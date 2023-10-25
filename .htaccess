@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteCond %{REQUEST_URI} !^public
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+AuthName "Area Restrita"
+AuthUserFile "/home/euroburg/.htpasswds/public_html/painel/passwd"
+#Use PHP55 as default
+AddHandler application/x-lsphp81.php
+
+
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
