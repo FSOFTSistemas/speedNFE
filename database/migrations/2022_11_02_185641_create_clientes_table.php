@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Cliente;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -26,6 +25,7 @@ return new class extends Migration
             $table->integer('tipo');
             $table->integer('situacao');
             $table->float('limite')->nullable();
+            $table->integer('contribuinte');
             $table->unsignedBigInteger('endereco_id');
             $table->foreign('endereco_id')->references('id')->on('enderecos')->onDelete('cascade');
             $table->unsignedBigInteger('empresa_id');

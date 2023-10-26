@@ -6,72 +6,78 @@ use App\Models\Cliente;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
-class ClientesService{
+class ClientesService
+{
     public function __construct()
     {
 
     }
 
-    public function um($id){
-        try{
-            return Cliente::findOrFail($id);
-        } catch (Exception $e){
-            return 0;
-        }
+    public function um($id)
+    {
+        return Cliente::select('clientes.*', 'empresas.razao', 'enderecos.rua', 'enderecos.numero', 'enderecos.bairro', 'enderecos.cidade',
+            'enderecos.cep', 'enderecos.codigoIBGE', 'enderecos.uf')
+            ->join('empresas', 'empresas.id', 'clientes.empresa_id')
+            ->join('enderecos', 'enderecos.id','clientes.endereco_id')
+            ->where('clientes.id', $id)
+            ->first();
     }
 
-    public function todos($id_empresa){
-        if($id_empresa == 1){
+    public function todos($id_empresa)
+    {
+        if ($id_empresa == 1) {
             $id_empresa = '%';
         }
         try {
             return DB::table('clientes')
-            ->select('clientes.*', 'empresas.fantasia')
-            ->join('empresas', 'empresas.id', '=', 'clientes.empresa_id')
-            ->where('clientes.empresa_id', 'like', $id_empresa)
-            ->get();
-        } catch (Exception $e){
+                ->select('clientes.*', 'empresas.fantasia')
+                ->join('empresas', 'empresas.id', '=', 'clientes.empresa_id')
+                ->where('clientes.empresa_id', 'like', $id_empresa)
+                ->get();
+        } catch (Exception $e) {
             return $e;
         }
     }
 
-    public function salvar($codigo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $tipo, $limite, $empresa, $endereco){
-        try{
-            Cliente::create([
-                'codigo' => $codigo,
-                'nome' => $nome,
-                'apelido' => $apelido,
-                'cpf_cnpj' => $cpf_cnpj,
-                'rg_ie' => $rg_ie,
-                'telefone' => $telefone,
-                'celular' => $celular,
-                'tipo' => $tipo,
-                'situacao' => 0,
-                'limite' => $limite,
-                'empresa_id' => $empresa,
-                'endereco_id' => $endereco
-            ]);
-
-            return 1;
-        } catch (Exception $e){
-            return $e;
+    public function salvar($codigo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $tipo, $limite, $empresa, $endereco)
+    {
+        $contribuinte = 0;
+        if ($rg_ie) {
+            $contribuinte = 1;
         }
+        return Cliente::create([
+            'codigo' => $codigo,
+            'nome' => $nome,
+            'apelido' => $apelido,
+            'cpf_cnpj' => $cpf_cnpj,
+            'rg_ie' => $rg_ie,
+            'telefone' => $telefone,
+            'celular' => $celular,
+            'tipo' => $tipo,
+            'situacao' => 0,
+            'limite' => $limite,
+            'contribuinte' => $contribuinte,
+            'empresa_id' => $empresa,
+            'endereco_id' => $endereco,
+        ]);
     }
 
-    public function excluir($id){
+    public function excluir($id)
+    {
         $cliente = Cliente::findOrFail($id);
 
-        try{
+        try {
             $cliente->delete();
             return 1;
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return 0;
         }
     }
 
-    public function editar($id, $tipo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $limite){
+    public function editar($id, $tipo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $limite)
+    {
 
-        try{
+        try {
             $cliente = Cliente::findOrFail($id);
             $cliente->update([
                 'tipo' => $tipo,
@@ -81,13 +87,21 @@ class ClientesService{
                 'rg_ie' => $rg_ie,
                 'telefone' => $telefone,
                 'celular' => $celular,
-                'limite' => $limite
+                'limite' => $limite,
             ]);
             return 1;
-        } catch (Exception $e){
+        } catch (Exception $e) {
             dd($e->getMessage());
             return 0;
         }
+    }
+
+    public function contagemClientes($id_empresa)
+    {
+        return Cliente::where('empresa_id', '=', $id_empresa)
+            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE)')
+            ->whereRaw('YEAR(created_at) = YEAR(CURRENT_DATE)')
+            ->count();
     }
 
 }

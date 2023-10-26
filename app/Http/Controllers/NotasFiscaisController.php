@@ -9,8 +9,6 @@ use App\Services\UsersService;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use NFePHP\DA\NFe\Danfe;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

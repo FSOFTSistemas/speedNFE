@@ -53,7 +53,7 @@ Route::get('/empresa/editar/{id}', [EmpresasController::class, 'editar'])->name(
 Route::post('/empresa/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware('auth');
 Route::post('/empresa', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware('auth');
 
-Route::get('/cliente', [ClientesController::class, 'show'])->middleware('auth');
+Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware('auth');
 Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware('auth');
 Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware('auth');
 Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware('auth');
