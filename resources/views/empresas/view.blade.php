@@ -203,8 +203,8 @@
                                             <label>Certificado</label><br> <!-- inserir arquivo pfx -->
                                             <input accept=".pfx" type="file" name="certificado" id="certificado"
                                                 class="file-upload-default">
-
                                         </div>
+
                                         <div class="col">
                                             <label>Senha Certificado</label>
                                             <input class=form-control type="text" name="senha" id="senha" />

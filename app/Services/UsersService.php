@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Empresa;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -20,14 +19,6 @@ class UsersService{
         } catch (Exception $e) {
             return $e;
         }
-    }
-
-    public function buscarEmpresa($id)
-    {
-        return Empresa::select('empresas.*', 'users.name', 'users.email')
-            ->join('users', 'users.empresa_id', 'empresas.id')
-            ->where('empresas.id', $id)
-            ->first();
     }
 
     public function editar($id, $name, $email, $senha, $cargo, $empresa){

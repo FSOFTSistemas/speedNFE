@@ -69,8 +69,8 @@ class EmpresasController extends Controller
     public function view($id)
     {
         try {
-            $sUser = new UsersService();
-            $empresa = $sUser->buscarEmpresa($id);
+            $sEmpresa = new EmpresasService();
+            $empresa = $sEmpresa->buscarEmpresa($id);
             return view('empresas.view', ['empresa' => $empresa]);
         } catch (Exception $e) {
             return back();

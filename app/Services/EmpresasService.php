@@ -16,6 +16,14 @@ class EmpresasService{
         return Empresa::all();
     }
 
+    public function buscarEmpresa($id)
+    {
+        return Empresa::select('empresas.*', 'users.name', 'users.email')
+            ->join('users', 'users.empresa_id', 'empresas.id')
+            ->where('empresas.id', $id)
+            ->first();
+    }
+
     public function todos($empresa){
         if($empresa == 1){
             $empresa = '%';
