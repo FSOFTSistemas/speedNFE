@@ -93,29 +93,25 @@
                                         <div class="row">
                                             <div class="col-9">
                                                 <label>Rua</label>
-                                                <input class="form-control" type="text" id="rua"
-                                                    name="rua" />
+                                                <input class="form-control" type="text" id="rua" name="rua" value="{{ $empresa->rua }}"/>
                                             </div>
                                             <div class="col-3">
                                                 <label>Número</label>
-                                                <input class="form-control" type="number" id="numero"
-                                                    name="numero" />
+                                                <input class="form-control" type="number" id="numero" name="numero" value="{{ $empresa->numero }}"/>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-8">
                                                 <label>Bairro</label>
-                                                <input class="form-control" type="text" id="bairro"
-                                                    name="bairro" />
+                                                <input class="form-control" type="text" id="bairro" name="bairro" value="{{ $empresa->bairro }}"/>
                                             </div>
                                             <div class="col">
                                                 <label>CEP</label>
                                                 <div class="row">
                                                     <div class="col">
 
-                                                        <input class="form-control" type="text" id="cep"
-                                                            name="cep" />
+                                                        <input class="form-control" type="text" id="cep" name="cep" value="{{ $empresa->cep }}"/>
                                                     </div>
                                                     <button class="btn btn-light" type="button" id="cep_button"><i
                                                             class="fa fa-search"></i></button>
@@ -127,13 +123,13 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <input class="form-control" type="text" id="cidade"
-                                                    name="cidade" />
+                                                <input class="form-control" type="text" id="cidade" name="cidade" value="{{ $empresa->cidade }}"/>
                                             </div>
                                             <div class="col">
                                                 <label>UF</label>
                                                 <select class="form-control" id="uf" name="uf">
                                                     <option>-- Escolha uma Unidade Federativa --</option>
+                                                    <option value="{{ $empresa->uf }}">{{ $empresa->uf }}</option>
                                                     <option value='RO'>RO</option>
                                                     <option value='AC'>AC</option>
                                                     <option value='AM'>AM</option>
@@ -170,15 +166,13 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Complemento</label>
-                                                <input class="form-control" type="text" id="complemento"
-                                                    name="complemento" />
+                                                <input class="form-control" type="text" id="complemento" name="complemento" value="{{ $empresa->complemento }}"/>
 
                                             </div>
                                             <div class="col">
 
                                                 <label>Código IBGE</label>
-                                                <input class="form-control" type="number" id="ibge"
-                                                    name="ibge" />
+                                                <input class="form-control" type="number" id="ibge" name="ibge" value="{{ $empresa->codigoIBGE }}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -189,7 +183,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Nº da Última NFe</label>
-                                            <input class=form-control type="number" name="nfe" id="nfe"/>
+                                            <input class=form-control type="number" name="nfe" id="nfe" value="{{ $empresa->ultimaNFe }}"/>
 
                                         </div>
                                         <div class="col">
@@ -201,13 +195,12 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input accept=".pfx" type="file" name="certificado" id="certificado"
-                                                class="file-upload-default">
+                                            <input accept=".pfx" type="file" name="certificado" id="certificado" class="file-upload-default" value="{{ $empresa->certificado }}">
                                         </div>
 
                                         <div class="col">
                                             <label>Senha Certificado</label>
-                                            <input class=form-control type="text" name="senha" id="senha" />
+                                            <input class=form-control type="text" name="senha" id="senha" value="{{ $empresa->senhaCertificado }}"/>
                                         </div>
                                     </div>
 

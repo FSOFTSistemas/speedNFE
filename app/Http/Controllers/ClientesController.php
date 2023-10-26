@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cidade;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use GuzzleHttp\Client;
@@ -41,23 +42,23 @@ class ClientesController extends Controller
 
         $sEmpresa = new EmpresasService();
         $empresas = $sEmpresa->todas();
-
-        return view('clientes.cadastrar', ['empresa' => $user->empresa_id, 'empresas' => $empresas]);
+        $cidades = Cidade::all();
+        return view('clientes.cadastrar', ['empresa' => $user->empresa_id, 'empresas' => $empresas, 'cidades' => $cidades]);
     }
 
     public function salvar(Request $request){
-       
+
         $sClientes = new ClientesService();
         $sEndereco = new EnderecosService();
         $sUsers = new UsersService();
         $user = $sUsers->getEmpresa(Auth::id());
-        
+
         if($request->has('empresa')){
             $user = $request->empresa;
         } else {
             $user = $user->empresa_id;
         }
-        
+
 
         if(DB::table('clientes')
         ->where('empresa_id', '=', $user)
@@ -66,7 +67,7 @@ class ClientesController extends Controller
         ->count() < Empresa::findOrFail($user)->limClientes or $user == 1){
             $endereco = $sEndereco->salvar($request->rua, $request->bairro, $request->numero, $request->cidade, $request->uf, $request->ibge, $request->cep, $request->complemento);
             $resp = $sClientes->salvar($request->codigo, $request->nome, $request->apelido, $request->cpf_cnpj, $request->rg_ie, $request->telefone, $request->celular, $request->tipo, $request->limite, $user, $endereco->id);
-        
+
         } else {
             return redirect('/cliente')->with('error', 'Limite de clientes atingido');
         }
@@ -91,10 +92,10 @@ class ClientesController extends Controller
     public function editar($id){
         $sCliente = new ClientesService();
         $cliente = $sCliente->um($id);
-        $emp = Empresa::find($cliente->empresa_id); 
+        $emp = Empresa::find($cliente->empresa_id);
         $sEndereco = new EnderecosService();
         $sEmpresa = new EmpresasService();
-      
+
         $endereco = $sEndereco->um($cliente->endereco_id);
         $empresas = $sEmpresa->todas();
 
@@ -110,7 +111,7 @@ class ClientesController extends Controller
         $sEndereco = new EnderecosService();
         $respE = $sEndereco->editar($cliente->endereco_id, $request->rua, $request->bairro, $request->numero, $request->cidade, $request->uf, $request->ibge, $request->cep, $request->complemento);
         $respC = $sCliente->editar($id, $request->tipo, $request->nome, $request->apelido, $request->cpf_cnpj, $request->rg_ie, $request->telefone, $request->telefone, $request->limite);
-    
+
         if ($respE == 1 && $respC == 1){
             return redirect('/cliente')->with('success', 'Cliente atualizado com sucesso');
         }
@@ -120,7 +121,7 @@ class ClientesController extends Controller
     }
 
     public function BuscarCNPJ(Request $request){
-        
+
         $cnpj = $request->cnpj;
         $URL = "https://receitaws.com.br/v1/";
 

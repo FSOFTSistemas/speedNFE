@@ -25,9 +25,9 @@
                         <td>{{$empresa->fantasia}}</td>
                         <td>{{$empresa->cpf_cnpj}}</td>
                         @if($empresa->status == 1)
-                            <td><a class="btn btn-danger" href="{{route('desativarReativar_empresa', ['id' => $empresa->id])}}"><i class="fas fa-ban"></i></a></td>
+                            <td><a class="text-danger" href="{{route('desativarReativar_empresa', ['id' => $empresa->id])}}"><i class="fas fa-ban"></i></a></td>
                         @else
-                            <td><a class="btn btn-warning" href="{{route('desativarReativar_empresa', ['id' => $empresa->id])}}"><i class="fas fa-check"></i></a></td>
+                            <td><a class="text-success" href="{{route('desativarReativar_empresa', ['id' => $empresa->id])}}"><i class="fas fa-check"></i></a></td>
                         @endif
                         <td>
                             <a href="{{route('editar_empresa', ['id' => $empresa->id])}}"><i class="fa fa-edit"></i></a>
