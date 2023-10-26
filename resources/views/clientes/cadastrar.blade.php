@@ -29,7 +29,7 @@
                     <div class="card-body">
                         <form action="{{ route('criar_cliente') }}" method="POST">
                             @csrf
-                            
+
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
@@ -229,11 +229,11 @@
             }
 
             document.getElementById("cep_button").addEventListener("click", function(event) {
-                
+
                 event.preventDefault();
                 const cep = document.getElementById('cep').value;
                 $.ajax({
-                    
+
                     url: "https://viacep.com.br/ws/" + somenteNumeros(cep) + "/json/",
                     method: 'GET',
                     dataType: 'json',
@@ -252,7 +252,7 @@
                 event.preventDefault();
                 const cnpj = document.getElementById('cpf_cnpj').value;
                 const tipo = document.getElementById('tipo').value;
-            
+
                 if (tipo == 2) {
                     $.ajax({
                         type: "POST",
