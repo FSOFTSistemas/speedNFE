@@ -18,8 +18,10 @@ class EmpresasService{
 
     public function buscarEmpresa($id)
     {
-        return Empresa::select('empresas.*', 'users.name', 'users.email')
+        return Empresa::select('empresas.*', 'users.name', 'users.email', 'enderecos.rua', 'enderecos.bairro', 'enderecos.numero', 'enderecos.cidade',
+        'enderecos.complemento', 'enderecos.uf', 'enderecos.cep', 'enderecos.codigoIBGE')
             ->join('users', 'users.empresa_id', 'empresas.id')
+            ->join('enderecos', 'enderecos.id', 'empresas.endereco_id')
             ->where('empresas.id', $id)
             ->first();
     }

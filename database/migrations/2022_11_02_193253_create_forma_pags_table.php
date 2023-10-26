@@ -17,8 +17,6 @@ return new class extends Migration
         Schema::create('forma_pags', function (Blueprint $table) {
             $table->id();
             $table->string('descricao');
-            $table->unsignedBigInteger('cliente_id');
-            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
