@@ -37,21 +37,25 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="nome">Nome</label>
-                                            <input class="form-control" type="text" name="nome" id="nome">
+                                            <input class="form-control" type="text" name="nome" id="nome"
+                                                required>
                                         </div>
                                         <div class="col">
                                             <label for="apelido">Apelido/Fantasia</label>
-                                            <input class="form-control" type="text" name="apelido" id="apelido" value="Apelido">
+                                            <input class="form-control" type="text" name="apelido" id="apelido"
+                                                value="Apelido">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <label for="codigo">Código Gerencial</label>
-                                            <input class="form-control" type="text" name="codigo" id="codigo" value="0">
+                                            <input class="form-control" type="text" name="codigo" id="codigo"
+                                                value="0">
                                         </div>
                                         <div class="col">
                                             <label for="limite">Limite</label>
-                                            <input class="form-control" type="text" name="limite" id="limite" value="100000">
+                                            <input class="form-control" type="text" name="limite" id="limite"
+                                                value="100000">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -91,7 +95,7 @@
                                             <label for="empresa">Empresa</label>
                                             <select name="empresa" id="empresa" class="form-control">
                                                 @foreach ($empresas as $empresa)
-                                                    <option value="{{$empresa->id}}">{{$empresa->razao}}</option>
+                                                    <option value="{{ $empresa->id }}">{{ $empresa->razao }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -178,7 +182,12 @@
 
                                         <div class="col">
                                             <label for="cod_ibge">Cód. IBGE</label>
-                                            <input class="form-control" type="text" name="ibge" id="ibge">
+                                            <select class="form-control" name="ibge" id="ibge" style="width: 100%">
+                                                <option>Selione a cidade...</option>
+                                                @foreach ($cidades as $cidade)
+                                                    <option value="{{ $cidade->ibge }}">{{ $cidade->ibge }} : {{ $cidade->cidade }} - {{ $cidade->uf }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -200,33 +209,40 @@
 @endsection
 
 @section('js')
-        <script>
-            function formatarCpfCnpj(valor) {
-                // Remove qualquer caracter que não seja número
-                valor = valor.replace(/\D/g, '');
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-                // Verifica se é CPF (11 dígitos)
-                if (valor.length === 11) {
-                    // Formata o CPF ###.###.###-##
-                    return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-                }
+    <script>
+        $(document).ready(function() {
+            $('#ibge').select2();
+        });
 
-                // Verifica se é CNPJ (14 dígitos)
-                else if (valor.length === 14) {
-                    // Formata o CNPJ ##.###.###/####-##
-                    return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-                }
+        function formatarCpfCnpj(valor) {
+            // Remove qualquer caracter que não seja número
+            valor = valor.replace(/\D/g, '');
 
-                // Não é CPF nem CNPJ
-                else {
-                    return valor;
-                }
+            // Verifica se é CPF (11 dígitos)
+            if (valor.length === 11) {
+                // Formata o CPF ###.###.###-##
+                return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
             }
 
-            function somenteNumeros(valor) {
-                var numeros = valor.replace(/\D/g, "");
-                return numeros;
+            // Verifica se é CNPJ (14 dígitos)
+            else if (valor.length === 14) {
+                // Formata o CNPJ ##.###.###/####-##
+                return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
             }
+
+            // Não é CPF nem CNPJ
+            else {
+                return valor;
+            }
+        }
+
+        function somenteNumeros(valor) {
+            var numeros = valor.replace(/\D/g, "");
+            return numeros;
+        }
 
             document.getElementById("cep_button").addEventListener("click", function(event) {
 
@@ -281,9 +297,9 @@
                         }
                     });
 
-                } else {
-                    alert("Tipo deve ser Pessoa Jurídica!");
-                }
-            });
-        </script>
+            } else {
+                alert("Tipo deve ser Pessoa Jurídica!");
+            }
+        });
+    </script>
 @endsection
