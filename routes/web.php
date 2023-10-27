@@ -56,9 +56,10 @@ Route::post('/empresa', [EmpresasController::class, 'store'])->name('salvar_empr
 Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware('auth');
 Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware('auth');
 Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware('auth');
+Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware('auth');
 Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware('auth');
-Route::post('/cliente/edit/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware('auth');
-Route::get('/cliente/del/{id}', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware('auth');
+Route::put('/cliente/salvar/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware('auth');
+Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware('auth');
 Route::post('/clientes/cnpj/', [ClientesController::class, 'BuscarCnpj'])->name('cnpj.clientes');
 
 Route::get('/forma', [FormaPagController::class, 'show'])->middleware('auth');

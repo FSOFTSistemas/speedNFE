@@ -26,6 +26,7 @@
                 @endif
                 <th></th>
                 <th></th>
+                <th></th>
             </thead>
             <tbody>
                 @foreach ($clientes as $cliente)
@@ -46,14 +47,63 @@
                             @endif
                             <td><a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
                                     class='text-warning'><i class="fa fa-edit"></i></a></td>
-                            <td><a title="Excluir" href='{{ route('excluir_cliente', ['id' => $cliente->id]) }}'
-                                    class='text-danger'><i class="fa fa-ban"></i></a></td>
+                            <td><a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})" class='text-danger'><i class="fa fa-trash" data-toggle="modal"
+                                        data-target=".bd-delete-modal-lg"></i></a></td>
+                            <td><a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
+                                    class='text-primary'><i class="fa fa-eye"></i></a></td>
                         </tr>
                     @endif
                 @endforeach
             </tbody>
         </table>
+    </div>
 
+    <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="col" style="text-align: center">
+                        <div class="modal-title" style="text: center">
+                            <h4>Apagar este Cliente?</h4>
+                        </div>
+                    </div>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <p style="color: red; text-align: center">OBS: Você irá excluir todas as informações sobre este cliente!
+                    </p>
+
+                    <div class="" style="text-align: center">
+
+                        <form action="{{ route('excluir_cliente') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('DELETE')
+                            <div class="form-group">
+                                <input type="hidden" step="0.01" class="form-control" id="idCliente" name="idCliente"
+                                    value="">
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" style="width: 50%;" class="btn btn-danger">EXCLUIR</button>
+                            </div>
+                            <br>
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -63,6 +113,10 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script>
+        function setaDadosModal(idCliente) {
+            document.getElementById('idCliente').value = idCliente;
+        }
+
         $(document).ready(function() {
             $('#clientes').DataTable({
                 responsive: true,
