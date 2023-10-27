@@ -7,13 +7,16 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 
 class EmpresasService{
-    public function __construct()
-    {
-
-    }
 
     public function todas(){
         return Empresa::all();
+    }
+
+    public function minhaEmpresa($id)
+    {
+        return Empresa::select('empresas.*')
+            ->where('empresas.id', $id)
+            ->get();
     }
 
     public function buscarEmpresa($id)
@@ -30,7 +33,6 @@ class EmpresasService{
         if($empresa == 1){
             $empresa = '%';
         }
-
         return DB::table('empresas')
         ->select('*')
         ->where('id', 'like', $empresa)

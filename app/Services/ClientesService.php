@@ -30,6 +30,13 @@ class ClientesService
             ->get();
     }
 
+    public function todosClientes()
+    {
+        return Cliente::select('clientes.*', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', '=', 'clientes.empresa_id')
+            ->get();
+    }
+
     public function salvar($codigo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $tipo, $limite, $empresa, $endereco)
     {
         $contribuinte = 0;

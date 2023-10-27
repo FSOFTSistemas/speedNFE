@@ -326,16 +326,16 @@ return [
             'url'         => '/produto',
             'icon'        => 'fas fa-box-open',
         ],
-        [
-            'text'        => 'Categorias',
-            'url'         => '/categoria',
-            'icon'        => 'fas fa-list',
-        ],
-        [
-            'text'        => 'Formas de Pagamento',
-            'url'         => '/forma',
-            'icon'        => 'fas fa-money-bill-wave',
-        ],
+        // [
+        //     'text'        => 'Categorias',
+        //     'url'         => '/categoria',
+        //     'icon'        => 'fas fa-list',
+        // ],
+        // [
+        //     'text'        => 'Formas de Pagamento',
+        //     'url'         => '/forma',
+        //     'icon'        => 'fas fa-money-bill-wave',
+        // ],
         // [
         //     'text'        => 'Estoque',
         //     'url'         => '/estoque',

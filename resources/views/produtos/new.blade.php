@@ -3,11 +3,15 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Produtos</h1>
+    <div class="row" style="text-align: center">
+        <div class="col">
+            <h1 class="m-0 text-dark">Produtos</h1>
+        </div>
+    </div>
 @stop
 
 @section('content')
-
+    <a class="btn btn-secondary" href="{{ route('produto.index') }}" style="margin-bottom: 2%">Voltar</a>
     <div class="content">
         <div class="container-fluid">
             <div class="col-xs-12 col-sm-12" style="width: 100%">
@@ -35,29 +39,25 @@
                                     aria-labelledby="home-tab">
                                     <div class="row">
                                         <div class="col">
-                                            @if ($empresa == 1)
+                                            @if ($user->empresa_id == 1)
                                                 <label>Empresa</label>
-                                                <select onchange="javascript:liberarProdutos({{ $empresa }})"
-                                                    class="form-control" name="empresa" id="empresa">
-                                                    <option>--Escolha uma empresa--</option>
+                                                <select onchange="javascript:liberarProdutos({{ $user->empresa_id }})"
+                                                    class="form-control" name="empresa" id="empresa" required>
+                                                    <option value="">--Escolha uma empresa--</option>
                                                     @foreach ($empresas as $emp)
                                                         <option value="{{ $emp->id }}">{{ $emp->fantasia }}</option>
                                                     @endforeach
                                                 </select>
                                             @else
-                                                <input onload="javascript:liberarProdutos({{ $empresa }})"
-                                                    type="hidden" value="{{ $empresa }}">
+                                                <input onload="javascript:liberarProdutos({{ $user->empresa_id }})"
+                                                    type="hidden" value="{{ $user->empresa_id }}">
                                             @endif
                                         </div>
 
                                         <div class="col">
                                             <label>Categoria</label>
-                                            @if ($empresa == 1)
-                                                <select disabled class="form-control" name="categoria" id="categoria">
-                                                @else
-                                                    <select class="form-control" name="categoria" id="categoria">
-                                            @endif
-                                            <option>-- Escolha uma categoria --</option>
+                                            <select class="form-control" name="categoria" id="categoria">
+                                            <option value="">-- Escolha uma categoria --</option>
                                             @foreach ($categorias as $categoria)
                                                 <option id="{{ $categoria->empresa_id }}" value="{{ $categoria->id }}">
                                                     {{ $categoria->descricao }}</option>
@@ -68,7 +68,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="codigo">Código de Barras</label>
-                                            <input class="form-control" type="text" name="codigo" id="codigo">
+                                            <input class="form-control" type="text" name="codigo" id="codigo" required>
                                         </div>
                                         <div class="col">
                                             <label for="produto">Produto</label>
@@ -191,7 +191,6 @@
                                     </div>
                                 </div>
 
-                                <!-- /.card -->
                             </div>
 
                         </form>

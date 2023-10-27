@@ -40,7 +40,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/categoria', [CategoriasController::class, 'show'])->middleware('auth');
+Route::get('/categoria', [CategoriasController::class, 'show'])->name('categoria.index')->middleware('auth');
 Route::get('/categoria/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware('auth');
 Route::post('/categoria/cadastro', [CategoriasController::class, 'store'])->name('salvar_categoria')->middleware('auth');
 Route::get('/categoria/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware('auth');
@@ -74,12 +74,12 @@ Route::get('/usuarios/del/{id}', [UsersController::class, 'destroy'])->name('exc
 Route::get('/usuarios/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware('auth');
 Route::post('/usuarios/editar/{id}', [UsersController::class, 'update'])->name('update_usuario')->middleware('auth');
 
-Route::get('/produto', [ProdutosController::class, 'show'])->middleware('auth');
+Route::get('/produto', [ProdutosController::class, 'show'])->name('produto.index')->middleware('auth');
 Route::get('/produto/cadastro', [ProdutosController::class, 'new'])->middleware('auth');
 Route::post('/produto/cadastro', [ProdutosController::class, 'store'])->name('salvar_produto')->middleware('auth');
 Route::get('/produto/del/{id}', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware('auth');
 Route::get('/produto/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware('auth');
-Route::post('/produto/editar/{id}', [ProdutosController::class, 'updat'])->name('update_produto')->middleware('auth');
+Route::post('/produto/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware('auth');
 
 Route::get('/estoque', [EstoqueController::class, 'show'])->middleware('auth');
 Route::get('/estoque/cadastro', [EstoqueController::class, 'new'])->middleware('auth');

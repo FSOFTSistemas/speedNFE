@@ -34,9 +34,12 @@ class ClientesController extends Controller
     {
         try {
             $user = $this->userServices->getEmpresa(Auth::id());
-            $clientes = $this->clienteServices->todos($user->empresa_id);
             if ($user->empresa_id == 1) {
+                $clientes = $this->clienteServices->todosClientes();
                 $empresas = $this->empresaServices->todas();
+            } else {
+                $clientes = $this->clienteServices->todos($user->empresa_id);
+                $empresas = $this->empresaServices->buscarEmpresa($user->empresa_id);
             }
             return view('clientes.todos', ['clientes' => $clientes, 'empresa' => $user->empresa_id, 'empresas' => $empresas]);
         } catch (Exception $e) {
@@ -47,7 +50,12 @@ class ClientesController extends Controller
     public function new ()
     {
         try {
-            $empresas = $this->empresaServices->todas();
+            $user = Auth::user();
+            if ($user->empresa_id == 1) {
+                $empresas = $this->empresaServices->todas();
+            } else {
+                $empresas = $this->empresaServices->minhaEmpresa($user->empresa_id);
+            }
             $cidades = $this->cidadeServices->buscarCidades();
             return view('clientes.cadastrar', ['empresas' => $empresas, 'cidades' => $cidades]);
         } catch (Exception $e) {
@@ -109,7 +117,8 @@ class ClientesController extends Controller
             }
             return redirect()->route('index')->with('success', 'Cliente cadastrado com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', $cliente);
+            dd($e);
+            return back();
         }
     }
 
