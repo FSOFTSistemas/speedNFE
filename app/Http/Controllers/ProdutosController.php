@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Categoria;
-use App\Models\Empresa;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
 use App\Services\ProdutosService;
@@ -12,7 +10,6 @@ use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ProdutosController extends Controller
 {
@@ -31,29 +28,61 @@ class ProdutosController extends Controller
 
     public function update($id, Request $request)
     {
-        $sProdutos = new ProdutosService();
-        $resp = $sProdutos->salvar($id, $request->codigo, $request->produto, $request->precocusto, $request->precovenda, $request->ncm, $request->cfopinterno, $request->cst_csosn, $request->cst_pis, $request->cst_cofins, $request->cst, $request->icms, $request->pis, $request->cofins, $request->ipi, $request->cfopexterno, $request->un);
-
-        if (is_int($resp)) {
-            return redirect('/produto')->with('success', 'Produto editado com sucesso');
+        try {
+            $request->validate([
+                'categoria' => 'required',
+                'codigo' => '',
+                'produto' => 'required|max:255',
+                'ncm' => 'required',
+                'precocusto' => 'required',
+                'precovenda' => 'required',
+                'un' => 'required',
+                'cfopinterno' => 'required',
+                'cfopexterno' => 'required',
+                'cst' => 'required',
+                'cst_pis' => 'required',
+                'cst_cofins' => 'required',
+                'cofins' => 'required',
+                'icms' => 'required',
+                'cst_csosn' => 'required',
+                'pis' => 'required',
+                'ipi' => 'required',
+            ]);
+            $produto = $this->produtoServices->salvar(
+                $id,
+                $request->categoria,
+                $request->codigo,
+                $request->produto,
+                $request->precocusto,
+                $request->precovenda,
+                $request->ncm,
+                $request->cfopinterno,
+                $request->cst_csosn,
+                $request->cst_pis,
+                $request->cst_cofins,
+                $request->cst,
+                $request->icms,
+                $request->pis,
+                $request->cofins,
+                $request->ipi,
+                $request->cfopexterno,
+                $request->un,
+            );
+            return redirect()->route('editar_produto', [$produto->id])->with('success', 'Produto editado com sucesso');
+        } catch (Exception $e) {
+            return back()->with('error', 'Não foi possível editar o produto');
         }
-        return redirect('/produto')->with('error', 'Não foi possível editar o produto');
     }
 
     public function editar($id)
     {
-        $sProdutos = new ProdutosService();
-        $produto = $sProdutos->um($id);
-
-        $sUsers = new UsersService();
-        $sEmpresas = new EmpresasService();
-        $sCategorias = new CategoriasService();
-        $empresa = $sUsers->getEmpresa(Auth::id());
-
-        $empresaAnterior = Empresa::find($produto->empresa_id);
-        $categoriaAnterior = Categoria::find($produto->categoria_id);
-
-        return view('produtos.editar', ['produto' => $produto, 'categoriaAnterior' => $categoriaAnterior, 'empresaAnterior' => $empresaAnterior, 'empresas' => $sEmpresas->todas(), 'categorias' => $sCategorias->todas($empresa->empresa_id), 'empresa' => $empresa->empresa_id]);
+        try {
+            $produto = $this->produtoServices->um($id);
+            $categorias = $this->categoriaServices->todas($produto->empresa_id);
+            return view('produtos.editar', ['produto' => $produto, 'categorias' => $categorias]);
+        } catch (Exception $e) {
+            return back();
+        }
     }
 
     public function destroy($id)
@@ -71,30 +100,53 @@ class ProdutosController extends Controller
 
     public function store(Request $request)
     {
-        $sUsers = new UsersService();
-        $empresa = $sUsers->getEmpresa(Auth::id());
-
-        if ($request->has('empresa')) {
-            $empresa = $request->empresa;
-        } else {
-            $empresa = $empresa->empresa_id;
+        try {
+            $request->validate([
+                'empresa' => 'required',
+                'categoria' => 'required',
+                'codigo' => '',
+                'produto' => 'required|max:255',
+                'ncm' => 'required',
+                'precocusto' => 'required',
+                'precovenda' => 'required',
+                'un' => 'required',
+                'cfopinterno' => 'required',
+                'cfopexterno' => 'required',
+                'cst' => 'required',
+                'cst_pis' => 'required',
+                'cst_cofins' => 'required',
+                'cofins' => 'required',
+                'icms' => 'required',
+                'cst_csosn' => 'required',
+                'pis' => 'required',
+                'ipi' => 'required',
+            ]);
+            if ($this->produtoServices->contagemProdutos($request->empresa) < $this->empresaServices->buscarEmpresa($request->empresa)->limProdutos || $request->empresa == 1) {
+                $this->produtoServices->store(
+                    $request->categoria,
+                    $request->empresa,
+                    $request->codigo,
+                    $request->produto,
+                    $request->precocusto,
+                    $request->precovenda,
+                    $request->ncm,
+                    $request->cfopinterno,
+                    $request->cst_csosn,
+                    $request->cst_pis,
+                    $request->cst_cofins,
+                    $request->cst,
+                    $request->icms,
+                    $request->pis,
+                    $request->cofins,
+                    $request->ipi,
+                    $request->cfopexterno,
+                    $request->un
+                );
+            }
+            return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');
+        } catch (Exception $e) {
+            return back()->with('error', 'Não foi possível cadastrar o produto!');
         }
-
-        if (DB::table('produtos')
-            ->where('empresa_id', '=', $empresa)
-            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE)')
-            ->whereRaw('YEAR(created_at) = YEAR(CURRENT_DATE)')
-            ->count() < Empresa::findOrFail($empresa)->limProdutos or $empresa == 1) {
-            $sProdutos = new ProdutosService();
-            $resp = $sProdutos->store($request->categoria, $empresa, $request->codigo, $request->produto, $request->precocusto, $request->precovenda, $request->ncm, $request->cfopinterno, $request->cst_csosn, $request->cst_pis, $request->cst_cofins, $request->cst, $request->icms, $request->pis, $request->cofins, $request->ipi, $request->cfopexterno, $request->un);
-        } else {
-            return redirect('/produto')->with('error', 'Limite de produtos atingido');
-        }
-
-        if ($resp == 1) {
-            return redirect('/produto')->with('success', 'Produto cadastrado com sucesso');
-        }
-        return $resp;
     }
 
     public function show()

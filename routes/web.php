@@ -24,10 +24,6 @@ use App\Http\Controllers\RelatoriosController;
 |
 */
 
-// Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 Route::get('/home', function() {
     return view('home');
 })->name('home')->middleware('auth');
@@ -79,7 +75,7 @@ Route::get('/produto/cadastro', [ProdutosController::class, 'new'])->middleware(
 Route::post('/produto/cadastro', [ProdutosController::class, 'store'])->name('salvar_produto')->middleware('auth');
 Route::get('/produto/del/{id}', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware('auth');
 Route::get('/produto/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware('auth');
-Route::post('/produto/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware('auth');
+Route::put('/produto/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware('auth');
 
 Route::get('/estoque', [EstoqueController::class, 'show'])->middleware('auth');
 Route::get('/estoque/cadastro', [EstoqueController::class, 'new'])->middleware('auth');

@@ -56,7 +56,7 @@
 
                                         <div class="col">
                                             <label>Categoria</label>
-                                            <select class="form-control" name="categoria" id="categoria">
+                                            <select class="form-control" name="categoria" id="categoria" required>
                                             <option value="">-- Escolha uma categoria --</option>
                                             @foreach ($categorias as $categoria)
                                                 <option id="{{ $categoria->empresa_id }}" value="{{ $categoria->id }}">
@@ -68,21 +68,21 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="codigo">Código de Barras</label>
-                                            <input class="form-control" type="text" name="codigo" id="codigo" required>
+                                            <input class="form-control" type="text" name="codigo" id="codigo" placeholder="Código de Barras...">
                                         </div>
                                         <div class="col">
                                             <label for="produto">Produto</label>
-                                            <input class="form-control" type="text" name="produto" id="produto">
+                                            <input class="form-control" type="text" name="produto" id="produto" required placeholder="Produto...">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <label for="ncm">NCM</label>
-                                            <input class="form-control" type="text" name="ncm" id="ncm">
+                                            <input class="form-control" type="text" name="ncm" id="ncm" required placeholder="Ncm...">
                                         </div>
                                         <div class="col">
-                                            <label for="precocusto">Preço Custo</label>
-                                            <input class="form-control" type="text" name="precocusto" id="precocusto">
+                                            <label for="precocusto">Preço de Custo</label>
+                                            <input class="form-control" type="number" name="precocusto" id="precocusto" step="0.01" required placeholder="Preço Custo...">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -90,15 +90,16 @@
                                             <label for="precovenda">Preço de Venda</label>
                                             <div class="row">
                                                 <div class="col">
-                                                    <input class="form-control" type="text" name="precovenda"
-                                                        id="precovenda">
+                                                    <input class="form-control" type="number" name="precovenda" step="0.01"
+                                                        id="precovenda" required placeholder="Preço Venda...">
 
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col">
                                             <label for="un">Unidade</label>
-                                            <select name="un" id="un" class="form-control">
+                                            <select name="un" id="un" class="form-control" required>
+                                                <option value="">-- Escolha uma Unidade --</option>
                                                 <option value="un">UN</option>
                                                 <option value="cx">CX</option>
                                                 <option value="kg">KG</option>
@@ -109,55 +110,46 @@
                                             </select>
                                         </div>
                                     </div>
-
-                                    <br>
-                                    <div>
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-success form-control">Salvar
-                                                Cliente</button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-
 
                                     <div class="row">
                                         <div class="col">
                                             <label for="cfopinterno">CFOP Interno</label>
                                             <input class="form-control" type="text" name="cfopinterno"
-                                                id="cfopinterno" value="5102">
+                                                id="cfopinterno" value="5102" require placeholder="CFOP Interno...">
                                         </div>
                                         <div class="col">
                                             <label for="cfopexterno">CFOP Externo</label>
                                             <input class="form-control" type="text" name="cfopexterno"
-                                                id="cfopexterno" value="6102">
+                                                id="cfopexterno" value="6102" required placeholder="CFOP Externo...">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <label for="cst">CST</label>
                                             <input class="form-control" type="text" name="cst" id="cst"
-                                                value="000">
+                                                value="000" required placeholder="Cst...">
                                         </div>
                                         <div class="col">
                                             <label for="cst_pis">CST/PIS</label>
                                             <input class="form-control" type="text" name="cst_pis" id="cst_pis"
-                                                value="0">
+                                                value="0" required placeholder="CST/PIS...">
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <label for="cst_cofins">CST/COFINS</label>
                                             <input class="form-control" type="text" name="cst_cofins" id="cst_cofins"
-                                                value="0">
+                                                value="0" required placeholder="Cst Confins...">
                                         </div>
                                         <div class="col">
                                             <label for="cofins">COFINS</label>
                                             <div class="row">
                                                 <div class="col">
                                                     <input class="form-control" type="text" name="cofins"
-                                                        id="cofins" value="0">
+                                                        id="cofins" value="0" required placeholder="Confins...">
                                                 </div>
 
                                             </div>
@@ -168,12 +160,12 @@
                                         <div class="col">
                                             <label for="icms">ICMS</label>
                                             <input class="form-control" type="text" name="icms" id="icms"
-                                                value="17">
+                                                value="17" required placeholder="Icms...">
                                         </div>
                                         <div class="col">
                                             <label for="cst_csosn">CST/CSOSN</label>
                                             <input type="text" class="form-control" name="cst_csosn" id="cst_csosn"
-                                                value="102">
+                                                value="102" required placeholder="Cst Csosn...">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -181,13 +173,20 @@
                                         <div class="col">
                                             <label for="pis">PIS</label>
                                             <input class="form-control" type="text" name="pis" id="pis"
-                                                value="0">
+                                                value="0" required placeholder="Pis...">
                                         </div>
                                         <div class="col">
                                             <label for="ipi">IPI</label>
                                             <input type="text" class="form-control" name="ipi" id="ipi"
-                                                value="0">
+                                                value="0" required placeholder="Ipi...">
                                         </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-success form-control">Salvar
+                                            Cliente</button>
                                     </div>
                                 </div>
 
@@ -209,14 +208,14 @@
 @section('js')
     <script>
         function liberarProdutos(empresa) {
-            if (empresa == 1) {
+            select = document.getElementById("categoria");
+            document.getElementById('categoria').removeAttribute('disabled');
 
+            if (empresa == 1) {
                 var input, filter, ul, li, a, i, txtValue;
                 input = document.getElementById('empresa');
                 filter = input.options[input.selectedIndex].value;
-                select = document.getElementById("categoria");
                 option = select.getElementsByTagName('option');
-
                 // Loop through all list items, and hide those who don't match the search query
                 for (i = 0; i < option.length; i++) {
                     a = option[i].id;
@@ -226,11 +225,9 @@
                         option[i].style.display = "none";
                     }
                 }
-                document.getElementById('categoria').removeAttribute('disabled');
             } else {
-                document.getElementById('categoria').removeAttribute('disabled');
+                select.value = "";
             }
-
         }
     </script>
 @endsection

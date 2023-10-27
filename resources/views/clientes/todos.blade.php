@@ -14,19 +14,21 @@
 
     <div class="container">
         <a class="btn btn-info" style="margin-bottom: 2%" href='/cliente/cadastro'>&nbsp; + Cliente &nbsp;</a>
-        <table class="table table-striped" id="clientes">
-            <thead>
-                <th>NOME</th>
-                <th>CPF OU CNPJ</th>
-                {{-- <th>CELULAR</th>
+        <table class="table table-hover" id="clientes">
+            <thead class="table-primary">
+                <tr>
+                    <th>NOME</th>
+                    <th>CPF OU CNPJ</th>
+                    {{-- <th>CELULAR</th>
                 <th>TIPO</th>
                 <th>LIMITE</th> --}}
-                @if ($empresa == 1)
-                    <th>EMPRESA</th>
-                @endif
-                <th></th>
-                <th></th>
-                <th></th>
+                    @if ($empresa == 1)
+                        <th>EMPRESA</th>
+                    @endif
+                    <th width="5%"></th>
+                    <th width="5%"></th>
+                    <th width="5%"></th>
+                </tr>
             </thead>
             <tbody>
                 @foreach ($clientes as $cliente)
@@ -47,8 +49,9 @@
                             @endif
                             <td><a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
                                     class='text-warning'><i class="fa fa-edit"></i></a></td>
-                            <td><a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})" class='text-danger'><i class="fa fa-trash" data-toggle="modal"
-                                        data-target=".bd-delete-modal-lg"></i></a></td>
+                            <td><a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})" class='text-danger'><i
+                                        class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
+                            </td>
                             <td><a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
                                     class='text-primary'><i class="fa fa-eye"></i></a></td>
                         </tr>
