@@ -3,116 +3,148 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cidade;
-use App\Models\Cliente;
-use App\Models\Empresa;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
+use App\Services\CidadeService;
 use App\Services\ClientesService;
 use App\Services\EmpresasService;
 use App\Services\EnderecosService;
 use App\Services\UsersService;
 use Exception;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ClientesController extends Controller
 {
-    public function show(){
-        $sUsers = new UsersService();
-        $user = $sUsers->getEmpresa(Auth::id());
 
-        $sClientes = new ClientesService();
-        $clientes = $sClientes->todos($user->empresa_id);
+    private UsersService $userServices;
+    private EnderecosService $enderecoServices;
+    private EmpresasService $empresaServices;
+    private CidadeService $cidadeServices;
+    private ClientesService $clienteServices;
 
-        $sEmpresa = new EmpresasService();
-
-        if($user->empresa_id == 1){
-            $empresas = $sEmpresa->todas();
-        } else {
-            $empresas = '';
-        }
-
-        return view('clientes.todos', ['clientes' => $clientes, 'empresa' => $user->empresa_id, 'empresas' => $empresas]);
+    public function __construct(UsersService $userServices, EnderecosService $enderecoServices, EmpresasService $empresaServices, CidadeService $cidadeServices, ClientesService $clienteServices)
+    {
+        $this->userServices = $userServices;
+        $this->enderecoServices = $enderecoServices;
+        $this->empresaServices = $empresaServices;
+        $this->cidadeServices = $cidadeServices;
+        $this->clienteServices = $clienteServices;
     }
 
-    public function new(){
-        $sUsers = new UsersService();
-        $user = $sUsers->getEmpresa(Auth::id());
-
-        $sEmpresa = new EmpresasService();
-        $empresas = $sEmpresa->todas();
-        $cidades = Cidade::all();
-        return view('clientes.cadastrar', ['empresa' => $user->empresa_id, 'empresas' => $empresas, 'cidades' => $cidades]);
+    public function show()
+    {
+        try {
+            $user = $this->userServices->getEmpresa(Auth::id());
+            $clientes = $this->clienteServices->todos($user->empresa_id);
+            if ($user->empresa_id == 1) {
+                $empresas = $this->empresaServices->todas();
+            }
+            return view('clientes.todos', ['clientes' => $clientes, 'empresa' => $user->empresa_id, 'empresas' => $empresas]);
+        } catch (Exception $e) {
+            return back();
+        }
     }
 
-    public function salvar(Request $request){
-
-        $sClientes = new ClientesService();
-        $sEndereco = new EnderecosService();
-        $sUsers = new UsersService();
-        $user = $sUsers->getEmpresa(Auth::id());
-
-        if($request->has('empresa')){
-            $user = $request->empresa;
-        } else {
-            $user = $user->empresa_id;
+    public function new ()
+    {
+        try {
+            $empresas = $this->empresaServices->todas();
+            $cidades = $this->cidadeServices->buscarCidades();
+            return view('clientes.cadastrar', ['empresas' => $empresas, 'cidades' => $cidades]);
+        } catch (Exception $e) {
+            return back();
         }
-
-
-        if(DB::table('clientes')
-        ->where('empresa_id', '=', $user)
-        ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE)')
-        ->whereRaw('YEAR(created_at) = YEAR(CURRENT_DATE)')
-        ->count() < Empresa::findOrFail($user)->limClientes or $user == 1){
-            $endereco = $sEndereco->salvar($request->rua, $request->bairro, $request->numero, $request->cidade, $request->uf, $request->ibge, $request->cep, $request->complemento);
-            $resp = $sClientes->salvar($request->codigo, $request->nome, $request->apelido, $request->cpf_cnpj, $request->rg_ie, $request->telefone, $request->celular, $request->tipo, $request->limite, $user, $endereco->id);
-
-        } else {
-            return redirect('/cliente')->with('error', 'Limite de clientes atingido');
-        }
-
-        if (is_int($resp)) {
-            return redirect('/cliente')->with('success', 'Cliente cadastrado com sucesso');
-        }
-        return redirect('/cliente')->with('error', $resp);
-        // return $request->codigo.' '.$request->nome.' '.$request->apelido.' '.$request->cpf_cnpj.' '.$request->rg_ie.' '.$request->telefone.' '.$request->celular.' '.$request->tipo.' '.$request->limite.' '.$user->empresa_id.' '.$endereco->id;
     }
 
-    public function excluir($id){
-        $sCliente = new ClientesService();
-        $resp = $sCliente->excluir($id);
-
-        if ($resp == 1){
-            return redirect('/cliente')->with('success', 'Cliente excluído com sucesso');
+    public function salvar(Request $request)
+    {
+        try {
+            $request->validate([
+                'nome' => 'required|max:255',
+                'apelido' => 'required|max:255',
+                'codigo' => 'required',
+                'limite' => 'required',
+                'cpf_cnpj' => 'required',
+                'rg_ie' => 'required',
+                'tipo' => 'required',
+                'telefone' => 'required|max:15',
+                'empresa' => 'required',
+                'rua' => 'max:255',
+                'numero' => '',
+                'bairro' => 'max:255',
+                'cidade' => 'max:255',
+                'uf' => '',
+                'cep' => '',
+                'ibge' => '',
+            ]);
+            $id_empresa = Auth::user()->id_empresa;
+            if ($request->has('empresa')) {
+                $id_empresa = $request->empresa;
+            }
+            if ($this->clienteServices->contagemClientes($id_empresa) < $this->empresaServices->buscarEmpresa($id_empresa)->limClientes || $id_empresa == 1) {
+                $endereco = $this->enderecoServices->salvar(
+                    $request->rua,
+                    $request->bairro,
+                    $request->numero,
+                    $request->cidade,
+                    $request->uf,
+                    $request->ibge,
+                    $request->cep,
+                    $request->complemento
+                );
+                $cliente = $this->clienteServices->salvar(
+                    $request->codigo,
+                    $request->nome,
+                    $request->apelido,
+                    $request->cpf_cnpj,
+                    $request->rg_ie,
+                    $request->telefone,
+                    $request->celular,
+                    $request->tipo,
+                    $request->limite,
+                    $id_empresa,
+                    $endereco->id
+                );
+            } else {
+                return redirect()->route('index')->with('error', 'Limite de clientes atingido');
+            }
+            return redirect()->route('index')->with('success', 'Cliente cadastrado com sucesso');
+        } catch (Exception $e) {
+            return back()->with('error', $cliente);
         }
-        return redirect('/cliente')->with('success', 'Não foi possível excluir o cliente selecionado');
     }
 
-    public function editar($id){
-        $sCliente = new ClientesService();
-        $cliente = $sCliente->um($id);
-        $emp = Empresa::find($cliente->empresa_id);
-        $sEndereco = new EnderecosService();
-        $sEmpresa = new EmpresasService();
-
-        $endereco = $sEndereco->um($cliente->endereco_id);
-        $empresas = $sEmpresa->todas();
-
-        if ($cliente && $endereco){
-            return view('clientes.editar', ['cliente' => $cliente, 'endereco' => $endereco,'empresas'=>$empresas,'emp'=>$emp]);
+    public function excluir($id)
+    {
+        try {
+            $this->clienteServices->excluir($id);
+            return redirect()->route('index')->with('success', 'Cliente excluído com sucesso');
+        } catch (Exception $e) {
+            return back()->with('error', 'Não foi possível excluir o cliente selecionado');
         }
-        return redirect('/cliente')->with('error', 'Cliente não encontrado');
     }
 
-    public function update($id, Request $request){
+    public function editar($id)
+    {
+        try {
+            $cliente = $this->clienteServices->um($id);
+            $empresas = $this->empresaServices->todas();
+            $cidades = $this->cidadeServices->buscarCidades();
+            return view('clientes.editar', ['cliente' => $cliente, 'empresas' => $empresas, 'cidades' => $cidades]);
+        } catch (Exception $e) {
+            return back();
+        }
+    }
+
+    public function update($id, Request $request)
+    {
         $sCliente = new ClientesService();
         $cliente = $sCliente->um(intval($id));
         $sEndereco = new EnderecosService();
         $respE = $sEndereco->editar($cliente->endereco_id, $request->rua, $request->bairro, $request->numero, $request->cidade, $request->uf, $request->ibge, $request->cep, $request->complemento);
         $respC = $sCliente->editar($id, $request->tipo, $request->nome, $request->apelido, $request->cpf_cnpj, $request->rg_ie, $request->telefone, $request->telefone, $request->limite);
 
-        if ($respE == 1 && $respC == 1){
+        if ($respE == 1 && $respC == 1) {
             return redirect('/cliente')->with('success', 'Cliente atualizado com sucesso');
         }
         return redirect('/cliente')->with('error', 'Não foi possível atualizar o cliente');
@@ -120,33 +152,25 @@ class ClientesController extends Controller
 
     }
 
-    public function BuscarCNPJ(Request $request){
-
-        $cnpj = $request->cnpj;
-        $URL = "https://receitaws.com.br/v1/";
-
-        $res = 0;
-        try{
+    public function BuscarCNPJ(Request $request)
+    {
+        try {
+            $cnpj = $request->cnpj;
+            $URL = "https://receitaws.com.br/v1/";
             $client = new Client([
                 'verify' => false,
                 'base_uri' => $URL,
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'Access-Control-Allow-Origin' => 'https://receitaws.com.br'
-                    ]
+                    'Access-Control-Allow-Origin' => 'https://receitaws.com.br',
+                ],
             ]);
-
-            $response = $client->get("cnpj/".$cnpj);
-
+            $response = $client->get("cnpj/" . $cnpj);
             $body = $response->getBody()->getContents();
-
             $responseXml = json_decode($body);
-
             return $responseXml;
-
-        }catch(Exception $e){
-            // dd($e);
-            return $res;
+        } catch (Exception $e) {
+            return back();
         }
     }
 
