@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h1 class="m-0 text-dark">Editar Cliente</h1>
+            <h1 class="m-0 text-dark">Visualizar Cliente</h1>
         </div>
     </div>
 @stop
@@ -33,9 +33,6 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('salvar_cliente', ['id' => $cliente->id]) }}" method="POST">
-                            @csrf
-                            @method('PUT')
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
@@ -92,8 +89,6 @@
                                                 <option value="{{ $cliente->tipo }}">
                                                     {{ $cliente->tipo == '1' ? 'Pessoa Física' : 'Pessoa Jurídica' }}
                                                 </option>
-                                                <option value="2">Pessoa Jurídica</option>
-                                                <option value="1">Pessoa Física</option>
                                             </select>
                                         </div>
                                         <div class="col">
@@ -108,9 +103,6 @@
                                             <label for="empresa">Empresa</label>
                                             <select name="empresa" id="empresa" class="form-control" required>
                                                 <option value="{{ $cliente->empresa_id }}">{{ $cliente->razao }}</option>
-                                                @foreach ($empresas as $empresa)
-                                                    <option value="{{ $empresa->id }}">{{ $empresa->razao }}</option>
-                                                @endforeach
                                             </select>
                                         </div>
 
@@ -149,33 +141,6 @@
                                             <label for="estado">Estado</label>
                                             <select name="uf" id="uf" class="form-control" required>
                                                 <option value="{{ $cliente->uf }}">{{ $cliente->uf }}</option>
-                                                <option value="AL">AL</option>
-                                                <option value="AL">AL</option>
-                                                <option value="AM">AM</option>
-                                                <option value="AP">AP</option>
-                                                <option value="BA">BA</option>
-                                                <option value="CE">CE</option>
-                                                <option value="DF">DF</option>
-                                                <option value="ES">ES</option>
-                                                <option value="GO">GO</option>
-                                                <option value="MA">MA</option>
-                                                <option value="MG">MG</option>
-                                                <option value="MS">MS</option>
-                                                <option value="MT">MT</option>
-                                                <option value="PA">PA</option>
-                                                <option value="PB">PB</option>
-                                                <option value="PE">PE</option>
-                                                <option value="PI">PI</option>
-                                                <option value="PR">PR</option>
-                                                <option value="RJ">RJ</option>
-                                                <option value="RN">RN</option>
-                                                <option value="RO">RO</option>
-                                                <option value="RR">RR</option>
-                                                <option value="RS">RS</option>
-                                                <option value="SC">SC</option>
-                                                <option value="SE">SE</option>
-                                                <option value="SP">SP</option>
-                                                <option value="TO">TO</option>
                                             </select>
                                         </div>
                                         <div class="col">
@@ -196,27 +161,13 @@
                                             <label for="cod_ibge">Cód. IBGE</label>
                                             <select class="form-control" name="ibge" id="ibge"
                                                 style="width: 100%">
-                                                <option value="{{ $cliente->codigoIBGE }}">{{ $cliente->codigoIBGE }}
-                                                </option>
-                                                @foreach ($cidades as $cidade)
-                                                    <option value="{{ $cidade->ibge }}">{{ $cidade->ibge }} :
-                                                        {{ $cidade->cidade }} - {{ $cidade->uf }}</option>
-                                                @endforeach
+                                                <option value="{{ $cliente->codigoIBGE }}">{{ $cliente->codigoIBGE }}</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
 
-                                <br>
-                                <div>
-                                    <div class="col">
-                                        <button type="submit" class="btn btn-success form-control">Salvar
-                                            Cliente</button>
-                                    </div>
-                                </div>
                             </div>
-
-                        </form>
                     </div>
 
                 </div>
@@ -225,17 +176,8 @@
 
         </div>
 
-
     </div>
 @endsection
 
 @section('js')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('#ibge').select2();
-        });
-    </script>
 @stop

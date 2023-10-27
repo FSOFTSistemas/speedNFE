@@ -40,7 +40,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/categoria', [CategoriasController::class, 'show'])->middleware('auth');
+Route::get('/categoria', [CategoriasController::class, 'show'])->name('categoria.index')->middleware('auth');
 Route::get('/categoria/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware('auth');
 Route::post('/categoria/cadastro', [CategoriasController::class, 'store'])->name('salvar_categoria')->middleware('auth');
 Route::get('/categoria/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware('auth');
@@ -56,9 +56,10 @@ Route::post('/empresa', [EmpresasController::class, 'store'])->name('salvar_empr
 Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware('auth');
 Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware('auth');
 Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware('auth');
+Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware('auth');
 Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware('auth');
-Route::post('/cliente/edit/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware('auth');
-Route::get('/cliente/del/{id}', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware('auth');
+Route::put('/cliente/salvar/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware('auth');
+Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware('auth');
 Route::post('/clientes/cnpj/', [ClientesController::class, 'BuscarCnpj'])->name('cnpj.clientes');
 
 Route::get('/forma', [FormaPagController::class, 'show'])->middleware('auth');
@@ -73,12 +74,12 @@ Route::get('/usuarios/del/{id}', [UsersController::class, 'destroy'])->name('exc
 Route::get('/usuarios/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware('auth');
 Route::post('/usuarios/editar/{id}', [UsersController::class, 'update'])->name('update_usuario')->middleware('auth');
 
-Route::get('/produto', [ProdutosController::class, 'show'])->middleware('auth');
+Route::get('/produto', [ProdutosController::class, 'show'])->name('produto.index')->middleware('auth');
 Route::get('/produto/cadastro', [ProdutosController::class, 'new'])->middleware('auth');
 Route::post('/produto/cadastro', [ProdutosController::class, 'store'])->name('salvar_produto')->middleware('auth');
 Route::get('/produto/del/{id}', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware('auth');
 Route::get('/produto/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware('auth');
-Route::post('/produto/editar/{id}', [ProdutosController::class, 'updat'])->name('update_produto')->middleware('auth');
+Route::post('/produto/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware('auth');
 
 Route::get('/estoque', [EstoqueController::class, 'show'])->middleware('auth');
 Route::get('/estoque/cadastro', [EstoqueController::class, 'new'])->middleware('auth');

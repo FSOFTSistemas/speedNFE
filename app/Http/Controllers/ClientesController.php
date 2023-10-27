@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ClientesController extends Controller
 {
-
     private UsersService $userServices;
     private EnderecosService $enderecoServices;
     private EmpresasService $empresaServices;
@@ -35,9 +34,12 @@ class ClientesController extends Controller
     {
         try {
             $user = $this->userServices->getEmpresa(Auth::id());
-            $clientes = $this->clienteServices->todos($user->empresa_id);
             if ($user->empresa_id == 1) {
+                $clientes = $this->clienteServices->todosClientes();
                 $empresas = $this->empresaServices->todas();
+            } else {
+                $clientes = $this->clienteServices->todos($user->empresa_id);
+                $empresas = $this->empresaServices->buscarEmpresa($user->empresa_id);
             }
             return view('clientes.todos', ['clientes' => $clientes, 'empresa' => $user->empresa_id, 'empresas' => $empresas]);
         } catch (Exception $e) {
@@ -48,7 +50,12 @@ class ClientesController extends Controller
     public function new ()
     {
         try {
-            $empresas = $this->empresaServices->todas();
+            $user = Auth::user();
+            if ($user->empresa_id == 1) {
+                $empresas = $this->empresaServices->todas();
+            } else {
+                $empresas = $this->empresaServices->minhaEmpresa($user->empresa_id);
+            }
             $cidades = $this->cidadeServices->buscarCidades();
             return view('clientes.cadastrar', ['empresas' => $empresas, 'cidades' => $cidades]);
         } catch (Exception $e) {
@@ -110,17 +117,28 @@ class ClientesController extends Controller
             }
             return redirect()->route('index')->with('success', 'Cliente cadastrado com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', $cliente);
+            dd($e);
+            return back();
         }
     }
 
-    public function excluir($id)
+    public function excluir(Request $request)
     {
         try {
-            $this->clienteServices->excluir($id);
+            $this->clienteServices->excluir($request->idCliente);
             return redirect()->route('index')->with('success', 'Cliente excluído com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Não foi possível excluir o cliente selecionado');
+        }
+    }
+
+    public function view($id)
+    {
+        try {
+            $cliente = $this->clienteServices->um($id);
+            return view('clientes.view', ['cliente' => $cliente]);
+        } catch (Exception $e) {
+            return back();
         }
     }
 
@@ -138,18 +156,50 @@ class ClientesController extends Controller
 
     public function update($id, Request $request)
     {
-        $sCliente = new ClientesService();
-        $cliente = $sCliente->um(intval($id));
-        $sEndereco = new EnderecosService();
-        $respE = $sEndereco->editar($cliente->endereco_id, $request->rua, $request->bairro, $request->numero, $request->cidade, $request->uf, $request->ibge, $request->cep, $request->complemento);
-        $respC = $sCliente->editar($id, $request->tipo, $request->nome, $request->apelido, $request->cpf_cnpj, $request->rg_ie, $request->telefone, $request->telefone, $request->limite);
-
-        if ($respE == 1 && $respC == 1) {
-            return redirect('/cliente')->with('success', 'Cliente atualizado com sucesso');
+        try {
+            $request->validate([
+                'tipo' => 'required|max:127',
+                'nome' => 'required|max:255',
+                'apelido' => 'required|max:255',
+                'cpf_cnpj' => 'required',
+                'rg_ie' => 'required',
+                'telefone' => 'required',
+                'limite' => 'required',
+                'rua' => 'required',
+                'bairro' => 'required',
+                'numero' => 'required',
+                'cidade' => 'required',
+                'uf' => 'required',
+                'ibge' => 'required',
+                'cep' => 'required',
+                'complemento' => ''
+            ]);
+            $cliente = $this->clienteServices->editar(
+                $id,
+                $request->tipo,
+                $request->nome,
+                $request->apelido,
+                $request->cpf_cnpj,
+                $request->rg_ie,
+                $request->telefone,
+                $request->telefone,
+                $request->limite
+            );
+            $this->enderecoServices->editar(
+                $cliente->endereco_id,
+                $request->rua,
+                $request->bairro,
+                $request->numero,
+                $request->cidade,
+                $request->uf,
+                $request->ibge,
+                $request->cep,
+                $request->complemento
+            );
+            return redirect()->route('editar_cliente', [$cliente->id])->with('success', 'Cliente atualizado com sucesso');
+        } catch (Exception $e) {
+            return back()->with('error', 'Não foi possível atualizar o cliente');
         }
-        return redirect('/cliente')->with('error', 'Não foi possível atualizar o cliente');
-        // return $request->rua.' '.$request->bairro.' '.$request->numero.' '.$request->cidade.' '.$request->uf.' '.$request->ibge;
-
     }
 
     public function BuscarCNPJ(Request $request)
