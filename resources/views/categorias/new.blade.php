@@ -11,7 +11,11 @@
 @stop
 
 @section('content')
-
+    <div class="row" style="margin-bottom: 2%">
+        <div class="col">
+                <a href="{{ route('categoria.index') }}" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
     <div class="container">
         <form action="{{ route('salvar_categoria') }}" method="post">
             @csrf
