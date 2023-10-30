@@ -28,7 +28,7 @@ class CategoriasService{
         }
     }
 
-    public function store($descricao, $empresa, $status){
+    public function store($descricao, $empresa){
         try {
             Categoria::create([
                 'descricao'     => $descricao,
@@ -49,4 +49,10 @@ class CategoriasService{
         ->get();
     }
 
+    public function todasCategorias()
+    {
+        return Categoria::select('categorias.*', 'empresas.fantasia')
+        ->join('empresas', 'empresas.id', '=', 'categorias.empresa_id')
+        ->get();
+    }
 }

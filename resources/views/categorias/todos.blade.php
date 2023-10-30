@@ -74,7 +74,6 @@
         function setaDadosModal(idCategoria) {
             document.getElementById('idCategoria').value = idCategoria;
         }
-
         $(document).ready(function() {
             $('#categorias').DataTable({
                 responsive: true,
