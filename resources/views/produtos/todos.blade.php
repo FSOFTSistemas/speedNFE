@@ -15,24 +15,28 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <a class="btn btn-info" style="margin-bottom: 2%" href="{{ route('categoria.index') }}">&nbsp;Categorias&nbsp;</a>
+                <a class="btn btn-info" style="margin-bottom: 2%"
+                    href="{{ route('categoria.index') }}">&nbsp;Categorias&nbsp;</a>
                 <a class="btn btn-info" style="margin-bottom: 2%" href="/produto/cadastro">&nbsp;+ Produto&nbsp;</a>
             </div>
         </div>
 
-        <table class="table table-striped" id="produtos">
-            <thead>
-                <th>CODIGO</th>
-                <th>PRODUTO</th>
-                <th>PRECO CUSTO</th>
-                <th>PRECO VENDA</th>
-                <th>CATEGORIA</th>
-                @if ($empresa == 1)
-                    <th>EMPRESA</th>
-                @endif
-                {{-- <th>estoque atual</th> --}}
-                <th></th>
-                <th></th>
+        <table class="table table-hover" id="produtos">
+            <thead class="table-primary">
+                <tr>
+                    <th>CODIGO</th>
+                    <th>PRODUTO</th>
+                    <th>PRECO CUSTO</th>
+                    <th>PRECO VENDA</th>
+                    <th>CATEGORIA</th>
+                    @if ($empresa == 1)
+                        <th>EMPRESA</th>
+                    @endif
+                    {{-- <th>estoque atual</th> --}}
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
             </thead>
 
             <tbody>
@@ -40,8 +44,8 @@
                     <tr>
                         <td>{{ $produto->codigo }}</td>
                         <td>{{ $produto->produto }}</td>
-                        <td>{{ $produto->precocusto }}</td>
-                        <td>{{ $produto->precovenda }}</td>
+                        <td>R$ {{ number_format($produto->precocusto, 2) }}</td>
+                        <td>R$ {{ number_format($produto->precovenda, 2) }}</td>
                         <td>{{ $produto->descricao }}</td>
                         @if ($empresa == 1)
                             <td>{{ $produto->fantasia }}</td>
@@ -52,6 +56,9 @@
                         </td>
                         <td><a class="text-danger" onclick="setaDadosModal({{ $produto->id }})"><i data-toggle="modal"
                                     data-target=".bd-delete-modal-lg" class="fa fa-trash"></i></a></td>
+                        <td><a class="text-primary" href="{{ route('ver_produto', [$produto->id]) }}"><i
+                                    class="fa fa-eye"></i></a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -81,7 +88,7 @@
 
                     <div class="" style="text-align: center">
 
-                        <form action="{{ route('excluir_cliente') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('excluir_produto') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('DELETE')
                             <div class="form-group">
