@@ -77,6 +77,14 @@ class ProdutosService
             ]);
     }
 
+    public function todosProdutos()
+    {
+        return Produto::select('produtos.*', 'categorias.descricao', 'empresas.fantasia', 'empresas.cpf_cnpj', 'empresas.celular')
+            ->join('categorias', 'categorias.id', 'produtos.categoria_id')
+            ->join('empresas', 'empresas.id', 'produtos.empresa_id')
+            ->get();
+    }
+
     public function todos($id)
     {
         if ($id == 1) {

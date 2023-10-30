@@ -35,6 +35,7 @@
                     {{-- <th>estoque atual</th> --}}
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -55,6 +56,9 @@
                         </td>
                         <td><a class="text-danger" onclick="setaDadosModal({{ $produto->id }})"><i data-toggle="modal"
                                     data-target=".bd-delete-modal-lg" class="fa fa-trash"></i></a></td>
+                        <td><a class="text-primary" href="{{ route('ver_produto', [$produto->id]) }}"><i
+                                    class="fa fa-eye"></i></a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -84,7 +88,7 @@
 
                     <div class="" style="text-align: center">
 
-                        <form action="{{ route('excluir_cliente') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('excluir_produto') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('DELETE')
                             <div class="form-group">

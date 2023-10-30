@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
 use App\Services\ProdutosService;
-use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,14 +13,12 @@ use Illuminate\Support\Facades\Auth;
 class ProdutosController extends Controller
 {
     private ProdutosService $produtoServices;
-    private UsersService $userServices;
     private CategoriasService $categoriaServices;
     private EmpresasService $empresaServices;
 
-    public function __construct(ProdutosService $produtoServices, UsersService $userServices, CategoriasService $categoriaServices, EmpresasService $empresaServices)
+    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices)
     {
         $this->produtoServices = $produtoServices;
-        $this->userServices = $userServices;
         $this->categoriaServices = $categoriaServices;
         $this->empresaServices = $empresaServices;
     }
@@ -85,17 +82,14 @@ class ProdutosController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $sProdutos = new ProdutosService();
-        $resp = $sProdutos->destroy($id);
-
-        // return $resp;
-
-        if ($resp == 1) {
-            return redirect('/produto')->with('success', 'Produto excluído com sucesso');
+        try {
+            $this->produtoServices->destroy($request->idProduto);
+            return redirect()->route('produto.index')->with('success', 'Produto excluído com sucesso');
+        } catch (Exception $e) {
+            return back()->with('error', 'Não foi possível excluir o produto');
         }
-        return redirect('/produto')->with('error', 'Não foi possível excluir o produto');
     }
 
     public function store(Request $request)
@@ -149,15 +143,30 @@ class ProdutosController extends Controller
         }
     }
 
+    public function view($id)
+    {
+        try {
+            $produto = $this->produtoServices->um($id);
+            return view('produtos.view', ['produto' => $produto]);
+        } catch (Exception $e) {
+            return back();
+        }
+    }
+
     public function show()
     {
-        $sUsers = new UsersService();
-        $empresa = $sUsers->getEmpresa(Auth::id());
-
-        $sProdutos = new ProdutosService();
-        $produtos = $sProdutos->todos($empresa->empresa_id);
-
-        return view('produtos.todos', ['produtos' => $produtos, 'empresa' => $empresa->empresa_id]);
+        try {
+            $user = Auth::user();
+            $produtos = null;
+            if ($user->empresa_id != 1) {
+                $produtos = $this->produtoServices->todos($user->empresa_id);
+            } else {
+                $produtos = $this->produtoServices->todosProdutos();
+            }
+            return view('produtos.todos', ['produtos' => $produtos, 'empresa' => $user->empresa_id]);
+        } catch (Exception $e) {
+            return back();
+        }
     }
 
     public function new ()

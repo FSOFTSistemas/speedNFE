@@ -40,7 +40,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Empresa</label>
-                                            <select class="form-control" name="categoria" id="categoria" disabled>
+                                            <select class="form-control" name="empresa" id="empresa" disabled>
                                                 <option>
                                                     {{ $produto->fantasia }}
                                                 </option>
@@ -78,7 +78,7 @@
                                         </div>
                                         <div class="col">
                                             <label for="precocusto">Preço Custo</label>
-                                            <input class="form-control" type="text" name="precocusto" id="precocusto"
+                                            <input class="form-control" type="number" name="precocusto" id="precocusto"
                                                 value="{{ $produto->precocusto }}" required placeholder="Preço Custo...">
                                         </div>
                                     </div>
@@ -87,7 +87,7 @@
                                             <label for="precovenda">Preço de Venda</label>
                                             <div class="row">
                                                 <div class="col">
-                                                    <input class="form-control" type="text" name="precovenda"
+                                                    <input class="form-control" type="number" name="precovenda"
                                                         id="precovenda" value="{{ $produto->precovenda }}" required
                                                         placeholder="Preço Venda...">
                                                 </div>
