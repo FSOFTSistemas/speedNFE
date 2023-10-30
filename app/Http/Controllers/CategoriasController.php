@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoriasController extends Controller
 {
+
     private CategoriasService $categoriaServices;
     private EmpresasService $empresaServices;
 

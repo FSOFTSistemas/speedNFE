@@ -13,17 +13,24 @@
 @section('content')
 
     <div class="container">
-        <a class="btn btn-info" style="margin-bottom: 2%" href="{{ route('cadastrar_categoria') }}">&nbsp; + Categoria
-            &nbsp;</a>
+        <div class="row" style="margin-bottom: 2%">
+            <div class="col">
+            <a class="btn btn-secondary" href="{{ route('produto.index') }}">Voltar</a>
+            <a class="btn btn-info" href="{{ route('cadastrar_categoria') }}">&nbsp; + Categoria
+                &nbsp;</a>
+            </div>
+        </div>
 
         <table class="table table-hover" id="categorias">
             <thead class="table-primary">
-                <th>DESCRIÇÃO</th>
-                <th>STATUS</th>
-                @if ($empresa == 1)
-                    <th>EMPRESA</th>
-                @endif
-                <th></th>
+                <tr>
+                    <th>DESCRIÇÃO</th>
+                    <th>STATUS</th>
+                    @if ($empresa == 1)
+                        <th>EMPRESA</th>
+                    @endif
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
                 @foreach ($categorias as $categoria)
@@ -64,6 +71,9 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script>
+        function setaDadosModal(idCategoria) {
+            document.getElementById('idCategoria').value = idCategoria;
+        }
         $(document).ready(function() {
             $('#categorias').DataTable({
                 responsive: true,
