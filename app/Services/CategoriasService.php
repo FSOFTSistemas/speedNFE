@@ -28,7 +28,7 @@ class CategoriasService{
         }
     }
 
-    public function store($descricao, $empresa, $status){
+    public function store($descricao, $empresa){
         try {
             Categoria::create([
                 'descricao'     => $descricao,
@@ -42,15 +42,17 @@ class CategoriasService{
     }
 
     public function todas($empresa){
-        if ($empresa == 1){
-            $empresa = '%';
-        }
-
         return DB::table('categorias')
         ->select('categorias.*', 'empresas.fantasia')
         ->join('empresas', 'empresas.id', '=', 'categorias.empresa_id')
-        ->where('categorias.empresa_id', 'like', $empresa)
-        ->paginate(8);
+        ->where('categorias.empresa_id', $empresa)
+        ->get();
     }
 
+    public function todasCategorias()
+    {
+        return Categoria::select('categorias.*', 'empresas.fantasia')
+        ->join('empresas', 'empresas.id', '=', 'categorias.empresa_id')
+        ->get();
+    }
 }
