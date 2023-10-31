@@ -46,54 +46,54 @@ class EditPedido extends Component
     public function mount()
     {
         try {
-        //declaração dos services para recuperar dados
-        $sUsers = new UsersService();
-        $sEmpresas = new EmpresasService();
-        $sClientes = new ClientesService();
-        $sProdutos = new ProdutosService();
-        $sFormas = new FormaPagService();
-        $sPedidos   = new PedidosService();
+            //declaração dos services para recuperar dados
+            $sUsers = new UsersService();
+            $sEmpresas = new EmpresasService();
+            $sClientes = new ClientesService();
+            $sProdutos = new ProdutosService();
+            $sFormas = new FormaPagService();
+            $sPedidos = new PedidosService();
 
-        //Recuperando empresa_id do usuario logado
-        $user = $sUsers->getEmpresa(Auth::id());
-        // $this->empresa = $user->empresa_id;
-        $pedido = Pedido::findOrFail($this->pedido->id);
-        $itens = ItemPedido::all()->where('pedido_id', '=', $pedido->id);
+            //Recuperando empresa_id do usuario logado
+            $user = $sUsers->getEmpresa(Auth::id());
+            // $this->empresa = $user->empresa_id;
+            $pedido = Pedido::findOrFail($this->pedido->id);
+            $itens = ItemPedido::all()->where('pedido_id', '=', $pedido->id);
 
-        $this->cfop = $pedido->cfop;
-        $this->bcfop = $sPedidos->findCfop($pedido->cfop)->cfop;
-        $this->empresa = $pedido->empresa_id;
-        $this->cliente = $pedido->cliente_id;
-        $this->pag = $pedido->forma_pag_id;
-        $this->empresas = $sEmpresas->todos($user->empresa_id);
-        $this->clientes = Cliente::all()->where('empresa_id', '=', $this->empresa);
-        $this->produtos = Produto::all()->where('empresa_id', '=', $this->empresa);
-        $this->cfops = $sPedidos->cfopAll();
-        $this->formas = FormaPag::all();
-        $this->desconto = $pedido->desconto;
-        $this->subtotal = $pedido->subtotal;
-        $this->total = $pedido->total;
+            $this->cfop = $pedido->cfop;
+            $this->bcfop = $sPedidos->findCfop($pedido->cfop)->cfop;
+            $this->empresa = $pedido->empresa_id;
+            $this->cliente = $pedido->cliente_id;
+            $this->pag = $pedido->forma_pag_id;
+            $this->empresas = $sEmpresas->todos($user->empresa_id);
+            $this->clientes = Cliente::all()->where('empresa_id', '=', $this->empresa);
+            $this->produtos = Produto::all()->where('empresa_id', '=', $this->empresa);
+            $this->cfops = $sPedidos->cfopAll();
+            $this->formas = FormaPag::all();
+            $this->desconto = $pedido->desconto;
+            $this->subtotal = $pedido->subtotal;
+            $this->total = $pedido->total;
 
-        foreach ($itens as $item) {
-            $produto = Produto::findOrFail($item->produto_id);
-            $this->vendaItens[] = [
-                'produto_id' => $produto->id,
-                'descricao' => $produto->produto,
-                'quantidade' => $item->qtde,
-                'unitario' => $produto->precocusto,
-                'desconto' => $item->desconto,
-                'total' => ($produto->precocusto * $item->qtde) - $item->desconto,
-            ];
+            foreach ($itens as $item) {
+                $produto = Produto::findOrFail($item->produto_id);
+                $this->vendaItens[] = [
+                    'produto_id' => $produto->id,
+                    'descricao' => $produto->produto,
+                    'quantidade' => $item->qtde,
+                    'unitario' => $produto->precocusto,
+                    'desconto' => $item->desconto,
+                    'total' => ($produto->precocusto * $item->qtde) - $item->desconto,
+                ];
+            }
+        } catch (Exception $e) {
+            dd($e);
+            return back();
         }
-    } catch (Exception $e) {
-        dd($e);
-        return back();
-    }
     }
 
     public function atualizarBCfop()
     {
-        $sPedidos   = new PedidosService();
+        $sPedidos = new PedidosService();
         $this->bcfop = $sPedidos->findCfop($this->cfop)->cfop;
     }
 

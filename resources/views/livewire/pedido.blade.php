@@ -211,7 +211,7 @@
 
         <hr color="black">
 
-        <div class="row">
+        <div class="row" style="margin-bottom: 2%">
             <div class="col-6" style="text-align: end">
                 <a wire:click.prevent="cancelar()" class="btn btn-danger">Cancelar</a>
             </div>

@@ -3,11 +3,15 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Visualizar de Empresa</h1>
+<div class="row" style="text-align: center">
+    <div class="col">
+        <h1 class="m-0 text-dark">Visualizar de Empresa</h1>
+    </div>
+</div>
 @stop
 
 @section('content')
-
+    <a href="{{ route('empresa.index') }}" style="margin-bottom: 2%" class="btn btn-secondary">Voltar</a>
     <div class="content">
         <div class="container-fluid">
             <div class="col-xs-12 col-sm-12" style="width: 100%">

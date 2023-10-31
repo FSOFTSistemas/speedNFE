@@ -43,7 +43,7 @@ Route::post('/categoria/cadastro', [CategoriasController::class, 'store'])->name
 Route::get('/categoria/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware('auth');
 
 //EMPRESA
-Route::get('/empresa', [EmpresasController::class, 'show'])->middleware('auth');
+Route::get('/empresa', [EmpresasController::class, 'show'])->name('empresa.index')->middleware('auth');
 Route::get('/empresa/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware('auth');
 Route::get('/empresa/status/{id}', [EmpresasController::class, 'desativarReativar'])->name('desativarReativar_empresa')->middleware('auth');
 Route::get('/empresa/cadastro', [EmpresasController::class, 'cadastrar'])->middleware('auth');
