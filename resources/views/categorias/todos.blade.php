@@ -29,7 +29,7 @@
                     @if ($empresa == 1)
                         <th>EMPRESA</th>
                     @endif
-                    <th></th>
+                    <th style="text-align: center">ATIVAR/DESATIVAR</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,13 +44,12 @@
                         @if ($empresa == 1)
                             <td>{{ $categoria->fantasia }}</td>
                         @endif
-                        <td>
-                            <a class="btn btn-warning"
-                                href="{{ route('desativarReativar_categoria', ['id' => $categoria->id]) }}">
+                        <td style="text-align: center">
+                            <a href="{{ route('desativarReativar_categoria', ['id' => $categoria->id]) }}">
                                 @if ($categoria->status == 1)
-                                    Desativar
+                                    <i title="Desativar" class="fa fa-ban text-danger"></i>
                                 @else
-                                    Reativar
+                                    <i title="Reativar" class="fa fa-check text-success"></i>
                                 @endif
                             </a>
                         </td>
