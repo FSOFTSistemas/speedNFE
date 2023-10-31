@@ -35,11 +35,11 @@
                     <td>{{ $pedido->estado }}</td>
                     <td>{{ $pedido->fantasia }}</td>
                     @if ($pedido->chave == '')
-                        <td><a href="/visualizar/{{ $pedido->id }}" class="btn btn-success">Visualizar</a></td>
+                        <td><a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a></td>
                     @else
                     @endif
                     @if ($pedido->estado == 'Novo' || $pedido->estado == 'Rejeitado')
-                        <td><a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" class="btn btn-success">Enviar NFe</a>
+                        <td><a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe" class="text-success"><i class="fas fa-upload"></i></a>
                         </td>
                     @elseif($pedido->estado == 'Aprovado')
                         @if ($pedido->sequencia_evento == 0)

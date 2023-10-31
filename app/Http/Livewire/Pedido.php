@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\cfop as CFOP;
 use App\Models\Cliente;
 use App\Models\FormaPag;
 use App\Models\Produto;
@@ -87,8 +86,6 @@ class Pedido extends Component
         ->select('*')
         ->where('cfop', $this->bcfop)
         ->first();
-        dd($prod);
-
         if($prod){
             $this->cfop = $prod->id;
         }else{

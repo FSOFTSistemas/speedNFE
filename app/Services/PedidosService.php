@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
 
 class PedidosService{
@@ -20,9 +21,19 @@ class PedidosService{
         ->get();
     }
 
+    public function buscarPedido($id)
+    {
+        return Pedido::find($id);
+    }
+
     public function cfopAll()
     {
         return DB::table('cfop')->get();
+    }
+
+    public function findCfop($id)
+    {
+        return DB::table('cfop')->where('id', $id)->first();
     }
 
 }

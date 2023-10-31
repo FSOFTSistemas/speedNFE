@@ -8,6 +8,7 @@ use App\Models\FaturaPedido;
 use App\Models\ItemPedido;
 use App\Models\Pedido;
 use App\Models\Produto;
+use App\Services\EmpresasService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
 use App\Services\UsersService;
@@ -22,38 +23,38 @@ class PedidosController extends Controller
 {
 
     private PedidosService $pedidoServices;
+    private EmpresasService $empresaServices;
 
-    public function __construct(PedidosService $pedidoServices)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices)
     {
         $this->pedidoServices = $pedidoServices;
+        $this->empresaServices = $empresaServices;
     }
 
     public function imprimirCorrecao($id)
     {
-        // return $id;
         try {
-            $venda = Pedido::find($id);
-            $emitente = Empresa::findOrFail($venda->empresa_id);
-
+            $venda = $this->pedidoServices->buscarPedido($id);
+            $emitente = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $xml = file_get_contents($emitente->fantasia . '/' . date_format(today(), 'Y') . '/' . date_format(today(), 'm') . '/notas/CCe/' . $venda->chave . '.xml');
-
             $daevento = new Daevento($xml, $emitente);
             $daevento->debugMode(true);
             $pdf = $daevento->render();
-
-            return response($pdf)
-                ->header('Content-Type', 'application/pdf');
-        } catch (\Exception $e) {
+            return response($pdf)->header('Content-Type', 'application/pdf');
+        } catch (Exception $e) {
             session()->flash("erro", $e->getMessage());
-            return redirect()->back();
+            return back();
         }
     }
 
     public function inutil()
     {
-        $sUsers = new UsersService();
-        $emp = $sUsers->getEmpresa(Auth::id());
-        return view('notas.inutilizar', ['empresa' => $emp->empresa_id]);
+        try {
+            $user = Auth::user();
+            return view('notas.inutilizar', ['empresa' => $user->empresa_id]);
+        } catch (Exception $e) {
+            return back();
+        }
     }
 
     public function inutilizar(Request $request)
@@ -89,7 +90,6 @@ class PedidosController extends Controller
             } else {
                 return redirect('/inutilizar')->with('success', $result['data']);
             }
-
         } catch (\Exception $e) {
             return redirect('/inutilizar')->with('error', $e->getMessage());
         }
@@ -323,7 +323,7 @@ class PedidosController extends Controller
                 'desconto' => $desconto,
                 'total' => $subtotal,
                 'forma_pag_id' => $request->forma,
-                'cfop_id' => $request->cfop,
+                'cfop' => $request->cfop,
             ]);
 
             return redirect('vendas')->with('success', 'Nota editada com sucesso.');
@@ -349,7 +349,6 @@ class PedidosController extends Controller
                 $desconto = $desconto + $item['desconto'];
                 $subtotal = $subtotal + ($item['total']);
             }
-
             $pedido = Pedido::create([
                 'user_id' => Auth::id(),
                 'cliente_id' => $request->cliente,
@@ -363,7 +362,7 @@ class PedidosController extends Controller
                 'sequencia_evento' => 0,
                 'chave' => '',
                 'estado' => 1,
-                'cfop_id' => $request->cfop,
+                'cfop' => $request->cfop,
             ]);
 
             foreach ($request->vendaItens as $item) {
@@ -408,9 +407,14 @@ class PedidosController extends Controller
         }
     }
 
-    public function visualizar($pedido)
+    public function visualizar($id)
     {
-        return view('vendas.visualizar', ['pedido' => $pedido]);
+        try {
+            $pedido = $this->pedidoServices->buscarPedido($id);
+            return view('vendas.visualizar', ['pedido' => $pedido]);
+        } catch (Exception $e) {
+            return back();
+        }
     }
 
     public function new ()
