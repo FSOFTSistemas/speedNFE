@@ -62,11 +62,13 @@ class CategoriasController extends Controller
         try {
             $request->validate([
                 'descricao' => 'required|max:512',
-                'empresa' => 'required',
+                'empresa' => 'nullable',
             ]);
+
+            !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             $this->categoriaServices->store(
                 $request->descricao,
-                $request->empresa
+                $empresa
             );
             return redirect()->route('categoria.index')->with('success', 'Categoria Cadastrada com sucesso');
         } catch (Exception $e) {

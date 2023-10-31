@@ -12,6 +12,8 @@ use App\Services\ClientesService;
 use App\Services\EmpresasService;
 use App\Services\UsersService;
 use App\Services\FormaPagService;
+use App\Services\PedidosService;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -42,11 +44,13 @@ class Pedido extends Component
 
     public function mount(){
         //declaração dos services para recuperar dados
+        try {
         $sUsers = new UsersService();
         $sEmpresas = new EmpresasService();
         $sClientes = new ClientesService();
         $sProdutos = new ProdutosService();
         $sFormas   = new FormaPagService();
+        $sPedidos   = new PedidosService();
 
         //Recuperando empresa_id do usuario logado
         $user = $sUsers->getEmpresa(Auth::id());
@@ -60,26 +64,30 @@ class Pedido extends Component
             $this->clientes = $sClientes->todos($user->empresa_id);
             $this->produtos = $sProdutos->todos($user->empresa_id);
             $this->formas   = $sFormas->todos();
-            $this->cfops = CFOP::all();
+            $this->cfops = $sPedidos->cfopAll();
         } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
             $this->empresas = $sEmpresas->todas();
-            $this->cfops = CFOP::all();
+            $this->cfops = $sPedidos->cfopAll();
         }
 
         $this->cfop = '';
         $this->vendaItens = [];
         $this->formasVenda = [];
+    } catch (Exception $e) {
+        dd($e);
+    }
     }
 
     public function atualizarBCfop(){
-        $this->bcfop = CFOP::findOrFail($this->cfop)->cfop;
+        $this->bcfop =  DB::table('cfop')->where('id', $this->cfop)->get()->cfop;
     }
 
     public function buscaCfop(){
-        $prod = DB::table('cfops')
+        $prod = DB::table('cfop')
         ->select('*')
-        ->where('cfop', 'like', $this->bcfop."%")
+        ->where('cfop', $this->bcfop)
         ->first();
+        dd($prod);
 
         if($prod){
             $this->cfop = $prod->id;

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Categoria;
-use Exception;
 use Illuminate\Support\Facades\DB;
 
 class CategoriasService
@@ -26,16 +25,11 @@ class CategoriasService
 
     public function store($descricao, $empresa)
     {
-        try {
-            Categoria::create([
-                'descricao' => $descricao,
-                'empresa_id' => $empresa,
-                'status' => 1,
-            ]);
-            return 1;
-        } catch (Exception $e) {
-            return $e;
-        }
+        return Categoria::create([
+            'descricao' => $descricao,
+            'empresa_id' => $empresa,
+            'status' => 1,
+        ]);
     }
 
     public function todas($empresa)

@@ -92,7 +92,7 @@ class EditPedido extends Component
     }
 
     public function buscaCfop(){
-        $prod = DB::table('cfops')
+        $prod = DB::table('cfop')
         ->select('*')
         ->where('cfop', 'like', $this->bcfop."%")
         ->first();
