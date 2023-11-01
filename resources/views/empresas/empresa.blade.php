@@ -49,12 +49,9 @@
                         @csrf
                         <div class="card-body">
 
-
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
-
-
 
                                     <input type='hidden' name="action" id="action" value="new" />
 
@@ -100,16 +97,8 @@
                                             <input class="form-control" type="text" id="telefone" name="telefone" maxlength="15" onkeyup="handlePhone(event)"
                                                 value="{{ $empresa->celular }}" />
                                         </div>
-
                                     </div>
 
-                                    <br>
-                                    <div>
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-success form-control">Salvar
-                                                Empresa</button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -277,7 +266,13 @@
 
                                 </div>
 
-                                <!-- /.card -->
+                                <br>
+                                <div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-success form-control">Salvar
+                                            Empresa</button>
+                                    </div>
+                                </div>
                             </div>
 
 

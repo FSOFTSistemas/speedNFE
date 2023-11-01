@@ -51,12 +51,12 @@
                             <td>{{ $produto->fantasia }}</td>
                         @endif
                         {{-- <td>estoque</td> --}}
-                        <td><a class="text-warning" href="{{ route('editar_produto', ['id' => $produto->id]) }}"><i
+                        <td><a class="text-warning" title="Editar" href="{{ route('editar_produto', ['id' => $produto->id]) }}"><i
                                     class="fa fa-edit"></i></a>
                         </td>
-                        <td><a class="text-danger" onclick="setaDadosModal({{ $produto->id }})"><i data-toggle="modal"
+                        <td><a class="text-danger" title="Excluir" onclick="setaDadosModal({{ $produto->id }})"><i data-toggle="modal"
                                     data-target=".bd-delete-modal-lg" class="fa fa-trash"></i></a></td>
-                        <td><a class="text-primary" href="{{ route('ver_produto', [$produto->id]) }}"><i
+                        <td><a class="text-primary" title="Visualizar" href="{{ route('ver_produto', [$produto->id]) }}"><i
                                     class="fa fa-eye"></i></a>
                         </td>
                     </tr>
