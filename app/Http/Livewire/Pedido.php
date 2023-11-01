@@ -2,18 +2,19 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\cfop as CFOP;
 use App\Models\Cliente;
 use App\Models\FormaPag;
 use App\Models\Produto;
-use Livewire\Component;
-use App\Services\ProdutosService;
 use App\Services\ClientesService;
 use App\Services\EmpresasService;
-use App\Services\UsersService;
 use App\Services\FormaPagService;
+use App\Services\PedidosService;
+use App\Services\ProdutosService;
+use App\Services\UsersService;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class Pedido extends Component
 {
@@ -40,85 +41,94 @@ class Pedido extends Component
     public $formas = [];
     public $cfops = [];
 
-    public function mount(){
+    public function mount()
+    {
         //declaração dos services para recuperar dados
-        $sUsers = new UsersService();
-        $sEmpresas = new EmpresasService();
-        $sClientes = new ClientesService();
-        $sProdutos = new ProdutosService();
-        $sFormas   = new FormaPagService();
+        try {
+            $sUsers = new UsersService();
+            $sEmpresas = new EmpresasService();
+            $sClientes = new ClientesService();
+            $sProdutos = new ProdutosService();
+            $sFormas = new FormaPagService();
+            $sPedidos = new PedidosService();
+            //Recuperando empresa_id do usuario logado
+            $user = $sUsers->getEmpresa(Auth::id());
+            $this->empresaL = $user->empresa_id;
+            // $this->empresa = $user->empresa_id;
 
-        //Recuperando empresa_id do usuario logado
-        $user = $sUsers->getEmpresa(Auth::id());
-        $this->empresaL = $user->empresa_id;
-        // $this->empresa = $user->empresa_id;
-
-        //preenchendo arrays com os valores da empresa selecionada, caso a empresa não seja a fsoft
-        if($user->empresa_id != 1){
-            $this->empresa = $user->empresa_id;
-            $this->empresas = $sEmpresas->todos($user->empresa_id);
-            $this->clientes = $sClientes->todos($user->empresa_id);
-            $this->produtos = $sProdutos->todos($user->empresa_id);
-            $this->formas   = $sFormas->todos();
-            $this->cfops = CFOP::all();
-        } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
-            $this->empresas = $sEmpresas->todas();
-            $this->cfops = CFOP::all();
+            //preenchendo arrays com os valores da empresa selecionada, caso a empresa não seja a fsoft
+            if ($user->empresa_id != 1) {
+                $this->empresa = $user->empresa_id;
+                $this->empresas = $sEmpresas->todos($user->empresa_id);
+                $this->clientes = $sClientes->todos($user->empresa_id);
+                $this->produtos = $sProdutos->todos($user->empresa_id);
+                $this->formas = $sFormas->todos();
+                $this->cfops = $sPedidos->cfopAll();
+            } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
+                $this->empresas = $sEmpresas->todas();
+                $this->cfops = $sPedidos->cfopAll();
+            }
+            $this->cfop = '';
+            $this->vendaItens = [];
+            $this->formasVenda = [];
+        } catch (Exception $e) {
+            dd($e);
         }
-
-        $this->cfop = '';
-        $this->vendaItens = [];
-        $this->formasVenda = [];
     }
 
-    public function atualizarBCfop(){
-        $this->bcfop = CFOP::findOrFail($this->cfop)->cfop;
+    public function atualizarBCfop()
+    {
+        $this->bcfop = DB::table('cfop')->where('id', $this->cfop)->get()->cfop;
     }
 
-    public function buscaCfop(){
-        $prod = DB::table('cfops')
-        ->select('*')
-        ->where('cfop', 'like', $this->bcfop."%")
-        ->first();
-
-        if($prod){
+    public function buscaCfop()
+    {
+        $prod = DB::table('cfop')
+            ->select('*')
+            ->where('cfop', $this->bcfop)
+            ->first();
+        if ($prod) {
             $this->cfop = $prod->id;
-        }else{
+        } else {
             $this->cfop = '';
         }
     }
 
-    public function atualizarTot(){
+    public function atualizarTot()
+    {
         $total = $this->quantidade * $this->preco;
-        $desconto = $total * $this->desconto/100;
+        $desconto = $total * $this->desconto / 100;
 
         $this->total = $total - $desconto;
 
     }
 
-    public function salvarProd(){
+    public function salvarProd()
+    {
         $prod = Produto::findOrFail($this->produto);
         $total = $this->quantidade * $this->preco;
-        $desconto = $total * $this->desconto/100;
+        $desconto = $total * $this->desconto / 100;
 
         $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
 
         $subtotal = 0;
 
-        foreach($this->vendaItens as $item){
+        foreach ($this->vendaItens as $item) {
             $subtotal = $subtotal + $item['total'];
         }
         $this->subtotal = $subtotal;
     }
 
-    public function salvarForma(){
+    public function salvarForma()
+    {
         $prod = FormaPag::findOrFail($this->forma);
         $total = $this->valPag;
 
-        $this->formasVenda[] = ['forma_id' => $prod->id, 'descricao'=> $prod->descricao, 'total' => $total];
+        $this->formasVenda[] = ['forma_id' => $prod->id, 'descricao' => $prod->descricao, 'total' => $total];
     }
 
-    public function atualizarProds(){
+    public function atualizarProds()
+    {
         $prod = Produto::findOrFail($this->produto);
         $this->barras = $prod->codigo;
         $this->preco = $prod->precovenda;
@@ -127,29 +137,31 @@ class Pedido extends Component
         $this->total = $prod->precovenda;
     }
 
-    public function atualizarArrays(){
-        if($this->empresaL == 1){
+    public function atualizarArrays()
+    {
+        if ($this->empresaL == 1) {
             $this->clientes = Cliente::all()->where('empresa_id', '=', $this->empresa);
             $this->produtos = Produto::all()->where('empresa_id', '=', $this->empresa);
-            $this->formas   = FormaPag::all();
+            $this->formas = FormaPag::all();
         } else {
         }
     }
 
-    public function buscaProd(){
+    public function buscaProd()
+    {
         $prod = DB::table('produtos')
-        ->select('*')
-        ->where('codigo', '=', $this->barras)
-        ->where('empresa_id', '=', $this->empresa)
-        ->first();
+            ->select('*')
+            ->where('codigo', '=', $this->barras)
+            ->where('empresa_id', '=', $this->empresa)
+            ->first();
 
-        if($prod){
+        if ($prod) {
             $this->produto = $prod->id;
             $this->preco = $prod->precovenda;
             $this->quantidade = 1;
             $this->desconto = 0;
             $this->total = $prod->precovenda;
-        }else{
+        } else {
             $this->produto = "";
             $this->barras = '';
             $this->preco = 0;
@@ -159,24 +171,27 @@ class Pedido extends Component
         }
     }
 
-    public function removerProduto($index){
+    public function removerProduto($index)
+    {
         unset($this->vendaItens[$index]);
         $this->vendaItens = array_values($this->vendaItens);
 
         $subtotal = 0;
 
-        foreach($this->vendaItens as $item){
+        foreach ($this->vendaItens as $item) {
             $subtotal = $subtotal + $item['total'];
         }
         $this->subtotal = $subtotal;
     }
 
-    public function removerForma($index){
+    public function removerForma($index)
+    {
         unset($this->formasVenda[$index]);
         $this->formasVenda = array_values($this->formasVenda);
     }
 
-    public function cancelar(){
+    public function cancelar()
+    {
         redirect('/vendas');
     }
 

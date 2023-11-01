@@ -3,7 +3,11 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Cadastro de Empresa</h1>
+<div class="row" style="text-align: center">
+    <div class="col">
+        <h1 class="m-0 text-dark">Cadastro de Empresa</h1>
+    </div>
+</div>
 @stop
 
 @section('content')
@@ -89,7 +93,8 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Celular</label>
-                                            <input class="form-control" type="text" id="telefone" name="telefone" />
+                                            <input class="form-control" type="text" id="telefone" name="telefone"
+                                                maxlength="15" onkeyup="handlePhone(event)" />
                                         </div>
 
                                     </div>
@@ -376,8 +381,19 @@
                     }
                 }
             });
-
-
         });
+
+        const handlePhone = (event) => {
+            let input = event.target
+            input.value = phoneMask(input.value)
+        }
+
+        const phoneMask = (value) => {
+            if (!value) return ""
+            value = value.replace(/\D/g, '')
+            value = value.replace(/(\d{2})(\d)/, "($1) $2")
+            value = value.replace(/(\d)(\d{4})$/, "$1-$2")
+            return value
+        }
     </script>
 @endsection

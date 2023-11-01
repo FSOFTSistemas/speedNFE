@@ -96,7 +96,7 @@ class ProdutosController extends Controller
     {
         try {
             $request->validate([
-                'empresa' => 'required',
+                'empresa' => '',
                 'categoria' => 'required',
                 'codigo' => '',
                 'produto' => 'required|max:255',
@@ -115,10 +115,11 @@ class ProdutosController extends Controller
                 'pis' => 'required',
                 'ipi' => 'required',
             ]);
-            if ($this->produtoServices->contagemProdutos($request->empresa) < $this->empresaServices->buscarEmpresa($request->empresa)->limProdutos || $request->empresa == 1) {
+            !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
+            if ($this->produtoServices->contagemProdutos($empresa) < $this->empresaServices->buscarEmpresa($empresa)->limProdutos || $empresa == 1) {
                 $this->produtoServices->store(
                     $request->categoria,
-                    $request->empresa,
+                    $empresa,
                     $request->codigo,
                     $request->produto,
                     $request->precocusto,

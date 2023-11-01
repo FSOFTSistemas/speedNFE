@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Pedido extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'status', 'empresa_id', 'cliente_id', 'data', 'forma_pag_id', 'subtotal', 'total', 'desconto', 'numero_nfe', 'sequencia_evento', 'chave', 'estado', 'cfop_id'];
+    protected $fillable = ['user_id', 'status', 'empresa_id', 'cliente_id', 'data', 'forma_pag_id', 'subtotal', 'total', 'desconto', 'numero_nfe', 'sequencia_evento', 'chave', 'estado', 'cfop'];
 
     public function itens(){
         return $this->hasMany(ItemPedido::class, 'pedido_id', 'id');
@@ -21,7 +20,7 @@ class Pedido extends Model
     }
 
     public function cfop(){
-        return $this->hasOne(cfop::class, 'id', 'cfop_id');
+        return $this->hasOne(cfop::class, 'id', 'cfop');
     }
 
     public function endereco_cliente(){
