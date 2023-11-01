@@ -18,11 +18,13 @@ class EmpresasController extends Controller
 
     private EmpresasService $empresaServices;
     private UsersService $userServices;
+    private EnderecosService $enderecoServices;
 
-    public function __construct(EmpresasService $empresaServices, UsersService $userServices)
+    public function __construct(EmpresasService $empresaServices, UsersService $userServices, EnderecosService $enderecoServices)
     {
         $this->empresaServices = $empresaServices;
         $this->userServices = $userServices;
+        $this->enderecoServices = $enderecoServices;
     }
 
     public function cadastrar()
@@ -181,8 +183,36 @@ class EmpresasController extends Controller
     public function store(Request $request)
     {
         try {
-            $sEndereco = new EnderecosService();
-            $responseE = $sEndereco->salvar(
+            $request->validate([
+                'nome' => 'required|max:255',
+                'fantasia' => 'required|max:255',
+                'cpf_cnpj' => 'required',
+                'rg_ie' => 'required',
+                'telefone' => 'required',
+                'rua' => 'required',
+                'numero' => 'required',
+                'bairro' => 'required',
+                'cep' => 'required',
+                'cidade' => 'required',
+                'uf' => 'required',
+                'complemento' => 'nullable',
+                'ibge' => 'required',
+                'nfe' => 'required',
+                'serie' => 'required',
+                'senha' => 'required',
+                'csc' => 'required',
+                'idCsc' => 'required',
+                'ambiente' => 'required',
+                'clientes' => 'required',
+                'produtos' => 'required',
+                'notas' => 'required',
+                'name' => 'required|max:255',
+                'email' => 'required',
+                'confirm_email' => 'required',
+                'password' => 'required',
+                'confirm_password' => 'required'
+            ]);
+            $responseE = $this->enderecoServices->salvar(
                 $request->rua,
                 $request->bairro,
                 $request->numero,
@@ -213,8 +243,18 @@ class EmpresasController extends Controller
                 $request->senha,
                 $request->ambiente,
                 $request->csc,
-                $request->idCsc, $request->notas, $request->clientes, $request->produtos);
-            $this->userServices->store($request->email, $request->password, 'cliente', $response->id, $request->name);
+                $request->idCsc,
+                $request->notas,
+                $request->clientes,
+                $request->produtos
+            );
+            $this->userServices->store(
+                $request->email,
+                $request->password,
+                'cliente',
+                $response->id,
+                $request->name
+            );
             if ($response) {
                 return redirect('/empresa');
             }

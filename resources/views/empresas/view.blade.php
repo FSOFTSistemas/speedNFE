@@ -5,7 +5,7 @@
 @section('content_header')
 <div class="row" style="text-align: center">
     <div class="col">
-        <h1 class="m-0 text-dark">Visualizar de Empresa</h1>
+        <h1 class="m-0 text-dark">Visualizar Empresa</h1>
     </div>
 </div>
 @stop
