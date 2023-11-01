@@ -1,12 +1,10 @@
 <?php
 namespace App\Services;
 
-use App\Models\Empresa;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
-use App\Models\Pedido;
 use Illuminate\Support\Facades\File;
 use NFePHP\NFe\Complements;
 use NFePHP\DA\NFe\Danfe;
@@ -17,6 +15,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
 class NFeService{
+
+	private $tools;
 
 	public function __construct($config, $emitente){
 		$this->tools = new Tools(json_encode($config), Certificate::readPfx(file_get_contents('storage/'.$emitente->razao.'.pfx'), $emitente->senhaCertificado));

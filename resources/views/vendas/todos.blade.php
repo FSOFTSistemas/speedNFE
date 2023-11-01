@@ -14,7 +14,7 @@
     <p><a href="/vendas/nova" class="btn btn-info">&nbsp; + Nova NFe &nbsp;</a></p>
 
     <table class="table table-hover" id="notas">
-        <thead class="table-primary">
+        <thead class="table-primary" style="text-align: center">
             <th>CLIENTE</th>
             <th>VALOR</th>
             <th>N. NFE</th>
@@ -24,7 +24,7 @@
             <th></th>
             <th></th>
         </thead>
-        <tbody>
+        <tbody style="text-align: center">
             @foreach ($pedidos as $pedido)
                 <tr>
                     <td>{{ $pedido->nome }}</td>
@@ -32,7 +32,7 @@
                     <td>{{ $pedido->numero_nfe }}</td>
                     <td><a target='_blank' href="{{ route('imprimirXML', ['id' => $pedido->id]) }}">{{ $pedido->chave }}</a>
                     </td>
-                    <td>{{ $pedido->estado }}</td>
+                    <td>{{ $pedido->status }}</td>
                     <td>{{ $pedido->fantasia }}</td>
                     @if ($pedido->chave == '')
                         <td><a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a></td>

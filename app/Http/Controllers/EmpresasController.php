@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
-use App\Models\Endereco;
 use App\Services\EmpresasService;
 use App\Services\EnderecosService;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use NFePHP\Common\Certificate;
 
 class EmpresasController extends Controller
 {
@@ -80,100 +78,43 @@ class EmpresasController extends Controller
     public function update($id, Request $request)
     {
         try {
-            $empresa = Empresa::findOrFail($id);
-            $endereco = Endereco::findOrFail($empresa->endereco_id);
-            $response = $endereco->update([
-                'rua' => $request->rua,
-                'bairro' => $request->bairro,
-                'numero' => $request->numero,
-                'cidade' => $request->cidade,
-                'uf' => $request->uf,
-                'codigoIBGE' => $request->ibge,
-                'cep' => $request->cep,
-                'complemento' => $request->complemento,
+            $request->validate([
+                'nome' => 'required|max:255',
+                'fantasia' => 'required|max:255',
+                'cpf_cnpj' => 'required',
+                'rg_ie' => 'required',
+                'telefone' => 'required',
+                'rua' => 'required|max:255',
+                'numero' => 'required',
+                'bairro' => 'required|max:128',
+                'cep' => 'required',
+                'cidade' => 'required|max:128',
+                'uf' => 'required',
+                'complemento' => 'max:255',
+                'ibge' => 'required',
+                'nfe' => 'required',
+                'serie' => 'required',
+                'senha' => '',
+                'csc' => 'required',
+                'idCsc' => 'required',
+                'ambiente' => 'required',
+                'clientes' => 'required',
+                'produtos' => 'required',
+                'notas' => 'required'
             ]);
-            if ($request->hasFile('certificado')) {
-                $path = $request->certificado->storeAs('storage/app/certificados', $request->nome . '.pfx');
-                // $content = file_get_contents('storage/'.$request->nome.'.pfx');
-                // $ctx = Certificate::readPfx($content, $request->senha);
-                // $request->merge(['certificado' => $]);
-
-                if ($request->senha != '') {
-                    $response = $empresa->update([
-                        'razao' => $request->nome,
-                        'fantasia' => $request->fantasia,
-                        'cpf_cnpj' => $request->cpf_cnpj,
-                        'rg_ie' => $request->rg_ie,
-                        'celular' => $request->telefone,
-                        'ultimaNFe' => $request->nfe,
-                        'serie' => $request->serie,
-                        'senhaCertificado' => $request->senha,
-                        'ambiente' => $request->ambiente,
-                        'certificado' => $path,
-                        'csc' => $request->csc,
-                        'idCsc' => $request->idCsc,
-                        'limNotas' => $request->notas,
-                        'limProdutos' => $request->produtos,
-                        'limClientes' => $request->clientes,
-                    ]);
-                } else {
-                    $response = $empresa->update([
-                        'razao' => $request->nome,
-                        'fantasia' => $request->fantasia,
-                        'cpf_cnpj' => $request->cpf_cnpj,
-                        'rg_ie' => $request->rg_ie,
-                        'celular' => $request->telefone,
-                        'ultimaNFe' => $request->nfe,
-                        'serie' => $request->serie,
-                        'ambiente' => $request->ambiente,
-                        'certificado' => $path,
-                        'csc' => $request->csc,
-                        'idCsc' => $request->idCsc,
-                        'limNotas' => $request->notas,
-                        'limProdutos' => $request->produtos,
-                        'limClientes' => $request->clientes,
-                    ]);
-                }
-            }
-
-            if ($request->senha != '') {
-                $response = $empresa->update([
-                    'razao' => $request->nome,
-                    'fantasia' => $request->fantasia,
-                    'cpf_cnpj' => $request->cpf_cnpj,
-                    'rg_ie' => $request->rg_ie,
-                    'celular' => $request->telefone,
-                    'ultimaNFe' => $request->nfe,
-                    'serie' => $request->serie,
-                    'senhaCertificado' => $request->senha,
-                    'ambiente' => $request->ambiente,
-                    'csc' => $request->csc,
-                    'idCsc' => $request->idCsc,
-                    'limNotas' => $request->notas,
-                    'limProdutos' => $request->produtos,
-                    'limClientes' => $request->clientes,
-                ]);
-            } else {
-                $response = $empresa->update([
-                    'razao' => $request->nome,
-                    'fantasia' => $request->fantasia,
-                    'cpf_cnpj' => $request->cpf_cnpj,
-                    'rg_ie' => $request->rg_ie,
-                    'celular' => $request->telefone,
-                    'ultimaNFe' => $request->nfe,
-                    'ambiente' => $request->ambiente,
-                    'csc' => $request->csc,
-                    'idCsc' => $request->idCsc,
-                    'limNotas' => $request->notas,
-                    'limProdutos' => $request->produtos,
-                    'limClientes' => $request->clientes,
-                ]);
-            }
-
-            if ($response == 1) {
-                return redirect('/empresa');
-            }
-            return "Erro";
+            $empresa = $this->empresaServices->atualizar($id, $request);
+            $this->enderecoServices->editar(
+                $empresa->endereco_id,
+                $request->rua,
+                $request->bairro,
+                $request->numero,
+                $request->cidade,
+                $request->uf,
+                $request->ibge,
+                $request->cep,
+                $request->complemento,
+            );
+            return redirect()->route('editar_empresa', [$empresa->id]);
         } catch (Exception $e) {
             dd($e);
             return back();
@@ -210,9 +151,9 @@ class EmpresasController extends Controller
                 'email' => 'required',
                 'confirm_email' => 'required',
                 'password' => 'required',
-                'confirm_password' => 'required'
+                'confirm_password' => 'required',
             ]);
-            $responseE = $this->enderecoServices->salvar(
+            $endereco = $this->enderecoServices->salvar(
                 $request->rua,
                 $request->bairro,
                 $request->numero,
@@ -224,17 +165,13 @@ class EmpresasController extends Controller
             );
             $ctx = null;
             if ($request->hasFile('certificado')) {
-                $path = $request->certificado->storeAs('storage/app/certificados', $request->nome . '.pfx');
-                $content = file_get_contents('../storage/app/certificados/' . $request->nome . '.pfx');
-                $ctx = Certificate::readPfx($content, $request->senha);
-            } else {
-                $path = '';
+                $ctx = $this->empresaServices->storeCertificate($request->certificado, $request->nome, $request->senha);
             }
-            $response = Empresa::salvar(
+            $empresa = Empresa::salvar(
                 $request->nome,
                 $request->fantasia,
                 $request->cpf_cnpj,
-                $responseE->id,
+                $endereco->id,
                 $request->rg_ie,
                 $request->telefone,
                 $request->nfe,
@@ -252,13 +189,10 @@ class EmpresasController extends Controller
                 $request->email,
                 $request->password,
                 'cliente',
-                $response->id,
+                $empresa->id,
                 $request->name
             );
-            if ($response) {
-                return redirect('/empresa');
-            }
-            return "Erro";
+            return redirect()->route('empresa.index');
         } catch (Exception $e) {
             dd($e);
             return back();
