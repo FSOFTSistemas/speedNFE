@@ -35,7 +35,7 @@ class PedidosController extends Controller
         try {
             $venda = $this->pedidoServices->buscarPedido($id);
             $emitente = $this->empresaServices->buscarEmpresa($venda->empresa_id);
-            $xml = file_get_contents($emitente->fantasia . '/' . date_format(today(), 'Y') . '/' . date_format(today(), 'm') . '/notas/CCe/' . $venda->chave . '.xml');
+            $xml = file_get_contents($emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/CCe/' . $venda->chave . '.xml');
             $daevento = new Daevento($xml, $emitente);
             $daevento->debugMode(true);
             $pdf = $daevento->render();
@@ -79,7 +79,7 @@ class PedidosController extends Controller
                 "CSC" => $emitente->csc,
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
-            $result = $nfe_service->inutilizarNum($emitente->serie, $request->numI, $request->numI, $request->justificativa, $emitente->fantasia . '/' . date_format(today(), 'Y') . '/' . date_format(today(), 'm') . '/notas/Inutilizacoes');
+            $result = $nfe_service->inutilizarNum($emitente->serie, $request->numI, $request->numI, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Inutilizacoes');
             if (!isset($result['erro'])) {
                 return redirect('/inutilizar')->with('success', 'Inutilização feita com sucesso');
             } else {
@@ -118,7 +118,7 @@ class PedidosController extends Controller
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
 
-            $result = $nfe_service->cartaCorrecao($venda, $request->justificativa, $emitente->fantasia . '/' . date_format(today(), 'Y') . '/' . date_format(today(), 'm') . '/notas/CCe');
+            $result = $nfe_service->cartaCorrecao($venda, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/CCe');
             if (!isset($result['erro'])) {
                 return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
             } else {
@@ -154,7 +154,7 @@ class PedidosController extends Controller
                 "CSC" => $emitente->csc,
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
-            $nfe = $nfe_service->cancelar($venda, $request->justificativa, $emitente->fantasia . '/' . date_format(today(), 'Y') . '/' . date_format(today(), 'm') . '/notas/Canceladas');
+            $nfe = $nfe_service->cancelar($venda, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas');
             if (!isset($nfe['erro'])) {
                 $venda->estado = 'Cancelado';
                 $venda->total = 0;
@@ -207,26 +207,24 @@ class PedidosController extends Controller
         try {
             $venda = Pedido::find($id);
             $empresa = Empresa::find($venda->empresa_id);
-            // dd($empresa);
             $nfe_service = new NFeService([
                 "atualizacao" => date('Y-m-d h:i:s'),
                 "tpAmb" => (int) $empresa->ambiente,
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => $empresa->cpf_cnpj,
+                "cnpj" => '42879649000174',
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
                 "CSC" => $empresa->csc,
                 "CSCid" => "00000" . $empresa->idCsc,
             ], $empresa);
-            dd('chega aqui');
             if ($venda->estado == 'Rejeitado' || $venda->estado == 'Novo') {
                 $result = $nfe_service->gerarXml($venda, $empresa);
                 // return $result;
                 if (!isset($result['erros_xml'])) {
                     $signed = $nfe_service->sign($result['xml']);
-                    $resultado = $nfe_service->transmitir($signed, $result['chave'], $empresa->fantasia . '/' . date_format(today(), 'Y') . '/' . date_format(today(), 'm') . '/notas/Autorizadas');
+                    $resultado = $nfe_service->transmitir($signed, $result['chave'], $empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
                     if (isset($resultado['sucesso'])) {
                         $venda->chave = $result['chave'];
                         $venda->estado = 'Aprovado';
