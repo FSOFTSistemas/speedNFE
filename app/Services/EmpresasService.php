@@ -3,12 +3,97 @@
 namespace App\Services;
 
 use App\Models\Empresa;
-use Exception;
 use Illuminate\Support\Facades\DB;
+use NFePHP\Common\Certificate;
 
-class EmpresasService{
+class EmpresasService
+{
 
-    public function todas(){
+    public function atualizar($id, $request)
+    {
+        $empresa = Empresa::find($id);
+        if ($request->hasFile('certificado')) {
+            $path = $request->certificado->storeAs('storage/app/certificados', $request->nome . '.pfx');
+            // $content = file_get_contents('storage/'.$request->nome.'.pfx');
+            // $ctx = Certificate::readPfx($content, $request->senha);
+            // $request->merge(['certificado' => $]);
+
+            if ($request->senha != '') {
+                $empresa->update([
+                    'razao' => $request->nome,
+                    'fantasia' => $request->fantasia,
+                    'cpf_cnpj' => $request->cpf_cnpj,
+                    'rg_ie' => $request->rg_ie,
+                    'celular' => $request->telefone,
+                    'ultimaNFe' => $request->nfe,
+                    'serie' => $request->serie,
+                    'senhaCertificado' => $request->senha,
+                    'ambiente' => $request->ambiente,
+                    'certificado' => $path,
+                    'csc' => $request->csc,
+                    'idCsc' => $request->idCsc,
+                    'limNotas' => $request->notas,
+                    'limProdutos' => $request->produtos,
+                    'limClientes' => $request->clientes,
+                ]);
+            } else {
+                $empresa->update([
+                    'razao' => $request->nome,
+                    'fantasia' => $request->fantasia,
+                    'cpf_cnpj' => $request->cpf_cnpj,
+                    'rg_ie' => $request->rg_ie,
+                    'celular' => $request->telefone,
+                    'ultimaNFe' => $request->nfe,
+                    'serie' => $request->serie,
+                    'ambiente' => $request->ambiente,
+                    'certificado' => $path,
+                    'csc' => $request->csc,
+                    'idCsc' => $request->idCsc,
+                    'limNotas' => $request->notas,
+                    'limProdutos' => $request->produtos,
+                    'limClientes' => $request->clientes,
+                ]);
+            }
+        }
+
+        if ($request->senha != '') {
+            $empresa->update([
+                'razao' => $request->nome,
+                'fantasia' => $request->fantasia,
+                'cpf_cnpj' => $request->cpf_cnpj,
+                'rg_ie' => $request->rg_ie,
+                'celular' => $request->telefone,
+                'ultimaNFe' => $request->nfe,
+                'serie' => $request->serie,
+                'senhaCertificado' => $request->senha,
+                'ambiente' => $request->ambiente,
+                'csc' => $request->csc,
+                'idCsc' => $request->idCsc,
+                'limNotas' => $request->notas,
+                'limProdutos' => $request->produtos,
+                'limClientes' => $request->clientes,
+            ]);
+        } else {
+            $empresa->update([
+                'razao' => $request->nome,
+                'fantasia' => $request->fantasia,
+                'cpf_cnpj' => $request->cpf_cnpj,
+                'rg_ie' => $request->rg_ie,
+                'celular' => $request->telefone,
+                'ultimaNFe' => $request->nfe,
+                'ambiente' => $request->ambiente,
+                'csc' => $request->csc,
+                'idCsc' => $request->idCsc,
+                'limNotas' => $request->notas,
+                'limProdutos' => $request->produtos,
+                'limClientes' => $request->clientes,
+            ]);
+        }
+        return $empresa;
+    }
+
+    public function todas()
+    {
         return Empresa::all();
     }
 
@@ -37,30 +122,35 @@ class EmpresasService{
     public function buscarEmpresa($id)
     {
         return Empresa::select('empresas.*', 'users.name', 'users.email', 'enderecos.rua', 'enderecos.bairro', 'enderecos.numero', 'enderecos.cidade',
-        'enderecos.complemento', 'enderecos.uf', 'enderecos.cep', 'enderecos.codigoIBGE')
+            'enderecos.complemento', 'enderecos.uf', 'enderecos.cep', 'enderecos.codigoIBGE')
             ->join('users', 'users.empresa_id', 'empresas.id')
             ->join('enderecos', 'enderecos.id', 'empresas.endereco_id')
             ->where('empresas.id', $id)
             ->first();
     }
 
-    public function todos($empresa){
-        if($empresa == 1){
+    public function todos($empresa)
+    {
+        if ($empresa == 1) {
             $empresa = '%';
         }
         return DB::table('empresas')
-        ->select('*')
-        ->where('id', 'like', $empresa)
-        ->get();
+            ->select('*')
+            ->where('id', 'like', $empresa)
+            ->get();
     }
 
-    public function getEmpresa($id_empresa){
-        try{
-            return DB::table('empresas')
+    public function getEmpresa($id_empresa)
+    {
+        return DB::table('empresas')
             ->where('id', '=', $id_empresa)
             ->first();
-        } catch (Exception $e) {
-            return 0;
-        }
+    }
+
+    public function storeCertificate($certificado, $nome, $senha)
+    {
+        $certificado->storeAs('storage/app/certificados', $nome . '.pfx');
+        $content = file_get_contents('../storage/app/certificados/' . $nome . '.pfx');
+        return Certificate::readPfx($content, $senha);
     }
 }

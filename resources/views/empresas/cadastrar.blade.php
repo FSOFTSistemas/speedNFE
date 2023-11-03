@@ -114,7 +114,7 @@
                                             </div>
                                             <div class="col-3">
                                                 <label>Número</label>
-                                                <input required placeholder="Nº..." class="form-control" type="number" id="numero"
+                                                <input required placeholder="Nº..." class="form-control" type="text" id="numero"
                                                     name="numero" />
                                             </div>
                                         </div>

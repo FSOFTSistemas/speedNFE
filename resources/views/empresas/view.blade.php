@@ -198,18 +198,6 @@
 
                                     <div class="row">
                                         <div class="col">
-                                            <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input accept=".pfx" type="file" name="certificado" id="certificado" class="file-upload-default" value="{{ $empresa->certificado }}">
-                                        </div>
-
-                                        <div class="col">
-                                            <label>Senha Certificado</label>
-                                            <input class=form-control type="text" name="senha" id="senha" value="{{ $empresa->senhaCertificado }}"/>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col">
                                             <label>CSC</label>
                                             <input class="form-control" type="text" name="csc" id="csc" value="{{ $empresa->csc }}">
 
