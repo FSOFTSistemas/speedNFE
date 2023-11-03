@@ -1,15 +1,13 @@
 <?php
 namespace App\Services;
 
+use Exception;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
 use Illuminate\Support\Facades\File;
 use NFePHP\NFe\Complements;
-use NFePHP\DA\NFe\Danfe;
-use NFePHP\DA\Legacy\FilesFolders;
-use NFePHP\Common\Soap\SoapCurl;
 
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
@@ -19,12 +17,16 @@ class NFeService{
 	private $tools;
 
 	public function __construct($config, $emitente){
-		$this->tools = new Tools(json_encode($config), Certificate::readPfx(file_get_contents('storage/'.$emitente->razao.'.pfx'), $emitente->senhaCertificado));
-		$this->tools->model(55);
+		try{
+			$this->tools = new Tools(json_encode($config), Certificate::readPfx(file_get_contents(asset('storage/'.$emitente->razao.'.pfx')), $emitente->senhaCertificado));
+			// $this->tools->model(55);
+		}catch(Exception $e){
+			dd($e->getMessage());
+		}
+
 	}
 
 	public function gerarXml($venda, $emitente){
-
 		// $array = [];
 		// $array['venda'] = $venda;
 		// $array['venda_cliente'] = $venda->cliente;
@@ -39,7 +41,6 @@ class NFeService{
 
 
 		// return $array;
-
 		$nfe = new Make();
 		$stdInNFe = new \stdClass();
 		$stdInNFe->versao = '4.00';
@@ -96,7 +97,6 @@ class NFeService{
 			$stdEmit->CPF = $cnpj;
 		}
 		$emit = $nfe->tagemit($stdEmit);
-
 
 		// ENDERECO EMITENTE
 		$stdEnderEmit = new \stdClass();
@@ -393,7 +393,6 @@ class NFeService{
 				'erros_xml' => $nfe->getErrors()
 			];
 		}
-
 	}
 
 	private function validate_EAN13Barcode($ean)

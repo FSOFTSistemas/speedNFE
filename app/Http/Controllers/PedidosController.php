@@ -207,6 +207,7 @@ class PedidosController extends Controller
         try {
             $venda = Pedido::find($id);
             $empresa = Empresa::find($venda->empresa_id);
+            // dd($empresa);
             $nfe_service = new NFeService([
                 "atualizacao" => date('Y-m-d h:i:s'),
                 "tpAmb" => (int) $empresa->ambiente,
@@ -219,6 +220,7 @@ class PedidosController extends Controller
                 "CSC" => $empresa->csc,
                 "CSCid" => "00000" . $empresa->idCsc,
             ], $empresa);
+            dd('chega aqui');
             if ($venda->estado == 'Rejeitado' || $venda->estado == 'Novo') {
                 $result = $nfe_service->gerarXml($venda, $empresa);
                 // return $result;
