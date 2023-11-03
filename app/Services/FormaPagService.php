@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\FormaPag;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class FormaPagService{
     public function __construct()

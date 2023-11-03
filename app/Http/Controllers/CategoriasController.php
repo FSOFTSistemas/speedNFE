@@ -2,62 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\UsersService;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoriasController extends Controller
 {
-    public function destroy($id){
-        $sCategorias = new CategoriasService();
-        $resp = $sCategorias->status($id);
 
-        if(is_int($resp)){
-            return redirect('/categoria')->with('success', 'Categoria desativada com sucesso');
-        } else {
-            return redirect('/categoria')->with('error', $resp);
+    private CategoriasService $categoriaServices;
+    private EmpresasService $empresaServices;
+
+    public function __construct(CategoriasService $categoriaServices, EmpresasService $empresaServices)
+    {
+        $this->categoriaServices = $categoriaServices;
+        $this->empresaServices = $empresaServices;
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $this->categoriaServices->status($id);
+            return redirect()->route('categoria.index')->with('success', 'Categoria desativada com sucesso');
+        } catch (Exception $e) {
+            return back();
         }
     }
 
-    public function show(){
-        $sEmpresa = new UsersService();
-        $empresa = $sEmpresa->getEmpresa(Auth::id());
-
-        $sCategorias = new CategoriasService();
-        $categorias = $sCategorias->todas($empresa->empresa_id);
-
-        return view('categorias.todos', ['categorias' => $categorias, 'empresa' => $empresa->empresa_id]);
-    }
-
-    public function new(){
-        $sUsers = new UsersService();
-        $empresa = $sUsers->getEmpresa(Auth::id());
-
-        $sEmpresa = new EmpresasService();
-        $empresas = $sEmpresa->todas();
-
-        return view('categorias.new', ['empresa' => $empresa->empresa_id, 'empresas' => $empresas]);
-    }
-
-    public function store(Request $request){
-        $sEmpresa = new UsersService();
-        $empresa = $sEmpresa->getEmpresa(Auth::id());
-
-        if($request->has('empresa')){
-            $empresa = $request->empresa;
-        } else {
-            $empresa = $empresa->empresa_id;
+    public function show()
+    {
+        try {
+            $user = Auth::user();
+            $categorias = null;
+            if ($user->empresa_id != 1) {
+                $categorias = $this->categoriaServices->todas($user->empresa_id);
+            } else {
+                $categorias = $this->categoriaServices->todasCategorias();
+            }
+            return view('categorias.todos', ['categorias' => $categorias, 'empresa' => $user->empresa_id]);
+        } catch (Exception $e) {
+            return back();
         }
+    }
 
-        $sCategorias = new CategoriasService();
-        $resp = $sCategorias->store($request->descricao, $empresa, $request->status);
+    public function new ()
+    {
+        try {
+            $user = Auth::user();
+            $empresas = $this->empresaServices->todas();
+            return view('categorias.new', ['empresa' => $user->empresa_id, 'empresas' => $empresas]);
+        } catch (Exception $e) {
+            return back();
+        }
+    }
 
-        if(is_int($resp)){
-            return redirect('/categoria')->with('success', 'Categoria Cadastrada com sucesso');
-        } else {
-            return redirect('/categoria')->with('error', $resp);
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'descricao' => 'required|max:512',
+                'empresa' => 'nullable',
+            ]);
+
+            !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
+            $this->categoriaServices->store(
+                $request->descricao,
+                $empresa
+            );
+            return redirect()->route('categoria.index')->with('success', 'Categoria Cadastrada com sucesso');
+        } catch (Exception $e) {
+            return back();
         }
     }
 }

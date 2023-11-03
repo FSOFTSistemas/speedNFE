@@ -3,10 +3,15 @@
 @section('title', 'AdminLTE')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Cadastro de Empresa</h1>
+    <div class="row" style="text-align: center">
+        <div class="col">
+            <h1 class="m-0 text-dark">Cadastro de Empresa</h1>
+        </div>
+    </div>
 @stop
 
 @section('content')
+    <a href="{{ route('empresa.index') }}" class="btn btn-secondary" style="margin-bottom: 2%">Voltar</a>
 
     <div class="content">
         <div class="container-fluid">
@@ -54,14 +59,14 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Razão Social</label>
-                                            <input required class="form-control" type="text" id="nome"
-                                                name="nome" />
+                                            <input required placeholder="Razão Social..." class="form-control"
+                                                type="text" id="nome" name="nome" />
                                         </div>
 
                                         <div class="col">
                                             <label>Nome Fantasia</label>
-                                            <input required class="form-control" type="text" id="fantasia"
-                                                name="fantasia" />
+                                            <input required placeholder="Nome Fantasia..." class="form-control"
+                                                type="text" id="fantasia" name="fantasia" />
                                         </div>
                                     </div>
 
@@ -70,9 +75,9 @@
                                             <label>CPF ou CNPJ</label>
                                             <div class="row">
                                                 <div class="col">
-                                                    <input class="form-control" type="text" id="cpf_cnpj"
-                                                        name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);"
-                                                        maxlength="14" />
+                                                    <input required placeholder="CPF/CNPJ..." class="form-control"
+                                                        type="text" id="cpf_cnpj" name="cpf_cnpj"
+                                                        onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" />
                                                 </div>
                                                 <button id="cnpj_button" type="button" class="btn btn-light"><i
                                                         class="fa fa-search"></i></button>
@@ -81,7 +86,8 @@
 
                                         <div class="col">
                                             <label>RG ou IE</label>
-                                            <input class="form-control" type="text" id="rg_ie" name="rg_ie" />
+                                            <input required placeholder="Razão RG/IE..." class="form-control" type="text"
+                                                id="rg_ie" name="rg_ie" />
                                         </div>
                                     </div>
 
@@ -89,18 +95,13 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Celular</label>
-                                            <input class="form-control" type="text" id="telefone" name="telefone" />
+                                            <input required placeholder="Celular..." class="form-control" type="text"
+                                                id="telefone" name="telefone" maxlength="15"
+                                                onkeyup="handlePhone(event)" />
                                         </div>
 
                                     </div>
 
-                                    <br>
-                                    <div>
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-success form-control">Salvar
-                                                Empresa</button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -108,12 +109,12 @@
                                         <div class="row">
                                             <div class="col-9">
                                                 <label>Rua</label>
-                                                <input class="form-control" type="text" id="rua"
+                                                <input required placeholder="Rua..." class="form-control" type="text" id="rua"
                                                     name="rua" />
                                             </div>
                                             <div class="col-3">
                                                 <label>Número</label>
-                                                <input class="form-control" type="number" id="numero"
+                                                <input required placeholder="Nº..." class="form-control" type="number" id="numero"
                                                     name="numero" />
                                             </div>
                                         </div>
@@ -121,7 +122,7 @@
                                         <div class="row">
                                             <div class="col-8">
                                                 <label>Bairro</label>
-                                                <input class="form-control" type="text" id="bairro"
+                                                <input required placeholder="Bairro..." class="form-control" type="text" id="bairro"
                                                     name="bairro" />
                                             </div>
                                             <div class="col">
@@ -129,7 +130,7 @@
                                                 <div class="row">
                                                     <div class="col">
 
-                                                        <input class="form-control" type="text" id="cep"
+                                                        <input required placeholder="Cep..." class="form-control" type="text" id="cep"
                                                             name="cep" />
                                                     </div>
                                                     <button class="btn btn-light" type="button" id="cep_button"><i
@@ -142,13 +143,13 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <input class="form-control" type="text" id="cidade"
+                                                <input required placeholder="Cidade..." class="form-control" type="text" id="cidade"
                                                     name="cidade" />
                                             </div>
                                             <div class="col">
                                                 <label>UF</label>
-                                                <select class="form-control" id="uf" name="uf">
-                                                    <option>-- Escolha uma Unidade Federativa --</option>
+                                                <select class="form-control" id="uf" name="uf" required>
+                                                    <option value="">-- Escolha uma Unidade Federativa --</option>
                                                     <option value='RO'>RO</option>
                                                     <option value='AC'>AC</option>
                                                     <option value='AM'>AM</option>
@@ -185,14 +186,14 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Complemento</label>
-                                                <input class="form-control" type="text" id="complemento"
+                                                <input placeholder="Complemento..." class="form-control" type="text" id="complemento"
                                                     name="complemento" />
 
                                             </div>
                                             <div class="col">
 
                                                 <label>Código IBGE</label>
-                                                <input class="form-control" type="number" id="ibge"
+                                                <input required placeholder="Código IBGE..." class="form-control" type="number" id="ibge"
                                                     name="ibge" />
                                             </div>
                                         </div>
@@ -204,43 +205,43 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Nº da Última NFe</label>
-                                            <input class=form-control type="number" name="nfe" id="nfe" />
+                                            <input required placeholder="Nº Última NFe..." class=form-control type="number" name="nfe" id="nfe" />
 
                                         </div>
                                         <div class="col">
-                                            <label>Serie</label>
-                                            <input class=form-control type="number" name="serie" id="serie" />
+                                            <label>Série</label>
+                                            <input required placeholder="Série..." class=form-control type="number" name="serie" id="serie" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input accept=".pfx" type="file" name="certificado" id="certificado"
+                                            <input required placeholder="Certificado..." accept=".pfx" type="file" name="certificado" id="certificado"
                                                 class="file-upload-default">
 
                                         </div>
                                         <div class="col">
                                             <label>Senha Certificado</label>
-                                            <input class=form-control type="text" name="senha" id="senha" />
+                                            <input required placeholder="Senha Certificado..." class=form-control type="text" name="senha" id="senha" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <label>CSC</label>
-                                            <input class="form-control" type="text" name="csc" id="csc">
+                                            <input required placeholder="Csc..." class="form-control" type="text" name="csc" id="csc">
 
 
                                         </div>
                                         <div class="col">
                                             <label>Id Token CSC</label>
-                                            <input class="form-control" type="text" name="idCsc" id="idCsc">
+                                            <input required placeholder="Id Token Csc..." class="form-control" type="text" name="idCsc" id="idCsc">
 
                                         </div>
                                         <div class="col">
                                             <label>Ambiente</label>
-                                            <input class=form-control type="number" name="ambiente" id="ambiente" />
+                                            <input required placeholder="Ambiente..." class=form-control type="number" name="ambiente" id="ambiente" />
                                         </div>
                                     </div>
 
@@ -249,36 +250,41 @@
                                 <div class="tab-pane fade" id="limite" role="tabpanel" aria-labelledby="limite-tab">
 
                                     <label>Limite de Clientes</label>
-                                    <input class=form-control type="number" name="clientes" id="clientes" />
+                                    <input required placeholder="Limite de Clientes..." class=form-control type="number" name="clientes" id="clientes" />
 
                                     <label>Limite de Produtos</label>
-                                    <input class=form-control type="number" name="produtos" id="produtos" />
+                                    <input required placeholder="Limite de Produtos..." class=form-control type="number" name="produtos" id="produtos" />
 
                                     <label>Limite de Notas</label>
-                                    <input class=form-control type="number" name="notas" id="notas" />
+                                    <input required placeholder="Limite de Notas..." class=form-control type="number" name="notas" id="notas" />
 
                                 </div>
 
                                 <div class="tab-pane fade" id="user" role="tabpanel" aria-labelledby="user-tab">
 
                                     <label>Nome</label>
-                                    <input class=form-control type="text" name="name" id="name" />
+                                    <input required placeholder="Nome..." class=form-control type="text" name="name" id="name" />
 
                                     <label>Email</label>
-                                    <input class=form-control type="text" name="email" id="email" />
+                                    <input required placeholder="Email..." class=form-control type="text" name="email" id="email" />
 
                                     <label>Confirmação de Email</label>
-                                    <input class=form-control type="text" name="confirm_email" id="confirm_email" />
+                                    <input required placeholder="Confirmação Email..." class=form-control type="text" name="confirm_email" id="confirm_email" />
 
                                     <label>Senha</label>
-                                    <input class=form-control type="text" name="password" id="password" />
+                                    <input required placeholder="Senha..." class=form-control type="text" name="password" id="password" />
 
                                     <label>Confirmação de Senha</label>
-                                    <input class=form-control type="text" name="confirm_password"
+                                    <input required placeholder="Confirmação Senha..." class=form-control type="text" name="confirm_password"
                                         id="confirm_password" />
-
                                 </div>
-
+                                <br>
+                                <div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-success form-control">Salvar
+                                            Empresa</button>
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -376,8 +382,19 @@
                     }
                 }
             });
-
-
         });
+
+        const handlePhone = (event) => {
+            let input = event.target
+            input.value = phoneMask(input.value)
+        }
+
+        const phoneMask = (value) => {
+            if (!value) return ""
+            value = value.replace(/\D/g, '')
+            value = value.replace(/(\d{2})(\d)/, "($1) $2")
+            value = value.replace(/(\d)(\d{4})$/, "$1-$2")
+            return value
+        }
     </script>
 @endsection
