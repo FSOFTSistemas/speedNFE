@@ -180,7 +180,8 @@ class ProdutosController extends Controller
             $empresas = $this->empresaServices->todas();
             $categorias = $this->categoriaServices->todas($user->empresa_id);
             $cfops = $this->pedidoServices->cfopAll();
-            return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias, 'cfops' => $cfops]);
+            $ncms = $this->pedidoServices->ncmAll();
+            return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias, 'cfops' => $cfops, 'ncms' => $ncms]);
         } catch (Exception $e) {
             return back();
         }

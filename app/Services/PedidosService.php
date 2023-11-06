@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Ncm;
 use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +20,11 @@ class PedidosService{
         ->where('pedidos.empresa_id', 'like', $idEmpresa)
         ->orderByDesc('pedidos.created_at')
         ->get();
+    }
+
+    public function ncmAll()
+    {
+        return Ncm::all();
     }
 
     public function buscarPedido($id)

@@ -134,7 +134,7 @@ class PedidosController extends Controller
     {
         try {
             $venda = Pedido::find($request->venda_id);
-            $emitente = Empresa::findOrFail($venda->empresa_id);
+            $emitente = Empresa::find($venda->empresa_id);
             if ($emitente == null) {
                 return response()->json('Configure o emitente', 404);
             }
@@ -155,6 +155,7 @@ class PedidosController extends Controller
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
             $nfe = $nfe_service->cancelar($venda, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas');
+
             if (!isset($nfe['erro'])) {
                 $venda->estado = 'Cancelado';
                 $venda->total = 0;

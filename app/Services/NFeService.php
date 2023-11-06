@@ -547,7 +547,6 @@ class NFeService
     public function cancelar($venda, $justificativa, $caminho)
     {
         try {
-
             $chave = $venda->chave;
             $response = $this->tools->sefazConsultaChave($chave);
             sleep(2);
@@ -562,7 +561,6 @@ class NFeService
             $std = $stdCl->toStd();
             $arr = $stdCl->toArray();
             $json = $stdCl->toJson();
-
             if ($std->cStat != 128) {
             } else {
                 $cStat = $std->retEvento->infEvento->cStat;
