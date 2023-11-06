@@ -224,7 +224,9 @@ class PedidosController extends Controller
                 // return $result;
                 if (!isset($result['erros_xml'])) {
                     $signed = $nfe_service->sign($result['xml']);
+                    // dd($signed);
                     $resultado = $nfe_service->transmitir($signed, $result['chave'], $empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
+                    // dd($resultado);
                     if (isset($resultado['sucesso'])) {
                         $venda->chave = $result['chave'];
                         $venda->estado = 'Aprovado';

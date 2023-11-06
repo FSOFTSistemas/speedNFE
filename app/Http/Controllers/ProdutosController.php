@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
+use App\Services\PedidosService;
 use App\Services\ProdutosService;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,12 +16,14 @@ class ProdutosController extends Controller
     private ProdutosService $produtoServices;
     private CategoriasService $categoriaServices;
     private EmpresasService $empresaServices;
+    private PedidosService $pedidoServices;
 
-    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices)
+    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices, PedidosService $pedidoServices)
     {
         $this->produtoServices = $produtoServices;
         $this->categoriaServices = $categoriaServices;
         $this->empresaServices = $empresaServices;
+        $this->pedidoServices = $pedidoServices;
     }
 
     public function update($id, Request $request)
@@ -176,7 +179,8 @@ class ProdutosController extends Controller
             $user = Auth::user();
             $empresas = $this->empresaServices->todas();
             $categorias = $this->categoriaServices->todas($user->empresa_id);
-            return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias]);
+            $cfops = $this->pedidoServices->cfopAll();
+            return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias, 'cfops' => $cfops]);
         } catch (Exception $e) {
             return back();
         }

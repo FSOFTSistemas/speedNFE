@@ -240,8 +240,7 @@ class NFeService
             //PIS
             $stdPIS = new \stdClass();
             $stdPIS->item = $key + 1;
-            // $stdPIS->CST = $i->produto->cst_pis;
-			$stdPIS->CST = '060';
+            $stdPIS->CST = $i->produto->cst_pis;
             $stdPIS->vBC = $this->format($i->produto->pis) > 0 ? $stdProd->vProd : 0.00;
             $stdPIS->pPIS = $this->format($i->produto->pis);
             $stdPIS->vPIS = $this->format(($stdProd->vProd) * ($i->produto->pis / 100));
@@ -250,8 +249,8 @@ class NFeService
             //COFINS
             $stdCOFINS = new \stdClass();
             $stdCOFINS->item = $key + 1;
-            // $stdCOFINS->CST = $i->produto->cst_cofins;
-			$stdCOFINS->CST = '060';
+            $stdCOFINS->CST = $i->produto->cst_cofins;
+			// $stdCOFINS->CST = '60';
             $stdCOFINS->vBC = $this->format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
             $stdCOFINS->pCOFINS = $this->format($i->produto->cofins);
             $stdCOFINS->vCOFINS = $this->format(($stdProd->vProd) *
@@ -262,8 +261,8 @@ class NFeService
             $std = new \stdClass();
             $std->item = $key + 1;
             $std->cEnq = '999';
-            // $std->CST = $i->produto->ipi;
-			$std->CST = '060';
+            $std->CST = $i->produto->ipi;
+			// $std->CST = '60';
             $std->vBC = $this->format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
             $std->pIPI = $this->format($i->produto->ipi);
             $std->vIPI = $stdProd->vProd * $this->format(($i->produto->ipi / 100));

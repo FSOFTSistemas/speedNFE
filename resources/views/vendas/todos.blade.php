@@ -15,9 +15,9 @@
 
     <table class="table table-hover" id="notas">
         <thead class="table-primary" style="text-align: center">
+            <th>Nº</th>
             <th>CLIENTE</th>
             <th>VALOR</th>
-            <th>N. NFE</th>
             <th>CHAVE</th>
             <th>STATUS</th>
             <th>EMPRESA</th>
@@ -27,25 +27,27 @@
         <tbody style="text-align: center">
             @foreach ($pedidos as $pedido)
                 <tr>
+                    <td>{{ $pedido->numero_nfe }}</td>
                     <td>{{ $pedido->nome }}</td>
                     <td>R${{ number_format($pedido->total, 2, ',', '.') }}</td>
-                    <td>{{ $pedido->numero_nfe }}</td>
                     <td><a target='_blank' href="{{ route('imprimirXML', ['id' => $pedido->id]) }}">{{ $pedido->chave }}</a>
                     </td>
-                    <td>{{ $pedido->status }}</td>
+                    <td>{{ $pedido->status == 0 ? "Autorizada" : "Rejeitada" }}</td>
                     <td>{{ $pedido->fantasia }}</td>
                     @if ($pedido->chave == '')
-                        <td><a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a></td>
+                        <td><a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i
+                                    class="fa fa-eye"></i></a></td>
                     @else
                     @endif
                     @if ($pedido->estado == 'Novo' || $pedido->estado == 'Rejeitado')
-                        <td><a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe" class="text-success"><i class="fas fa-upload"></i></a>
+                        <td><a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
+                                class="text-success"><i class="fas fa-upload"></i></a>
                         </td>
                     @elseif($pedido->estado == 'Aprovado')
                         @if ($pedido->sequencia_evento == 0)
-                            <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#cceModal">
-                                    Carta de Correção
-                                </button></td>
+                            <td><a title="Carta de Correção" href="#">
+                                    <i class="fa fa-envelope text-warning" data-toggle="modal" data-target="#cceModal"></i>
+                                </a></td>
 
                             <!-- Modal -->
                             <div class="modal fade" id="cceModal" tabindex="-1" role="dialog"
@@ -76,9 +78,9 @@
                             <td><a href="/venda/cce/{{ $pedido->id }}" class="btn btn-info">Imprimir CCe</a></td>
                         @endif
 
-                        <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
-                                Cancelar
-                            </button></td>
+                        <td><a title="Cancelar" href="#">
+                                <i data-toggle="modal" data-target="#exampleModal" class="fa fa-ban text-danger"></i>
+                            </a></td>
 
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
@@ -107,7 +109,7 @@
                         </div>
                     @else
                         <td><a target='_blank' href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}"
-                                class="btn btn-success">Imprimir</a></td>
+                                class="btn btn-success"><i class="fa fa-print"></i></a></td>
                         <td></td>
                     @endif
                 </tr>
