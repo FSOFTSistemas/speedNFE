@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\EstadoEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Models\FaturaPedido;
@@ -93,8 +94,8 @@ class PedidosController extends Controller
     public function cartaCorrecao(Request $request)
     {
         try {
-            $venda = Pedido::findOrFail($request->venda_id);
-            $emitente = Empresa::findOrFail($venda->empresa_id);
+            $venda = Pedido::find($request->venda_id);
+            $emitente = Empresa::find($venda->empresa_id);
 
             if ($emitente == null) {
                 return response()->json('Configure o emitente', 404);
@@ -155,8 +156,8 @@ class PedidosController extends Controller
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
             $nfe = $nfe_service->cancelar($venda, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas');
-
             if (!isset($nfe['erro'])) {
+                $venda->status = 0;
                 $venda->estado = 'Cancelado';
                 $venda->total = 0;
                 $venda->save();
@@ -165,6 +166,7 @@ class PedidosController extends Controller
                 return redirect('/venda')->with('error', $nfe['data']);
             }
         } catch (\Exception $e) {
+            dd($e);
             return redirect('/venda')->with('error', $e->getMessage());
         }
     }
@@ -220,7 +222,7 @@ class PedidosController extends Controller
                 "CSC" => $empresa->csc,
                 "CSCid" => "00000" . $empresa->idCsc,
             ], $empresa);
-            if ($venda->estado == 'Rejeitado' || $venda->estado == 'Novo') {
+            if ($venda->estado->value == 'Rejeitado' || $venda->estado->value == 'Pendente') {
                 $result = $nfe_service->gerarXml($venda, $empresa);
                 // return $result;
                 if (!isset($result['erros_xml'])) {
@@ -230,7 +232,7 @@ class PedidosController extends Controller
                     // dd($resultado);
                     if (isset($resultado['sucesso'])) {
                         $venda->chave = $result['chave'];
-                        $venda->estado = 'Aprovado';
+                        $venda->estado = 'Autorizado';
                         $venda->numero_nfe = $result['nNf'];
                         $venda->save();
                         $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
@@ -315,16 +317,15 @@ class PedidosController extends Controller
     public function store(Request $request)
     {
         try {
-            // return $request;
             $subtotal = 0;
             $desconto = 0;
             if (DB::table('pedidos')
                 ->where('empresa_id', '=', $request->empresa)
                 ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE)')
                 ->whereRaw('YEAR(created_at) = YEAR(CURRENT_DATE)')
-                ->count() < Empresa::findOrFail($request->empresa)->limNotas or $request->empresa == 1) {
+                ->count() < Empresa::find($request->empresa)->limNotas or $request->empresa == 1) {
                 foreach ($request->vendaItens as $item) {
-                    $prod = Produto::findOrFail($item['produto_id']);
+                    $prod = Produto::find($item['produto_id']);
                     $desconto = $desconto + $item['desconto'];
                     $subtotal = $subtotal + ($item['total']);
                 }
@@ -332,7 +333,7 @@ class PedidosController extends Controller
                     'user_id' => Auth::id(),
                     'cliente_id' => $request->cliente,
                     'data' => today(),
-                    'status' => 0,
+                    'status' => 2,
                     'subtotal' => $subtotal,
                     'desconto' => $desconto,
                     'total' => $subtotal,
@@ -340,11 +341,11 @@ class PedidosController extends Controller
                     'numero_nfe' => 0,
                     'sequencia_evento' => 0,
                     'chave' => '',
-                    'estado' => 1,
+                    'estado' => EstadoEnum::PENDENTE,
                     'cfop' => $request->cfop,
                 ]);
                 foreach ($request->vendaItens as $item) {
-                    $prod = Produto::findOrFail($item['produto_id']);
+                    $prod = Produto::find($item['produto_id']);
                     $desconto = 0;
                     ItemPedido::create([
                         'pedido_id' => $pedido->id,

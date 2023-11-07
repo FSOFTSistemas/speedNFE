@@ -32,18 +32,18 @@
                     <td>R${{ number_format($pedido->total, 2, ',', '.') }}</td>
                     <td><a target='_blank' href="{{ route('imprimirXML', ['id' => $pedido->id]) }}">{{ $pedido->chave }}</a>
                     </td>
-                    <td>{{ $pedido->status == 0 ? "Autorizada" : "Rejeitada" }}</td>
+                    <td>{{ $pedido->status == 0 ? 'Cancelada' : ($pedido->status == 1 ? 'Autorizada' : 'Pendente') }}</td>
                     <td>{{ $pedido->fantasia }}</td>
                     @if ($pedido->chave == '')
                         <td><a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i
                                     class="fa fa-eye"></i></a></td>
                     @else
                     @endif
-                    @if ($pedido->estado == 'Novo' || $pedido->estado == 'Rejeitado')
+                    @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
                         <td><a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
                                 class="text-success"><i class="fas fa-upload"></i></a>
                         </td>
-                    @elseif($pedido->estado == 'Aprovado')
+                    @elseif($pedido->estado == 'Autorizado')
                         @if ($pedido->sequencia_evento == 0)
                             <td><a title="Carta de Correção" href="#">
                                     <i class="fa fa-envelope text-warning" data-toggle="modal" data-target="#cceModal"></i>
@@ -57,13 +57,17 @@
                                         <form action="{{ route('cartaCorrecao') }}" method="post">
                                             @csrf
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Justificativa CCe</h5>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h5 id="exampleModalLabel">Justificativa CCe</h5>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" value="{{ $pedido->id }}" name="venda_id"
                                                     id="venda_id">
-                                                <input type="text-area" class="form-control" name="justificativa"
-                                                    id="justificativa">
+                                                <textarea name="justificativa" id="justificativa" class="form-control" cols="30" rows="6" required minlength="15"
+                                                    placeholder="Informe a justificativa para solicitar a carta de correção... (mínimo de 15 dígitos)"></textarea>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
@@ -75,7 +79,7 @@
                                 </div>
                             </div>
                         @else
-                            <td><a href="/venda/cce/{{ $pedido->id }}" class="btn btn-info">Imprimir CCe</a></td>
+                            <td><a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}" class="text-dark"><i class="fa fa-print"></i></a></td>
                         @endif
 
                         <td><a title="Cancelar" href="#">
@@ -90,26 +94,31 @@
                                     <form action="{{ route('cancelar') }}" method="post">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Justificativa</h5>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Justificativa
+                                                        Cancelamento</h5>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="modal-body">
                                             <input type="hidden" value="{{ $pedido->id }}" name="venda_id"
                                                 id="venda_id">
-                                            <input type="text-area" class="form-control" name="justificativa"
-                                                id="justificativa">
+                                            <textarea class="form-control" name="justificativa" id="justificativa" cols="30" rows="6" required minlength="15"
+                                                placeholder="Informe a justificativa para solicitar o cancelamento... (mínimo de 15 dígitos)"></textarea>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Fechar</button>
-                                            <button type="submit" class="btn btn-primary">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Enviar Cancelamento</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     @else
-                        <td><a target='_blank' href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}"
-                                class="btn btn-success"><i class="fa fa-print"></i></a></td>
+                        <td><a target='_blank' title="Imprimir Cancelamento" href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}"
+                                class="text-dark"><i class="fa fa-print"></i></a></td>
                         <td></td>
                     @endif
                 </tr>

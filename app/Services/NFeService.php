@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
@@ -93,7 +94,6 @@ class NFeService
             $stdEmit->CPF = $cnpj;
         }
         $emit = $nfe->tagemit($stdEmit);
-
         // ENDERECO EMITENTE
         $stdEnderEmit = new \stdClass();
         $stdEnderEmit->xLgr = $this->retiraAcentos($emitente->endereco->rua);
