@@ -93,7 +93,6 @@ class NFeService
             $stdEmit->CPF = $cnpj;
         }
         $emit = $nfe->tagemit($stdEmit);
-
         // ENDERECO EMITENTE
         $stdEnderEmit = new \stdClass();
         $stdEnderEmit->xLgr = $this->retiraAcentos($emitente->endereco->rua);
@@ -512,7 +511,6 @@ class NFeService
     public function cartaCorrecao($venda, $justificativa, $caminho)
     {
         try {
-
             $chave = $venda->chave;
             $xCorrecao = $justificativa;
             $nSeqEvento = $venda->sequencia_evento + 1;

@@ -5,9 +5,10 @@ namespace App\Services;
 use App\Models\Ncm;
 use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
-
 class PedidosService{
-    public function __construct(){}
+
+    public function __construct(){
+    }
 
     public function formatedVenda($idEmpresa){
         if($idEmpresa == 1){

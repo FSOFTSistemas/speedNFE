@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('numero_nfe');
             $table->integer('sequencia_evento');
             $table->string('chave', 44);
-            $table->enum('estado', ['Novo', 'Rejeitado', 'Cancelado', 'Aprovado']);
+            $table->string('estado');
         });
     }
 
