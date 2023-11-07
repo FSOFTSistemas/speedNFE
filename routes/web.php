@@ -103,7 +103,7 @@ Route::post('/receber/edit/{id}', [ReceberController::class, 'update'])->name('u
 //VENDAS
 Route::get('/venda', [PedidosController::class, 'todos'])->middleware('auth');
 Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware('auth');
-Route::get('/vendas', [PedidosController::class, 'todos'])->middleware('auth');
+Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware('auth');
 Route::post('/vendas', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware('auth');
 Route::get('/visualizar/{pedido}', [PedidosController::class, 'visualizar'])->name('visu')->middleware('auth');
 Route::post('/visualizar/{pedido}', [PedidosController::class, 'update'])->middleware('auth');

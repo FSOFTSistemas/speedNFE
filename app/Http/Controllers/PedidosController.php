@@ -208,8 +208,8 @@ class PedidosController extends Controller
     public function enviarNFe($id)
     {
         try {
-            $venda = Pedido::find($id);
-            $empresa = Empresa::find($venda->empresa_id);
+            $venda = $this->pedidoServices->buscarPedido($id);
+            $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $nfe_service = new NFeService([
                 "atualizacao" => date('Y-m-d h:i:s'),
                 "tpAmb" => (int) $empresa->ambiente,
@@ -224,7 +224,7 @@ class PedidosController extends Controller
             ], $empresa);
             if ($venda->estado->value == 'Rejeitado' || $venda->estado->value == 'Pendente') {
                 $result = $nfe_service->gerarXml($venda, $empresa);
-                // return $result;
+                // dd($result);
                 if (!isset($result['erros_xml'])) {
                     $signed = $nfe_service->sign($result['xml']);
                     // dd($signed);
@@ -232,12 +232,14 @@ class PedidosController extends Controller
                     // dd($resultado);
                     if (isset($resultado['sucesso'])) {
                         $venda->chave = $result['chave'];
+                        $venda->status = 1;
                         $venda->estado = 'Autorizado';
                         $venda->numero_nfe = $result['nNf'];
                         $venda->save();
                         $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
                         return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
                     } else {
+                        $venda->status = 3;
                         $venda->estado = 'Rejeitado';
                         $venda->save();
                         return redirect('/vendas')->with('error', $resultado['erro']);

@@ -79,6 +79,7 @@ class Pedido extends Component
     public function atualizarBCfop()
     {
         $this->bcfop = DB::table('cfop')->where('id', $this->cfop)->get()->cfop;
+        return $this->render();
     }
 
     public function buscaCfop()
@@ -135,6 +136,7 @@ class Pedido extends Component
         $this->quantidade = 1;
         $this->desconto = 0;
         $this->total = $prod->precovenda;
+        return $this->render();
     }
 
     public function atualizarArrays()
