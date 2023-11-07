@@ -1,7 +1,6 @@
 <?php
 namespace App\Services;
 
-use Exception;
 use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
@@ -512,7 +511,6 @@ class NFeService
     public function cartaCorrecao($venda, $justificativa, $caminho)
     {
         try {
-
             $chave = $venda->chave;
             $xCorrecao = $justificativa;
             $nSeqEvento = $venda->sequencia_evento + 1;
