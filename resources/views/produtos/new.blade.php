@@ -315,7 +315,7 @@
                                             <div class="row">
                                                 <div class="col">
                                                     <input class="form-control" type="text" name="cofins"
-                                                        id="cofins" value="0" required placeholder="Confins...">
+                                                        id="cofins" value="00" required placeholder="Confins...">
                                                 </div>
 
                                             </div>
@@ -358,12 +358,12 @@
                                         <div class="col">
                                             <label for="pis">PIS</label>
                                             <input class="form-control" type="text" name="pis" id="pis"
-                                                value="0" required placeholder="Pis...">
+                                                value="00" required placeholder="Pis...">
                                         </div>
                                         <div class="col">
                                             <label for="ipi">IPI</label>
                                             <input type="text" class="form-control" name="ipi" id="ipi"
-                                                value="0" required placeholder="Ipi...">
+                                                value="00" required placeholder="Ipi...">
                                         </div>
                                     </div>
                                 </div>
