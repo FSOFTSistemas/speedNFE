@@ -23,6 +23,12 @@ class PedidosService{
         ->get();
     }
 
+    public function delete($id)
+    {
+        $pedido = Pedido::find($id);
+        return $pedido->delete();
+    }
+
     public function ncmAll()
     {
         return Ncm::all();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\EstadoEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Livewire\Notifications;
 use App\Models\Empresa;
 use App\Models\FaturaPedido;
 use App\Models\ItemPedido;
@@ -21,14 +22,15 @@ use NFePHP\DA\NFe\Danfe;
 
 class PedidosController extends Controller
 {
-
+    protected Notifications $popUp;
     private PedidosService $pedidoServices;
     private EmpresasService $empresaServices;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, Notifications $popUp)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
+        $this->popUp = $popUp;
     }
 
     public function imprimirCorrecao($id)
@@ -359,22 +361,33 @@ class PedidosController extends Controller
                         'unitario' => $item['unitario'],
                     ]);
                 }
-
-                foreach ($request->formasVenda as $forma) {
-                    FaturaPedido::create([
-                        'valor' => $forma['total'],
-                        'vencimento' => today(),
-                        'venda_id' => $pedido->id,
-                        'forma_pag_id' => $forma['forma_id'],
-                        'empresa_id' => $request->empresa,
-                    ]);
-                }
-
+                FaturaPedido::create([
+                    'valor' => $subtotal,
+                    'vencimento' => today(),
+                    'venda_id' => $pedido->id,
+                    'forma_pag_id' => 1,
+                    'empresa_id' => $request->empresa,
+                ]);
+                $this->popUp->addNotification('Nota criada com sucesso', 'success');
                 return redirect('/vendas')->with('success', "Nota criada com sucesso");
             } else {
+                $this->popUp->addNotification('Limite de notas atingido', 'error');
                 return redirect('/vendas')->with('error', 'Limite de notas Atingido');
             }
         } catch (Exception $e) {
+            $this->popUp->addNotification('Ocorreu um problema inesperado!', 'error');
+            return back();
+        }
+    }
+
+    public function destroyPedido(Request $request)
+    {
+        try {
+            $this->pedidoServices->delete($request->pedido_id);
+            $this->popUp->addNotification('Nota excluida com sucesso!', 'success');
+            return redirect()->route('vendas.index');
+        } catch (Exception $e) {
+            $this->popUp->addNotification('Ocorreu um erro inesperado', 'error');
             return back();
         }
     }

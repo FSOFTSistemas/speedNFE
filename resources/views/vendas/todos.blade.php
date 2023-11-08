@@ -8,6 +8,9 @@
             <h3 class="m-0 text-black" width="100%">Resumo de Notas</h3>
         </div>
     </div>
+
+    @livewire('notifications')
+
 @stop
 
 @section('content')
@@ -48,8 +51,38 @@
 
                                 {{-- EXCLUIR --}}
                                 <div class="col">
-                                    <a href="" title="Excluir" class="text-danger"><i class="fa fa-trash"></i></a>
+                                    <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger"><i class="fa fa-trash" data-toggle="modal"
+                                        data-target="#excluir"></i></a>
                                 </div>
+
+                                <div class="modal fade" id="excluir" tabindex="-1" role="dialog"
+                                aria-labelledby="excluirLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <form action="{{ route('pedido.deletar') }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <div class="modal-header">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h5 id="exampleModalLabel">Deletar Pedido</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h5 class="text-danger">Tem certeza que deseja deletar o pedido? Isso irá excluir todas as informações sobre o mesmo!</h5>
+                                                <input type="hidden" value="" name="pedido_id"
+                                                    id="pedido_id">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Fechar</button>
+                                                <button type="submit" class="btn btn-warning">Deletar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
                                 <div class="col">
                                     <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
@@ -117,7 +150,8 @@
                                                 <div class="modal-header">
                                                     <div class="row">
                                                         <div class="col">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Justificativa de
+                                                            <h5 class="modal-title" id="exampleModalLabel">Justificativa
+                                                                de
                                                                 Cancelamento</h5>
                                                         </div>
                                                     </div>
@@ -168,5 +202,10 @@
                 },
             });
         });
+
+        function setaDadosExcluir($id)
+        {
+            document.getElementById('pedido_id').value = $id;
+        }
     </script>
 @stop
