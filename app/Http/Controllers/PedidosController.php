@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enum\EstadoEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Livewire\Notifications;
 use App\Models\Empresa;
 use App\Models\FaturaPedido;
 use App\Models\ItemPedido;
@@ -22,15 +21,13 @@ use NFePHP\DA\NFe\Danfe;
 
 class PedidosController extends Controller
 {
-    protected Notifications $popUp;
     private PedidosService $pedidoServices;
     private EmpresasService $empresaServices;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, Notifications $popUp)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
-        $this->popUp = $popUp;
     }
 
     public function imprimirCorrecao($id)
@@ -368,15 +365,12 @@ class PedidosController extends Controller
                     'forma_pag_id' => 1,
                     'empresa_id' => $request->empresa,
                 ]);
-                $this->popUp->addNotification('Nota criada com sucesso', 'success');
-                return redirect('/vendas')->with('success', "Nota criada com sucesso");
+                return redirect()->route('vendas.index')->with('success', "Nota criada com sucesso");
             } else {
-                $this->popUp->addNotification('Limite de notas atingido', 'error');
-                return redirect('/vendas')->with('error', 'Limite de notas Atingido');
+                return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (Exception $e) {
-            $this->popUp->addNotification('Ocorreu um problema inesperado!', 'error');
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!');
         }
     }
 
@@ -384,11 +378,9 @@ class PedidosController extends Controller
     {
         try {
             $this->pedidoServices->delete($request->pedido_id);
-            $this->popUp->addNotification('Nota excluida com sucesso!', 'success');
-            return redirect()->route('vendas.index');
+            return redirect()->route('vendas.index')->with('success', 'Nota deletada com sucesso!');
         } catch (Exception $e) {
-            $this->popUp->addNotification('Ocorreu um erro inesperado', 'error');
-            return back();
+            return back()->with('error', 'Não foi possível deletar a nota, tente novamente');
         }
     }
 

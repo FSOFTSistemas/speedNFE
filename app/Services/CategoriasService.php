@@ -42,6 +42,15 @@ class CategoriasService
             ->get();
     }
 
+    public function todasCategoriasEmpresa($empresa)
+    {
+        return DB::table('categorias')
+            ->select('categorias.*', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', '=', 'categorias.empresa_id')
+            ->where('categorias.empresa_id', $empresa)
+            ->get();
+    }
+
     public function todasCategorias()
     {
         return Categoria::select('categorias.*', 'empresas.fantasia')

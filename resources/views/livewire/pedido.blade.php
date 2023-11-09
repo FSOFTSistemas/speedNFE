@@ -15,11 +15,10 @@
                 @endforeach
             </select>
 
-
             <div class="row">
                 <div class="col-8">
                     <label>Cliente</label>
-                    <select class="form-control" name="cliente">
+                    <select class="form-control" name="cliente" id="cliente">
                         <option value="" disabled selected>--Escolha um cliente--</option>
                         @if ($empresaL != 1)
                             @foreach (json_decode($clientes) as $cliente)
@@ -92,8 +91,8 @@
 
                                 <div class="col-1">
                                     <label>Qtd</label>
-                                    <input class="form-control" type="number"
-                                        wire:change="atualizarTot()" wire:model="quantidade">
+                                    <input class="form-control" type="number" wire:change="atualizarTot()"
+                                        wire:model="quantidade">
                                 </div>
 
                                 <div class="col-1">
@@ -124,63 +123,63 @@
 
                 </div>
             </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="overflow-auto" style="max-height: 30%">
-                            <table class="table table-striped">
-                                <thead>
-                                    <th>Id</th>
-                                    <th>Produto</th>
-                                    <th>Quantidade</th>
-                                    <th>Unitário</th>
-                                    <th>Desconto</th>
-                                    <th>Total</th>
-                                    <th>Ações</th>
-                                </thead>
-                                <tbody>
-                                    @foreach ($vendaItens as $item)
-                                        <tr>
-                                            @foreach ($item as $i)
-                                                <td>{{ $i }}</td>
-                                            @endforeach
-                                            <td><button
-                                                    wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
-                                                    class="btn btn-danger">rmv</button></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class="col-3">
-                                Soma produtos:
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="overflow-auto" style="max-height: 30%">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <th>Id</th>
+                                        <th>Produto</th>
+                                        <th>Quantidade</th>
+                                        <th>Unitário</th>
+                                        <th>Desconto</th>
+                                        <th>Total</th>
+                                        <th>Ações</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($vendaItens as $item)
+                                            <tr>
+                                                @foreach ($item as $i)
+                                                    <td>{{ $i }}</td>
+                                                @endforeach
+                                                <td><button
+                                                        wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
+                                                        class="btn btn-danger">rmv</button></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="col-9">
-                                <b><input disabled wire:model="subtotal" type="number" class="form-control"></b>
+                            <div class="row">
+                                <div class="col-3">
+                                    Soma produtos:
+                                </div>
+                                <div class="col-9">
+                                    <b><input disabled wire:model="subtotal" type="number" class="form-control"></b>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    @foreach ($vendaItens as $index => $vendaItem)
+                        <input type="hidden" name="vendaItens[{{ $index }}][produto_id]"
+                            wire:model="vendaItens.{{ $index }}.produto_id">
+                        <input type="hidden" name="vendaItens[{{ $index }}][quantidade]"
+                            wire:model="vendaItens.{{ $index }}.quantidade" />
+                        <input type="hidden" name="vendaItens[{{ $index }}][unitario]"
+                            wire:model="vendaItens.{{ $index }}.unitario" />
+                        <input type="hidden" name="vendaItens[{{ $index }}][desconto]"
+                            wire:model="vendaItens.{{ $index }}.desconto" />
+                        <input type="hidden" name="vendaItens[{{ $index }}][total]"
+                            wire:model="vendaItens.{{ $index }}.total" />
+                    @endforeach
+
                 </div>
-
-                @foreach ($vendaItens as $index => $vendaItem)
-                    <input type="hidden" name="vendaItens[{{ $index }}][produto_id]"
-                        wire:model="vendaItens.{{ $index }}.produto_id">
-                    <input type="hidden" name="vendaItens[{{ $index }}][quantidade]"
-                        wire:model="vendaItens.{{ $index }}.quantidade" />
-                    <input type="hidden" name="vendaItens[{{ $index }}][unitario]"
-                        wire:model="vendaItens.{{ $index }}.unitario" />
-                    <input type="hidden" name="vendaItens[{{ $index }}][desconto]"
-                        wire:model="vendaItens.{{ $index }}.desconto" />
-                    <input type="hidden" name="vendaItens[{{ $index }}][total]"
-                        wire:model="vendaItens.{{ $index }}.total" />
-                @endforeach
-
             </div>
+            <hr color="black">
         </div>
-        <hr color="black">
-    </div>
 
         {{-- <div class="row">
             <div class="col-9">

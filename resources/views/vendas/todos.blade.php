@@ -9,8 +9,6 @@
         </div>
     </div>
 
-    @livewire('notifications')
-
 @stop
 
 @section('content')
