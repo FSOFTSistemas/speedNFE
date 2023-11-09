@@ -1,7 +1,7 @@
 <div>
     <form method="POST">
         @csrf
-        <div class="container" style="background-color: rgb(220, 220, 220);">
+        <div class="container">
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Cabeçalho</h5>
@@ -60,7 +60,7 @@
             <hr color="black">
         </div>
 
-        <div class="container" style="background-color: rgb(220, 220, 220)">
+        <div class="container">
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Itens</h5>
@@ -246,7 +246,20 @@
             </div>
         </div>
 
+        <!-- Certifique-se de que o jQuery e o Livewire são carregados antes do Select2 -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/livewire@2.0.3/dist/livewire.js"></script>
+
+        <!-- Em seguida, carregue o Select2 -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
+
         <script>
+            document.addEventListener('livewire:after', function() {
+                // Inicialize o Select2 aqui
+                $('#cliente').select2();
+            });
             $(document).ready(function() {
                 $(window).keydown(function(event) {
                     if (event.keyCode == 13) {

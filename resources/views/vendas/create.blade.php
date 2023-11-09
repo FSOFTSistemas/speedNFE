@@ -8,6 +8,7 @@
 
 @section('content')
 
+<br>
     @livewire('pedido')
 
 @endsection
