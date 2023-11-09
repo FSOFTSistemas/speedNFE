@@ -106,7 +106,7 @@ class Pedido extends Component
 
     public function salvarProd()
     {
-        $prod = Produto::findOrFail($this->produto);
+        $prod = Produto::find($this->produto);
         $total = $this->quantidade * $this->preco;
         $desconto = $total * $this->desconto / 100;
 
@@ -118,6 +118,16 @@ class Pedido extends Component
             $subtotal = $subtotal + $item['total'];
         }
         $this->subtotal = $subtotal;
+        $this->limparProdutos();
+    }
+
+    public function limparProdutos()
+    {
+        $this->produto = '';
+        $this->desconto = 0;
+        $this->total = 0;
+        $this->preco = 0;
+        $this->quantidade = 1;
     }
 
     public function salvarForma()

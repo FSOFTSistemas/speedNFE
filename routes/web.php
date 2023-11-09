@@ -114,6 +114,7 @@ Route::get('/venda/imprimir/{id}', [PedidosController::class, 'imprimir'])->name
 Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'imprimirCancelamento'])->name('imprimirCancelamentoXML')->middleware('auth');
 Route::post('/venda/cce', [PedidosController::class, 'cartaCorrecao'])->name('cartaCorrecao')->middleware('auth');
 Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->middleware('auth');
+Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware('auth');
 
 //NOTAS FISCAIS
 Route::get('/notas', [NotasFiscaisController::class, 'show'])->middleware('auth');

@@ -21,7 +21,6 @@ use NFePHP\DA\NFe\Danfe;
 
 class PedidosController extends Controller
 {
-
     private PedidosService $pedidoServices;
     private EmpresasService $empresaServices;
 
@@ -359,23 +358,29 @@ class PedidosController extends Controller
                         'unitario' => $item['unitario'],
                     ]);
                 }
-
-                foreach ($request->formasVenda as $forma) {
-                    FaturaPedido::create([
-                        'valor' => $forma['total'],
-                        'vencimento' => today(),
-                        'venda_id' => $pedido->id,
-                        'forma_pag_id' => $forma['forma_id'],
-                        'empresa_id' => $request->empresa,
-                    ]);
-                }
-
-                return redirect('/vendas')->with('success', "Nota criada com sucesso");
+                FaturaPedido::create([
+                    'valor' => $subtotal,
+                    'vencimento' => today(),
+                    'venda_id' => $pedido->id,
+                    'forma_pag_id' => 1,
+                    'empresa_id' => $request->empresa,
+                ]);
+                return redirect()->route('vendas.index')->with('success', "Nota criada com sucesso");
             } else {
-                return redirect('/vendas')->with('error', 'Limite de notas Atingido');
+                return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!');
+        }
+    }
+
+    public function destroyPedido(Request $request)
+    {
+        try {
+            $this->pedidoServices->delete($request->pedido_id);
+            return redirect()->route('vendas.index')->with('success', 'Nota deletada com sucesso!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Não foi possível deletar a nota, tente novamente');
         }
     }
 

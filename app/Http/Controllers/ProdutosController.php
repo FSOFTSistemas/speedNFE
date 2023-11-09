@@ -70,7 +70,7 @@ class ProdutosController extends Controller
             );
             return redirect()->route('editar_produto', [$produto->id])->with('success', 'Produto editado com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', 'Não foi possível editar o produto');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
@@ -91,7 +91,7 @@ class ProdutosController extends Controller
             $this->produtoServices->destroy($request->idProduto);
             return redirect()->route('produto.index')->with('success', 'Produto excluído com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', 'Não foi possível excluir o produto');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
@@ -143,7 +143,7 @@ class ProdutosController extends Controller
             }
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', 'Não foi possível cadastrar o produto!');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
