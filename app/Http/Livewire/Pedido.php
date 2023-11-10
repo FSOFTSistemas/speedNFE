@@ -236,11 +236,6 @@ class Pedido extends Component
         }
     }
 
-    public function cancelar()
-    {
-        redirect('/vendas');
-    }
-
     public function render()
     {
         return view('livewire.pedido');

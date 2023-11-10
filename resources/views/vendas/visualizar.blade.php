@@ -4,6 +4,6 @@
 
 @section('content')
 
-    @livewire('edit-pedido', ["pedido" => $pedido])
+    <h2>Hello Bá</h2>
 
 @endsection

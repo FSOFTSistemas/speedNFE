@@ -261,62 +261,76 @@ class PedidosController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        try {
+            $pedido = $this->pedidoServices->buscarPedido($id);
+            return view('vendas.edit', ['pedido' => $pedido]);
+        } catch (Exception $e) {
+            return back();
+        }
+    }
+
     public function update(Request $request, $pedido)
     {
-        $venda = Pedido::find($pedido);
+        try {
+            $venda = Pedido::find($pedido);
 
-        if ($venda->chave == '') {
-            // return $request;
-            DB::table('item_pedidos')->where('pedido_id', '=', $venda->id)->delete();
+            if ($venda->chave == '') {
+                // return $request;
+                DB::table('item_pedidos')->where('pedido_id', '=', $venda->id)->delete();
 
-            $subtotal = 0;
-            $desconto = 0;
-
-            foreach ($request->vendaItens as $item) {
-                $prod = Produto::find($item['produto_id']);
-                $desconto = $desconto + $item['desconto'];
-                $subtotal = $subtotal + ($item['total']);
-            }
-
-            foreach ($request->vendaItens as $item) {
-                $prod = Produto::find($item['produto_id']);
-
+                $subtotal = 0;
                 $desconto = 0;
 
-                ItemPedido::create([
-                    'pedido_id' => $venda->id,
-                    'produto_id' => $prod->id,
-                    'qtde' => $item['quantidade'],
+                foreach ($request->vendaItens as $item) {
+                    $prod = Produto::find($item['produto_id']);
+                    $desconto = $desconto + $item['desconto'];
+                    $subtotal = $subtotal + ($item['total']);
+                }
+
+                foreach ($request->vendaItens as $item) {
+                    $prod = Produto::find($item['produto_id']);
+
+                    $desconto = 0;
+
+                    ItemPedido::create([
+                        'pedido_id' => $venda->id,
+                        'produto_id' => $prod->id,
+                        'qtde' => $item['quantidade'],
+                        'empresa_id' => $venda->empresa_id,
+                        'desconto' => $item['desconto'],
+                        'acrescimo' => 0,
+                        'unitario' => $item['unitario'],
+                    ]);
+                }
+
+                FaturaPedido::create([
+                    'valor' => $venda->total,
+                    'vencimento' => today(),
+                    'venda_id' => $venda->id,
+                    'forma_pag_id' => $request->forma,
                     'empresa_id' => $venda->empresa_id,
-                    'desconto' => $item['desconto'],
-                    'acrescimo' => 0,
-                    'unitario' => $item['unitario'],
                 ]);
+
+                $venda->update([
+                    'cliente_id' => $request->cliente,
+                    'data' => today(),
+                    'status' => 0,
+                    'subtotal' => $subtotal,
+                    'desconto' => $desconto,
+                    'total' => $subtotal,
+                    'forma_pag_id' => $request->forma,
+                    'cfop' => $request->cfop,
+                ]);
+
+                return redirect('vendas')->with('success', 'Nota editada com sucesso.');
+
+            } else {
+                return redirect('vendas')->with('alert', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
             }
-
-            FaturaPedido::create([
-                'valor' => $venda->total,
-                'vencimento' => today(),
-                'venda_id' => $venda->id,
-                'forma_pag_id' => $request->forma,
-                'empresa_id' => $venda->empresa_id,
-            ]);
-
-            $venda->update([
-                'cliente_id' => $request->cliente,
-                'data' => today(),
-                'status' => 0,
-                'subtotal' => $subtotal,
-                'desconto' => $desconto,
-                'total' => $subtotal,
-                'forma_pag_id' => $request->forma,
-                'cfop' => $request->cfop,
-            ]);
-
-            return redirect('vendas')->with('success', 'Nota editada com sucesso.');
-
-        } else {
-            return redirect('vendas')->with('alert', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 
@@ -327,7 +341,7 @@ class PedidosController extends Controller
                 'empresa' => 'required|numeric',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
-                'vendaItens' => 'required'
+                'vendaItens' => 'required',
             ]);
             $subtotal = 0;
             $desconto = 0;
@@ -367,7 +381,7 @@ class PedidosController extends Controller
                 return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: '. $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 

@@ -120,8 +120,7 @@
                             </div>
                             <div class="row" style="text-align: center; margin-top: 2%;">
                                 <div class="col">
-                                    <label>&nbsp;</label>
-                                    <button wire:click.prevent="salvarProd()" class="btn btn-primary" style="width: 25%;">Adicionar</button>
+                                    <button wire:click.prevent="salvarProd()" class="btn btn-primary" style="width: 25%;">+ Adicionar</button>
                                 </div>
                             </div>
                         </div>
