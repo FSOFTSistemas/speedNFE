@@ -18,7 +18,7 @@ class NFeService
 
     public function __construct($config, $emitente)
     {
-		$certificado = file_get_contents(public_path('storage/'. $emitente->razao .'.pfx'));
+        $certificado = file_get_contents(public_path('storage/' . $emitente->razao . '.pfx'));
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
         // $this->tools->model(55);
     }
@@ -176,7 +176,7 @@ class NFeService
         $telefone = str_replace(" ", "", $telefone);
         $stdEnderDest->fone = $telefone;
         // $stdEnderDest->cMun = $venda->endereco_cliente->codigoIBGE;
-		$stdEnderDest->cMun = "2615102";
+        $stdEnderDest->cMun = "2615102";
         $stdEnderDest->xMun = $this->retiraAcentos($venda->endereco_cliente->cidade);
         $stdEnderDest->UF = $venda->endereco_cliente->uf;
 
@@ -218,7 +218,6 @@ class NFeService
             $stdProd->indTot = 1;
             $prod = $nfe->tagprod($stdProd);
 
-
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
             $imposto = $nfe->tagimposto($stdImposto);
@@ -249,7 +248,7 @@ class NFeService
             $stdCOFINS = new \stdClass();
             $stdCOFINS->item = $key + 1;
             $stdCOFINS->CST = $i->produto->cst_cofins;
-			// $stdCOFINS->CST = '60';
+            // $stdCOFINS->CST = '60';
             $stdCOFINS->vBC = $this->format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
             $stdCOFINS->pCOFINS = $this->format($i->produto->cofins);
             $stdCOFINS->vCOFINS = $this->format(($stdProd->vProd) *
@@ -261,7 +260,7 @@ class NFeService
             $std->item = $key + 1;
             $std->cEnq = '999';
             $std->CST = $i->produto->ipi;
-			// $std->CST = '60';
+            // $std->CST = '60';
             $std->vBC = $this->format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
             $std->pIPI = $this->format($i->produto->ipi);
             $std->vIPI = $stdProd->vProd * $this->format(($i->produto->ipi / 100));
@@ -458,22 +457,15 @@ class NFeService
             $recibo = $std->infRec->nRec;
             $protocolo = $this->tools->sefazConsultaRecibo($recibo);
             sleep(3);
-            try {
-                $xml = Complements::toAuthorize($signXml, $protocolo);
-                if (!File::exists(public_path($caminho . '/'))) {
-                    File::makeDirectory(public_path($caminho . '/'), 755, true, true);
-                }
-                file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
-                return [
-                    'sucesso' => $recibo,
-                ];
-                // $this->printDanfe($xml);
-            } catch (\Exception $e) {
-                return [
-                    'erro' => $e->getMessage(),
-                ];
+            $xml = Complements::toAuthorize($signXml, $protocolo);
+            if (!File::exists(public_path($caminho . '/'))) {
+                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
             }
-
+            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+            return [
+                'sucesso' => $recibo,
+            ];
+            // $this->printDanfe($xml);
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),

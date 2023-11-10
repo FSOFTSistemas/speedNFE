@@ -96,7 +96,7 @@
 
                                 <div class="col-md-1 col-xs-3">
                                     <label>Qtd.</label>
-                                    <input class="form-control" type="number" wire:change="atualizarTot()"
+                                    <input class="form-control" type="number" min="1" wire:change="atualizarTot()"
                                         wire:model="quantidade">
                                 </div>
 

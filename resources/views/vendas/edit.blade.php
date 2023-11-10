@@ -13,7 +13,7 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <a class="btn btn-secondary" href="{{ route('vendas.index') }}">Cancelar</a>
+            <a class="btn btn-secondary" href="{{ route('vendas.index') }}">Voltar</a>
         </div>
     </div>
 
