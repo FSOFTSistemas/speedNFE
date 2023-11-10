@@ -243,8 +243,11 @@
                                         </div>
                                         <div class="col">
                                             <label>Ambiente</label>
-                                            <input required placeholder="Ambiente..." class=form-control type="number" name="ambiente" id="ambiente"
-                                                value="{{ $empresa->ambiente }}" />
+                                            <select required class="form-control" name="ambiente" id="ambiente">
+                                                <option value="{{ $empresa->ambiente }}">{{ $empresa->ambiente == 1 ? 'Produção' : 'Homologação' }}</option>
+                                                <option value="1">Produção</option>
+                                                <option value="2">Homologação</option>
+                                            </select>
                                         </div>
                                     </div>
 
