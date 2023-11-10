@@ -16,13 +16,13 @@
 
     <table class="table table-hover" id="notas">
         <thead class="table-primary" style="text-align: center">
-            <th>Nº</th>
-            <th>CLIENTE</th>
-            <th>VALOR</th>
-            <th>CHAVE</th>
-            <th>ESTADO</th>
-            <th>EMPRESA</th>
-            <th>AÇÕES</th>
+            <th width="10%">Nº</th>
+            <th width="20%">CLIENTE</th>
+            <th width="10%">VALOR</th>
+            <th width="10%">DATA</th>
+            <th width="10%">ESTADO</th>
+            <th width="20%">EMPRESA</th>
+            <th width="20%">AÇÕES</th>
         </thead>
         <tbody style="text-align: center">
             @foreach ($pedidos as $pedido)
@@ -30,25 +30,24 @@
                     <td>{{ $pedido->numero_nfe }}</td>
                     <td>{{ $pedido->nome }}</td>
                     <td>R${{ number_format($pedido->total, 2, ',', '.') }}</td>
-                    <td><a target='_blank' href="{{ route('imprimirXML', ['id' => $pedido->id]) }}">{{ $pedido->chave }}</a>
-                    </td>
+                    <td>{{ date('d/m/Y', strtotime($pedido->data)) }}</td>
                     <td>{{ $pedido->estado }}</td>
                     <td>{{ $pedido->fantasia }}</td>
                     <td>
                         <div class="row">
                             @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
-                                <div class="col">
+                                <div class="col-md-3 col-xs-2">
                                     <a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i
                                             class="fa fa-eye"></i></a>
                                 </div>
 
                                 {{-- EDITAR --}}
-                                <div class="col">
-                                    <a href="" title="Editar" class="text-info"><i class="fa fa-edit"></i></a>
+                                <div class="col-md-3 col-xs-2">
+                                    <a href="{{ route('vendas.editar', [$pedido->id]) }}" title="Editar" class="text-info"><i class="fa fa-edit"></i></a>
                                 </div>
 
                                 {{-- EXCLUIR --}}
-                                <div class="col">
+                                <div class="col-md-3 col-xs-2">
                                     <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger"><i class="fa fa-trash" data-toggle="modal"
                                         data-target="#excluir"></i></a>
                                 </div>
@@ -82,13 +81,13 @@
                                 </div>
                             </div>
 
-                                <div class="col">
+                                <div class="col-md-3 col-xs-2">
                                     <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
                                         class="text-success"><i class="fas fa-upload"></i></a>
                                 </div>
                             @elseif($pedido->estado == 'Autorizado')
                                 @if ($pedido->sequencia_evento == 0)
-                                    <div class="col">
+                                    <div class="col-md-3 col-xs-2">
                                         <a title="Carta de Correção" href="#">
                                             <i class="fa fa-envelope text-warning" data-toggle="modal"
                                                 data-target="#cceModal"></i>
@@ -125,13 +124,13 @@
                                         </div>
                                     </div>
                                 @else
-                                    <div class="col">
+                                    <div class="col-md-3 col-xs-2">
                                         <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}"
                                             class="text-dark"><i class="fa fa-print"></i></a>
                                     </div>
                                 @endif
 
-                                <div class="col">
+                                <div class="col-md-3 col-xs-2">
                                     <a title="Cancelar" href="#">
                                         <i data-toggle="modal" data-target="#exampleModal"
                                             class="fa fa-ban text-danger"></i>
@@ -171,7 +170,7 @@
                                     </div>
                                 </div>
                             @else
-                                <div class="col">
+                                <div class="col-md-3 col-xs-2">
                                     <a target='_blank' title="Imprimir Cancelamento"
                                         href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}"
                                         class="text-dark"><i class="fa fa-print"></i></a>

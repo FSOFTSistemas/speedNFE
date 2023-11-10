@@ -106,6 +106,7 @@ Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar
 Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware('auth');
 Route::post('/vendas', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware('auth');
 Route::get('/visualizar/{pedido}', [PedidosController::class, 'visualizar'])->name('visu')->middleware('auth');
+Route::get('/editar/{pedido}', [PedidosController::class, 'edit'])->name('vendas.editar')->middleware('auth');
 Route::post('/visualizar/{pedido}', [PedidosController::class, 'update'])->middleware('auth');
 Route::get('/vendas/nova', [PedidosController::class, 'new'])->middleware('auth');
 Route::post('/vendas/nova', [PedidosController::class, 'store'])->name('salvar_venda')->middleware('auth');

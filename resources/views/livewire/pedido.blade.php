@@ -1,24 +1,28 @@
 <div>
     <form method="POST">
         @csrf
-        <div class="container" style="background-color: rgb(220, 220, 220);">
+        <div class="container">
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Cabeçalho</h5>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12 col-xs-12">
             <label>Empresa</label>
-            <select wire:change="atualizarArrays()" class="form-control" name="empresa" wire:model="empresa">
+            <select wire:change="atualizarArrays()" class="form-control" name="empresa" wire:model="empresa" required>
                 <option value="" disabled selected>--Escolha uma empresa--</option>
                 @foreach (json_decode($empresas) as $emp)
                     <option value="{{ $emp->id }}">{{ $emp->fantasia }} | {{ $emp->cpf_cnpj }}</option>
                 @endforeach
             </select>
+        </div>
+    </div>
 
             <div class="row">
-                <div class="col-8">
+                <div class="col-md-8 col-xs-12">
                     <label>Cliente</label>
-                    <select class="form-control" name="cliente" id="cliente">
+                    <select class="form-control" name="cliente" id="cliente" required>
                         <option value="" disabled selected>--Escolha um cliente--</option>
                         @if ($empresaL != 1)
                             @foreach (json_decode($clientes) as $cliente)
@@ -33,11 +37,11 @@
                         @endif
                     </select>
                 </div>
-                <div class="col-1">
+                <div class="col-md-1 col-xs-6">
                     <label>CFOP</label>
                     <input wire:change="buscaCfop()" class="form-control" wire:model="bcfop">
                 </div>
-                <div class="col-3">
+                <div class="col-md-3 col-xs-6">
                     <label>Descrição CFOP</label>
                     <select wire:change="atualizarBCfop()" required class="form-control" name="cfop"
                         wire:model="cfop">
@@ -56,22 +60,23 @@
                     </select>
                 </div>
             </div>
-
+            <br>
             <hr color="black">
         </div>
 
-        <div class="container" style="background-color: rgb(220, 220, 220)">
+        <div class="container">
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Itens</h5>
                 </div>
             </div>
+            <br>
             <div class="row">
-                <div class="col-12">
+                <div class="col">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-7">
+                                <div class="col-md-8 col-xs-12">
                                     {{-- <label>Produto</label>
                                 <input type="text" wire:model="produto" class="form-control"> --}}
                                     <label>Produto</label>
@@ -89,32 +94,33 @@
                                     </select>
                                 </div>
 
-                                <div class="col-1">
-                                    <label>Qtd</label>
+                                <div class="col-md-1 col-xs-3">
+                                    <label>Qtd.</label>
                                     <input class="form-control" type="number" wire:change="atualizarTot()"
                                         wire:model="quantidade">
                                 </div>
 
-                                <div class="col-1">
+                                <div class="col-md-1 col-xs-3">
                                     <label>Valor</label>
                                     <input class="form-control" type="number" step="0.01"
                                         wire:change="atualizarTot()" wire:model="preco">
                                 </div>
 
-                                <div class="col-1">
+                                <div class="col-md-1 col-xs-3">
                                     <label>Dsct. (%)</label>
                                     <input class="form-control" type="number" step="0.1"
                                         wire:change="atualizarTot()" wire:model="desconto">
                                 </div>
 
-                                <div class="col-1">
+                                <div class="col-md-1 col-xs-3">
                                     <label>Total</label>
                                     <input class="form-control" type="number" step="0.01" wire:model="total">
                                 </div>
 
-                                <div class="col-1">
-                                    <label>&nbsp;</label>
-                                    <a wire:click.prevent="salvarProd()" class="btn btn-success">Adicionar</a>
+                            </div>
+                            <div class="row" style="text-align: center; margin-top: 2%;">
+                                <div class="col">
+                                    <button wire:click.prevent="salvarProd()" class="btn btn-primary" style="width: 25%;">+ Adicionar</button>
                                 </div>
                             </div>
                         </div>
@@ -124,39 +130,41 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12">
+                <div class="col">
                     <div class="card">
                         <div class="card-body">
                             <div class="overflow-auto" style="max-height: 30%">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <th>Id</th>
-                                        <th>Produto</th>
-                                        <th>Quantidade</th>
-                                        <th>Unitário</th>
-                                        <th>Desconto</th>
-                                        <th>Total</th>
-                                        <th>Ações</th>
+                                <table class="table table-hover">
+                                    <thead class="table-primary" style="text-align: center">
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Produto</th>
+                                            <th>Quantidade</th>
+                                            <th>Unitário</th>
+                                            <th>Desconto</th>
+                                            <th>Total</th>
+                                            <th>Ações</th>
+                                        </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody style="text-align: center">
                                         @foreach ($vendaItens as $item)
                                             <tr>
                                                 @foreach ($item as $i)
                                                     <td>{{ $i }}</td>
                                                 @endforeach
-                                                <td><button
-                                                        wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
-                                                        class="btn btn-danger">rmv</button></td>
+                                                <td><a wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
+                                                        title="Remover Item" class="text-danger"><i
+                                                            class="fa fa-trash"></i></a></td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-md-5 col-xs-6" style="text-align: center">
                                     Soma produtos:
                                 </div>
-                                <div class="col-9">
+                                <div class="col-md-7 col-xs-6">
                                     <b><input disabled wire:model="subtotal" type="number" class="form-control"></b>
                                 </div>
                             </div>
@@ -178,7 +186,6 @@
 
                 </div>
             </div>
-            <hr color="black">
         </div>
 
         {{-- <div class="row">
@@ -236,13 +243,9 @@
 
         {{-- <hr color="black"> --}}
 
-        <div class="row" style="margin-bottom: 2%">
-            <div class="col-6" style="text-align: end">
-                <a wire:click.prevent="cancelar()" class="btn btn-danger">Cancelar</a>
-            </div>
-
-            <div class="col-6">
-                <button type="submit" class="btn btn-success">Salvar</a>
+        <div class="row" style="margin-bottom: 2%; text-align: center;">
+            <div class="col">
+                <button type="submit" style="width: 25%;" class="btn btn-success">Salvar</a>
             </div>
         </div>
 
