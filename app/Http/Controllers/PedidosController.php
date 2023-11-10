@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\EstadoEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Models\FaturaPedido;
@@ -10,6 +9,8 @@ use App\Models\ItemPedido;
 use App\Models\Pedido;
 use App\Models\Produto;
 use App\Services\EmpresasService;
+use App\Services\FaturaService;
+use App\Services\ItemService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
 use Exception;
@@ -23,11 +24,15 @@ class PedidosController extends Controller
 {
     private PedidosService $pedidoServices;
     private EmpresasService $empresaServices;
+    private FaturaService $faturaServices;
+    private ItemService $itemServices;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
+        $this->itemServices = $itemServices;
+        $this->faturaServices = $faturaServices;
     }
 
     public function imprimirCorrecao($id)
@@ -318,59 +323,51 @@ class PedidosController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->validate([
+                'empresa' => 'required|numeric',
+                'cliente' => 'required|numeric',
+                'cfop' => 'required|numeric',
+                'vendaItens' => 'required'
+            ]);
             $subtotal = 0;
             $desconto = 0;
-            if (DB::table('pedidos')
-                ->where('empresa_id', '=', $request->empresa)
-                ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE)')
-                ->whereRaw('YEAR(created_at) = YEAR(CURRENT_DATE)')
-                ->count() < Empresa::find($request->empresa)->limNotas or $request->empresa == 1) {
+            //Se ainda não atingiu o limite de Notas ou é janaina que está fazendo, permito a criação de uma nova nota, caso contrário faço o bloqueio da ação
+            if ($this->pedidoServices->limiteDeNotas($request->empresa) < $this->empresaServices->buscarEmpresa($request->empresa)->limNotas || $request->empresa == 1) {
                 foreach ($request->vendaItens as $item) {
                     $prod = Produto::find($item['produto_id']);
                     $desconto = $desconto + $item['desconto'];
                     $subtotal = $subtotal + ($item['total']);
                 }
-                $pedido = Pedido::create([
-                    'user_id' => Auth::id(),
-                    'cliente_id' => $request->cliente,
-                    'data' => today(),
-                    'status' => 2,
-                    'subtotal' => $subtotal,
-                    'desconto' => $desconto,
-                    'total' => $subtotal,
-                    'empresa_id' => $request->empresa,
-                    'numero_nfe' => 0,
-                    'sequencia_evento' => 0,
-                    'chave' => '',
-                    'estado' => EstadoEnum::PENDENTE,
-                    'cfop' => $request->cfop,
-                ]);
+                $pedido = $this->pedidoServices->create(
+                    Auth::id(),
+                    $request->cliente,
+                    $subtotal,
+                    $desconto,
+                    $request->empresa,
+                    $request->cfop
+                );
                 foreach ($request->vendaItens as $item) {
                     $prod = Produto::find($item['produto_id']);
-                    $desconto = 0;
-                    ItemPedido::create([
-                        'pedido_id' => $pedido->id,
-                        'produto_id' => $prod->id,
-                        'qtde' => $item['quantidade'],
-                        'empresa_id' => $request->empresa,
-                        'desconto' => $item['desconto'],
-                        'acrescimo' => 0,
-                        'unitario' => $item['unitario'],
-                    ]);
+                    $this->itemServices->create(
+                        $pedido,
+                        $prod,
+                        $item['quantidade'],
+                        $request->empresa,
+                        $item['desconto'],
+                        $item['unitario']
+                    );
                 }
-                FaturaPedido::create([
-                    'valor' => $subtotal,
-                    'vencimento' => today(),
-                    'venda_id' => $pedido->id,
-                    'forma_pag_id' => 1,
-                    'empresa_id' => $request->empresa,
-                ]);
+                $this->faturaServices->create(
+                    $subtotal,
+                    $pedido,
+                    $request->empresa
+                );
                 return redirect()->route('vendas.index')->with('success', "Nota criada com sucesso");
             } else {
                 return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: '. $e);
         }
     }
 

@@ -19,7 +19,7 @@
             <th>Nº</th>
             <th>CLIENTE</th>
             <th>VALOR</th>
-            <th>CHAVE</th>
+            <th>DATA</th>
             <th>ESTADO</th>
             <th>EMPRESA</th>
             <th>AÇÕES</th>
@@ -30,8 +30,7 @@
                     <td>{{ $pedido->numero_nfe }}</td>
                     <td>{{ $pedido->nome }}</td>
                     <td>R${{ number_format($pedido->total, 2, ',', '.') }}</td>
-                    <td><a target='_blank' href="{{ route('imprimirXML', ['id' => $pedido->id]) }}">{{ $pedido->chave }}</a>
-                    </td>
+                    <td>{{ date('d/m/Y', strtotime($pedido->data)) }}</td>
                     <td>{{ $pedido->estado }}</td>
                     <td>{{ $pedido->fantasia }}</td>
                     <td>
