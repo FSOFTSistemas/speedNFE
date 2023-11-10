@@ -29,6 +29,20 @@ class PedidosService
         ]);
     }
 
+    public function update($id, $cliente, $subtotal, $desconto, $cfop)
+    {
+        $pedido = Pedido::find($id);
+        return $pedido->update([
+            'cliente_id' => $cliente,
+            'data' => today(),
+            'status' => 0,
+            'subtotal' => $subtotal,
+            'desconto' => $desconto,
+            'total' => $subtotal,
+            'cfop' => $cfop,
+        ]);
+    }
+
     public function formatedVenda($idEmpresa)
     {
         if ($idEmpresa == 1) {

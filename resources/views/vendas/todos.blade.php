@@ -37,7 +37,7 @@
                         <div class="row">
                             @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
                                 <div class="col-md-3 col-xs-2">
-                                    <a href="/visualizar/{{ $pedido->id }}" title="Visualizar" class="text-primary"><i
+                                    <a href="{{ route('vendas.show', [$pedido->id]) }}" title="Visualizar" class="text-primary"><i
                                             class="fa fa-eye"></i></a>
                                 </div>
 

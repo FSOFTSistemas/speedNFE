@@ -4,19 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
-use App\Models\FaturaPedido;
-use App\Models\ItemPedido;
 use App\Models\Pedido;
-use App\Models\Produto;
 use App\Services\EmpresasService;
 use App\Services\FaturaService;
 use App\Services\ItemService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
+use App\Services\ProdutosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use NFePHP\DA\NFe\Daevento;
 use NFePHP\DA\NFe\Danfe;
 
@@ -26,13 +23,15 @@ class PedidosController extends Controller
     private EmpresasService $empresaServices;
     private FaturaService $faturaServices;
     private ItemService $itemServices;
+    private ProdutosService $produtoServices;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
         $this->itemServices = $itemServices;
         $this->faturaServices = $faturaServices;
+        $this->produtoServices = $produtoServices;
     }
 
     public function imprimirCorrecao($id)
@@ -246,7 +245,7 @@ class PedidosController extends Controller
                         $venda->status = 3;
                         $venda->estado = 'Rejeitado';
                         $venda->save();
-                        return redirect('/vendas')->with('error', $resultado['erro']);
+                        return redirect('/vendas')->with('warning', 'Detectado instabilidade na SEFAZ! tente novamente em alguns minutos.');
                     }
                 } else {
                     return redirect('/vendas')->with('error', $result['erros_xml']);
@@ -256,7 +255,6 @@ class PedidosController extends Controller
             }
             return redirect('/vendas')->with('success', $venda);
         } catch (Exception $e) {
-            dd($e);
             return redirect('/vendas')->with('error', $e->getMessage());
         }
     }
@@ -271,63 +269,51 @@ class PedidosController extends Controller
         }
     }
 
-    public function update(Request $request, $pedido)
+    public function update(Request $request, $id)
     {
         try {
-            $venda = Pedido::find($pedido);
-
-            if ($venda->chave == '') {
-                // return $request;
-                DB::table('item_pedidos')->where('pedido_id', '=', $venda->id)->delete();
-
+            $request->validate([
+                'cliente' => 'required|numeric',
+                'cfop' => 'required|numeric',
+                'vendaItens' => 'required',
+            ]);
+            $venda = $this->pedidoServices->buscarPedido($id);
+            if (!$venda->chave) {
+                $this->itemServices->deleteItems($venda->id);
                 $subtotal = 0;
                 $desconto = 0;
-
                 foreach ($request->vendaItens as $item) {
-                    $prod = Produto::find($item['produto_id']);
+                    $prod = $this->produtoServices->um($item['produto_id']);
                     $desconto = $desconto + $item['desconto'];
                     $subtotal = $subtotal + ($item['total']);
                 }
-
                 foreach ($request->vendaItens as $item) {
-                    $prod = Produto::find($item['produto_id']);
-
+                    $prod = $this->produtoServices->um($item['produto_id']);
                     $desconto = 0;
-
-                    ItemPedido::create([
-                        'pedido_id' => $venda->id,
-                        'produto_id' => $prod->id,
-                        'qtde' => $item['quantidade'],
-                        'empresa_id' => $venda->empresa_id,
-                        'desconto' => $item['desconto'],
-                        'acrescimo' => 0,
-                        'unitario' => $item['unitario'],
-                    ]);
+                    $this->itemServices->create(
+                        $id,
+                        $prod,
+                        $item['quantidade'],
+                        $venda->empresa_id,
+                        $item['desconto'],
+                        $item['unitario']
+                    );
                 }
-
-                FaturaPedido::create([
-                    'valor' => $venda->total,
-                    'vencimento' => today(),
-                    'venda_id' => $venda->id,
-                    'forma_pag_id' => $request->forma,
-                    'empresa_id' => $venda->empresa_id,
-                ]);
-
-                $venda->update([
-                    'cliente_id' => $request->cliente,
-                    'data' => today(),
-                    'status' => 0,
-                    'subtotal' => $subtotal,
-                    'desconto' => $desconto,
-                    'total' => $subtotal,
-                    'forma_pag_id' => $request->forma,
-                    'cfop' => $request->cfop,
-                ]);
-
-                return redirect('vendas')->with('success', 'Nota editada com sucesso.');
-
+                $this->faturaServices->create(
+                    $subtotal,
+                    $id,
+                    $venda->empresa_id
+                );
+                $this->pedidoServices->update(
+                    $venda->id,
+                    $request->cliente,
+                    $subtotal,
+                    $desconto,
+                    $request->cfop
+                );
+                return redirect()->route('vendas.editar', [$venda->id])->with('success', 'Nota atualizada com sucesso.');
             } else {
-                return redirect('vendas')->with('alert', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
+                return redirect()->route('vendas.index')->with('warning', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
             }
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
@@ -348,7 +334,7 @@ class PedidosController extends Controller
             //Se ainda não atingiu o limite de Notas ou é janaina que está fazendo, permito a criação de uma nova nota, caso contrário faço o bloqueio da ação
             if ($this->pedidoServices->limiteDeNotas($request->empresa) < $this->empresaServices->buscarEmpresa($request->empresa)->limNotas || $request->empresa == 1) {
                 foreach ($request->vendaItens as $item) {
-                    $prod = Produto::find($item['produto_id']);
+                    $prod = $this->produtoServices->um($item['produto_id']);
                     $desconto = $desconto + $item['desconto'];
                     $subtotal = $subtotal + ($item['total']);
                 }
@@ -361,9 +347,9 @@ class PedidosController extends Controller
                     $request->cfop
                 );
                 foreach ($request->vendaItens as $item) {
-                    $prod = Produto::find($item['produto_id']);
+                    $prod = $this->produtoServices->um($item['produto_id']);
                     $this->itemServices->create(
-                        $pedido,
+                        $pedido->id,
                         $prod,
                         $item['quantidade'],
                         $request->empresa,
@@ -373,7 +359,7 @@ class PedidosController extends Controller
                 }
                 $this->faturaServices->create(
                     $subtotal,
-                    $pedido,
+                    $pedido->id,
                     $request->empresa
                 );
                 return redirect()->route('vendas.index')->with('success', "Nota criada com sucesso");
@@ -423,4 +409,5 @@ class PedidosController extends Controller
             return back();
         }
     }
+
 }
