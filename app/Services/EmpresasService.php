@@ -149,8 +149,11 @@ class EmpresasService
 
     public function storeCertificate($certificado, $nome, $senha)
     {
-        $certificado->storeAs('storage/app/certificados', $nome . '.pfx');
-        $content = file_get_contents('../storage/app/certificados/' . $nome . '.pfx');
+        dd('OI');
+        $certificado->storeAs('public/certificados', $nome . '.pfx');
+        $content = file_get_contents(asset('storage/certificados/' . $nome . '.pfx'));
+        dd($content);
         return Certificate::readPfx($content, $senha);
     }
+
 }
