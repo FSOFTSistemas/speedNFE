@@ -48,7 +48,7 @@ return new class extends Migration
             'certificado' => null,
             'senhaCertificado' => null,
             'ambiente' => 1,
-            'status' => null,
+            'status' => 1,
             'csc' => '060',
             'idCsc' => 1,
             'limClientes' => 10,

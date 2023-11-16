@@ -24,9 +24,9 @@ class CategoriasController extends Controller
     {
         try {
             $this->categoriaServices->status($id);
-            return redirect()->route('categoria.index')->with('success', 'Categoria desativada com sucesso');
+            return redirect()->route('categoria.index')->with('success', 'Categoria atualizada com sucesso');
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
@@ -36,7 +36,7 @@ class CategoriasController extends Controller
             $user = Auth::user();
             $categorias = null;
             if ($user->empresa_id != 1) {
-                $categorias = $this->categoriaServices->todas($user->empresa_id);
+                $categorias = $this->categoriaServices->todasCategoriasEmpresa($user->empresa_id);
             } else {
                 $categorias = $this->categoriaServices->todasCategorias();
             }
@@ -72,7 +72,7 @@ class CategoriasController extends Controller
             );
             return redirect()->route('categoria.index')->with('success', 'Categoria Cadastrada com sucesso');
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 }

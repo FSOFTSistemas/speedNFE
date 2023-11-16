@@ -99,7 +99,7 @@ class ClientesController extends Controller
                     $request->cep,
                     $request->complemento
                 );
-                $cliente = $this->clienteServices->salvar(
+                $this->clienteServices->salvar(
                     $request->codigo,
                     $request->nome,
                     $request->apelido,
@@ -113,22 +113,24 @@ class ClientesController extends Controller
                     $endereco->id
                 );
             } else {
-                return redirect()->route('index')->with('error', 'Limite de clientes atingido');
+                return redirect()->route('index')->with('warning', 'Limite de clientes atingido');
             }
             return redirect()->route('index')->with('success', 'Cliente cadastrado com sucesso');
         } catch (Exception $e) {
-            dd($e);
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
     public function excluir(Request $request)
     {
         try {
+            $request->validate([
+                'idCliente' => 'required'
+            ]);
             $this->clienteServices->excluir($request->idCliente);
             return redirect()->route('index')->with('success', 'Cliente excluído com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', 'Não foi possível excluir o cliente selecionado');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
@@ -198,7 +200,7 @@ class ClientesController extends Controller
             );
             return redirect()->route('editar_cliente', [$cliente->id])->with('success', 'Cliente atualizado com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', 'Não foi possível atualizar o cliente');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 

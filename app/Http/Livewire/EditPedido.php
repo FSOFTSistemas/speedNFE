@@ -2,17 +2,13 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\cfop;
 use App\Models\Cliente;
 use App\Models\FormaPag;
 use App\Models\ItemPedido;
 use App\Models\Pedido;
 use App\Models\Produto;
-use App\Services\ClientesService;
 use App\Services\EmpresasService;
-use App\Services\FormaPagService;
 use App\Services\PedidosService;
-use App\Services\ProdutosService;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -49,15 +45,15 @@ class EditPedido extends Component
             //declaração dos services para recuperar dados
             $sUsers = new UsersService();
             $sEmpresas = new EmpresasService();
-            $sClientes = new ClientesService();
-            $sProdutos = new ProdutosService();
-            $sFormas = new FormaPagService();
+            // $sClientes = new ClientesService();
+            // $sProdutos = new ProdutosService();
+            // $sFormas = new FormaPagService();
             $sPedidos = new PedidosService();
 
             //Recuperando empresa_id do usuario logado
             $user = $sUsers->getEmpresa(Auth::id());
             // $this->empresa = $user->empresa_id;
-            $pedido = Pedido::findOrFail($this->pedido->id);
+            $pedido = Pedido::find($this->pedido->id);
             $itens = ItemPedido::all()->where('pedido_id', '=', $pedido->id);
 
             $this->cfop = $pedido->cfop;
@@ -72,120 +68,149 @@ class EditPedido extends Component
             $this->formas = FormaPag::all();
             $this->desconto = $pedido->desconto;
             $this->subtotal = $pedido->subtotal;
-            $this->total = $pedido->total;
 
             foreach ($itens as $item) {
-                $produto = Produto::findOrFail($item->produto_id);
+                $produto = Produto::find($item->produto_id);
                 $this->vendaItens[] = [
                     'produto_id' => $produto->id,
                     'descricao' => $produto->produto,
                     'quantidade' => $item->qtde,
-                    'unitario' => $produto->precocusto,
+                    'unitario' => $produto->precovenda,
                     'desconto' => $item->desconto,
-                    'total' => ($produto->precocusto * $item->qtde) - $item->desconto,
+                    'total' => ($produto->precovenda * $item->qtde) - $item->desconto,
                 ];
             }
         } catch (Exception $e) {
-            dd($e);
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 
     public function atualizarBCfop()
     {
-        $sPedidos = new PedidosService();
-        $this->bcfop = $sPedidos->findCfop($this->cfop)->cfop;
+        try {
+            $sPedidos = new PedidosService();
+            $this->bcfop = $sPedidos->findCfop($this->cfop)->cfop;
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
+        }
     }
 
     public function buscaCfop()
     {
-        $prod = DB::table('cfop')
-            ->select('*')
-            ->where('cfop', 'like', $this->bcfop . "%")
-            ->first();
-
-        if ($prod) {
-            $this->cfop = $prod->id;
-        } else {
-            $this->cfop = '';
+        try {
+            $prod = DB::table('cfop')
+                ->select('*')
+                ->where('cfop', 'like', $this->bcfop . "%")
+                ->first();
+            if ($prod) {
+                $this->cfop = $prod->id;
+            } else {
+                $this->cfop = '';
+            }
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 
     public function atualizarTot()
     {
-        $total = $this->quantidade * $this->preco;
-        $desconto = $total * $this->desconto / 100;
-
-        $this->total = $total - $desconto;
+        try {
+            $total = $this->quantidade * $this->preco;
+            $desconto = $total * $this->desconto / 100;
+            $this->total = $total - $desconto;
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
+        }
 
     }
 
     public function salvarProd()
     {
-        $prod = Produto::findOrFail($this->produto);
-        $total = $this->quantidade * $this->preco;
-        $desconto = $total * $this->desconto / 100;
-
-        $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
-
-        $subtotal = 0;
-
-        foreach ($this->vendaItens as $item) {
-            $subtotal = $subtotal + $item['total'];
+        try {
+            if ($this->produto) {
+                $prod = Produto::find($this->produto);
+                $total = $this->quantidade * $this->preco;
+                $desconto = $total * $this->desconto / 100;
+                $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                $subtotal = 0;
+                foreach ($this->vendaItens as $item) {
+                    $subtotal = $subtotal + $item['total'];
+                }
+                $this->subtotal = $subtotal;
+                $this->limparProdutos();
+            }
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
+    }
 
+    public function limparProdutos()
+    {
+        try {
+            $this->produto = '';
+            $this->desconto = 0;
+            $this->total = 0;
+            $this->preco = 0;
+            $this->quantidade = 1;
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
+        }
     }
 
     public function atualizarProds()
     {
-        $prod = Produto::findOrFail($this->produto);
-        $this->barras = $prod->codigo;
-        $this->preco = $prod->precovenda;
-        $this->quantidade = 1;
-        $this->desconto = 0;
-        $this->total = $prod->precovenda;
-    }
-
-    public function buscaProd()
-    {
-        $prod = DB::table('produtos')
-            ->select('*')
-            ->where('codigo', '=', $this->barras)
-            ->where('empresa_id', '=', $this->empresa)
-            ->first();
-
-        if ($prod) {
-            $this->produto = $prod->id;
+        try {
+            $prod = Produto::find($this->produto);
+            $this->barras = $prod->codigo;
             $this->preco = $prod->precovenda;
             $this->quantidade = 1;
             $this->desconto = 0;
             $this->total = $prod->precovenda;
-        } else {
-            $this->produto = "";
-            $this->barras = '';
-            $this->preco = 0;
-            $this->quantidade = 0;
-            $this->desconto = 0;
-            $this->total = 0;
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
+        }
+    }
+
+    public function buscaProd()
+    {
+        try {
+            $prod = DB::table('produtos')
+                ->select('*')
+                ->where('codigo', '=', $this->barras)
+                ->where('empresa_id', '=', $this->empresa)
+                ->first();
+            if ($prod) {
+                $this->produto = $prod->id;
+                $this->preco = $prod->precovenda;
+                $this->quantidade = 1;
+                $this->desconto = 0;
+                $this->total = $prod->precovenda;
+            } else {
+                $this->produto = "";
+                $this->barras = '';
+                $this->preco = 0;
+                $this->quantidade = 0;
+                $this->desconto = 0;
+                $this->total = 0;
+            }
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 
     public function removerProduto($index)
     {
-        unset($this->vendaItens[$index]);
-        $this->vendaItens = array_values($this->vendaItens);
-
-        $subtotal = 0;
-
-        foreach ($this->vendaItens as $item) {
-            $subtotal = $subtotal + $item['total'];
+        try {
+            unset($this->vendaItens[$index]);
+            $this->vendaItens = array_values($this->vendaItens);
+            $subtotal = 0;
+            foreach ($this->vendaItens as $item) {
+                $subtotal = $subtotal + $item['total'];
+            }
+            $this->subtotal = $subtotal;
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
-        $this->subtotal = $subtotal;
-    }
-
-    public function cancelar()
-    {
-        redirect('/vendas');
     }
 
     public function render()
@@ -193,7 +218,7 @@ class EditPedido extends Component
         try {
             return view('livewire.edit-pedido');
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 }

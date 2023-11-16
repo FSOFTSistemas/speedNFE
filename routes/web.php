@@ -103,10 +103,11 @@ Route::post('/receber/edit/{id}', [ReceberController::class, 'update'])->name('u
 //VENDAS
 Route::get('/venda', [PedidosController::class, 'todos'])->middleware('auth');
 Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware('auth');
-Route::get('/vendas', [PedidosController::class, 'todos'])->middleware('auth');
+Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware('auth');
 Route::post('/vendas', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware('auth');
-Route::get('/visualizar/{pedido}', [PedidosController::class, 'visualizar'])->name('visu')->middleware('auth');
-Route::post('/visualizar/{pedido}', [PedidosController::class, 'update'])->middleware('auth');
+Route::get('/visualizar/{pedido}', [PedidosController::class, 'visualizar'])->name('vendas.show')->middleware('auth');
+Route::get('/editar/{pedido}', [PedidosController::class, 'edit'])->name('vendas.editar')->middleware('auth');
+Route::put('/atualizar/{id}', [PedidosController::class, 'update'])->name('vendas.atualizar')->middleware('auth');
 Route::get('/vendas/nova', [PedidosController::class, 'new'])->middleware('auth');
 Route::post('/vendas/nova', [PedidosController::class, 'store'])->name('salvar_venda')->middleware('auth');
 Route::get('/venda/envio/{id}', [PedidosController::class, 'enviarNFe'])->name('enviarXML')->middleware('auth');
@@ -114,6 +115,7 @@ Route::get('/venda/imprimir/{id}', [PedidosController::class, 'imprimir'])->name
 Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'imprimirCancelamento'])->name('imprimirCancelamentoXML')->middleware('auth');
 Route::post('/venda/cce', [PedidosController::class, 'cartaCorrecao'])->name('cartaCorrecao')->middleware('auth');
 Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->middleware('auth');
+Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware('auth');
 
 //NOTAS FISCAIS
 Route::get('/notas', [NotasFiscaisController::class, 'show'])->middleware('auth');
