@@ -243,6 +243,13 @@
 
         {{-- <hr color="black"> --}}
 
+        <div class="row" style="margin-bottom: 2%;">
+            <div class="col">
+                <label for="">Informações Complementares</label>
+                <textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" cols="30" rows="9" placeholder="Opicional..."></textarea>
+            </div>
+        </div>
+
         <div class="row" style="margin-bottom: 2%; text-align: center;">
             <div class="col">
                 <button type="submit" style="width: 25%;" class="btn btn-success">Salvar</a>

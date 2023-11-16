@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Empresa;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use NFePHP\Common\Certificate;
 
@@ -149,10 +150,8 @@ class EmpresasService
 
     public function storeCertificate($certificado, $nome, $senha)
     {
-        dd('OI');
         $certificado->storeAs('public/certificados', $nome . '.pfx');
-        $content = file_get_contents(asset('storage/certificados/' . $nome . '.pfx'));
-        dd($content);
+        $content = file_get_contents('../storage/app/public/certificados/' . $nome . '.pfx');
         return Certificate::readPfx($content, $senha);
     }
 

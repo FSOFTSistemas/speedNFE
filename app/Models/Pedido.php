@@ -10,7 +10,7 @@ class Pedido extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'status', 'empresa_id', 'cliente_id', 'data', 'forma_pag_id', 'subtotal', 'total', 'desconto', 'numero_nfe', 'sequencia_evento', 'chave', 'estado', 'cfop'];
+    protected $fillable = ['user_id', 'status', 'empresa_id', 'cliente_id', 'data', 'forma_pag_id', 'info_complementares', 'subtotal', 'total', 'desconto', 'numero_nfe', 'sequencia_evento', 'chave', 'estado', 'cfop'];
 
     protected $casts = [
         'estado' => EstadoEnum::class

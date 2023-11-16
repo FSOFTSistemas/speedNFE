@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('data');
             $table->integer('status');
             $table->string('forma_pag');
+            $table->string('info_complementares', 1500)->nullable();
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedBigInteger('cfop');

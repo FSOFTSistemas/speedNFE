@@ -116,7 +116,6 @@ class EmpresasController extends Controller
             );
             return redirect()->route('editar_empresa', [$empresa->id]);
         } catch (Exception $e) {
-            dd($e);
             return back();
         }
     }
