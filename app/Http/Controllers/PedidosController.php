@@ -14,6 +14,7 @@ use App\Services\ProdutosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use NFePHP\DA\NFe\Daevento;
 use NFePHP\DA\NFe\Danfe;
 
@@ -46,7 +47,7 @@ class PedidosController extends Controller
             return response($pdf)->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
             session()->flash("erro", $e->getMessage());
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -56,7 +57,7 @@ class PedidosController extends Controller
             $user = Auth::user();
             return view('notas.inutilizar', ['empresa' => $user->empresa_id]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -90,7 +91,7 @@ class PedidosController extends Controller
                 return redirect('/inutilizar')->with('success', $result['data']);
             }
         } catch (\Exception $e) {
-            return redirect('/inutilizar')->with('error', $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -130,7 +131,7 @@ class PedidosController extends Controller
             }
 
         } catch (\Exception $e) {
-            return redirect('/venda')->with('error', $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -170,7 +171,7 @@ class PedidosController extends Controller
             }
         } catch (\Exception $e) {
             dd($e);
-            return redirect('/venda')->with('error', $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -188,7 +189,7 @@ class PedidosController extends Controller
                 ->header('Content-Type', 'application/pdf');
         } catch (\Exception $e) {
             session()->flash("erro", $e->getMessage());
-            return redirect()->back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -204,7 +205,7 @@ class PedidosController extends Controller
                 ->header('Content-Type', 'application/pdf');
         } catch (\Exception $e) {
             session()->flash("erro", $e->getMessage());
-            return redirect()->back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -245,7 +246,7 @@ class PedidosController extends Controller
                         $venda->status = 3;
                         $venda->estado = 'Rejeitado';
                         $venda->save();
-                        return redirect('/vendas')->with('warning', 'Detectado instabilidade na SEFAZ! tente novamente em alguns minutos.');
+                        return redirect('/vendas')->with('warning', $resultado['erro']);
                     }
                 } else {
                     return redirect('/vendas')->with('error', $result['erros_xml']);
@@ -255,7 +256,7 @@ class PedidosController extends Controller
             }
             return redirect('/vendas')->with('success', $venda);
         } catch (Exception $e) {
-            return redirect('/vendas')->with('error', $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -265,7 +266,7 @@ class PedidosController extends Controller
             $pedido = $this->pedidoServices->buscarPedido($id);
             return view('vendas.edit', ['pedido' => $pedido]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -316,18 +317,24 @@ class PedidosController extends Controller
                 return redirect()->route('vendas.index')->with('warning', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
             }
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             $request->validate([
                 'empresa' => 'required|numeric',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
+                'info_complementares' => 'nullable'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'vendaItens.required' => 'Deve existir pelo menos um item no pedido!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
             ]);
             $subtotal = 0;
             $desconto = 0;
@@ -344,7 +351,8 @@ class PedidosController extends Controller
                     $subtotal,
                     $desconto,
                     $request->empresa,
-                    $request->cfop
+                    $request->cfop,
+                    $request->info_complementares
                 );
                 foreach ($request->vendaItens as $item) {
                     $prod = $this->produtoServices->um($item['produto_id']);
@@ -366,8 +374,10 @@ class PedidosController extends Controller
             } else {
                 return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
+        } catch (ValidationException $e) {
+            return back()->with('error', $e->errors()['vendaItens']);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -377,7 +387,7 @@ class PedidosController extends Controller
             $this->pedidoServices->delete($request->pedido_id);
             return redirect()->route('vendas.index')->with('success', 'Nota deletada com sucesso!');
         } catch (Exception $e) {
-            return back()->with('error', 'Não foi possível deletar a nota, tente novamente');
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -387,7 +397,7 @@ class PedidosController extends Controller
             $pedidos = $this->pedidoServices->formatedVenda(Auth::user()->empresa_id);
             return view('vendas.todos', ['pedidos' => $pedidos]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -395,9 +405,26 @@ class PedidosController extends Controller
     {
         try {
             $pedido = $this->pedidoServices->buscarPedido($id);
-            return view('vendas.visualizar', ['pedido' => $pedido]);
+            $empresa = $this->empresaServices->buscarEmpresa($pedido->empresa_id);
+            $nfe_service = new NFeService([
+                "atualizacao" => date('Y-m-d h:i:s'),
+                "tpAmb" => (int) $empresa->ambiente,
+                "razaosocial" => $empresa->razao,
+                "siglaUF" => $empresa->endereco->uf,
+                "cnpj" => '42879649000174',
+                "schemes" => "PL_009_V4",
+                "versao" => "4.00",
+                "tokenIBPT" => "AAAAAAA",
+                "CSC" => $empresa->csc,
+                "CSCid" => "00000" . $empresa->idCsc,
+            ], $empresa);
+            $result = $nfe_service->gerarXml($pedido, $empresa);
+            $danfe = new Danfe($result['xml']);
+            $pdf = $danfe->render();
+            return response($pdf)
+                ->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
@@ -406,7 +433,7 @@ class PedidosController extends Controller
         try {
             return view('vendas.create');
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 

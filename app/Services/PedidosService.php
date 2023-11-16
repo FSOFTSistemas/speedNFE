@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class PedidosService
 {
 
-    public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop)
+    public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $info_complementares)
     {
         return Pedido::create([
             'user_id' => $user_id,
@@ -26,6 +26,7 @@ class PedidosService
             'chave' => '',
             'estado' => EstadoEnum::PENDENTE,
             'cfop' => $cfop,
+            'info_complementares' => $info_complementares
         ]);
     }
 

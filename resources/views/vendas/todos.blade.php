@@ -37,49 +37,51 @@
                         <div class="row">
                             @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
                                 <div class="col-md-3 col-xs-2">
-                                    <a href="{{ route('vendas.show', [$pedido->id]) }}" title="Visualizar" class="text-primary"><i
-                                            class="fa fa-eye"></i></a>
+                                    <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}" title="Visualizar"
+                                        class="text-primary"><i class="fa fa-eye"></i></a>
                                 </div>
 
                                 {{-- EDITAR --}}
                                 <div class="col-md-3 col-xs-2">
-                                    <a href="{{ route('vendas.editar', [$pedido->id]) }}" title="Editar" class="text-info"><i class="fa fa-edit"></i></a>
+                                    <a href="{{ route('vendas.editar', [$pedido->id]) }}" title="Editar"
+                                        class="text-info"><i class="fa fa-edit"></i></a>
                                 </div>
 
                                 {{-- EXCLUIR --}}
                                 <div class="col-md-3 col-xs-2">
-                                    <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger"><i class="fa fa-trash" data-toggle="modal"
-                                        data-target="#excluir"></i></a>
+                                    <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});"
+                                        class="text-danger"><i class="fa fa-trash" data-toggle="modal"
+                                            data-target="#excluir"></i></a>
                                 </div>
 
                                 <div class="modal fade" id="excluir" tabindex="-1" role="dialog"
-                                aria-labelledby="excluirLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <form action="{{ route('pedido.deletar') }}" method="post">
-                                            @csrf
-                                            @method('DELETE')
-                                            <div class="modal-header">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <h5 id="exampleModalLabel">Deletar Pedido</h5>
+                                    aria-labelledby="excluirLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <form action="{{ route('pedido.deletar') }}" method="post">
+                                                @csrf
+                                                @method('DELETE')
+                                                <div class="modal-header">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h5 id="exampleModalLabel">Deletar Pedido</h5>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h5 class="text-danger">Tem certeza que deseja deletar o pedido? Isso irá excluir todas as informações sobre o mesmo!</h5>
-                                                <input type="hidden" value="" name="pedido_id"
-                                                    id="pedido_id">
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Fechar</button>
-                                                <button type="submit" class="btn btn-warning">Deletar</button>
-                                            </div>
-                                        </form>
+                                                <div class="modal-body">
+                                                    <h5 class="text-danger">Tem certeza que deseja deletar o pedido? Isso
+                                                        irá excluir todas as informações sobre o mesmo!</h5>
+                                                    <input type="hidden" value="" name="pedido_id" id="pedido_id">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Fechar</button>
+                                                    <button type="submit" class="btn btn-warning">Deletar</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
                                 <div class="col-md-3 col-xs-2">
                                     <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
@@ -87,6 +89,10 @@
                                 </div>
                             @elseif($pedido->estado == 'Autorizado')
                                 @if ($pedido->sequencia_evento == 0)
+                                    <div class="col-md-3 col-xs-2">
+                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Visualizar"
+                                            class="text-primary"><i class="fa fa-eye"></i></a>
+                                    </div>
                                     <div class="col-md-3 col-xs-2">
                                         <a title="Carta de Correção" href="#">
                                             <i class="fa fa-envelope text-warning" data-toggle="modal"
@@ -200,8 +206,7 @@
             });
         });
 
-        function setaDadosExcluir($id)
-        {
+        function setaDadosExcluir($id) {
             document.getElementById('pedido_id').value = $id;
         }
     </script>

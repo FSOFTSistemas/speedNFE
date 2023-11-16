@@ -18,7 +18,7 @@ class NFeService
 
     public function __construct($config, $emitente)
     {
-        $certificado = file_get_contents(public_path('storage/' . $emitente->razao . '.pfx'));
+        $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
         // $this->tools->model(55);
     }
@@ -304,12 +304,13 @@ class NFeService
         }
 
         foreach ($venda->fatura as $key => $fat) {
-            $stdDup = new \stdClass();
-            $stdDup->nDup = '00' . ($key + 1);
-            $stdDup->dVenc = $fat->vencimento;
-            $stdDup->vDup = $this->format($fat->valor);
+            // $stdDup = new \stdClass();
+            // $stdDup->nDup = '00' . ($key + 1);
+            // $stdDup->dVenc = $fat->vencimento;
+            // $stdDup->dVenc = date('Y-m-d');
+            // $stdDup->vDup = $this->format($fat->valor);
 
-            $nfe->tagdup($stdDup);
+            // $nfe->tagdup($stdDup);
 
             $stdPag = new \stdClass();
             $pag = $nfe->tagpag($stdPag);
@@ -354,6 +355,10 @@ class NFeService
             }
             $detPag = $nfe->tagdetPag($stdDetPag);
         }
+
+        $stdInfCpl = new \stdClass();
+        $stdInfCpl->infCpl = $venda->info_complementares;
+        $infCpl = $nfe->taginfAdic($stdInfCpl);
 
         //TAG AUTORIZADOR XML VARIAVEL NO ARQUIVO .ENV, ESTADO DA BAHIA OBRIGATORIO
         if (getenv('AUT_XML') != '') {
