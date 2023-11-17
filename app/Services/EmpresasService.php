@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Empresa;
-use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use NFePHP\Common\Certificate;
 
 class EmpresasService
@@ -14,7 +14,8 @@ class EmpresasService
     {
         $empresa = Empresa::find($id);
         if ($request->hasFile('certificado')) {
-            $path = $request->certificado->storeAs('storage/app/certificados', $request->nome . '.pfx');
+            // Storage::delete('public/certificados/'. $request->nome . '.pfx');
+            $path = $request->certificado->storeAs('public/certificados', $request->nome . '.pfx');
             // $content = file_get_contents('storage/'.$request->nome.'.pfx');
             // $ctx = Certificate::readPfx($content, $request->senha);
             // $request->merge(['certificado' => $]);
@@ -150,9 +151,10 @@ class EmpresasService
 
     public function storeCertificate($certificado, $nome, $senha)
     {
-        $certificado->storeAs('public/certificados', $nome . '.pfx');
+        $path = $certificado->storeAs('public/certificados', $nome . '.pfx');
         $content = file_get_contents('../storage/app/public/certificados/' . $nome . '.pfx');
-        return Certificate::readPfx($content, $senha);
+        Certificate::readPfx($content, $senha);
+        return $path;
     }
 
 }
