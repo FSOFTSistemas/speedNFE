@@ -193,7 +193,6 @@ class EmpresasController extends Controller
             );
             return redirect()->route('empresa.index');
         } catch (Exception $e) {
-            dd($e);
             return back();
         }
     }
