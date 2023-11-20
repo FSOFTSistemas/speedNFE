@@ -393,6 +393,16 @@ return [
                     'url'         => '/relatorios',
                     'icon'        => 'far fa-fw fa-file',
                 ],
+                [
+                    'text'        => 'Veículos',
+                    'url'         => '/relatorios',
+                    'icon'        => 'fa fa-car',
+                ],
+                [
+                    'text'        => 'Motoristas',
+                    'url'         => '/relatorios',
+                    'icon'        => 'far fa-address-card',
+                ],
             ],
         ],
         [
