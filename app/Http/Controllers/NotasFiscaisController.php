@@ -59,11 +59,12 @@ class NotasFiscaisController extends Controller
 
     public function downloadXml($chave){
         try{
+            // $xml = asset('xml_nfe/')
 			$xml = public_path('xml_nfe/').$chave.'.xml';
 			return response()->download($xml);
 		}catch(\Exception $e){
-			session()->flash("erro", $e->getMessage());
-			return redirect()->back();
+            dd($e);
+			return back()->with('Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
 		}
     }
 

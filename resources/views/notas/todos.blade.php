@@ -29,7 +29,7 @@
         </div>
         <div class="col">
             <div class="text-right">
-                <a class="btn btn-info" href="/inutilizar">Inutilizar Notas</a>
+                <a class="btn btn-info" href="{{ route('inutilizar.index') }}">Inutilizar Notas</a>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
                     <td><a href="/venda/imprimir/{{ $nota->id }}" target="_blank">{{ $nota->chave }}</a></td>
                     <td>R$ {{ number_format($nota->total, 2) }}</td>
                     <td>{{ $nota->estado }}</td>
-                    <td><a title="XML" href="/notas/xml/{{ $nota->chave }}" class="text-success"><i class="fa fa-file-code"></i></a></td>
+                    <td><a title="Download XML" href="/notas/xml/{{ $nota->chave }}" class="text-success"><i class="fa fa-file-code"></i></a></td>
                     <td></td>
                 </tr>
             @endforeach

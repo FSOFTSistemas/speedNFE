@@ -348,22 +348,22 @@ return [
             'icon'        => 'far fa-fw fa-file',
             'submenu' => [
                 [
-                    'text'        => 'Emitir',
+                    'text'        => 'Emitir NFe',
                     'url'         => '/vendas/nova',
                     'icon'        => 'fas fa-upload',
                 ],
                 [
-                    'text'        => 'Notas Emitidas',
+                    'text'        => 'Notas Emitidas (NFe)',
                     'url'         => '/vendas',
                     'icon'        => 'far fa-fw fa-file',
                 ],
                 [
-                    'text'        => 'Baixar XML',
+                    'text'        => 'Baixar XML (NFe)',
                     'url'         => '/notas',
                     'icon'        => 'fas fa-download',
                 ],
                 [
-                    'text'        => 'Relatórios',
+                    'text'        => 'Relatórios (NFe)',
                     'url'         => '/relatorios',
                     'icon'        => 'far fa-fw fa-file',
                 ],
@@ -374,33 +374,33 @@ return [
             'icon'        => 'far fa-fw fa-file',
             'submenu' => [
                 [
-                    'text'        => 'Emitir',
-                    'url'         => '/vendas/nova',
+                    'text'        => 'Emitir MDFe',
+                    'url'         => 'mdfes/emitir',
                     'icon'        => 'fas fa-upload',
                 ],
                 [
-                    'text'        => 'Notas Emitidas',
-                    'url'         => '/vendas',
+                    'text'        => 'Notas Emitidas (MDFe)',
+                    'url'         => 'mdfes',
                     'icon'        => 'far fa-fw fa-file',
                 ],
                 [
-                    'text'        => 'Baixar XML',
-                    'url'         => '/notas',
+                    'text'        => 'Baixar XML (MDFe)',
+                    'url'         => 'mdfes/download/xmls',
                     'icon'        => 'fas fa-download',
                 ],
                 [
-                    'text'        => 'Relatórios',
-                    'url'         => '/relatorios',
+                    'text'        => 'Relatórios (MDFe)',
+                    'url'         => 'relatorios/mdfe',
                     'icon'        => 'far fa-fw fa-file',
                 ],
                 [
                     'text'        => 'Veículos',
-                    'url'         => '/relatorios',
+                    'url'         => 'veiculos',
                     'icon'        => 'fa fa-car',
                 ],
                 [
                     'text'        => 'Motoristas',
-                    'url'         => '/relatorios',
+                    'url'         => 'motoristas',
                     'icon'        => 'far fa-address-card',
                 ],
             ],

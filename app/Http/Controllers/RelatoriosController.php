@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Pedido;
 use App\Services\UsersService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -54,4 +55,14 @@ class RelatoriosController extends Controller
            return $pdf->stream(date('d-m-Y').' Relatorio de NFe.pdf');
         }
     }
+
+    public function indexMDFe()
+    {
+        try {
+            return view('relatorios.index-mdfe');
+        } catch (Exception $e) {
+            return back()->with('Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
+        }
+    }
+
 }
