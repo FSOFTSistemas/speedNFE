@@ -365,7 +365,7 @@ return [
                 [
                     'text'        => 'Relatórios (NFe)',
                     'url'         => '/relatorios',
-                    'icon'        => 'far fa-fw fa-file',
+                    'icon'        => 'fas fa-chart-area',
                 ],
             ],
         ],
@@ -391,7 +391,7 @@ return [
                 [
                     'text'        => 'Relatórios (MDFe)',
                     'url'         => 'relatorios/mdfe',
-                    'icon'        => 'far fa-fw fa-file',
+                    'icon'        => 'fas fa-chart-area',
                 ],
                 [
                     'text'        => 'Veículos',

@@ -135,10 +135,10 @@ Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->m
 Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware('auth');
 
 //NOTAS FISCAIS
-Route::get('/notas', [NotasFiscaisController::class, 'show'])->middleware('auth');
+Route::get('/notas', [NotasFiscaisController::class, 'show'])->name('notas.index')->middleware('auth');
 Route::get('/notas/{chave}', [NotasFiscaisController::class, 'visualizarPdf'])->middleware('auth');
-Route::get('/notas/xml/{chave}', [NotasFiscaisController::class, 'downloadXml'])->middleware('auth');
-Route::post('/zip', [NotasFiscaisController::class, 'zip'])->middleware('auth');
+Route::post('/notas/xml', [NotasFiscaisController::class, 'downloadXml'])->name('baixarXml')->middleware('auth');
+Route::post('/zip', [NotasFiscaisController::class, 'zip'])->name('zip')->middleware('auth');
 
 //INUTILIZAR
 Route::prefix('inutilizar')->group(function () {
@@ -169,6 +169,7 @@ Route::prefix('veiculos')->group(function () {
 //MOTORISTAS
 Route::prefix('motoristas')->group(function () {
     Route::get('', [MotoristaController::class, 'index'])->name('motorista.index')->middleware('auth');
+    Route::get('/registrar', [MotoristaController::class, 'create'])->name('motorista.create')->middleware('auth');
 });
 
 require __DIR__.'/auth.php';

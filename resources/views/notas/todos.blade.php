@@ -14,14 +14,14 @@
 
     <div class="row">
         <div class="col">
-            <form action="/zip" method="POST">
+            <form action="{{ route('zip') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
-                    <div class="col-3">
-                        <input class="form-control" type="month" name="periodo" min="2022-01" max="2030-12"
+                    <div class="col-md-5 col-xs-12" style="margin-bottom: 3%">
+                        <input class="form-control" type="month" name="periodo" required min="2022-01" max="2030-12"
                             value="{{ date_format(today(), 'Y-m') }}">
                     </div>
-                    <div class="col-3">
+                    <div class="col-md-4 col-xs-12">
                         <button class="btn btn-info" type="submit">Download ZIP</button>
                     </div>
                 </div>
@@ -37,32 +37,38 @@
     <br>
     <table class="table table-hover" id="xmls">
         <thead class="table-primary" style="text-align: center">
-            <th>Chave</th>
-            <th>Valor</th>
-            <th>Estado</th>
-            <th></th>
-            <th></th>
+            <tr>
+                <th>Número</th>
+                <th>Chave</th>
+                <th>Valor</th>
+                <th>Estado</th>
+                <th></th>
+                <th></th>
+            </tr>
         </thead>
 
         <tbody style="text-align: center">
             @foreach ($notas as $nota)
                 <tr>
+                    <td>#{{ $nota->numero_nfe }}</td>
                     <td><a href="/venda/imprimir/{{ $nota->id }}" target="_blank">{{ $nota->chave }}</a></td>
                     <td>R$ {{ number_format($nota->total, 2) }}</td>
                     <td>{{ $nota->estado }}</td>
-                    <td><a title="Download XML" href="/notas/xml/{{ $nota->chave }}" class="text-success"><i class="fa fa-file-code"></i></a></td>
+                    <td>
+                        <form action="{{ route('baixarXml') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" name="empresa" id="empresa" value="{{ $nota->fantasia }}">
+                            <input type="hidden" name="chave" id="chave" value="{{ $nota->chave }}">
+                            <input type="hidden" name="data" id="data" value="{{ $nota->data }}">
+                            <input type="hidden" name="estado" id="estado" value="{{ $nota->estado }}">
+                            <button class="btn btn-light" type="submit" title="Download XML"><i class="fa fa-file-code text-success"></i></button>
+                        </form>
+                    </td>
                     <td></td>
                 </tr>
             @endforeach
         </tbody>
 
-        {{-- <tfoot>
-            <th>{{ $notas->links() }}</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tfoot> --}}
     </table>
 
 @endsection

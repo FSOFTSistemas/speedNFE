@@ -26,7 +26,7 @@ class PedidosService
             'chave' => '',
             'estado' => EstadoEnum::PENDENTE,
             'cfop' => $cfop,
-            'info_complementares' => $info_complementares
+            'info_complementares' => $info_complementares,
         ]);
     }
 
@@ -65,6 +65,17 @@ class PedidosService
             ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE)')
             ->whereRaw('YEAR(created_at) = YEAR(CURRENT_DATE)')
             ->count();
+    }
+
+    public function buscarPedidos($empresaId)
+    {
+        return Pedido::select('pedidos.*', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', 'pedidos.empresa_id')
+            ->where('pedidos.empresa_id', 'like', $empresaId)
+            ->where('pedidos.chave', '!=', '')
+            ->whereRaw('MONTH(pedidos.created_at) = MONTH(CURRENT_DATE)')
+            ->whereRaw('YEAR(pedidos.created_at) = YEAR(CURRENT_DATE)')
+            ->get();
     }
 
     public function delete($id)

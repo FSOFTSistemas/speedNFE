@@ -12,11 +12,19 @@
 
 @section('content')
 
+<div class="row" style="margin-bottom: 2%">
+    <div class="col">
+        <a class="btn btn-secondary" href="{{ route('notas.index') }}">
+            Voltar
+        </a>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <div class="row" style="text-align: center">
             <div class="col">
-                <h2>Justificativa de Inutilização</h2>
+                <h2>Nota Fiscal</h2>
             </div>
         </div>
     </div>
@@ -38,7 +46,7 @@
                 <div class="col">
                     <label>Justificativa</label><br>
                     {{-- <input type="textarea" name="justificativa"> --}}
-                    <textarea name="justificativa" class="form-control" width="100%" rows="5" required placeholder="Justificativa..."></textarea>
+                    <textarea name="justificativa" class="form-control" rows="5" maxlength="1200" required placeholder="Justificativa..."></textarea>
                 </div>
             </div>
             <div style="padding-top: 2%" class="text-center">

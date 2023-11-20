@@ -17,7 +17,7 @@ class VeiculoController extends Controller
         try {
             return view('veiculos.index');
         } catch (Exception $e) {
-            return back()->with('Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
