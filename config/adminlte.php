@@ -168,10 +168,11 @@ return [
     */
 
     'classes_auth_card' => 'card-outline card-primary',
-    'classes_auth_header' => '',
+    'classes_auth_card' => '',
+    'classes_auth_header' => 'bg-gradient-info',
     'classes_auth_body' => '',
-    'classes_auth_footer' => '',
-    'classes_auth_icon' => '',
+    'classes_auth_footer' => 'text-center',
+    'classes_auth_icon' => 'fa-lg text-info',
     'classes_auth_btn' => 'btn-flat btn-primary',
 
     /*
@@ -256,7 +257,7 @@ return [
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
     'login_url' => 'login',
-    'register_url' => 'register',
+    'register_url' => false,
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
     'profile_url' => false,
@@ -343,19 +344,66 @@ return [
         //     'icon'        => 'far fa-fw fa-file',
         // ],
         [
-            'text'        => 'Notas Fiscais',
-            'url'         => '/vendas',
+            'text'        => 'NFe',
             'icon'        => 'far fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text'        => 'Emitir',
+                    'url'         => '/vendas/nova',
+                    'icon'        => 'fas fa-upload',
+                ],
+                [
+                    'text'        => 'Notas Emitidas',
+                    'url'         => '/vendas',
+                    'icon'        => 'far fa-fw fa-file',
+                ],
+                [
+                    'text'        => 'Baixar XML',
+                    'url'         => '/notas',
+                    'icon'        => 'fas fa-download',
+                ],
+                [
+                    'text'        => 'Relatórios',
+                    'url'         => '/relatorios',
+                    'icon'        => 'far fa-fw fa-file',
+                ],
+            ],
         ],
         [
-            'text'        => 'XMLs',
-            'url'         => '/notas',
-            'icon'        => 'fas fa-download',
-        ],
-        [
-            'text'        => 'Relatórios',
-            'url'         => '/relatorios',
+            'text'        => 'MDFe',
             'icon'        => 'far fa-fw fa-file',
+            'submenu' => [
+                [
+                    'text'        => 'Emitir',
+                    'url'         => '/vendas/nova',
+                    'icon'        => 'fas fa-upload',
+                ],
+                [
+                    'text'        => 'Notas Emitidas',
+                    'url'         => '/vendas',
+                    'icon'        => 'far fa-fw fa-file',
+                ],
+                [
+                    'text'        => 'Baixar XML',
+                    'url'         => '/notas',
+                    'icon'        => 'fas fa-download',
+                ],
+                [
+                    'text'        => 'Relatórios',
+                    'url'         => '/relatorios',
+                    'icon'        => 'far fa-fw fa-file',
+                ],
+                [
+                    'text'        => 'Veículos',
+                    'url'         => '/relatorios',
+                    'icon'        => 'fa fa-car',
+                ],
+                [
+                    'text'        => 'Motoristas',
+                    'url'         => '/relatorios',
+                    'icon'        => 'far fa-address-card',
+                ],
+            ],
         ],
         [
             'text'        => 'Configurações',

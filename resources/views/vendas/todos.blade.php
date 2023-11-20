@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                {{-- EMITIR --}}
                                 <div class="col-md-3 col-xs-2">
                                     <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
                                         class="text-success"><i class="fas fa-upload"></i></a>

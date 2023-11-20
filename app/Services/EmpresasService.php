@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use NFePHP\Common\Certificate;
 
 class EmpresasService
