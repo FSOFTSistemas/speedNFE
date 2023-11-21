@@ -170,6 +170,10 @@ Route::prefix('veiculos')->group(function () {
 Route::prefix('motoristas')->group(function () {
     Route::get('', [MotoristaController::class, 'index'])->name('motorista.index')->middleware('auth');
     Route::get('/registrar', [MotoristaController::class, 'create'])->name('motorista.create')->middleware('auth');
+    Route::post('/salvar', [MotoristaController::class, 'store'])->name('motorista.store')->middleware('auth');
+    Route::get('/editar/{id}', [MotoristaController::class, 'edit'])->name('motorista.edit')->middleware('auth');
+    Route::put('/atualizar/{id}', [MotoristaController::class, 'update'])->name('motorista.update')->middleware('auth');
+    Route::delete('/deletar', [MotoristaController::class, 'delete'])->name('motorista.delete')->middleware('auth');
 });
 
 require __DIR__.'/auth.php';
