@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Veiculo;
+use App\Enum\TipoCarroceriaEnum;
+use App\Enum\TipoVeiculoEnum;
 use App\Services\VeiculosService;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class VeiculoController extends Controller
 
     public function __construct(VeiculosService $veiculosService)
     {
-        $veiculosServices = $veiculosService;
+        $this->veiculosServices = $veiculosService;
     }
 
     public function index()
@@ -28,7 +29,9 @@ class VeiculoController extends Controller
     public function create()
     {
         try {
-            return view('veiculos.create');
+            $tiposCarrocerias = TipoCarroceriaEnum::cases();
+            $tiposVeiculos = TipoVeiculoEnum::cases();
+            return view('veiculos.create', ['tiposCarrocerias' => $tiposCarrocerias, 'tiposVeiculos' => $tiposVeiculos]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -36,23 +39,25 @@ class VeiculoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'placa' => 'required',
-            'capacidade' => '',
-            'renavan' => 'required|max:255',
-            'tara' => 'required',
-            'capacidade_m3' => 'required',
-            'tipo_carroceria' => 'required',
-            'tipo_veiculo' => 'required',
-            'tipo_rodado' => 'required',
-            'uf_veiculo' => 'required',
-            'tipo_propriedade' => 'required',
-        ]);
-
-        $veiculo = $this->veiculosServices->salvar($request->all());
-
-        dd($veiculo);
-
+        try {
+            $request->validate([
+                'placa' => 'required',
+                'capacidade' => 'nullable|numeric',
+                'renavan' => 'required|max:255',
+                'tara' => 'required|numeric',
+                'capacidade_m3' => 'required|numeric',
+                'tipo_carroceria' => 'required',
+                'tipo_veiculo' => 'required',
+                'tipo_rodado' => 'required',
+                'uf_veiculo' => 'required',
+                'tipo_propriedade' => 'required',
+                'descricao' => 'nullable|max:512'
+            ]);
+            $this->veiculosServices->salvar($request->all());
+            return redirect()->route('veiculos.index');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
 }

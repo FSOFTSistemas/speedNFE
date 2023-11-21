@@ -14,7 +14,7 @@
 
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
-            <a class="btn btn-info" href="{{ route('motorista.create') }}">+ Registrar Motorista</a>
+            <a class="btn btn-info" href="{{ route('motorista.create') }}">+ Motorista</a>
         </div>
     </div>
 

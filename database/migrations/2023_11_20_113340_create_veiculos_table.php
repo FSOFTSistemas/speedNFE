@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('tipo_rodado');
             $table->string('uf_veiculo');
             $table->string('tipo_propriedade');
+            $table->string('descricao', 512)->nullable();
             $table->timestamps();
         });
     }
