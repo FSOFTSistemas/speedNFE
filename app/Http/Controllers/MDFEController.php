@@ -2,84 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MDFE;
+use Exception;
 use Illuminate\Http\Request;
 
 class MDFEController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+    public function __construct()
+    {
+
+    }
+
     public function index()
     {
-        //
+        try {
+            return view('mdfes.index');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        try {
+            return view('mdfes.create');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function edit($mdfeId)
     {
-        //
+        try {
+            return view('mdfes.edit');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\MDFE  $mDFE
-     * @return \Illuminate\Http\Response
-     */
-    public function show(MDFE $mDFE)
+    public function downloadXML()
     {
-        //
+        try {
+            return view('mdfes.download-xml');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\MDFE  $mDFE
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(MDFE $mDFE)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\MDFE  $mDFE
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, MDFE $mDFE)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\MDFE  $mDFE
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(MDFE $mDFE)
-    {
-        //
-    }
 }

@@ -170,7 +170,6 @@ class PedidosController extends Controller
                 return redirect('/venda')->with('error', $nfe['data']);
             }
         } catch (\Exception $e) {
-            dd($e);
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }

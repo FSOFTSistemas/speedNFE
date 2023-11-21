@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h3 class="m-0 text-black" width="100%">Resumo de Notas</h3>
+            <h3 class="m-0 text-black" width="100%">Resumo de Notas NFe</h3>
         </div>
     </div>
 
