@@ -161,15 +161,17 @@ Route::prefix('mdfes')->group(function () {
     Route::get('/download/xmls', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
 });
 
-//VEICULOS
-Route::prefix('veiculos')->group(function () {
-    Route::get('', [VeiculoController::class, 'index'])->name('veiculo.index')->middleware('auth');
-});
-
 //MOTORISTAS
 Route::prefix('motoristas')->group(function () {
     Route::get('', [MotoristaController::class, 'index'])->name('motorista.index')->middleware('auth');
     Route::get('/registrar', [MotoristaController::class, 'create'])->name('motorista.create')->middleware('auth');
+});
+
+//VEICULO
+Route::prefix('veiculos')->group(function () {
+    Route::get('', [VeiculoController::class, 'index'])->name('veiculos.index')->middleware('auth');
+    Route::get('/registrar', [VeiculoController::class, 'create'])->name('veiculos.create')->middleware('auth');
+    Route::post('/salvar', [VeiculoController::class, 'store'])->name('veiculos.salvar')->middleware('auth');
 });
 
 require __DIR__.'/auth.php';
