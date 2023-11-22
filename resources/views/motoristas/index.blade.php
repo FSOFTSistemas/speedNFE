@@ -3,29 +3,28 @@
 @section('title', 'Motoristas')
 
 @section('content_header')
-    <div class="row" style="text-align: center">
+    {{-- <div class="row" style="text-align: center">
         <div class="col">
             <h3>Motoristas</h3>
         </div>
-    </div>
+    </div> --}}
 @stop
 
 @section('content')
-
-    <div class="row" style="margin-bottom: 2%">
-        <div class="col">
-            <a class="btn btn-info" href="{{ route('motorista.create') }}">+ Motorista</a>
-        </div>
-    </div>
-
     <div class="container">
+        <div class="row" style="padding-top: 1%">
+            <div class="col">
+                <a class="btn btn-info" style="margin-bottom: 1%" href="{{ route('motorista.create') }}">&nbsp;+ Novo motorista&nbsp;</a>
+            </div>
+        </div>
+
         <table class="table table-hover" id="motoristas_table">
             <thead class="table-primary" style="text-align: center">
                 <tr>
                     <th>Nome</th>
                     <th>Cpf</th>
                     <th>Empresa</th>
-                    <th>Ações</th>
+                    <th></th>
                 </tr>
             </thead>
 

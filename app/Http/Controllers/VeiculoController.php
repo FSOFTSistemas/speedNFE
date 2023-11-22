@@ -29,7 +29,6 @@ class VeiculoController extends Controller
     {
         try {
             $veiculos = $this->veiculosServices->buscarVeiculos();
-            // dd($veiculos);
             return view('veiculos.index', ['veiculos' => $veiculos]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -63,7 +62,6 @@ class VeiculoController extends Controller
 
     public function store(Request $request)
     {
-
         try {
             $request->validate([
                 'placa' => 'required',
@@ -78,7 +76,6 @@ class VeiculoController extends Controller
                 'tipo_propriedade' => 'required',
                 'descricao' => 'nullable|max:512',
             ]);
-
             $this->veiculosServices->salvar($request->all());
             return redirect()->route('veiculos.index');
         } catch (Exception $e) {
@@ -89,12 +86,12 @@ class VeiculoController extends Controller
     public function edit($veiculoID)
     {
         try {
-            $veiculo = Veiculo::find($veiculoID);
             $tiposCarrocerias = TipoCarroceriaEnum::cases();
             $tiposVeiculos = TipoVeiculoEnum::cases();
             $tiposRodados = TipoRodadoEnum::cases();
             $tiposPropriedades = TipoPropriedadeEnum::cases();
             $Ufs = UfEnum::cases();
+            $veiculo = $this->veiculosServices->buscarVeiculo( $veiculoID);
             $empresas = $this->empresaService->todos(Auth::user()->empresa_id);
             return view('veiculos.edit', [
                 'veiculo' => $veiculo,
@@ -126,7 +123,6 @@ class VeiculoController extends Controller
                 'tipo_propriedade' => 'required',
                 'descricao' => 'nullable|max:512',
             ]);
-
             $this->veiculosServices->update($request->all(), $veiculoID);
             return redirect()->route('veiculos.edit', [$veiculoID])->with('success', 'Veículo atualizado com sucesso!');
         } catch (Exception $e) {
@@ -136,7 +132,6 @@ class VeiculoController extends Controller
 
     public function delete(Request $request)
     {
-
         try {
             $request->validate([
                 'veiculoID' => 'required|numeric'
