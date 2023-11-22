@@ -3,17 +3,13 @@
 @section('title', 'Cadastrar Motorista')
 
 @section('content_header')
-    <div class="row" style="text-align: center">
-        <div class="col">
-            <h3>Cadastrar Motorista</h3>
-        </div>
-    </div>
+
 @stop
 
 @section('content')
     <div class="row" style="margin-bottom: 2%;">
         <div class="col">
-            <a class="btn btn-secondary" href="{{ route('motorista.index') }}">Voltar</a>
+
         </div>
     </div>
 
@@ -22,7 +18,7 @@
             <div class="card-header">
                 <div class="row" style="text-align: center">
                     <div class="col">
-                        <h2>Informações de Identificação</h2>
+                        <h5>Identificação do motorista</h5>
                     </div>
                 </div>
             </div>
@@ -68,6 +64,7 @@
 
                     <div class="row" style="text-align: center">
                         <div class="col">
+                            <a class="btn btn-secondary" href="{{ route('motorista.index') }}">Cancelar</a>
                             <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
                         </div>
                     </div>

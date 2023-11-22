@@ -7,11 +7,6 @@
 @stop
 
 @section('content')
-    <div class="row" style="margin-bottom: 1%; padding-top: 1%;">
-        <div class="col">
-            <a class="btn btn-secondary" href="{{ route('veiculos.index') }}">Voltar</a>
-        </div>
-    </div>
 
     <div class="container">
         <div class="card">
@@ -151,7 +146,9 @@
                     <hr>
                     <div class="row" style="text-align: center">
                         <div class="col">
+                            <a class="btn btn-secondary" href="{{ route('veiculos.index') }}">Cancelar</a>
                             <button class="btn btn-success" style="width: 25%" type="submit">Salvar</button>
+
                         </div>
                     </div>
                 </form>
