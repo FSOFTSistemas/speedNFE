@@ -27,11 +27,11 @@ use App\Http\Controllers\VeiculoController;
 |
 */
 
-Route::get('/home', function() {
+Route::get('/home', function () {
     return view('home');
 })->name('home')->middleware('auth');
 
-Route::get('/',  function() {
+Route::get('/',  function () {
     return view('home');
 })->middleware('auth');
 
@@ -176,6 +176,9 @@ Route::prefix('veiculos')->group(function () {
     Route::get('', [VeiculoController::class, 'index'])->name('veiculos.index')->middleware('auth');
     Route::get('/registrar', [VeiculoController::class, 'create'])->name('veiculos.create')->middleware('auth');
     Route::post('/salvar', [VeiculoController::class, 'store'])->name('veiculos.salvar')->middleware('auth');
+    Route::get('/editar/{id}', [VeiculoController::class, 'edit'])->name('veiculos.edit')->middleware('auth');
+    Route::put('/atualizar/{id}', [VeiculoController::class, 'update'])->name('veiculos.update')->middleware('auth');
+    Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware('auth');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

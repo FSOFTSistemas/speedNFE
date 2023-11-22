@@ -2,12 +2,12 @@
 
 namespace App\Enum;
 
-enum TipoCarriceria:string
+enum TipoCarroceriaEnum:string
 {
-    case GRANELEIRA = 'GRANELEIRA';
-    case BAU_FECHADO = 'BAU_FECHADO';
-    case PORTA_CONTAINER = 'PORTA_CONTAINER';
-    case ABERTA = 'ABERTA';
-    case NAO_APLICAVEL = 'NAO_APLICAVEL';
-    case SIDER = 'SIDER';
+    case GRANELEIRA = 'Graneleira';
+    case BAU_FECHADO = 'Baú fechado';
+    case PORTA_CONTAINER = 'Porta container';
+    case ABERTA = 'Aberta';
+    case NAO_APLICAVEL = 'Não aplicável';
+    case SIDER = 'Sider';
 }
