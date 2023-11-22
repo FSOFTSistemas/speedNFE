@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\EstadoEnum;
+use App\Enum\TipoDocumentoEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,7 +30,8 @@ class MDFE extends Model
     ];
 
     protected $casts = [
-        'situacao' => EstadoEnum::class
+        'situacao' => EstadoEnum::class,
+        'tipo_documento' => TipoDocumentoEnum::class
     ];
 
 }

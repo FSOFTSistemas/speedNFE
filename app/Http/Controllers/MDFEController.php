@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\TipoDocumentoEnum;
+use App\Enum\UfEnum;
 use App\Services\MDFeService;
 use Exception;
 use Illuminate\Http\Request;
@@ -30,7 +32,9 @@ class MDFEController extends Controller
     public function create()
     {
         try {
-            return view('mdfes.create');
+            $tiposDocumentos = TipoDocumentoEnum::cases();
+            $ufs = UfEnum::cases();
+            return view('mdfes.create', ['tiposDocumentos' => $tiposDocumentos, 'ufs' => $ufs]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
