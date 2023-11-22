@@ -157,6 +157,7 @@ Route::prefix('relatorios')->group(function () {
 Route::prefix('mdfes')->group(function () {
     Route::get('', [MDFEController::class, 'index'])->name('mdfe.index')->middleware('auth');
     Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware('auth');
+    Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware('auth');
     Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware('auth');
     Route::get('/download/xmls', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
 });
