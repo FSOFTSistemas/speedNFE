@@ -121,17 +121,17 @@
                             </div>
                         </div>
                         @if (Auth::user()->empresa_id == 1)
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="">Empresa</label>
-                                <select class="form-control" name="empresaId" id="empresaId" required>
-                                    <option value="">-- Selecione uma Empresa --</option>
-                                    @foreach ($empresas as $empresa)
-                                        <option value="{{ $empresa->id }}">{{ $empresa->fantasia }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-3 col-xs-3">
+                                <div class="form-group">
+                                    <label for="">Empresa</label>
+                                    <select class="form-control" name="empresaId" id="empresaId" required>
+                                        <option value="">-- Selecione uma Empresa --</option>
+                                        @foreach ($empresas as $empresa)
+                                            <option value="{{ $empresa->id }}">{{ $empresa->fantasia }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
                         @endif
                     </div>
                     <div class="row">
@@ -166,18 +166,12 @@
     <script>
         function validarPlaca(entradaDoUsuario) {
             var placa = entradaDoUsuario.value; // Passa para a variável 'placa' o que o usuário digitar no formulário
+            placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
+            document.forms['veiculo']['placa'].value = placaMaiuscula; // Coloca a nova string de volta no formulário
 
-            if (placa.length === 1 || placa.length === 2) { // Quando a string possuir 1 ou 2 dígitos
-                placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
-                document.forms['veiculo']['placa'].value =
-                    placaMaiuscula; // Coloca a string modificada de volta no formulário
-                return true;
-            }
-
-            if (placa.length === 3) { // Quando a string possuir 3 dígitos
+        if (placa.length === 3) { // Quando a string possuir 3 dígitos
                 placa += "-"; // Adiciona um hífen
-                placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
-                document.forms['veiculo']['placa'].value = placaMaiuscula; // Coloca a nova string de volta no formulário
+                document.forms['veiculo']['placa'].value = placa;
                 return true;
             }
         }

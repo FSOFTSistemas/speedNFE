@@ -36,13 +36,13 @@
             <tbody style="width: 100%">
                 @foreach ($veiculos as $veiculo)
                     <tr>
-                        <td>{{ $veiculo->id }}</td>
+                        <td>#{{ $veiculo->id }}</td>
                         <td>{{ $veiculo->placa }}</td>
                         <td>{{ $veiculo->cpf_cnpj }}</td>
                         <td>{{ $veiculo->fantasia }}</td>
                         <td>{{ $veiculo->tipo_propriedade}}</td>
-                        <td>{{ $veiculo->tara }}</td>
-                        <td>{{ $veiculo->capacidade_m3 }}</td>
+                        <td>{{ number_format($veiculo->tara, 1) }}</td>
+                        <td>{{ number_format($veiculo->capacidade_m3, 1) }}</td>
                         <td>{{ $veiculo->tipo_veiculo }}</td>
                         <td>
                             <div class="row">
@@ -60,7 +60,7 @@
                 @endforeach
             </tbody>
         </table>
-        
+
     </div>
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"

@@ -4,7 +4,10 @@ namespace App\Models;
 
 use App\Enum\TipoCarriceria;
 use App\Enum\TipoCarroceriaEnum;
+use App\Enum\TipoPropriedadeEnum;
+use App\Enum\TipoRodadoEnum;
 use App\Enum\TipoVeiculoEnum;
+use App\Enum\UfEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,6 +32,9 @@ class Veiculo extends Model
 
     protected $casts = [
         'tipo_carroceria' => TipoCarroceriaEnum::class,
-        'tipo_veiculo' => TipoVeiculoEnum::class
+        'tipo_veiculo' => TipoVeiculoEnum::class,
+        'tipo_rodado' => TipoRodadoEnum::class,
+        'uf_veiculo' => UfEnum::class,
+        'tipo_propriedade' => TipoPropriedadeEnum::class
     ];
 }
