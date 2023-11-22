@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('uf_veiculo');
             $table->string('tipo_propriedade');
             $table->string('descricao', 512)->nullable();
+            $table->unsignedBigInteger('empresaId');
+            $table->foreign('empresaId')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
         });
     }
