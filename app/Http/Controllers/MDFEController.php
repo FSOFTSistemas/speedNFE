@@ -40,6 +40,15 @@ class MDFEController extends Controller
         }
     }
 
+    public function store(Request $request)
+    {
+        try {
+            dd($request->all());
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
     public function edit($mdfeId)
     {
         try {
