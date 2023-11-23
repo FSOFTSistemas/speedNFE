@@ -8,12 +8,25 @@ use Livewire\Component;
 
 class MDFe extends Component
 {
-    public $tipoDocumento;
-    public $localDescarregamento;
-    public $cidade;
-    public $valorTotal;
-    public $peso;
-    public $chave;
+    public $tipoDocumento = null;
+    public $localDescarregamento = null;
+    public $cidade = null;
+    public $valorTotal = null;
+    public $peso = null;
+    public $chave = null;
+    public $teste = null;
+
+    public $veiculoTracao = null;
+    public $motorista = null;
+    public $veiculoReboque = null;
+    public $localCarregamento = null;
+    public $percurso = null;
+    public $dataInicio = null;
+    public $tipoTransporte = null;
+    public $numero = null;
+    public $serie = null;
+    public $produtoPredominante = null;
+    public $tipoCarga = null;
 
     public $tiposDocumentos = [];
     public $ufs = [];
@@ -24,9 +37,11 @@ class MDFe extends Component
         $this->ufs = UfEnum::cases();
     }
 
-    public function atualizar()
+    public function salvarDocumento()
     {
-        dd('oi');
+        if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valorTotal && $this->peso && $this->chave) {
+            $this->teste = 'ola';
+        }
     }
 
     public function render()
