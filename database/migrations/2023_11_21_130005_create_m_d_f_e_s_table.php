@@ -27,6 +27,7 @@ return new class extends Migration
             $table->double('valor_total');
             $table->double('peso');
             $table->string('carga_predominante');
+            $table->string('tipo_carga');
             $table->string('ncm');
             $table->unsignedBigInteger('empresaId');
             $table->foreign('empresaId')->references('id')->on('empresas')->onDelete('cascade');

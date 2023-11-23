@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\EstadoEnum;
+use App\Enum\TipoCargaEnum;
 use App\Enum\TipoDocumentoEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class MDFE extends Model
         'peso',
         'carga_predominante',
         'ncm',
+        'tipo_carga',
         'veiculo_tracao_id',
         'veiculo_reboque_id',
         'motoristaId'
@@ -31,7 +33,8 @@ class MDFE extends Model
 
     protected $casts = [
         'situacao' => EstadoEnum::class,
-        'tipo_documento' => TipoDocumentoEnum::class
+        'tipo_documento' => TipoDocumentoEnum::class,
+        'tipo_carga' => TipoCargaEnum::class
     ];
 
 }

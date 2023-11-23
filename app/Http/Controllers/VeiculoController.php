@@ -77,7 +77,7 @@ class VeiculoController extends Controller
                 'descricao' => 'nullable|max:512',
             ]);
             $this->veiculosServices->salvar($request->all());
-            return redirect()->route('veiculos.index');
+            return redirect()->route('veiculos.index')->with('success', 'Veículo cadastrado com sucesso!');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }

@@ -1,65 +1,287 @@
 <div>
 
-    <form action="" method="POST">
+    <form method="POST">
+        @csrf
 
-        <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row" style="text-align: center">
-                                    <div class="col">
-                                        <h5>NFes importadas</h5>
+        <main>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card" style="height: 80dvh">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>NFes importadas</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div style="background-color: rgb(230, 230, 230); height: 100%; width: 100%;">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th width="80%"></th>
+                                                    <th width="20%"></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                    <td>NFe {{ $numero }}/{{ $serie }}</td>
+                                                    <td>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <a wire:click.prevent="" title="Editar NFe"
+                                                                    class="text-info"><i class="fa fa-edit"></i></a>
+                                                            </div>
+                                                            <div class="col">
+                                                                <a wire:click.prevent="" title="Remover NFe"
+                                                                    class="text-danger"><i class="fa fa-trash"></i></a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="card-body">
-                                <h5>{{ $chave }}</h5>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>Transporte</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="">Veículo de tração *</label>
+                                                <select class="form-control" name="veiculoTracao" wire:model="veiculoTracao" required>
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($veiculosTracao as $veiculoT)
+                                                        <option value="{{ $veiculoT->id }}">{{ $veiculoT->placa }}</option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input class="form-control" type="text" name="veiculoTracao"
+                                                    wire:model="veiculoTracao" required
+                                                    placeholder="Veículo de tração..."> --}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="">Motorista *</label>
+                                                <select class="form-control" name="motorista" wire:model="motorista" required>
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($motoristas as $motorista)
+                                                        <option value="{{ $motorista->id }}">{{ $motorista->nome }}</option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input class="form-control" type="text" name="motorista"
+                                                    wire:model="motorista" required placeholder="Motorista..."> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="">Veículo de reboque</label>
+                                                <select class="form-control" name="veiculoReboque" wire:model="veiculoReboque" required>
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($veiculosReboque as $veiculoR)
+                                                        <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}</option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input class="form-control" type="text" name="veiculoReboque"
+                                                    wire:model="veiculoReboque" placeholder="Veículo de reboque..."> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row" style="text-align: center">
-                                    <div class="col">
-                                        <h5>Transporte</h5>
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-4 col-xs-6" style="margin-bottom: 2%">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="">Tipo de Transporte</label>
+                                    <select class="form-control" name="tipoTransporte" wire:model="tipoTransporte"
+                                        required>
+                                        <option value="Carga própria">Carga própria</option>
+                                        <option value="CT-e golbalizado">CT-e golbalizado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-xs-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Nº documento</label>
+                                        <input class="form-control" type="number" name="numero" wire:model="numero"
+                                            required placeholder="Nº...">
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="">Veículo de tração *</label>
-                                            <input class="form-control" type="text" name="veiculoTracao"
-                                                wire:model="veiculoTracao" required placeholder="Veículo de tração...">
-                                        </div>
+                        </div>
+                        <div class="col-md-4 col-xs-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Série</label>
+                                        <input class="form-control" type="number" name="serie" wire:model="serie"
+                                            required placeholder="Série...">
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="">Motorista *</label>
-                                            <input class="form-control" type="text" name="motorista"
-                                                wire:model="motorista" required placeholder="Motorista...">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>Viagem</h5>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label for="">Veículo de reboque</label>
-                                            <input class="form-control" type="text" name="veiculoReboque"
-                                                wire:model="veiculoReboque" placeholder="Veículo de reboque...">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-5 col-xs-4">
+                                            <i class="fas fa-map-marker-alt" style="margin-right: 2%"></i><label
+                                                for=""><b> Local de Carregamento:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="text" name="localCarregamento"
+                                                wire:model="localCarregamento" required
+                                                placeholder="Local carregamento...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-4">
+                                            <i class="fas fa-map-marker-alt text-info"
+                                                style="margin-right: 2%"></i><label for=""><b> Local de
+                                                    Descarregamento:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="text" name="localDescarregamento"
+                                                wire:model="localDescarregamento" required
+                                                placeholder="Local descarregamento...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-4">
+                                            <i class="fas fa-map-marker-alt text-primary"
+                                                style="margin-right: 2%"></i><label for=""><b>
+                                                    Percurso:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="text" name="percurso"
+                                                wire:model="percurso" required placeholder="Percurso...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-4">
+                                            <i class="fas fa-calendar-week" style="margin-right: 2%"></i><label
+                                                for=""><b> Data de viagem:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="date" name="dataInicio"
+                                                wire:model="dataInicio" required placeholder="Data de viagem...">
+                                        </div>
+                                    </div><br>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>Carga</h5>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-md-5 col-xs-4">
+                                            <i class="fas fa-dollar-sign" style="margin-right: 2%"></i><label
+                                                for=""><b> Valor total da Carga (R$):</b></label>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <input class="form-control" type="number" name="valorTotal"
+                                                wire:model="valorTotal" required placeholder="Valor total...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-4">
+                                            <i class="fas fa-weight-hanging" style="margin-right: 2%"></i><label
+                                                for=""><b> Peso total (Kg):</b></label>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <input class="form-control" type="number" name="peso"
+                                                wire:model="peso" required placeholder="Peso...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-5 col-xs-5">
+                                            <i class="fas fa-box-open" style="margin-right: 2%"></i><label
+                                                for=""><b> Produto predominante:</b></label>
+                                        </div>
+                                        <div class="col-md-5 col-xs-5">
+                                            <input class="form-control" type="text" name="produtoPredominante"
+                                                wire:model="produtoPredominante" required
+                                                placeholder="Produto predominante...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-4">
+                                            <i class="fas fa-box-open" style="margin-right: 2%"></i><label
+                                                for=""><b> Tipo de carga:</b></label>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <select class="form-control" name="tipoCarga" wire:model="tipoCarga" required>
+                                                <option value="">Selecionar</option>
+                                                @foreach ($tiposCarga as $tipoC)
+                                                    <option value="{{ $tipoC }}">{{ $tipoC }}</option>
+                                                @endforeach
+                                            </select>
+                                            {{-- <input class="form-control" type="text" name="tipoCarga"
+                                                wire:model="tipoCarga" required placeholder="Tipo de carga..."> --}}
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -67,143 +289,13 @@
                 </div>
             </div>
 
-            <div class="col">
-                <div class="row">
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <label for="">Tipo de Transporte</label>
-                                <select class="form-control" name="tipoTransporte" wire:model="tipoTransporte" required>
-                                    <option value="">Carga própria</option>
-                                    <option value="">CT-e golbalizado</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="">Nº documento</label>
-                                    <input class="form-control" type="number" name="numero" wire:model="numero"
-                                        required placeholder="Nº...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="">Série</label>
-                                    <input class="form-control" type="number" name="serie" wire:model="serie"
-                                        required placeholder="Série...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row" style="text-align: center">
-                                    <div class="col">
-                                        <h5>Viagem</h5>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <p><i class="fas fa-map-marker-alt text-dark"></i><b> Local de Carregamento:</b>
-                                            {{ $localCarregamento }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <p><i class="fas fa-map-marker-alt text-info"></i><b> Local de
-                                                Descarregamento:</b> {{ $localDescarregamento }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <p><i class="fas fa-map-marker-alt text-primary"></i><b> Percurso:</b>
-                                            {{ $percurso }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <p><i class="fas fa-calendar-week"></i><b> Data de início da Viagem:</b>
-                                            {{ $dataInicio }}</p>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="row" style="text-align: center">
-                                    <div class="col">
-                                        <h5>Carga</h5>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card-body">
-
-                                <div class="row">
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-dollar-sign"></i><label for=""><b> Valor total da Carga:</b></label>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <input class="form-control" type="number" name="valorTotal" wire:model="valorTotal" required placeholder="Valor total...">
-                                    </div>
-                                </div><br>
-
-                                <div class="row">
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-weight-hanging"></i><label for=""><b> Peso total:</b></label>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <input class="form-control" type="number" name="peso" wire:model="peso" required placeholder="Peso...">
-                                    </div>
-                                </div><br>
-
-                                <div class="row">
-                                    <div class="col-md-5 col-xs-5">
-                                        <i class="fas fa-box-open"></i><label for=""><b> Produto predominante:</b></label>
-                                    </div>
-                                    <div class="col-md-5 col-xs-5">
-                                        <input class="form-control" type="text" name="produtoPredominante" wire:model="produtoPredominante" required placeholder="Produto predominante...">
-                                    </div>
-                                </div><br>
-
-                                <div class="row">
-                                    <div class="col-md-4 col-xs-4">
-                                        <i class="fas fa-box-open"></i><label for=""><b> Tipo de carga:</b></label>
-                                    </div>
-                                    <div class="col-md-4 col-xs-4">
-                                        <input class="form-control" type="text" name="tipoCarga" wire:model="tipoCarga" required placeholder="Tipo de carga...">
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
+            <div class="row" style="text-align: center; margin-bottom: 2%">
+                <div class="col">
+                    <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
+                    <button class="btn btn-success" type="submit" style="width: 25%">Concluir</button>
                 </div>
             </div>
-        </div>
+        </main>
 
     </form>
 
