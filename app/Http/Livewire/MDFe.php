@@ -19,7 +19,7 @@ class MDFe extends Component
     public $valorTotal = null;
     public $peso = null;
     public $chave = null;
-    public $teste = null;
+    public $modal = true;
 
     public $veiculoTracao = null;
     public $motorista = null;
@@ -58,7 +58,7 @@ class MDFe extends Component
     public function salvarDocumento()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valorTotal && $this->peso && $this->chave) {
-            $this->teste = 'ola';
+            $this->modal = false;
         }
     }
 
