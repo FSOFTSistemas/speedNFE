@@ -67,10 +67,12 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Veículo de tração *</label>
-                                                <select class="form-control" name="veiculoTracao" wire:model="veiculoTracao" required>
+                                                <select class="form-control" name="veiculoTracao"
+                                                    wire:model="veiculoTracao" required>
                                                     <option value="">Selecionar</option>
                                                     @foreach ($veiculosTracao as $veiculoT)
-                                                        <option value="{{ $veiculoT->id }}">{{ $veiculoT->placa }}</option>
+                                                        <option value="{{ $veiculoT->id }}">{{ $veiculoT->placa }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 {{-- <input class="form-control" type="text" name="veiculoTracao"
@@ -82,10 +84,12 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Motorista *</label>
-                                                <select class="form-control" name="motorista" wire:model="motorista" required>
+                                                <select class="form-control" name="motorista" wire:model="motorista"
+                                                    required>
                                                     <option value="">Selecionar</option>
                                                     @foreach ($motoristas as $motorista)
-                                                        <option value="{{ $motorista->id }}">{{ $motorista->nome }}</option>
+                                                        <option value="{{ $motorista->id }}">{{ $motorista->nome }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 {{-- <input class="form-control" type="text" name="motorista"
@@ -98,10 +102,12 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Veículo de reboque</label>
-                                                <select class="form-control" name="veiculoReboque" wire:model="veiculoReboque" required>
+                                                <select class="form-control" name="veiculoReboque"
+                                                    wire:model="veiculoReboque" required>
                                                     <option value="">Selecionar</option>
                                                     @foreach ($veiculosReboque as $veiculoR)
-                                                        <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}</option>
+                                                        <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                                 {{-- <input class="form-control" type="text" name="veiculoReboque"
@@ -271,7 +277,8 @@
                                                 for=""><b> Tipo de carga:</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
-                                            <select class="form-control" name="tipoCarga" wire:model="tipoCarga" required>
+                                            <select class="form-control" name="tipoCarga" wire:model="tipoCarga"
+                                                required>
                                                 <option value="">Selecionar</option>
                                                 @foreach ($tiposCarga as $tipoC)
                                                     <option value="{{ $tipoC }}">{{ $tipoC }}</option>
@@ -300,7 +307,7 @@
     </form>
 
     <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
-        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+        wire:model="modal" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -314,7 +321,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form wire:submit.prevent="salvarDocumento()">
+                    <form action="#" wire:submit.prevent="salvarDocumento()">
 
                         <div class="row">
                             <div class="col-md-3 col-xs-3">
@@ -375,12 +382,13 @@
                                 <div class="form-group">
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
-                                        placeholder="Chave...">
+                                        oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
                                 </div>
                             </div>
                         </div>
 
                         <div class="row" style="text-align: center">
+
                             <div class="col">
                                 <button class="btn btn-success" wire:click="salvarDocumento()"
                                     style="width: 25%">Salvar</button>
@@ -388,7 +396,6 @@
                         </div>
 
                     </form>
-
 
                 </div>
 
@@ -403,6 +410,18 @@
 
 <script>
     $(document).ready(function() {
-        $('#meuModal').modal('show');
+        if ({{ $modal }}) {
+            $('#meuModal').modal('show');
+        } else {
+            $('#meuModal').modal('hide');
+        }
     });
+
+    function limitarCaracteres(elemento, limite) {
+        let valor = elemento.value.toString();
+        if (valor.length > limite) {
+            valor = valor.slice(0, limite);
+            elemento.value = valor;
+        }
+    }
 </script>
