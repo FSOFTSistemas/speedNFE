@@ -2,12 +2,17 @@
 
 namespace App\Http\Livewire;
 
+use App\Enum\TipoCargaEnum;
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
+use App\Services\MotoristaService;
+use App\Services\VeiculosService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class MDFe extends Component
 {
+
     public $tipoDocumento = null;
     public $localDescarregamento = null;
     public $cidade = null;
@@ -29,12 +34,25 @@ class MDFe extends Component
     public $tipoCarga = null;
 
     public $tiposDocumentos = [];
+    public $tiposCarga = [];
     public $ufs = [];
+    public $veiculosTracao = [];
+    public $veiculosReboque = [];
+    public $motoristas = [];
 
     public function mount()
     {
+        //Injetar Services
+        $motoristaService = new MotoristaService();
+        $veiculoService = new VeiculosService();
+
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
+        $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
+        $this->dataInicio = now()->format('Y-m-d');
+        $this->veiculosTracao = $veiculoService->buscarVeiculos();
+        $this->veiculosReboque = $veiculoService->buscarVeiculos();
+        $this->motoristas = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
     }
 
     public function salvarDocumento()
