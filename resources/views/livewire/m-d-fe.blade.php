@@ -306,8 +306,7 @@
 
     </form>
 
-    <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
-        wire:model="modal" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -321,7 +320,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form action="#" wire:submit.prevent="salvarDocumento()">
+                    <form wire:submit.prevent="salvarDocumento">
 
                         <div class="row">
                             <div class="col-md-3 col-xs-3">
@@ -388,10 +387,8 @@
                         </div>
 
                         <div class="row" style="text-align: center">
-
                             <div class="col">
-                                <button class="btn btn-success" wire:click="salvarDocumento()"
-                                    style="width: 25%">Salvar</button>
+                                <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
                             </div>
                         </div>
 
@@ -410,11 +407,13 @@
 
 <script>
     $(document).ready(function() {
-        if ({{ $modal }}) {
-            $('#meuModal').modal('show');
-        } else {
+        $('#meuModal').modal('show');
+    });
+
+    document.addEventListener('livewire:load', function () {
+        Livewire.on('fecharModal', function () {
             $('#meuModal').modal('hide');
-        }
+        });
     });
 
     function limitarCaracteres(elemento, limite) {

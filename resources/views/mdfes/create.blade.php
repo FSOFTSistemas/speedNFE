@@ -8,7 +8,7 @@
             <h3>Emitir MDFe</h3>
         </div>
     </div> --}}
-    <div style="margin-top: 1%"></div>
+    <div style="margin-top: 2%"></div>
 @stop
 
 @section('content')
