@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class MDFe extends Component
 {
-
+    //Dados iniciais
     public $tipoDocumento = null;
     public $localDescarregamento = null;
     public $cidade = null;
@@ -20,6 +20,7 @@ class MDFe extends Component
     public $peso = null;
     public $chave = null;
 
+    //Especificações da MDFe
     public $veiculoTracao = null;
     public $motorista = null;
     public $veiculoReboque = null;
@@ -32,6 +33,11 @@ class MDFe extends Component
     public $produtoPredominante = null;
     public $tipoCarga = null;
 
+    //Dados da NFe
+    public $serieNFe = null;
+    public $numeroNFe = null;
+
+    //Dados para preemcher a teça
     public $tiposDocumentos = [];
     public $tiposCarga = [];
     public $ufs = [];
