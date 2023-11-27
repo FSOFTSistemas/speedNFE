@@ -29,7 +29,7 @@
 
                                             <tbody>
                                                 <tr>
-                                                    <td>NFe {{ $numero }}/{{ $serie }}</td>
+                                                    <td>NFe {{ $numeroNFe }}/{{ $serieNFe }}</td>
                                                     <td>
                                                         <div class="row">
                                                             <div class="col">

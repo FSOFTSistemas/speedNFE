@@ -63,10 +63,60 @@ class MDFe extends Component
     public function salvarDocumento()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valorTotal && $this->peso && $this->chave) {
+            if (!$this->validarChaveNFe($this->chave)) {
+                return back()->with('error', 'Chave NFe não é válida!');
+            }
             $this->emit('fecharModal');
-            $this->serie = $this->chave[0];
-            $this->numero = $this->chave[1];
         }
+    }
+
+    public function validarChaveNFe($chave)
+    {
+        if (strlen($chave) != 44) {
+            return false;
+        }
+        $uf = substr($chave, 0, 2);
+        // $anoMesEmissao = substr($chave, 2, 4);
+        $cnpjEmitente = substr($chave, 6, 14);
+        // $modelo = substr($chave, 20, 2);
+        $serie = substr($chave, 22, 3);
+        $numeroNFe = substr($chave, 25, 9);
+        // $tipoEmisao = substr($chave, 34, 1);
+        // $codigoNumerico = substr($chave, 35, 8);
+        $digitoVerificador = substr($chave, 43, 1);
+        if (!$this->validarCNPJ($cnpjEmitente)) {
+            return false;
+        }
+        $dvCalculado = $this->calcularDV(substr($chave, 0, -1));
+        if ($dvCalculado != $digitoVerificador) {
+            return false;
+        }
+        $this->localCarregamento = $this->localDescarregamento . ' - ' . $this->cidade;
+        $this->localDescarregamento = $uf;
+        $this->serieNFe = $serie;
+        $this->numeroNFe = $numeroNFe;
+        return true;
+    }
+
+    public function validarCNPJ($cnpj)
+    {
+        return true;
+    }
+
+    public function calcularDV($chave)
+    {
+        $soma = 0;
+        $multiplicador = 2;
+        for ($i = strlen($chave) - 1; $i >= 0; $i--) {
+            $soma += $chave[$i] * $multiplicador;
+            $multiplicador++;
+            if ($multiplicador > 9) {
+                $multiplicador = 2;
+            }
+        }
+        $resto = $soma % 11;
+        $dv = $resto == 0 || $resto == 1 ? 0 : 11 - $resto;
+        return $dv;
     }
 
     public function render()
