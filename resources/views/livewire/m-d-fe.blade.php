@@ -103,7 +103,7 @@
                                             <div class="form-group">
                                                 <label for="">Veículo de reboque</label>
                                                 <select class="form-control" name="veiculoReboque"
-                                                    wire:model="veiculoReboque" required>
+                                                    wire:model="veiculoReboque">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($veiculosReboque as $veiculoR)
                                                         <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}
@@ -352,7 +352,7 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    <input class="form-control" type="text" wire:model="cidade"
+                                    <input class="form-control" type="text" wire:click="buscarCidades()" wire:model="cidade"
                                         placeholder="Cidade..." required>
                                 </div>
                             </div>
@@ -382,6 +382,7 @@
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
+                                        <span class="text-danger" style="display: none;" id="chaveInvalida"><i class="fas fa-exclamation-circle"></i> Chave inválida, informe uma chave válida!</span>
                                 </div>
                             </div>
                         </div>
@@ -413,6 +414,12 @@
     document.addEventListener('livewire:load', function () {
         Livewire.on('fecharModal', function () {
             $('#meuModal').modal('hide');
+        });
+    });
+
+    document.addEventListener('livewire:load', function () {
+        Livewire.on('chaveInvalida', function () {
+            document.getElementById('chaveInvalida').style.display = 'block';
         });
     });
 

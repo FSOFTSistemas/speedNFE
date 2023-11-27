@@ -5,9 +5,11 @@ namespace App\Http\Livewire;
 use App\Enum\TipoCargaEnum;
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
+use App\Services\CidadeService;
 use App\Services\MotoristaService;
 use App\Services\VeiculosService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class MDFe extends Component
@@ -39,6 +41,7 @@ class MDFe extends Component
 
     //Dados para preemcher a teça
     public $tiposDocumentos = [];
+    public $cidades = [];
     public $tiposCarga = [];
     public $ufs = [];
     public $veiculosTracao = [];
@@ -55,18 +58,27 @@ class MDFe extends Component
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
         $this->dataInicio = now()->format('Y-m-d');
-        $this->veiculosTracao = $veiculoService->buscarVeiculos();
-        $this->veiculosReboque = $veiculoService->buscarVeiculos();
+        $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
+        $this->veiculosReboque = $veiculoService->buscarReboques();
         $this->motoristas = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
+    }
+
+    public function buscarCidades()
+    {
+        //Injetar Service
+        $cidadeService = new CidadeService();
+        if ($this->localDescarregamento) {
+            $this->cidades = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
+        }
     }
 
     public function salvarDocumento()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valorTotal && $this->peso && $this->chave) {
             if (!$this->validarChaveNFe($this->chave)) {
-                return back()->with('error', 'Chave NFe não é válida!');
+                return $this->emit('chaveInvalida');
             }
-            $this->emit('fecharModal');
+            return $this->emit('fecharModal');
         }
     }
 
@@ -75,7 +87,7 @@ class MDFe extends Component
         if (strlen($chave) != 44) {
             return false;
         }
-        $uf = substr($chave, 0, 2);
+        $uf = $this->ufNFe(substr($chave, 0, 2));
         // $anoMesEmissao = substr($chave, 2, 4);
         $cnpjEmitente = substr($chave, 6, 14);
         // $modelo = substr($chave, 20, 2);
@@ -117,6 +129,17 @@ class MDFe extends Component
         $resto = $soma % 11;
         $dv = $resto == 0 || $resto == 1 ? 0 : 11 - $resto;
         return $dv;
+    }
+
+    public function ufNFe($codigo)
+    {
+        foreach (UfEnum::cases() as $uf) {
+            $cod = explode('_', $uf->name)[1];
+            if ($cod == $codigo) {
+                return $uf;
+            }
+        }
+        return false;
     }
 
     public function render()

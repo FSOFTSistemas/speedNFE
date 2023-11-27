@@ -11,4 +11,10 @@ class CidadeService {
         return Cidade::all();
     }
 
+    public function buscarCidadesPorUf($uf)
+    {
+        dd($uf);
+        return Cidade::where('uf', $uf)->get();
+    }
+
 }

@@ -38,4 +38,20 @@ class VeiculosService
             ->join('empresas', 'empresas.id', 'veiculos.empresaId')
             ->get();
     }
+
+    public function buscarVeiculosTracao()
+    {
+        return Veiculo::select('veiculos.*', 'empresas.cpf_cnpj', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', 'veiculos.empresaId')
+            ->where('veiculos.tipo_veiculo', 'Tração')
+            ->get();
+    }
+
+    public function buscarReboques()
+    {
+        return Veiculo::select('veiculos.*', 'empresas.cpf_cnpj', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', 'veiculos.empresaId')
+            ->where('veiculos.tipo_veiculo', 'Reboque')
+            ->get();
+    }
 }
