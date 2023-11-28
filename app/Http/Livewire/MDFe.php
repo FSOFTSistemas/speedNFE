@@ -38,6 +38,8 @@ class MDFe extends Component
     //Dados da NFe
     public $serieNFe = null;
     public $numeroNFe = null;
+    public $NFe = [];
+    public $NFes = [];
 
     //Dados para preemcher a teça
     public $tiposDocumentos = [];
@@ -76,10 +78,13 @@ class MDFe extends Component
 
     public function salvarDocumento()
     {
+
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valorTotal && $this->peso && $this->chave) {
             if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
+            array_push($this->NFe, $this->tipoDocumento, $this->localDescarregamento, $this->cidade, $this->valorTotal, $this->peso, $this->chave);
+            array_push($this->NFes, $this->NFe);
             return $this->emit('fecharModal');
         }
     }
