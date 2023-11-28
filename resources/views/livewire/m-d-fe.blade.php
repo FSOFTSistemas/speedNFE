@@ -306,7 +306,8 @@
 
     </form>
 
-    <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -339,8 +340,7 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento"
-                                        name="localDescarregamento" required>
+                                    <select class="form-control" wire:model="localDescarregamento" wire:change="buscarCidades()" name="localDescarregamento" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($ufs as $uf)
                                             <option value="{{ $uf }}">{{ $uf }}</option>
@@ -352,10 +352,15 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    <input class="form-control" type="text" wire:click="buscarCidades()" wire:model="cidade"
-                                        placeholder="Cidade..." required>
+                                    {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
+                                        <option value="">Selecionar</option>
+                                        @foreach ($cidades as $city)
+                                            <option value="{{ $city }}">{{ $city }}</option>
+                                        @endforeach
+                                    </select> --}}
                                 </div>
                             </div>
+
                         </div>
 
                         <div class="row">
@@ -382,7 +387,9 @@
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
-                                        <span class="text-danger" style="display: none;" id="chaveInvalida"><i class="fas fa-exclamation-circle"></i> Chave inválida, informe uma chave válida!</span>
+                                    <span class="text-danger" style="display: none;" id="chaveInvalida"><i
+                                            class="fas fa-exclamation-circle"></i> Chave inválida, informe uma chave
+                                        válida!</span>
                                 </div>
                             </div>
                         </div>
@@ -411,14 +418,14 @@
         $('#meuModal').modal('show');
     });
 
-    document.addEventListener('livewire:load', function () {
-        Livewire.on('fecharModal', function () {
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('fecharModal', function() {
             $('#meuModal').modal('hide');
         });
     });
 
-    document.addEventListener('livewire:load', function () {
-        Livewire.on('chaveInvalida', function () {
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('chaveInvalida', function() {
             document.getElementById('chaveInvalida').style.display = 'block';
         });
     });

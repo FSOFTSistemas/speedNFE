@@ -13,7 +13,6 @@ class CidadeService {
 
     public function buscarCidadesPorUf($uf)
     {
-        dd($uf);
         return Cidade::where('uf', $uf)->get();
     }
 

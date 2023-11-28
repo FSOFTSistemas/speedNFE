@@ -9,7 +9,6 @@ use App\Services\CidadeService;
 use App\Services\MotoristaService;
 use App\Services\VeiculosService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 
 class MDFe extends Component
@@ -65,11 +64,9 @@ class MDFe extends Component
 
     public function buscarCidades()
     {
-        //Injetar Service
+        // Injetar Service
         $cidadeService = new CidadeService();
-        if ($this->localDescarregamento) {
-            $this->cidades = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
-        }
+        $this->cidades = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
     }
 
     public function salvarDocumento()
