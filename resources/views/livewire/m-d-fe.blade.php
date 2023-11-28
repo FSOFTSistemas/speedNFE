@@ -22,14 +22,16 @@
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th width="80%"></th>
+                                                    <th width="50%"></th>
+                                                    <th width="30%"></th>
                                                     <th width="20%"></th>
                                                 </tr>
                                             </thead>
 
-                                            <tbody>
+                                            <tbody style="font-size: 70%">
                                                 <tr>
                                                     <td>NFe {{ $numeroNFe }}/{{ $serieNFe }}</td>
+                                                    <td>{{ $cidade }}/{{ $localDescarregamento }}</td>
                                                     <td>
                                                         <div class="row">
                                                             <div class="col">
@@ -140,7 +142,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="">Nº documento</label>
-                                        <input class="form-control" type="number" name="numero" wire:model="numero"
+                                        <input class="form-control" type="text" name="numero" wire:model="numero"
                                             required placeholder="Nº...">
                                     </div>
                                 </div>
@@ -352,6 +354,7 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
+                                    <input class="form-control" type="text" name="cidade" wire:model="cidade" required placeholder="Cidade...">
                                     {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($cidades as $city)

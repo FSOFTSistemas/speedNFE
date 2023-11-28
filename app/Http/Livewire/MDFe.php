@@ -6,6 +6,7 @@ use App\Enum\TipoCargaEnum;
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
 use App\Services\CidadeService;
+use App\Services\EmpresasService;
 use App\Services\MotoristaService;
 use App\Services\VeiculosService;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +53,11 @@ class MDFe extends Component
         //Injetar Services
         $motoristaService = new MotoristaService();
         $veiculoService = new VeiculosService();
+        $empresaService = new EmpresasService();
+        $empresa = $empresaService->buscarEmpresa(Auth::user()->empresa_id);
 
+        $this->numero = "Geração Automática";
+        $this->localCarregamento = $empresa->uf . ' - ' . $empresa->cidade;
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
@@ -100,7 +105,6 @@ class MDFe extends Component
         if ($dvCalculado != $digitoVerificador) {
             return false;
         }
-        $this->localCarregamento = $this->localDescarregamento . ' - ' . $this->cidade;
         $this->localDescarregamento = $uf;
         $this->serieNFe = $serie;
         $this->numeroNFe = $numeroNFe;
