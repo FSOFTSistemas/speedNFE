@@ -18,8 +18,8 @@ class MDFe extends Component
     public $tipoDocumento = null;
     public $localDescarregamento = null;
     public $cidade = null;
-    public $valorTotal = null;
     public $peso = null;
+    public $valor = null;
     public $chave = null;
 
     //Especificações da MDFe
@@ -34,6 +34,8 @@ class MDFe extends Component
     public $serie = null;
     public $produtoPredominante = null;
     public $tipoCarga = null;
+    public $valorTotal = 0;
+    public $pesoTotal = 0;
 
     //Dados da NFe
     public $serieNFe = null;
@@ -78,16 +80,21 @@ class MDFe extends Component
 
     public function salvarDocumento()
     {
-
-        if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valorTotal && $this->peso && $this->chave) {
+        if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
             if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
-            array_push($this->NFe, $this->tipoDocumento, $this->localDescarregamento, $this->cidade, $this->valorTotal, $this->peso, $this->chave);
-            array_push($this->NFes, $this->NFe);
-            empty($this->NFe);
+            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'localDescarregamento' => $this->localDescarregamento, 'cidade' => $this->cidade, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
+            $this->NFes[] = $this->NFe;
+            $this->calcularTotais();
             return $this->emit('fecharModal');
         }
+    }
+
+    public function calcularTotais()
+    {
+        $this->valorTotal += $this->valor;
+        $this->pesoTotal += $this->peso;
     }
 
     public function validarChaveNFe($chave)
@@ -147,6 +154,11 @@ class MDFe extends Component
             }
         }
         return false;
+    }
+
+    public function addNFe()
+    {
+        return $this->emit('abrirModal');
     }
 
     public function render()
