@@ -85,6 +85,7 @@ class MDFe extends Component
             }
             array_push($this->NFe, $this->tipoDocumento, $this->localDescarregamento, $this->cidade, $this->valorTotal, $this->peso, $this->chave);
             array_push($this->NFes, $this->NFe);
+            empty($this->NFe);
             return $this->emit('fecharModal');
         }
     }
@@ -152,4 +153,5 @@ class MDFe extends Component
     {
         return view('livewire.m-d-fe');
     }
+
 }
