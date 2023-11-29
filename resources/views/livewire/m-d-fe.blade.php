@@ -29,22 +29,25 @@
                                             </thead>
 
                                             <tbody style="font-size: 70%">
-                                                <tr>
-                                                    <td>NFe {{ $numeroNFe }}/{{ $serieNFe }}</td>
-                                                    <td>{{ $cidade }}/{{ $localDescarregamento }}</td>
-                                                    <td>
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <a wire:click.prevent="" title="Editar NFe"
-                                                                    class="text-info"><i class="fa fa-edit"></i></a>
+                                                @foreach ($NFes as $nota)
+                                                    <tr>
+                                                        <td>NFe {{ $numeroNFe }}/{{ $serieNFe }}</td>
+                                                        <td>{{ $cidade }}/{{ $localDescarregamento }}</td>
+                                                        <td>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <a wire:click.prevent="" title="Editar NFe"
+                                                                        class="text-info"><i class="fa fa-edit"></i></a>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <a wire:click.prevent="" title="Remover NFe"
+                                                                        class="text-danger"><i
+                                                                            class="fa fa-trash"></i></a>
+                                                                </div>
                                                             </div>
-                                                            <div class="col">
-                                                                <a wire:click.prevent="" title="Remover NFe"
-                                                                    class="text-danger"><i class="fa fa-trash"></i></a>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -342,7 +345,8 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento" wire:change="buscarCidades()" name="localDescarregamento" required>
+                                    <select class="form-control" wire:model="localDescarregamento"
+                                        wire:change="buscarCidades()" name="localDescarregamento" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($ufs as $uf)
                                             <option value="{{ $uf }}">{{ $uf }}</option>
@@ -354,7 +358,8 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    <input class="form-control" type="text" name="cidade" wire:model="cidade" required placeholder="Cidade...">
+                                    <input class="form-control" type="text" name="cidade" wire:model="cidade"
+                                        required placeholder="Cidade...">
                                     {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($cidades as $city)
