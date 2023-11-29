@@ -18,7 +18,7 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <div style="background-color: rgb(230, 230, 230); height: 100%; width: 100%;">
+                                    <div style="background-color: rgb(230, 230, 230); height: 85%; width: 100%;">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
@@ -31,8 +31,9 @@
                                             <tbody style="font-size: 70%">
                                                 @foreach ($NFes as $nota)
                                                     <tr>
-                                                        <td>NFe {{ $numeroNFe }}/{{ $serieNFe }}</td>
-                                                        <td>{{ $cidade }}/{{ $localDescarregamento }}</td>
+                                                        <td>NFe {{ $nota['numeroNFe'] }}/{{ $nota['serieNFe'] }}</td>
+                                                        <td>{{ $nota['cidade'] }}/{{ $nota['localDescarregamento'] }}
+                                                        </td>
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
@@ -50,7 +51,34 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
+
+                                        @foreach ($NFes as $index => $nt)
+                                            <input type="hidden" name="NFes[{{ $index }}][tipoDocumento]"
+                                                wire:model="NFes.{{ $index }}.tipoDocumento">
+                                            <input type="hidden" name="NFes[{{ $index }}][localDescarregamento]"
+                                                wire:model="NFes.{{ $index }}.localDescarregamento" />
+                                            <input type="hidden" name="NFes[{{ $index }}][cidade]"
+                                                wire:model="NFes.{{ $index }}.cidade" />
+                                            <input type="hidden" name="NFes[{{ $index }}][valor]"
+                                                wire:model="NFes.{{ $index }}.valor" />
+                                            <input type="hidden" name="NFes[{{ $index }}][peso]"
+                                                wire:model="NFes.{{ $index }}.peso" />
+                                            <input type="hidden" name="NFes[{{ $index }}][chave]"
+                                                wire:model="NFes.{{ $index }}.chave" />
+                                            <input type="hidden" name="NFes[{{ $index }}][serieNFe]"s
+                                                wire:model="NFes.{{ $index }}.serieNFe" />
+                                            <input type="hidden" name="NFes[{{ $index }}][numeroNFe]"
+                                                wire:model="NFes.{{ $index }}.numeroNFe" />
+                                        @endforeach
+
                                     </div>
+
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <button class="btn btn-dark" wire:click="addNFe()">Importar mais NFes <i class="fas fa-upload"></i></button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -145,8 +173,8 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="">Nº documento</label>
-                                        <input class="form-control" type="text" name="numero" wire:model="numero"
-                                            required placeholder="Nº...">
+                                        <input class="form-control" type="text" name="numero"
+                                            wire:model="numero" required placeholder="Nº...">
                                     </div>
                                 </div>
                             </div>
@@ -259,8 +287,8 @@
                                                 for=""><b> Peso total (Kg):</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
-                                            <input class="form-control" type="number" name="peso"
-                                                wire:model="peso" required placeholder="Peso...">
+                                            <input class="form-control" type="number" name="pesoTotal"
+                                                wire:model="pesoTotal" required placeholder="Peso...">
                                         </div>
                                     </div><br>
 
@@ -376,7 +404,7 @@
                                 <div class="form-group">
                                     <label for="">Valor total *</label>
                                     <input class="form-control" type="number" step="0.01" min="0"
-                                        wire:model="valorTotal" required placeholder="Valor...">
+                                        wire:model="valor" required placeholder="Valor...">
                                 </div>
                             </div>
 
@@ -429,6 +457,10 @@
     document.addEventListener('livewire:load', function() {
         Livewire.on('fecharModal', function() {
             $('#meuModal').modal('hide');
+        });
+
+        Livewire.on('abrirModal', function() {
+            $('#meuModal').modal('show');
         });
     });
 
