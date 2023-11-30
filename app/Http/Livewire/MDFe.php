@@ -82,7 +82,9 @@ class MDFe extends Component
     public function salvarDocumento()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
-            if (!$this->validarChaveNFe($this->chave)) {
+            if ($this->buscarChave($this->chave)) {
+                return $this->emit('chaveJaExiste');
+            } else if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
             $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $this->cidade, 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
@@ -93,10 +95,26 @@ class MDFe extends Component
         }
     }
 
+    public function buscarChave($chave)
+    {
+        foreach ($this->NFes as $NFe) {
+            if ($NFe['chave'] == $chave) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function calcularTotais()
     {
-        $this->valorTotal += $this->valor;
-        $this->pesoTotal += $this->peso;
+        $valor = 0;
+        $peso = 0;
+        foreach ($this->NFes as $NFe) {
+            $valor += $NFe['valor'];
+            $peso += $NFe['peso'];
+        }
+        $this->valorTotal = $valor;
+        $this->pesoTotal = $peso;
     }
 
     public function limparCampos()
@@ -168,8 +186,24 @@ class MDFe extends Component
 
     public function editNFe($nota)
     {
-        dd($nota);
+        $this->cidade = $nota['cidade'];
+        $this->valor = $nota['valor'];
+        $this->peso = $nota['peso'];
+        $this->chave = $nota['chave'];
         return $this->emit('abrirModalEdit');
+    }
+
+    public function updateNFe()
+    {
+        $this->limparCampos();
+        $this->calcularTotais();
+    }
+
+    public function deleteNFe($nota)
+    {
+        unset($this->NFes[$nota]);
+        $this->NFes = array_values($this->NFes);
+        return $this->calcularTotais();
     }
 
     public function addNFe()

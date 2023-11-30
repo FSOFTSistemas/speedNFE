@@ -29,7 +29,7 @@
                                             </thead>
 
                                             <tbody style="font-size: 70%">
-                                                @foreach ($NFes as $nota)
+                                                @foreach ($NFes as $index => $nota)
                                                     <tr>
                                                         <td>NFe {{ $nota['numeroNFe'] }}/{{ $nota['serieNFe'] }}</td>
                                                         <td>{{ $nota['cidade'] }}/{{ $nota['ufNFe'] }}
@@ -37,14 +37,17 @@
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
-                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }})" title="Editar NFe"
-                                                                        class="text-info"><i class="fa fa-edit"></i></a>
+                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }})"
+                                                                        title="Editar NFe" class="text-info"><i
+                                                                            class="fa fa-edit"></i></a>
                                                                 </div>
-                                                                <div class="col">
-                                                                    <a wire:click.prevent="" title="Remover NFe"
-                                                                        class="text-danger"><i
-                                                                            class="fa fa-trash"></i></a>
-                                                                </div>
+                                                                @if (count($NFes) > 1)
+                                                                    <div class="col">
+                                                                        <a wire:click.prevent="deleteNFe({{ $index }})"
+                                                                            title="Remover NFe" class="text-danger"><i
+                                                                                class="fa fa-trash"></i></a>
+                                                                    </div>
+                                                                @endif
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -174,7 +177,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="">Nº documento</label>
-                                        <input class="form-control" type="text" name="numero"
+                                        <input class="form-control" type="text" name="numero" min="0"
                                             wire:model="numero" required placeholder="Nº...">
                                     </div>
                                 </div>
@@ -186,7 +189,7 @@
                                     <div class="form-group">
                                         <label for="">Série</label>
                                         <input class="form-control" type="number" name="serie" wire:model="serie"
-                                            required placeholder="Série...">
+                                            min="0" required placeholder="Série...">
                                     </div>
                                 </div>
                             </div>
@@ -278,7 +281,8 @@
                                         </div>
                                         <div class="col-md-4 col-xs-4">
                                             <input class="form-control" type="number" name="valorTotal"
-                                                wire:model="valorTotal" required placeholder="Valor total...">
+                                                min="0" wire:model="valorTotal" required
+                                                placeholder="Valor total...">
                                         </div>
                                     </div><br>
 
@@ -289,7 +293,7 @@
                                         </div>
                                         <div class="col-md-4 col-xs-4">
                                             <input class="form-control" type="number" name="pesoTotal"
-                                                wire:model="pesoTotal" required placeholder="Peso...">
+                                                min="0" wire:model="pesoTotal" required placeholder="Peso...">
                                         </div>
                                     </div><br>
 
@@ -425,8 +429,7 @@
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
                                     <span class="text-danger" style="display: none;" id="chaveInvalida"><i
-                                            class="fas fa-exclamation-circle"></i> Chave inválida, informe uma chave
-                                        válida!</span>
+                                            class="fas fa-exclamation-circle"></i></span>
                                 </div>
                             </div>
                         </div>
@@ -456,7 +459,7 @@
 
                     <div class="col" style="text-align: center">
                         <div class="modal-title" style="text: center">
-                            <h4>Adicionar documento</h4>
+                            <h4>Editar documento</h4>
                         </div>
                     </div>
 
@@ -470,7 +473,6 @@
                                 <div class="form-group">
                                     <label for="">Tipo de Documento *</label>
                                     <select class="form-control" wire:model="tipoDocumento" required>
-                                        <option value="">Selecionar</option>
                                         @foreach ($tiposDocumentos as $tipoDocumento)
                                             <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
                                         @endforeach
@@ -481,9 +483,7 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento"
-                                        wire:change="buscarCidades()" required>
-                                        <option value="">Selecionar</option>
+                                    <select class="form-control" wire:model="localDescarregamento" disabled>
                                         @foreach ($ufs as $uf)
                                             <option value="{{ $uf }}">{{ $uf }}</option>
                                         @endforeach
@@ -494,8 +494,8 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    <input class="form-control" type="text" wire:model="cidade"
-                                        required placeholder="Cidade...">
+                                    <input class="form-control" type="text" wire:model="cidade" required
+                                        placeholder="Cidade...">
                                     {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
                                     <option value="">Selecionar</option>
                                     @foreach ($cidades as $city)
@@ -531,9 +531,7 @@
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
-                                    <span class="text-danger" style="display: none;" id="chaveInvalida"><i
-                                            class="fas fa-exclamation-circle"></i> Chave inválida, informe uma chave
-                                        válida!</span>
+                                    <span class="text-danger" style="display: none;" id="chaveInvalida"></span>
                                 </div>
                             </div>
                         </div>
@@ -575,8 +573,18 @@
             $('#meuModalEdit').modal('show');
         });
 
+        Livewire.on('chaveJaExiste', function() {
+            let errorBox = document.getElementById('chaveInvalida');
+            errorBox.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave já utilizada, tente com uma nova chave!";
+            errorBox.style.display = 'block';
+        });
+
         Livewire.on('chaveInvalida', function() {
-            document.getElementById('chaveInvalida').style.display = 'block';
+            let errorBox = document.getElementById('chaveInvalida');
+            errorBox.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave inválida, tente com uma chave válida!";
+            errorBox.style.display = 'block';
         });
     });
 
