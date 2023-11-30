@@ -186,8 +186,17 @@ class MDFe extends Component
 
     public function editNFe($nota)
     {
-        dd($nota);
+        $this->cidade = $nota['cidade'];
+        $this->valor = $nota['valor'];
+        $this->peso = $nota['peso'];
+        $this->chave = $nota['chave'];
         return $this->emit('abrirModalEdit');
+    }
+
+    public function updateNFe()
+    {
+        $this->limparCampos();
+        $this->calcularTotais();
     }
 
     public function deleteNFe($nota)

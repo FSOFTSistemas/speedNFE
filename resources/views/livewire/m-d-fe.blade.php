@@ -37,7 +37,7 @@
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
-                                                                    <a wire:click.prevent="editNFe({{ $index }})"
+                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }})"
                                                                         title="Editar NFe" class="text-info"><i
                                                                             class="fa fa-edit"></i></a>
                                                                 </div>
@@ -459,7 +459,7 @@
 
                     <div class="col" style="text-align: center">
                         <div class="modal-title" style="text: center">
-                            <h4>Adicionar documento</h4>
+                            <h4>Editar documento</h4>
                         </div>
                     </div>
 
@@ -473,7 +473,6 @@
                                 <div class="form-group">
                                     <label for="">Tipo de Documento *</label>
                                     <select class="form-control" wire:model="tipoDocumento" required>
-                                        <option value="">Selecionar</option>
                                         @foreach ($tiposDocumentos as $tipoDocumento)
                                             <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
                                         @endforeach
@@ -484,9 +483,7 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento"
-                                        wire:change="buscarCidades()" required>
-                                        <option value="">Selecionar</option>
+                                    <select class="form-control" wire:model="localDescarregamento" disabled>
                                         @foreach ($ufs as $uf)
                                             <option value="{{ $uf }}">{{ $uf }}</option>
                                         @endforeach
