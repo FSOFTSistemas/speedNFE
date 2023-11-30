@@ -43,6 +43,7 @@ class MDFe extends Component
     public $ufNFe = null;
     public $NFe = [];
     public $NFes = [];
+    public $indexEdit = null;
 
     //Dados para preemcher a teça
     public $tiposDocumentos = [];
@@ -82,7 +83,7 @@ class MDFe extends Component
     public function salvarDocumento()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
-            if ($this->buscarChave($this->chave)) {
+            if ($this->buscarChave($this->chave) >= 1) {
                 return $this->emit('chaveJaExiste');
             } else if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
@@ -97,12 +98,13 @@ class MDFe extends Component
 
     public function buscarChave($chave)
     {
+        $achou = 0;
         foreach ($this->NFes as $NFe) {
             if ($NFe['chave'] == $chave) {
-                return true;
+                $achou++;
             }
         }
-        return false;
+        return $achou;
     }
 
     public function calcularTotais()
@@ -123,6 +125,7 @@ class MDFe extends Component
         $this->valor = null;
         $this->peso = null;
         $this->chave = null;
+        $this->indexEdit = null;
     }
 
     public function validarChaveNFe($chave)
@@ -184,19 +187,29 @@ class MDFe extends Component
         return false;
     }
 
-    public function editNFe($nota)
+    public function editNFe($nota, $index)
     {
         $this->cidade = $nota['cidade'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];
         $this->chave = $nota['chave'];
+        $this->indexEdit = $index;
         return $this->emit('abrirModalEdit');
     }
 
     public function updateNFe()
     {
-        $this->limparCampos();
-        $this->calcularTotais();
+        if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
+            if ($this->buscarChave($this->chave) > 1) {
+                return $this->emit('chaveJaExiste');
+            } else if (!$this->validarChaveNFe($this->chave)) {
+                return $this->emit('chaveInvalida');
+            }
+            $this->NFes[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $this->cidade, 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
+            $this->calcularTotais();
+            $this->limparCampos();
+            return $this->emit('fecharModalEdit');
+        }
     }
 
     public function deleteNFe($nota)
@@ -208,6 +221,7 @@ class MDFe extends Component
 
     public function addNFe()
     {
+        $this->emit('atualizarSelect');
         return $this->emit('abrirModal');
     }
 

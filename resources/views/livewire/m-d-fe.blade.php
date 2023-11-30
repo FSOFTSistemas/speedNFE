@@ -37,7 +37,7 @@
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
-                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }})"
+                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }}, {{ $index }})"
                                                                         title="Editar NFe" class="text-info"><i
                                                                             class="fa fa-edit"></i></a>
                                                                 </div>
@@ -228,7 +228,7 @@
                                         </div>
                                         <div class="col-md-6 col-xs-4">
                                             <input class="form-control" type="text" name="localDescarregamento"
-                                                wire:model="localDescarregamento" required
+                                                readonly wire:model="localDescarregamento" required
                                                 placeholder="Local descarregamento...">
                                         </div>
                                     </div><br>
@@ -378,12 +378,12 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento"
+                                    <select class="form-control" wire:model="localDescarregamento" id="meuSelect"
                                         wire:change="buscarCidades()" name="localDescarregamento" required>
                                         <option value="">Selecionar</option>
-                                        @foreach ($ufs as $uf)
-                                            <option value="{{ $uf }}">{{ $uf }}</option>
-                                        @endforeach
+                                            @foreach ($ufs as $uf)
+                                                <option value="{{ $uf }}">{{ $uf }}</option>
+                                            @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -466,7 +466,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form wire:submit.prevent="salvarDocumento">
+                    <form wire:submit.prevent="updateNFe">
 
                         <div class="row">
                             <div class="col-md-3 col-xs-3">
@@ -483,11 +483,8 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento" disabled>
-                                        @foreach ($ufs as $uf)
-                                            <option value="{{ $uf }}">{{ $uf }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input class="form-control" type="text" wire:model="localDescarregamento"
+                                        readonly>
                                 </div>
                             </div>
 
@@ -571,6 +568,15 @@
 
         Livewire.on('abrirModalEdit', function() {
             $('#meuModalEdit').modal('show');
+        });
+
+        Livewire.on('fecharModalEdit', function() {
+            $('#meuModalEdit').modal('hide');
+        });
+
+        Livewire.on('atualizarSelect', function() {
+            var select = document.getElementById('meuSelect');
+            select.innerHTML = '';
         });
 
         Livewire.on('chaveJaExiste', function() {
