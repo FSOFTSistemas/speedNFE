@@ -32,12 +32,12 @@
                                                 @foreach ($NFes as $nota)
                                                     <tr>
                                                         <td>NFe {{ $nota['numeroNFe'] }}/{{ $nota['serieNFe'] }}</td>
-                                                        <td>{{ $nota['cidade'] }}/{{ $nota['localDescarregamento'] }}
+                                                        <td>{{ $nota['cidade'] }}/{{ $nota['ufNFe'] }}
                                                         </td>
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
-                                                                    <a wire:click.prevent="" title="Editar NFe"
+                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }})" title="Editar NFe"
                                                                         class="text-info"><i class="fa fa-edit"></i></a>
                                                                 </div>
                                                                 <div class="col">
@@ -55,8 +55,8 @@
                                         @foreach ($NFes as $index => $nt)
                                             <input type="hidden" name="NFes[{{ $index }}][tipoDocumento]"
                                                 wire:model="NFes.{{ $index }}.tipoDocumento">
-                                            <input type="hidden" name="NFes[{{ $index }}][localDescarregamento]"
-                                                wire:model="NFes.{{ $index }}.localDescarregamento" />
+                                            <input type="hidden" name="NFes[{{ $index }}][ufNFe]"
+                                                wire:model="NFes.{{ $index }}.ufNFe" />
                                             <input type="hidden" name="NFes[{{ $index }}][cidade]"
                                                 wire:model="NFes.{{ $index }}.cidade" />
                                             <input type="hidden" name="NFes[{{ $index }}][valor]"
@@ -75,7 +75,8 @@
 
                                     <div class="row" style="text-align: center">
                                         <div class="col">
-                                            <button class="btn btn-dark" wire:click="addNFe()">Importar mais NFes <i class="fas fa-upload"></i></button>
+                                            <button class="btn btn-dark" wire:click="addNFe()">Importar mais NFes <i
+                                                    class="fas fa-upload"></i></button>
                                         </div>
                                     </div>
 
@@ -447,6 +448,113 @@
         </div>
     </div>
 
+    <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="col" style="text-align: center">
+                        <div class="modal-title" style="text: center">
+                            <h4>Adicionar documento</h4>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-body">
+
+                    <form wire:submit.prevent="salvarDocumento">
+
+                        <div class="row">
+                            <div class="col-md-3 col-xs-3">
+                                <div class="form-group">
+                                    <label for="">Tipo de Documento *</label>
+                                    <select class="form-control" wire:model="tipoDocumento" required>
+                                        <option value="">Selecionar</option>
+                                        @foreach ($tiposDocumentos as $tipoDocumento)
+                                            <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-xs-4">
+                                <div class="form-group">
+                                    <label for="">Local de descarregamento *</label>
+                                    <select class="form-control" wire:model="localDescarregamento"
+                                        wire:change="buscarCidades()" required>
+                                        <option value="">Selecionar</option>
+                                        @foreach ($ufs as $uf)
+                                            <option value="{{ $uf }}">{{ $uf }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5 col-xs-5">
+                                <div class="form-group">
+                                    <label for="">Cidade *</label>
+                                    <input class="form-control" type="text" wire:model="cidade"
+                                        required placeholder="Cidade...">
+                                    {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
+                                    <option value="">Selecionar</option>
+                                    @foreach ($cidades as $city)
+                                        <option value="{{ $city }}">{{ $city }}</option>
+                                    @endforeach
+                                </select> --}}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Valor total *</label>
+                                    <input class="form-control" type="number" step="0.01" min="0"
+                                        wire:model="valor" required placeholder="Valor...">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Peso (Kg) *</label>
+                                    <input class="form-control" type="number" step="0.01" min="0"
+                                        wire:model="peso" required placeholder="Peso...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Chave de acesso *</label>
+                                    <input class="form-control" type="number" wire:model="chave" required
+                                        oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
+                                    <span class="text-danger" style="display: none;" id="chaveInvalida"><i
+                                            class="fas fa-exclamation-circle"></i> Chave inválida, informe uma chave
+                                        válida!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="text-align: center">
+                            <div class="col">
+                                <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -462,9 +570,11 @@
         Livewire.on('abrirModal', function() {
             $('#meuModal').modal('show');
         });
-    });
 
-    document.addEventListener('livewire:load', function() {
+        Livewire.on('abrirModalEdit', function() {
+            $('#meuModalEdit').modal('show');
+        });
+
         Livewire.on('chaveInvalida', function() {
             document.getElementById('chaveInvalida').style.display = 'block';
         });

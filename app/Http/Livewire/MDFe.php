@@ -40,6 +40,7 @@ class MDFe extends Component
     //Dados da NFe
     public $serieNFe = null;
     public $numeroNFe = null;
+    public $ufNFe = null;
     public $NFe = [];
     public $NFes = [];
 
@@ -84,9 +85,10 @@ class MDFe extends Component
             if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
-            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'localDescarregamento' => $this->localDescarregamento, 'cidade' => $this->cidade, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
+            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $this->cidade, 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
             $this->NFes[] = $this->NFe;
             $this->calcularTotais();
+            $this->limparCampos();
             return $this->emit('fecharModal');
         }
     }
@@ -95,6 +97,14 @@ class MDFe extends Component
     {
         $this->valorTotal += $this->valor;
         $this->pesoTotal += $this->peso;
+    }
+
+    public function limparCampos()
+    {
+        $this->cidade = null;
+        $this->valor = null;
+        $this->peso = null;
+        $this->chave = null;
     }
 
     public function validarChaveNFe($chave)
@@ -118,7 +128,7 @@ class MDFe extends Component
         if ($dvCalculado != $digitoVerificador) {
             return false;
         }
-        $this->localDescarregamento = $uf;
+        $this->ufNFe = $uf;
         $this->serieNFe = $serie;
         $this->numeroNFe = $numeroNFe;
         return true;
@@ -154,6 +164,12 @@ class MDFe extends Component
             }
         }
         return false;
+    }
+
+    public function editNFe($nota)
+    {
+        dd($nota);
+        return $this->emit('abrirModalEdit');
     }
 
     public function addNFe()
