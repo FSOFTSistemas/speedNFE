@@ -34,17 +34,18 @@
 </head>
 
 <body>
-    <header>
-        <div class="logo">
-            <img src="{{ asset("css/logo.png") }}">
-        </div>
-        <a href="#">Home</a>
-        <a href="#">Emissor NFE</a>
-        <a href="#">Planos</a>
-        <a href="#">Contatos</a>
-        <a href="#">Acessar o Sistema</a>
-    </header>
-
+    <div class="container" >
+        <header>
+            <div class="logo">
+                <img src="{{ asset("css/logo.png") }}">
+            </div>
+            <nav>
+                <a href="{{ route("homePage") }}">Home</a>
+                <a href="{{ route('Planos') }}">Planos</a>
+                <a href="{{ route('loginPage') }}">Login</a>
+            </nav>
+        </header>
+    </div>
     <div class="img-fundo">
         <div class="img-overlay"></div>
         <img src="{{ asset('css/Mulher-no-Computador.jpg') }}" alt="Logo">
