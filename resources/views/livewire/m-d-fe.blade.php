@@ -18,7 +18,8 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <div style="background-color: rgb(230, 230, 230); height: 85%; width: 100%;">
+                                    <div
+                                        style="background-color: rgb(230, 230, 230); height: 85%; width: 100%; max-height: 85%; overflow-y: auto;">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
@@ -78,7 +79,8 @@
 
                                     <div class="row" style="text-align: center">
                                         <div class="col">
-                                            <button class="btn btn-dark" wire:click="addNFe()">Importar mais NFes <i
+                                            <button class="btn btn-dark" wire:click="addNFe()"
+                                                style="margin-top: 2%;">Importar mais NFes <i
                                                     class="fas fa-upload"></i></button>
                                         </div>
                                     </div>
@@ -390,8 +392,6 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    {{-- <input class="form-control" type="text" wire:model="cidade" required
-                                        placeholder="Cidade..."> --}}
                                     <select class="form-control" wire:model="cidade" id="cidade" required>
                                         <option value="">Selecionar</option>
                                     </select>
@@ -447,6 +447,7 @@
         </div>
     </div>
 
+    @if(count($NFes) >= 1)
     <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
         aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -487,14 +488,11 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    <input class="form-control" type="text" wire:model="cidade" required
-                                        placeholder="Cidade...">
-                                    {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
-                                    <option value="">Selecionar</option>
-                                    @foreach ($cidades as $city)
-                                        <option value="{{ $city }}">{{ $city }}</option>
-                                    @endforeach
-                                </select> --}}
+                                    <select class="form-control" wire:model="cidade" required>
+                                        @foreach (json_decode($cidades) as $city)
+                                            <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
@@ -524,7 +522,7 @@
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
-                                    <span class="text-danger" style="display: none;" id="chaveInvalida"></span>
+                                    <span class="text-danger" style="display: none;" id="chaveInvalidaEdit"></span>
                                 </div>
                             </div>
                         </div>
@@ -545,8 +543,10 @@
             </div>
         </div>
     </div>
+    @endif
 
 </div>
+
 
 <script>
     $(document).ready(function() {
@@ -572,26 +572,22 @@
 
         Livewire.on('btnCancelar', function() {
             var cancelar = document.getElementById('cancelar');
-            var novoBotao = document.createElement('button');
-            novoBotao.className = 'btn btn-secondary';
-            novoBotao.textContent = 'Cancelar';
-            novoBotao.addEventListener('click', function() {
-                Livewire.emit('cancelAdd');
-            });
-            while (cancelar.firstChild) {
-                cancelar.removeChild(cancelar.firstChild);
-            }
-            cancelar.appendChild(novoBotao);
+            cancelar.innerHTML =
+                '<button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>';
         });
 
         Livewire.on('cidades', function(value) {
             var select = document.getElementById('cidade');
             select.innerHTML = '';
+            var option1 = document.createElement('option');
+            option1.value = '';
+            option1.text = 'Selecionar';
+            select.add(option1);
             value.forEach(element => {
-                var option = document.createElement('option');
-                option.value = element.cidade;
-                option.text = element.cidade;
-                select.add(option);
+                var option2 = document.createElement('option');
+                option2.value = element.cidade;
+                option2.text = element.cidade;
+                select.add(option2);
             });
         });
 
@@ -607,16 +603,32 @@
 
         Livewire.on('chaveJaExiste', function() {
             let errorBox = document.getElementById('chaveInvalida');
+            let errorBox2 = document.getElementById('chaveInvalidaEdit');
             errorBox.innerHTML =
                 "<i class='fas fa-exclamation-circle'></i> Chave já utilizada, tente com uma nova chave!";
             errorBox.style.display = 'block';
+            errorBox2.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave já utilizada, tente com uma nova chave!";
+            errorBox2.style.display = 'block';
+            setTimeout(function() {
+                errorBox.style.display = 'none';
+                errorBox2.style.display = 'none';
+            }, 3000);
         });
 
         Livewire.on('chaveInvalida', function() {
             let errorBox = document.getElementById('chaveInvalida');
+            let errorBox2 = document.getElementById('chaveInvalidaEdit');
             errorBox.innerHTML =
                 "<i class='fas fa-exclamation-circle'></i> Chave inválida, tente com uma chave válida!";
             errorBox.style.display = 'block';
+            errorBox2.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave inválida, tente com uma chave válida!";
+            errorBox2.style.display = 'block';
+            setTimeout(function() {
+                errorBox.style.display = 'none';
+                errorBox2.style.display = 'none';
+            }, 3000);
         });
     });
 

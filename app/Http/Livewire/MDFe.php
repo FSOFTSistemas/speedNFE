@@ -98,13 +98,6 @@ class MDFe extends Component
         }
     }
 
-    public function cancelAdd()
-    {
-        dd('oi');
-        $this->limparCampos();
-        return $this->emit('fecharModal');
-    }
-
     public function buscarChave($chave)
     {
         $achou = 0;
