@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #ffffff;
+    padding: 30px;
+    text-align: right;
+}
+
+header a {
+    color: #54BCE1;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+.logo img {
+float: left;
+    
+}
+
+.background::after {
+    content: '';
+    background: #54BCE1;
+    background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
+    background: -webkit-linear-gradient(top, #4394f4 0%,#54BCE1 100%);
+    background: linear-gradient(to bottom, #4394f4 0%,#54BCE1 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#60a9ff', endColorstr='#4394f4',GradientType=0 );
+    height: 350px;
+    left: 0;
+    position: absolute;
+    top: 15%;
+    width: 100%;
+    z-index: 1;
+}
+
+.container-2 {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between; 
+    align-items: start;
+    margin-top: 25px;
+    
+}
+
+#text-home {
+    color: #fff;
+    text-align: left;
+    position: relative;
+    z-index: 2;
+    width: 100%; 
+    margin-right: 50px;
+}
+
+
+
+
+.text-left h1,
+.text-right h1 {
+    
+    margin-right: 35dvh;
+}

@@ -40,9 +40,9 @@
                 <img src="{{ asset("css/logo.png") }}">
             </div>
             <nav>
-                <a href="{{ route("homePage") }}">Home</a>
+                <a href="{{ route('homePage') }}">Home</a>
                 <a href="{{ route('Planos') }}">Planos</a>
-                <a href="{{ route('loginPage') }}">Login</a>
+                <a href="{{ route('login') }}">Login</a>
             </nav>
         </header>
     </div>

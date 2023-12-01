@@ -38,7 +38,6 @@ Route::get('/', function(){
     return view('homePage');
 });
 
-Route::get('/loginPage', [LoginController::class, 'loginPage'])->name('loginPage');
 
 Route::get('/homePage', [HomeController::class, 'homePage'])->name('homePage');
 
@@ -50,9 +49,9 @@ Route::get('/home', function () {
     return view('home');
 })->name('home')->middleware('auth');
 
-Route::get('/',  function () {
-    return view('home');
-})->middleware('auth');
+// Route::get('/',  function () {
+//     return view('home');
+// })->middleware('auth');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
