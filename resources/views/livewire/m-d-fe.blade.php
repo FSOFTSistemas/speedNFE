@@ -365,8 +365,7 @@
                             <div class="col-md-3 col-xs-3">
                                 <div class="form-group">
                                     <label for="">Tipo de Documento *</label>
-                                    <select class="form-control" wire:model="tipoDocumento" name="tipoDocumento"
-                                        required>
+                                    <select class="form-control" wire:model="tipoDocumento" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($tiposDocumentos as $tipoDocumento)
                                             <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
@@ -379,11 +378,11 @@
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
                                     <select class="form-control" wire:model="localDescarregamento" id="meuSelect"
-                                        wire:change="buscarCidades()" name="localDescarregamento" required>
+                                        wire:change="buscarCidades()" required>
                                         <option value="">Selecionar</option>
-                                            @foreach ($ufs as $uf)
-                                                <option value="{{ $uf }}">{{ $uf }}</option>
-                                            @endforeach
+                                        @foreach ($ufs as $uf)
+                                            <option value="{{ $uf }}">{{ $uf }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -391,14 +390,11 @@
                             <div class="col-md-5 col-xs-5">
                                 <div class="form-group">
                                     <label for="">Cidade *</label>
-                                    <input class="form-control" type="text" name="cidade" wire:model="cidade"
-                                        required placeholder="Cidade...">
-                                    {{-- <select class="form-control" wire:model="cidade" name="cidade" required>
+                                    {{-- <input class="form-control" type="text" wire:model="cidade" required
+                                        placeholder="Cidade..."> --}}
+                                    <select class="form-control" wire:model="cidade" id="cidade" required>
                                         <option value="">Selecionar</option>
-                                        @foreach ($cidades as $city)
-                                            <option value="{{ $city }}">{{ $city }}</option>
-                                        @endforeach
-                                    </select> --}}
+                                    </select>
                                 </div>
                             </div>
 
@@ -444,7 +440,7 @@
 
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer" id="cancelar">
                     <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
                 </div>
             </div>
@@ -544,7 +540,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-secondary" wire:click="cancelEdit()">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -574,9 +570,39 @@
             $('#meuModalEdit').modal('hide');
         });
 
-        Livewire.on('atualizarSelect', function() {
+        Livewire.on('btnCancelar', function() {
+            var cancelar = document.getElementById('cancelar');
+            var novoBotao = document.createElement('button');
+            novoBotao.className = 'btn btn-secondary';
+            novoBotao.textContent = 'Cancelar';
+            novoBotao.addEventListener('click', function() {
+                Livewire.emit('cancelAdd');
+            });
+            while (cancelar.firstChild) {
+                cancelar.removeChild(cancelar.firstChild);
+            }
+            cancelar.appendChild(novoBotao);
+        });
+
+        Livewire.on('cidades', function(value) {
+            var select = document.getElementById('cidade');
+            select.innerHTML = '';
+            value.forEach(element => {
+                var option = document.createElement('option');
+                option.value = element.cidade;
+                option.text = element.cidade;
+                select.add(option);
+            });
+        });
+
+        Livewire.on('atualizarSelect', function(value) {
             var select = document.getElementById('meuSelect');
             select.innerHTML = '';
+            select.readonly = true;
+            var option = document.createElement('option');
+            option.value = value;
+            option.text = value;
+            select.add(option);
         });
 
         Livewire.on('chaveJaExiste', function() {
