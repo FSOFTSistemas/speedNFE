@@ -27,6 +27,7 @@ class MDFe extends Component
     public $motorista = null;
     public $veiculoReboque = null;
     public $localCarregamento = null;
+    public $municipio = null;
     public $percurso = null;
     public $dataInicio = null;
     public $tipoTransporte = null;
@@ -63,7 +64,8 @@ class MDFe extends Component
         $empresa = $empresaService->buscarEmpresa(Auth::user()->empresa_id);
 
         $this->numero = "Geração Automática";
-        $this->localCarregamento = $empresa->uf . ' - ' . $empresa->cidade;
+        $this->localCarregamento = $empresa->uf;
+        $this->municipio = $empresa->cidade;
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
