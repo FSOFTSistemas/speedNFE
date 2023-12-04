@@ -228,10 +228,15 @@
                                                 style="margin-right: 2%"></i><label for=""><b> Local de
                                                     Descarregamento:</b></label>
                                         </div>
-                                        <div class="col-md-6 col-xs-4">
+                                        <div class="col-md-2 col-xs-4">
                                             <input class="form-control" type="text" name="localDescarregamento"
                                                 readonly wire:model="localDescarregamento" required
                                                 placeholder="Local descarregamento...">
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <input class="form-control" type="text" name="municipio"
+                                                readonly wire:model="municipio" required
+                                                placeholder="Município...">
                                         </div>
                                     </div><br>
 
