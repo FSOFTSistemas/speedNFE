@@ -78,6 +78,7 @@ class MDFe extends Component
         // Injetar Service
         $cidadeService = new CidadeService();
         $this->cidades = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
+        return $this->emit('cidades', $this->cidades);
     }
 
     public function salvarDocumento()
@@ -92,6 +93,7 @@ class MDFe extends Component
             $this->NFes[] = $this->NFe;
             $this->calcularTotais();
             $this->limparCampos();
+            $this->emit('btnCancelar');
             return $this->emit('fecharModal');
         }
     }
@@ -197,6 +199,12 @@ class MDFe extends Component
         return $this->emit('abrirModalEdit');
     }
 
+    public function cancelEdit()
+    {
+        $this->limparCampos();
+        return $this->emit('fecharModalEdit');
+    }
+
     public function updateNFe()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
@@ -221,7 +229,8 @@ class MDFe extends Component
 
     public function addNFe()
     {
-        $this->emit('atualizarSelect');
+        $this->ufs = [];
+        $this->emit('atualizarSelect', $this->localDescarregamento);
         return $this->emit('abrirModal');
     }
 
