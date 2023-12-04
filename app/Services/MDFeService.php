@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\MDFE;
 use NFePHP\Common\Certificate;
 use NFePHP\MDFe\Make;
 use NFePHP\MDFe\Tools;
@@ -17,17 +16,11 @@ class MDFeService
     {
         $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
-        // $this->tools->model(55);
     }
 
     public function gerarXml($transporte, $emitente)
     {
         $mdfe = new Make();
-        // $stdInfMDFe = new \stdClass();
-        // $stdInfMDFe->versao = $mdfe->versao;
-        // $stdInfMDFe->Id = null;
-        // $stdInfMDFe->pk_nItem = '';
-        // $mdfe->taginfMDFeTransp($stdInfMDFe);
 
         $numeroMDFe = $emitente->ultimaMDFe + 1;
         $stdIde = new \stdClass();
@@ -40,7 +33,7 @@ class MDFeService
         $stdIde->nMDF = $numeroMDFe;
         $stdIde->cdv = '?';
         $stdIde->modal = 1;
-        $stdIde->dhEmi = $transporte->created_at;
+        $stdIde->dhEmi = '2023-12-04';
         $stdIde->tpEmis = '?';
         $stdIde->procEmi = '?';
         $stdIde->verProc = '?';
@@ -72,14 +65,14 @@ class MDFeService
         $enderEmit->fone = $emitente->contato;
         $mdfe->tagenderEmit($enderEmit);
 
-        $rodo = new \stdClass();
-        $mdfe->taglacRodo($rodo);
+        // $rodo = new \stdClass();
+        // $mdfe->taglacRodo($rodo);
 
         $infANTT = new \stdClass();
         $mdfe->taginfANTT($infANTT);
 
         $infContratante = new \stdClass();
-        $infContratante->CNPJ = $emitente->cnpj;
+        $infContratante->CNPJ = '';
         $mdfe->taginfContratante($infContratante);
 
         $veicTracao = new \stdClass();
@@ -110,14 +103,57 @@ class MDFeService
             $mdfe->tagveicReboque($veicReboque);
         }
 
-    }
+        $infMunDescarga = new \stdClass();
+        $infMunDescarga->cMunDescarga = $transporte->municipio;
+        $infMunDescarga->xMunDescarga = $transporte->municipio;
+        $mdfe->taginfMunDescarga($infMunDescarga);
 
-    public function buscarMDFes($empresaId)
-    {
-        return MDFE::select('m_d_f_e_s.*', 'empresas.fantasia')
-            ->join('empresas', 'empresas.id', 'm_d_f_e_s.empresaId')
-            ->where('m_d_f_e_s.empresaId', $empresaId)
-            ->get();
+        $infNFe = new \stdClass();
+        foreach ($transporte->NFes as $NFe) {
+            $infNFe->chNFe = $NFe->chave;
+        }
+        $mdfe->taginfNFe($infNFe);
+
+        $seg = new \stdClass();
+        $seg->infResp->respSeg = 1;
+        $mdfe->tagseg($seg);
+
+        $prodPred = new \stdClass();
+        $prodPred->tpCarga = $transporte->tipoCarga;
+        $prodPred->xProd = $transporte->produtoPredominante;
+        $prodPred->NCM = $transporte->ncm;
+        $prodPred->infLotacao->infLocalCarrega->CEP = $transporte->localCarregamento->cep;
+        $prodPred->infLotacao->infLocalDescarrega->CEP = $transporte->localDescarregamento->cep;
+        $mdfe->tagprodPred($prodPred);
+
+        $tot = new \stdClass();
+        $tot->qNFe = count($transporte->NFes);
+        $tot->vCarga = $transporte->valorTotal;
+        //CÓDIGO DE UNIDADE: 01 - KG, 02 - TON.
+        $tot->cUnid = 01;
+        $tot->qCarga = $transporte->pesoTotal;
+        $mdfe->tagtot($tot);
+
+        $infRespTec = new \stdClass();
+        $infRespTec->CNPJ = 42879649000174;
+        $infRespTec->xContato = 'FSOFT SISTEMAS';
+        $infRespTec->email = 'fsoftsistemas@gmail.com';
+        $infRespTec->fone = '87981753993';
+        $mdfe->taginfRespTec($infRespTec);
+
+        try {
+            $mdfe->montaMDFe();
+            $arr = [
+                'chave' => $mdfe->getChave(),
+                'xml' => $mdfe->getXML(),
+                'nNf' => $stdIde->nNF,
+            ];
+            return $arr;
+        } catch (\Exception $e) {
+            return [
+                'erros_xml' => $mdfe->getErrors(),
+            ];
+        }
     }
 
 }

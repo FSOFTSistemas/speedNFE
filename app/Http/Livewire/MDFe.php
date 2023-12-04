@@ -28,6 +28,7 @@ class MDFe extends Component
     public $veiculoReboque = null;
     public $localCarregamento = null;
     public $municipio = null;
+    public $codMunCarregamento = null;
     public $percurso = null;
     public $dataInicio = null;
     public $tipoTransporte = null;
@@ -66,6 +67,7 @@ class MDFe extends Component
         $this->numero = "Geração Automática";
         $this->localCarregamento = $empresa->uf;
         $this->municipio = $empresa->cidade;
+        $this->codMunCarregamento = '2600206';
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
@@ -91,7 +93,8 @@ class MDFe extends Component
             } else if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
-            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $this->cidade, 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
+            $local = explode('@', $this->cidade);
+            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
             $this->NFes[] = $this->NFe;
             $this->calcularTotais();
             $this->limparCampos();
@@ -215,7 +218,8 @@ class MDFe extends Component
             } else if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
-            $this->NFes[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $this->cidade, 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
+            $local = explode('@', $this->cidade);
+            $this->NFes[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
             $this->calcularTotais();
             $this->limparCampos();
             return $this->emit('fecharModalEdit');

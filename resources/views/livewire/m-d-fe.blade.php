@@ -63,6 +63,8 @@
                                                 wire:model="NFes.{{ $index }}.ufNFe" />
                                             <input type="hidden" name="NFes[{{ $index }}][cidade]"
                                                 wire:model="NFes.{{ $index }}.cidade" />
+                                            <input type="hidden" name="NFes[{{ $index }}][codMun]"
+                                                wire:model="NFes.{{ $index }}.codMun" />
                                             <input type="hidden" name="NFes[{{ $index }}][valor]"
                                                 wire:model="NFes.{{ $index }}.valor" />
                                             <input type="hidden" name="NFes[{{ $index }}][peso]"
@@ -169,7 +171,7 @@
                                     <select class="form-control" name="tipoTransporte" wire:model="tipoTransporte"
                                         required>
                                         <option value="Carga própria">Carga própria</option>
-                                        <option value="CT-e golbalizado">CT-e golbalizado</option>
+                                        <option value="CT-e globalizado">CT-e golbalizado</option>
                                     </select>
                                 </div>
                             </div>
@@ -215,10 +217,17 @@
                                             <i class="fas fa-map-marker-alt" style="margin-right: 2%"></i><label
                                                 for=""><b> Local de Carregamento:</b></label>
                                         </div>
-                                        <div class="col-md-6 col-xs-4">
+                                        <div class="col-md-2 col-xs-4">
                                             <input class="form-control" type="text" name="localCarregamento"
                                                 wire:model="localCarregamento" required
                                                 placeholder="Local carregamento...">
+                                        </div>
+                                        <div class="col-md-5 col-xs-4">
+                                            <input class="form-control" type="text" name="municipio"
+                                                wire:model="municipio" required placeholder="Município...">
+                                            <input class="form-control" type="hidden" name="codMunCarregamento"
+                                                wire:model="codMunCarregamento" required
+                                                placeholder="Cód. Município...">
                                         </div>
                                     </div><br>
 
@@ -228,15 +237,10 @@
                                                 style="margin-right: 2%"></i><label for=""><b> Local de
                                                     Descarregamento:</b></label>
                                         </div>
-                                        <div class="col-md-2 col-xs-4">
+                                        <div class="col-md-6 col-xs-4">
                                             <input class="form-control" type="text" name="localDescarregamento"
                                                 readonly wire:model="localDescarregamento" required
                                                 placeholder="Local descarregamento...">
-                                        </div>
-                                        <div class="col-md-4 col-xs-4">
-                                            <input class="form-control" type="text" name="municipio"
-                                                readonly wire:model="municipio" required
-                                                placeholder="Município...">
                                         </div>
                                     </div><br>
 
@@ -452,102 +456,103 @@
         </div>
     </div>
 
-    @if(count($NFes) >= 1)
-    <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
-        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
+    @if (count($NFes) >= 1)
+        <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
+            aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
 
-                    <div class="col" style="text-align: center">
-                        <div class="modal-title" style="text: center">
-                            <h4>Editar documento</h4>
+                        <div class="col" style="text-align: center">
+                            <div class="modal-title" style="text: center">
+                                <h4>Editar documento</h4>
+                            </div>
                         </div>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <form wire:submit.prevent="updateNFe">
+
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="">Tipo de Documento *</label>
+                                        <select class="form-control" wire:model="tipoDocumento" required>
+                                            @foreach ($tiposDocumentos as $tipoDocumento)
+                                                <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-4">
+                                    <div class="form-group">
+                                        <label for="">Local de descarregamento *</label>
+                                        <input class="form-control" type="text" wire:model="localDescarregamento"
+                                            readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5 col-xs-5">
+                                    <div class="form-group">
+                                        <label for="">Cidade *</label>
+                                        <select class="form-control" wire:model="cidade" required>
+                                            @foreach (json_decode($cidades) as $city)
+                                                <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Valor total *</label>
+                                        <input class="form-control" type="number" step="0.01" min="0"
+                                            wire:model="valor" required placeholder="Valor...">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Peso (Kg) *</label>
+                                        <input class="form-control" type="number" step="0.01" min="0"
+                                            wire:model="peso" required placeholder="Peso...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Chave de acesso *</label>
+                                        <input class="form-control" type="number" wire:model="chave" required
+                                            oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
+                                        <span class="text-danger" style="display: none;"
+                                            id="chaveInvalidaEdit"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="text-align: center">
+                                <div class="col">
+                                    <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
+                                </div>
+                            </div>
+
+                        </form>
+
                     </div>
 
-                </div>
-                <div class="modal-body">
-
-                    <form wire:submit.prevent="updateNFe">
-
-                        <div class="row">
-                            <div class="col-md-3 col-xs-3">
-                                <div class="form-group">
-                                    <label for="">Tipo de Documento *</label>
-                                    <select class="form-control" wire:model="tipoDocumento" required>
-                                        @foreach ($tiposDocumentos as $tipoDocumento)
-                                            <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 col-xs-4">
-                                <div class="form-group">
-                                    <label for="">Local de descarregamento *</label>
-                                    <input class="form-control" type="text" wire:model="localDescarregamento"
-                                        readonly>
-                                </div>
-                            </div>
-
-                            <div class="col-md-5 col-xs-5">
-                                <div class="form-group">
-                                    <label for="">Cidade *</label>
-                                    <select class="form-control" wire:model="cidade" required>
-                                        @foreach (json_decode($cidades) as $city)
-                                            <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="">Valor total *</label>
-                                    <input class="form-control" type="number" step="0.01" min="0"
-                                        wire:model="valor" required placeholder="Valor...">
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="">Peso (Kg) *</label>
-                                    <input class="form-control" type="number" step="0.01" min="0"
-                                        wire:model="peso" required placeholder="Peso...">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="">Chave de acesso *</label>
-                                    <input class="form-control" type="number" wire:model="chave" required
-                                        oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
-                                    <span class="text-danger" style="display: none;" id="chaveInvalidaEdit"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row" style="text-align: center">
-                            <div class="col">
-                                <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
-                            </div>
-                        </div>
-
-                    </form>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" wire:click="cancelEdit()">Cancelar</button>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" wire:click="cancelEdit()">Cancelar</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
 </div>
@@ -590,7 +595,7 @@
             select.add(option1);
             value.forEach(element => {
                 var option2 = document.createElement('option');
-                option2.value = element.cidade;
+                option2.value = element.cidade + '@' + element.municipio;
                 option2.text = element.cidade;
                 select.add(option2);
             });
