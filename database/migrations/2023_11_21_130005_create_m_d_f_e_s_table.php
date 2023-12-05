@@ -29,8 +29,8 @@ return new class extends Migration
             $table->string('carga_predominante');
             $table->string('tipo_carga');
             $table->string('ncm');
-            $table->unsignedBigInteger('empresaId');
-            $table->foreign('empresaId')->references('id')->on('empresas')->onDelete('cascade');
+            $table->unsignedBigInteger('empresa_id');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedBigInteger('veiculo_tracao_id');
             $table->foreign('veiculo_tracao_id')->references('id')->on('veiculos')->onDelete('cascade');
             $table->unsignedBigInteger('veiculo_reboque_id')->nullable();

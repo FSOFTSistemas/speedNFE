@@ -72,12 +72,38 @@ class MDFEController extends Controller
                 'produtoPredominante' => 'required',
                 'tipoCarga' => 'required'
             ]);
-            $condutor = $this->motoristaService->buscarMotorista($request->motorista);
-            $veicTracao = $this->veiculoService->buscarVeiculo($request->veiculoTracao);
-            $veicReboque = $this->veiculoService->buscarVeiculo($request->veiculoReboque);
-            dd($condutor, $veicReboque, $veicTracao);
-
-
+            $MDFe = $this->notasService->save(
+                1,
+                $request->serie,
+                $request->dataInicio,
+                $request->localCarregamento,
+                $request->localDescarregamento,
+                $request->percurso,
+                $request->valorTotal,
+                $request->pesoTotal,
+                $request->produtoPredominante,
+                $request->ncm,
+                $request->tipoCarga,
+                Auth::user()->empresa_id,
+                $request->veiculoTracao,
+                $request->veiculoReboque,
+                $request->motorista
+            );
+            foreach ($request->NFes as $NFe) {
+                $this->notasService->saveNotas(
+                    $NFe['tipoDocumento'],
+                    $NFe['chave'],
+                    $NFe['ufNFe'],
+                    $NFe['cidade'],
+                    $NFe['codMun'],
+                    $NFe['valor'],
+                    $NFe['peso'],
+                    $NFe['serieNFe'],
+                    $NFe['numeroNFe'],
+                    $MDFe->id
+                );
+            }
+            return redirect()->route('mdfe.index')->with('success', 'MDFe foi criada com sucesso!');
             // $empresa = $this->empresaService->buscarEmpresa(Auth::user()->empresa_id);
             // $MDFeService = new MDFeService([
             //     "atualizacao" => date('Y-m-d h:i:s'),
