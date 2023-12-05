@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Emitir MDFe')
+@section('title', 'Editar MDFe')
 
 @section('content_header')
     <div class="row" style="text-align: center">

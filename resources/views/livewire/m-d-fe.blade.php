@@ -30,22 +30,22 @@
                                             </thead>
 
                                             <tbody style="font-size: 70%">
-                                                @foreach ($NFes as $index => $nota)
+                                                @foreach ($notas as $index => $nt)
                                                     <tr>
-                                                        <td>NFe {{ $nota['numeroNFe'] }}/{{ $nota['serieNFe'] }}</td>
-                                                        <td>{{ $nota['cidade'] }}/{{ $nota['ufNFe'] }}
+                                                        <td>{{ $nt['tipoDocumento'] }} {{ $nt['numeroNota'] }}/{{ $nt['serieNota'] }}</td>
+                                                        <td>{{ $nt['cidade'] }}/{{ $nt['ufNota'] }}
                                                         </td>
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
-                                                                    <a wire:click.prevent="editNFe({{ json_encode($nota) }}, {{ $index }})"
-                                                                        title="Editar NFe" class="text-info"><i
+                                                                    <a wire:click.prevent="editNote({{ json_encode($nt) }}, {{ $index }})"
+                                                                        title="Editar {{ $nt['tipoDocumento'] }}" class="text-info"><i
                                                                             class="fa fa-edit"></i></a>
                                                                 </div>
-                                                                @if (count($NFes) > 1)
+                                                                @if (count($notas) > 1)
                                                                     <div class="col">
-                                                                        <a wire:click.prevent="deleteNFe({{ $index }})"
-                                                                            title="Remover NFe" class="text-danger"><i
+                                                                        <a wire:click.prevent="deleteNote({{ $index }})"
+                                                                            title="Remover {{ $nt['tipoDocumento'] }}" class="text-danger"><i
                                                                                 class="fa fa-trash"></i></a>
                                                                     </div>
                                                                 @endif
@@ -56,34 +56,34 @@
                                             </tbody>
                                         </table>
 
-                                        @foreach ($NFes as $index => $nt)
-                                            <input type="hidden" name="NFes[{{ $index }}][tipoDocumento]"
-                                                wire:model="NFes.{{ $index }}.tipoDocumento">
-                                            <input type="hidden" name="NFes[{{ $index }}][ufNFe]"
-                                                wire:model="NFes.{{ $index }}.ufNFe" />
-                                            <input type="hidden" name="NFes[{{ $index }}][cidade]"
-                                                wire:model="NFes.{{ $index }}.cidade" />
-                                            <input type="hidden" name="NFes[{{ $index }}][codMun]"
-                                                wire:model="NFes.{{ $index }}.codMun" />
-                                            <input type="hidden" name="NFes[{{ $index }}][valor]"
-                                                wire:model="NFes.{{ $index }}.valor" />
-                                            <input type="hidden" name="NFes[{{ $index }}][peso]"
-                                                wire:model="NFes.{{ $index }}.peso" />
-                                            <input type="hidden" name="NFes[{{ $index }}][chave]"
-                                                wire:model="NFes.{{ $index }}.chave" />
-                                            <input type="hidden" name="NFes[{{ $index }}][serieNFe]"s
-                                                wire:model="NFes.{{ $index }}.serieNFe" />
-                                            <input type="hidden" name="NFes[{{ $index }}][numeroNFe]"
-                                                wire:model="NFes.{{ $index }}.numeroNFe" />
+                                        @foreach ($notas as $index => $nt)
+                                            <input type="hidden" name="notas[{{ $index }}][tipoDocumento]"
+                                                wire:model="notas.{{ $index }}.tipoDocumento">
+                                            <input type="hidden" name="notas[{{ $index }}][ufNota]"
+                                                wire:model="notas.{{ $index }}.ufNota" />
+                                            <input type="hidden" name="notas[{{ $index }}][cidade]"
+                                                wire:model="notas.{{ $index }}.cidade" />
+                                            <input type="hidden" name="notas[{{ $index }}][codMun]"
+                                                wire:model="notas.{{ $index }}.codMun" />
+                                            <input type="hidden" name="notas[{{ $index }}][valor]"
+                                                wire:model="notas.{{ $index }}.valor" />
+                                            <input type="hidden" name="notas[{{ $index }}][peso]"
+                                                wire:model="notas.{{ $index }}.peso" />
+                                            <input type="hidden" name="notas[{{ $index }}][chave]"
+                                                wire:model="notas.{{ $index }}.chave" />
+                                            <input type="hidden" name="notas[{{ $index }}][serieNota]"
+                                                wire:model="notas.{{ $index }}.serieNota" />
+                                            <input type="hidden" name="notas[{{ $index }}][numeroNota]"
+                                                wire:model="notas.{{ $index }}.numeroNota" />
                                         @endforeach
 
                                     </div>
 
                                     <div class="row" style="text-align: center">
                                         <div class="col">
-                                            <button class="btn btn-dark" wire:click="addNFe()"
-                                                style="margin-top: 2%;">Importar mais NFes <i
-                                                    class="fas fa-upload"></i></button>
+                                            <a class="btn btn-dark" wire:click="addNote()"
+                                                style="margin-top: 2%;">Importar mais Notas <i
+                                                    class="fas fa-upload"></i></a>
                                         </div>
                                     </div>
 
@@ -456,7 +456,7 @@
         </div>
     </div>
 
-    @if (count($NFes) >= 1)
+    @if (count($notas) >= 1)
         <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
             aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -472,7 +472,7 @@
                     </div>
                     <div class="modal-body">
 
-                        <form wire:submit.prevent="updateNFe">
+                        <form wire:submit.prevent="updateNote">
 
                             <div class="row">
                                 <div class="col-md-3 col-xs-3">
@@ -499,7 +499,7 @@
                                         <label for="">Cidade *</label>
                                         <select class="form-control" wire:model="cidade" required>
                                             @foreach (json_decode($cidades) as $city)
-                                                <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
+                                                <option value="{{ $city->cidade . '@' . $city->municipio }}">{{ $city->cidade }}</option>
                                             @endforeach
                                         </select>
                                     </div>

@@ -12,11 +12,11 @@
 
 @section('content')
 
-<div class="row" style="margin-bottom: 2%">
-    <div class="col">
-        <a class="btn btn-info" href="{{ route('mdfe.create') }}">+ Emitir MDFe</a>
+    <div class="row" style="margin-bottom: 2%">
+        <div class="col">
+            <a class="btn btn-info" href="{{ route('mdfe.create') }}">+ Emitir MDFe</a>
+        </div>
     </div>
-</div>
 
     <div class="container">
         <table class="table table-hover" id="mdfes">
@@ -46,7 +46,7 @@
                         <td>
                             <div class="row">
                                 <div class="col">
-                                    <a title="Editar" href='{{ route('veiculos.edit', [$mdfe->id]) }}' class='text-warning'><i
+                                    <a title="Editar" href='{{ route('mdfe.edit', [$mdfe->id]) }}' class='text-warning'><i
                                             class="fa fa-edit"></i></a>
                                 </div>
                                 <div class="col">
@@ -54,6 +54,11 @@
                                             class="fa fa-trash" data-toggle="modal"
                                             data-target=".bd-delete-modal-lg"></i></a>
                                 </div>
+                                @if ($mdfe->situacao->value === 'Pendente')
+                                    <div class="col">
+                                        <a title="Enviar MDFe" href="{{ route('mdfe.enviar', [$mdfe->id]) }}" class='text-success'><i class="fa fa-upload"></i></a>
+                                    </div>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -70,7 +75,7 @@
 
                     <div class="col" style="text-align: center">
                         <div class="modal-title" style="text: center">
-                            <h4>Apagar esta Nota ?</h4>
+                            <h4>Apagar esta Nota?</h4>
                         </div>
                     </div>
 
@@ -85,7 +90,7 @@
 
                     <div class="" style="text-align: center">
 
-                        <form action="{{ route('veiculos.delete') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('mdfe.delete') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('DELETE')
                             <div class="form-group">
