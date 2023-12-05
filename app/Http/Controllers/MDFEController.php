@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
+use App\Services\EmpresasService;
 use App\Services\MDFeService;
+use App\Services\MotoristaService;
+use App\Services\NotasService;
+use App\Services\VeiculosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,17 +16,23 @@ use Illuminate\Support\Facades\Auth;
 class MDFEController extends Controller
 {
 
-    private MDFeService $MDFeService;
+    private NotasService $notasService;
+    private EmpresasService $empresaService;
+    private VeiculosService $veiculoService;
+    private MotoristaService $motoristaService;
 
-    public function __construct(MDFeService $MDFeService)
+    public function __construct(NotasService $notasService, EmpresasService $empresaService, VeiculosService $veiculoService, MotoristaService $motoristaService)
     {
-        $this->MDFeService = $MDFeService;
+        $this->notasService = $notasService;
+        $this->empresaService = $empresaService;
+        $this->veiculoService = $veiculoService;
+        $this->motoristaService = $motoristaService;
     }
 
     public function index()
     {
         try {
-            $MDFes = $this->MDFeService->buscarMDFes(Auth::user()->empresa_id);
+            $MDFes = $this->notasService->buscarMDFes(Auth::user()->empresa_id);
             return view('mdfes.index', ['mdfes' => $MDFes]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -43,8 +53,45 @@ class MDFEController extends Controller
     public function store(Request $request)
     {
         try {
-            dd($request->all());
+            $request->validate([
+                'NFes' => 'required',
+                'veiculoTracao' => 'required|numeric',
+                'motorista' => 'required|numeric',
+                'veiculoReboque' => 'nullable|numeric',
+                'tipoTransporte' => 'required',
+                'numero' => 'required',
+                'serie' => 'required',
+                'localCarregamento' => 'required',
+                'municipio' => 'required',
+                'codMunCarregamento' => 'required',
+                'localDescarregamento' => 'required',
+                'percurso' => 'required',
+                'dataInicio' => 'required|date',
+                'valorTotal' => 'required|numeric',
+                'pesoTotal' => 'required|numeric',
+                'produtoPredominante' => 'required',
+                'tipoCarga' => 'required'
+            ]);
+            $condutor = $this->motoristaService->buscarMotorista($request->motorista);
+            $veicTracao = $this->veiculoService->buscarVeiculo($request->veiculoTracao);
+            $veicReboque = $this->veiculoService->buscarVeiculo($request->veiculoReboque);
+            dd($condutor, $veicReboque, $veicTracao);
+
+
+            // $empresa = $this->empresaService->buscarEmpresa(Auth::user()->empresa_id);
+            // $MDFeService = new MDFeService([
+            //     "atualizacao" => date('Y-m-d h:i:s'),
+            //     "tpAmb" => (int) $empresa->ambiente,
+            //     "razaosocial" => $empresa->razao,
+            //     "siglaUF" => $empresa->endereco->uf,
+            //     "cnpj" => '42879649000174',
+            //     "schemes" => "PL_MDFe_300a",
+            //     "versao" => "3.00",
+            // ], $empresa);
+            // $xml = $MDFeService->gerarXml((object) $request->all(), $empresa);
+            // dd($xml);
         } catch (Exception $e) {
+            dd($e);
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }

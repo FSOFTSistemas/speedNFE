@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('uf_termino');
             $table->string('uf_percurso');
             $table->string('tipo_documento');
-            $table->string('chave_acesso');
+            $table->string('chave_acesso')->nullable();
             $table->double('valor_total');
             $table->double('peso');
             $table->string('carga_predominante');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->foreign('empresaId')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedBigInteger('veiculo_tracao_id');
             $table->foreign('veiculo_tracao_id')->references('id')->on('veiculos')->onDelete('cascade');
-            $table->unsignedBigInteger('veiculo_reboque_id');
+            $table->unsignedBigInteger('veiculo_reboque_id')->nullable();
             $table->foreign('veiculo_reboque_id')->references('id')->on('veiculos')->onDelete('cascade');
             $table->unsignedBigInteger('motoristaId');
             $table->foreign('motoristaId')->references('id')->on('motoristas')->onDelete('cascade');
