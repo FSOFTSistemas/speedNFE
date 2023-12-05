@@ -18,6 +18,7 @@ class MDFE extends Model
         'data',
         'situacao',
         'uf_inicio',
+        'uf_termino',
         'uf_percurso',
         'tipo_documento',
         'chave_acesso',
@@ -26,6 +27,7 @@ class MDFE extends Model
         'carga_predominante',
         'ncm',
         'tipo_carga',
+        'empresa_id',
         'veiculo_tracao_id',
         'veiculo_reboque_id',
         'motoristaId'
