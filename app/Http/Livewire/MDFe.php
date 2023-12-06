@@ -156,7 +156,7 @@ class MDFe extends Component
         if ($dvCalculado != $digitoVerificador) {
             return false;
         }
-        $this->ufNota = $uf;
+        $this->ufNota = $this->localDescarregamento;
         $this->serieNota = $serie;
         $this->numeroNota = $numeroNota;
         return true;

@@ -32,20 +32,22 @@
                                             <tbody style="font-size: 70%">
                                                 @foreach ($notas as $index => $nt)
                                                     <tr>
-                                                        <td>{{ $nt['tipoDocumento'] }} {{ $nt['numeroNota'] }}/{{ $nt['serieNota'] }}</td>
+                                                        <td>{{ $nt['tipoDocumento'] }}
+                                                            {{ $nt['numeroNota'] }}/{{ $nt['serieNota'] }}</td>
                                                         <td>{{ $nt['cidade'] }}/{{ $nt['ufNota'] }}
                                                         </td>
                                                         <td>
                                                             <div class="row">
                                                                 <div class="col">
                                                                     <a wire:click.prevent="editNote({{ json_encode($nt) }}, {{ $index }})"
-                                                                        title="Editar {{ $nt['tipoDocumento'] }}" class="text-info"><i
-                                                                            class="fa fa-edit"></i></a>
+                                                                        title="Editar {{ $nt['tipoDocumento'] }}"
+                                                                        class="text-info"><i class="fa fa-edit"></i></a>
                                                                 </div>
                                                                 @if (count($notas) > 1)
                                                                     <div class="col">
                                                                         <a wire:click.prevent="deleteNote({{ $index }})"
-                                                                            title="Remover {{ $nt['tipoDocumento'] }}" class="text-danger"><i
+                                                                            title="Remover {{ $nt['tipoDocumento'] }}"
+                                                                            class="text-danger"><i
                                                                                 class="fa fa-trash"></i></a>
                                                                     </div>
                                                                 @endif
@@ -99,6 +101,7 @@
                                     <div class="row" style="text-align: center">
                                         <div class="col">
                                             <h5>Transporte</h5>
+                                            <p class="text-danger">Modal Rodoviário <i class="fa fa-car"></i></p>
                                         </div>
                                     </div>
                                 </div>
@@ -218,13 +221,25 @@
                                                 for=""><b> Local de Carregamento:</b></label>
                                         </div>
                                         <div class="col-md-2 col-xs-4">
-                                            <input class="form-control" type="text" name="localCarregamento"
+                                            {{-- <input class="form-control" type="text" name="localCarregamento"
                                                 wire:model="localCarregamento" required
-                                                placeholder="Local carregamento...">
+                                                placeholder="Local carregamento..."> --}}
+
+                                            <select class="form-control" name="localCarregamento"
+                                                wire:model="localCarregamento" required>
+                                                @foreach ($ufs as $uf)
+                                                    <option value="{{ $uf }}">{{ $uf }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-5 col-xs-4">
                                             <input class="form-control" type="text" name="municipio"
                                                 wire:model="municipio" required placeholder="Município...">
+
+                                            {{-- <select class="form-control" name="municipio"
+                                                wire:model="municipio" required>
+                                            </select> --}}
+
                                             <input class="form-control" type="hidden" name="codMunCarregamento"
                                                 wire:model="codMunCarregamento" required
                                                 placeholder="Cód. Município...">
@@ -499,7 +514,8 @@
                                         <label for="">Cidade *</label>
                                         <select class="form-control" wire:model="cidade" required>
                                             @foreach (json_decode($cidades) as $city)
-                                                <option value="{{ $city->cidade . '@' . $city->municipio }}">{{ $city->cidade }}</option>
+                                                <option value="{{ $city->cidade . '@' . $city->municipio }}">
+                                                    {{ $city->cidade }}</option>
                                             @endforeach
                                         </select>
                                     </div>

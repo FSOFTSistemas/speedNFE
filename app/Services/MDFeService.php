@@ -21,7 +21,7 @@ class MDFeService
     public function gerarXml($transporte, $emitente)
     {
         $mdfe = new Make();
-        dd($transporte, $mdfe, $emitente);
+        // dd($transporte, $mdfe, $emitente);
 
         //Identificação do MDF-e
         $numeroMDFe = $emitente->ultimaMDFe + 1;
@@ -32,7 +32,7 @@ class MDFeService
         $stdIde->mod = $mdfe->mod;
         $stdIde->serie = $emitente->serie;
         $stdIde->nMDF = $numeroMDFe;
-        $stdIde->cDV = '?';
+        $stdIde->cDV = '0';
         $stdIde->modal = '1';
         $stdIde->dhEmi = $transporte->created_at;
         $stdIde->tpEmis = '1';
@@ -233,33 +233,95 @@ class MDFeService
 //         $std->nItem = 1;
 //         $mdfe->taginfCTe($std);
 
+        //Informações das NFes
         foreach ($transporte->notas as $nota) {
             $infNFe = new \stdClass();
             $infNFe->chNFe = $nota->chave;
-
-
             $mdfe->taginfNFe($infNFe);
         }
 
-        $seg = new \stdClass();
-        $seg->infResp->respSeg = 1;
-        $mdfe->tagseg($seg);
+        //Informações de Transporte da MDFe
+        $infMDFe = new \stdClass();
+        $infMDFe->chMDFe = '0';
+
+        //Informações das Unidades de Transporte (Carreta/Reboque/Vagão)
+        $unidades = [$transporte->veiculoTracao, $transporte->veiculoReboque];
+        foreach ($unidades as $un) {
+            $stdinfUnidTransp = new \stdClass();
+            $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo == 'Tração' ? '1' : '2';
+            $stdinfUnidTransp->idUnidTransp = $un->placa;
+        }
+
+        //Lacres das Unidades de Transporte
+        $stdlacUnidTransp = new \stdClass();
+        $stdlacUnidTransp->nLacre = ['00000001', '00000002'];
+
+        $stdinfUnidTransp->lacUnidaTransp = $stdlacUnidTransp;
+
+        //Informações das Unidades de Carga (Containeres/ULD/Outros)
+        $stdinfUnidCarga = new \stdClass();
+        $stdinfUnidCarga->tpUnidCarga = '1';
+        $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
+
+        //Lacres das Unidades de Carga
+        $stdlacUnidCarga = new \stdClass();
+        $stdlacUnidCarga->nLacre = ['00000001', '00000001'];
+
+        $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
+        $stdinfUnidCarga->qtdRat = '3.50';
+
+        $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
+        $stdinfUnidTransp->qtdRat = '3.50';
+
+        $infMDFe->infUnidTransp = [$stdinfUnidTransp];
+
+        //Transporte de produtos classificados pela ONU como perigosos
+        if ($transporte->prodsPrerigosos) {
+            $stdperi = new \stdClass();
+            $stdperi->nONU = '1234';
+            $stdperi->xNomeAE = 'testeNome';
+            $stdperi->xClaRisco = 'testeClaRisco';
+            $stdperi->grEmb = 'testegrEmb';
+            $stdperi->qTotProd = '1';
+            $stdperi->qVolTipo = '1';
+
+            $infMDFe->peri = [$stdperi];
+        }
+
+        $mdfe->taginfMDFeTransp($infMDFe);
+
+        $tot = new \stdClass();
+        $tot->qCTe = '0';
+        $tot->qNFe = count($transporte->notas);
+        $tot->qMDFe = '0';
+        $tot->vCarga = $transporte->valorTotal;
+        $tot->cUnid = '01';
+        $tot->qCarga = $transporte->pesoTotal;
+        $mdfe->tagtot($tot);
 
         $prodPred = new \stdClass();
         $prodPred->tpCarga = $transporte->tipoCarga;
         $prodPred->xProd = $transporte->produtoPredominante;
-        $prodPred->NCM = $transporte->ncm;
-        $prodPred->infLotacao->infLocalCarrega->CEP = $transporte->localCarregamento->cep;
-        $prodPred->infLotacao->infLocalDescarrega->CEP = $transporte->localDescarregamento->cep;
-        $mdfe->tagprodPred($prodPred);
+        $prodPred->cEAN = null;
+        $prodPred->NCM = null;
 
-        $tot = new \stdClass();
-        $tot->qNFe = count($transporte->NFes);
-        $tot->vCarga = $transporte->valorTotal;
-        //CÓDIGO DE UNIDADE: 01 - KG, 02 - TON.
-        $tot->cUnid = 01;
-        $tot->qCarga = $transporte->pesoTotal;
-        $mdfe->tagtot($tot);
+        $localCarrega = new \stdClass();
+        $localCarrega->CEP = '00000000';
+        $localCarrega->latitude = null;
+        $localCarrega->longitude = null;
+
+        $localDescarrega = new \stdClass();
+        $localDescarrega->CEP = '00000000';
+        $localDescarrega->latitude = null;
+        $localDescarrega->longitude = null;
+
+        $lotacao = new \stdClass();
+        $lotacao->infLocalCarrega = $localCarrega;
+        $lotacao->infLocalDescarrega = $localDescarrega;
+
+        $prodPred->infLotacao = $lotacao;
+
+        $mdfe->tagprodPred($prodPred);
 
         $infRespTec = new \stdClass();
         $infRespTec->CNPJ = 42879649000174;
@@ -268,19 +330,14 @@ class MDFeService
         $infRespTec->fone = '87981753993';
         $mdfe->taginfRespTec($infRespTec);
 
-        try {
-            $mdfe->montaMDFe();
-            $arr = [
-                'chave' => $mdfe->getChave(),
-                'xml' => $mdfe->getXML(),
-                'nNf' => $stdIde->nNF,
-            ];
-            return $arr;
-        } catch (\Exception $e) {
-            return [
-                'erros_xml' => $mdfe->getErrors(),
-            ];
-        }
+        $infAdic = new \stdClass();
+        $infAdic->infCpl = 'Hello my friend';
+        $infAdic->infAdFisco = 'Very good bro!';
+        $mdfe->taginfAdic($infAdic);
+
+        $xml = $mdfe->getXml();
+        header("Content-type: text/xml");
+        echo $mdfe->getXML();
     }
 
 }
