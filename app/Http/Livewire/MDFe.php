@@ -40,11 +40,11 @@ class MDFe extends Component
     public $pesoTotal = 0;
 
     //Dados da NFe
-    public $serieNFe = null;
-    public $numeroNFe = null;
-    public $ufNFe = null;
-    public $NFe = [];
-    public $NFes = [];
+    public $serieNota = null;
+    public $numeroNota = null;
+    public $ufNota = null;
+    public $nota = [];
+    public $notas = [];
     public $indexEdit = null;
 
     //Dados para preemcher a teça
@@ -94,8 +94,8 @@ class MDFe extends Component
                 return $this->emit('chaveInvalida');
             }
             $local = explode('@', $this->cidade);
-            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
-            $this->NFes[] = $this->NFe;
+            $this->nota = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
+            $this->notas[] = $this->nota;
             $this->calcularTotais();
             $this->limparCampos();
             $this->emit('btnCancelar');
@@ -106,8 +106,8 @@ class MDFe extends Component
     public function buscarChave($chave)
     {
         $achou = 0;
-        foreach ($this->NFes as $NFe) {
-            if ($NFe['chave'] == $chave) {
+        foreach ($this->notas as $nota) {
+            if ($nota['chave'] == $chave) {
                 $achou++;
             }
         }
@@ -118,9 +118,9 @@ class MDFe extends Component
     {
         $valor = 0;
         $peso = 0;
-        foreach ($this->NFes as $NFe) {
-            $valor += $NFe['valor'];
-            $peso += $NFe['peso'];
+        foreach ($this->notas as $nota) {
+            $valor += $nota['valor'];
+            $peso += $nota['peso'];
         }
         $this->valorTotal = $valor;
         $this->pesoTotal = $peso;
@@ -140,12 +140,12 @@ class MDFe extends Component
         if (strlen($chave) != 44) {
             return false;
         }
-        $uf = $this->ufNFe(substr($chave, 0, 2));
+        $uf = $this->ufNota(substr($chave, 0, 2));
         // $anoMesEmissao = substr($chave, 2, 4);
         $cnpjEmitente = substr($chave, 6, 14);
         // $modelo = substr($chave, 20, 2);
         $serie = substr($chave, 22, 3);
-        $numeroNFe = substr($chave, 25, 9);
+        $numeroNota = substr($chave, 25, 9);
         // $tipoEmisao = substr($chave, 34, 1);
         // $codigoNumerico = substr($chave, 35, 8);
         $digitoVerificador = substr($chave, 43, 1);
@@ -156,9 +156,9 @@ class MDFe extends Component
         if ($dvCalculado != $digitoVerificador) {
             return false;
         }
-        $this->ufNFe = $uf;
-        $this->serieNFe = $serie;
-        $this->numeroNFe = $numeroNFe;
+        $this->ufNota = $uf;
+        $this->serieNota = $serie;
+        $this->numeroNota = $numeroNota;
         return true;
     }
 
@@ -183,7 +183,7 @@ class MDFe extends Component
         return $dv;
     }
 
-    public function ufNFe($codigo)
+    public function ufNota($codigo)
     {
         foreach (UfEnum::cases() as $uf) {
             $cod = explode('_', $uf->name)[1];
@@ -194,9 +194,9 @@ class MDFe extends Component
         return false;
     }
 
-    public function editNFe($nota, $index)
+    public function editNote($nota, $index)
     {
-        $this->cidade = $nota['cidade'];
+        $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];
         $this->chave = $nota['chave'];
@@ -210,7 +210,7 @@ class MDFe extends Component
         return $this->emit('fecharModalEdit');
     }
 
-    public function updateNFe()
+    public function updateNote()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
             if ($this->buscarChave($this->chave) > 1) {
@@ -219,21 +219,21 @@ class MDFe extends Component
                 return $this->emit('chaveInvalida');
             }
             $local = explode('@', $this->cidade);
-            $this->NFes[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNFe' => $this->ufNFe, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
+            $this->notas[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
             $this->calcularTotais();
             $this->limparCampos();
             return $this->emit('fecharModalEdit');
         }
     }
 
-    public function deleteNFe($nota)
+    public function deleteNote($nota)
     {
-        unset($this->NFes[$nota]);
-        $this->NFes = array_values($this->NFes);
+        unset($this->notas[$nota]);
+        $this->notas = array_values($this->notas);
         return $this->calcularTotais();
     }
 
-    public function addNFe()
+    public function addNote()
     {
         $this->ufs = [];
         $this->emit('atualizarSelect', $this->localDescarregamento);

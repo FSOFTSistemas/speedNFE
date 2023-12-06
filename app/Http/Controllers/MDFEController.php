@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
+use App\Models\MDFE;
 use App\Services\EmpresasService;
 use App\Services\MDFeService;
 use App\Services\MotoristaService;
@@ -54,7 +55,7 @@ class MDFEController extends Controller
     {
         try {
             $request->validate([
-                'NFes' => 'required',
+                'notas' => 'required',
                 'veiculoTracao' => 'required|numeric',
                 'motorista' => 'required|numeric',
                 'veiculoReboque' => 'nullable|numeric',
@@ -89,35 +90,22 @@ class MDFEController extends Controller
                 $request->veiculoReboque,
                 $request->motorista
             );
-            foreach ($request->NFes as $NFe) {
+            foreach ($request->notas as $nota) {
                 $this->notasService->saveNotas(
-                    $NFe['tipoDocumento'],
-                    $NFe['chave'],
-                    $NFe['ufNFe'],
-                    $NFe['cidade'],
-                    $NFe['codMun'],
-                    $NFe['valor'],
-                    $NFe['peso'],
-                    $NFe['serieNFe'],
-                    $NFe['numeroNFe'],
+                    $nota['tipoDocumento'],
+                    $nota['chave'],
+                    $nota['ufNota'],
+                    $nota['cidade'],
+                    $nota['codMun'],
+                    $nota['valor'],
+                    $nota['peso'],
+                    $nota['serieNota'],
+                    $nota['numeroNota'],
                     $MDFe->id
                 );
             }
             return redirect()->route('mdfe.index')->with('success', 'MDFe foi criada com sucesso!');
-            // $empresa = $this->empresaService->buscarEmpresa(Auth::user()->empresa_id);
-            // $MDFeService = new MDFeService([
-            //     "atualizacao" => date('Y-m-d h:i:s'),
-            //     "tpAmb" => (int) $empresa->ambiente,
-            //     "razaosocial" => $empresa->razao,
-            //     "siglaUF" => $empresa->endereco->uf,
-            //     "cnpj" => '42879649000174',
-            //     "schemes" => "PL_MDFe_300a",
-            //     "versao" => "3.00",
-            // ], $empresa);
-            // $xml = $MDFeService->gerarXml((object) $request->all(), $empresa);
-            // dd($xml);
         } catch (Exception $e) {
-            dd($e);
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
@@ -127,6 +115,41 @@ class MDFEController extends Controller
         try {
             return view('mdfes.edit');
         } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+            $request->validate([
+                'mdfeId' => 'required|numeric'
+            ]);
+            $this->notasService->deleteMDFe($request->mdfeId);
+            return redirect()->route('mdfe.index')->with('success', 'MDFe foi deletada com sucesso!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function enviarMDFe($mdfeId)
+    {
+        try {
+            $empresa = $this->empresaService->buscarEmpresa(Auth::user()->empresa_id);
+            $mdfe = $this->notasService->buscarMDFe($mdfeId);
+            $MDFeService = new MDFeService([
+                "atualizacao" => date('Y-m-d h:i:s'),
+                "tpAmb" => (int) $empresa->ambiente,
+                "razaosocial" => $empresa->razao,
+                "siglaUF" => $empresa->endereco->uf,
+                "cnpj" => '42879649000174',
+                "schemes" => "PL_MDFe_300a",
+                "versao" => "3.00",
+            ], $empresa);
+            $xml = $MDFeService->gerarXml($mdfe, $empresa);
+            dd($xml);
+        } catch (Exception $e) {
+            dd($e);
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }

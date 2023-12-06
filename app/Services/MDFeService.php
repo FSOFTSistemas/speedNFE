@@ -20,8 +20,8 @@ class MDFeService
 
     public function gerarXml($transporte, $emitente)
     {
-        $mdfe = new Make();
 
+        $mdfe = new Make();
         $numeroMDFe = $emitente->ultimaMDFe + 1;
         $stdIde = new \stdClass();
         $stdIde->cUF = \App\Models\Empresa::getCUF($emitente->endereco->uf);
@@ -38,7 +38,7 @@ class MDFeService
         $stdIde->procEmi = '?';
         $stdIde->verProc = '?';
         $stdIde->UFIni = $transporte->localCarregamento;
-        $stdIde->UFFim =$transporte->localDescarregamento;
+        $stdIde->UFFim = $transporte->localDescarregamento;
         $mdfe->tagide($stdIde);
 
         $infMunCarrega = new \stdClass();
@@ -76,17 +76,17 @@ class MDFeService
         $mdfe->taginfContratante($infContratante);
 
         $veicTracao = new \stdClass();
-        $veicTracao->placa = $transporte->veicTracao->placa;
-        $veicTracao->RENAVAM = $transporte->veicTracao->renavam;
-        $veicTracao->tara = $transporte->veicTracao->tara;
-        $veicTracao->capKG = $transporte->veicTracao->capacidade;
-        $veicTracao->condutor->xNome = $transporte->motorista->nome;
-        $veicTracao->condutor->CPF = $transporte->motorista->cpf;
-        $veicTracao->tpRod = $transporte->veicTracao->tipo_rodado;
-        $veicTracao->tpCar = $transporte->veicTracao->tipo_carroceria;
-        $veicTracao->UF = $transporte->veicTracao->uf;
-        $veicTracao->capM3 = $transporte->veicTracao->capacidade_m3;
-        $veicTracao->tpProp = $transporte->veicTracao->tipo_propriedade;
+        $veicTracao->placa = $transporte->veiculoTracao->placa;
+        $veicTracao->RENAVAM = $transporte->veiculoTracao->renavam;
+        $veicTracao->tara = $transporte->veiculoTracao->tara;
+        $veicTracao->capKG = $transporte->veiculoTracao->capacidade;
+        // $veicTracao->condutor = $transporte->motorista->nome;
+        // $veicTracao->condutor = $transporte->motorista->cpf;
+        $veicTracao->tpRod = $transporte->veiculoTracao->tipo_rodado;
+        $veicTracao->tpCar = $transporte->veiculoTracao->tipo_carroceria;
+        $veicTracao->UF = $transporte->veiculoTracao->uf;
+        $veicTracao->capM3 = $transporte->veiculoTracao->capacidade_m3;
+        $veicTracao->tpProp = $transporte->veiculoTracao->tipo_propriedade;
         $mdfe->tagveicTracao($veicTracao);
 
         if ($transporte->veiculoReboque) {
@@ -109,8 +109,8 @@ class MDFeService
         $mdfe->taginfMunDescarga($infMunDescarga);
 
         $infNFe = new \stdClass();
-        foreach ($transporte->NFes as $NFe) {
-            $infNFe->chNFe = $NFe->chave;
+        foreach ($transporte->notas as $nota) {
+            $infNFe->chNFe = $nota->chave;
         }
         $mdfe->taginfNFe($infNFe);
 

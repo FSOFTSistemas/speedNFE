@@ -39,4 +39,28 @@ class MDFE extends Model
         'tipo_carga' => TipoCargaEnum::class
     ];
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
+
+    public function veiculoTracao()
+    {
+        return $this->belongsTo(Veiculo::class, 'veiculo_tracao_id');
+    }
+
+    public function veiculoReboque()
+    {
+        return $this->belongsTo(Veiculo::class, 'veiculo_reboque_id');
+    }
+
+    public function motorista()
+    {
+        return $this->belongsTo(Motorista::class, 'motoristaId');
+    }
+
+    public function notas()
+    {
+        return $this->hasMany(MDFeNota::class, 'mdfe_id');
+    }
 }

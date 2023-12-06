@@ -11,6 +11,7 @@ use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\MDFEController;
+use App\Http\Controllers\MDFeNotaController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\RelatoriosController;
@@ -159,7 +160,9 @@ Route::prefix('mdfes')->group(function () {
     Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware('auth');
     Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware('auth');
     Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware('auth');
+    Route::delete('/deletar', [MDFEController::class, 'delete'])->name('mdfe.delete')->middleware('auth');
     Route::get('/download/xmls', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
+    Route::get('/{mdfeId}/enviar-nota', [MDFEController::class, 'enviarMDFe'])->name('mdfe.enviar')->middleware('auth');
 });
 
 //MOTORISTAS

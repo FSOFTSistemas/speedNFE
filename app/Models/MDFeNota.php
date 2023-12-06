@@ -26,4 +26,5 @@ class MDFeNota extends Model
     protected $cast = [
         'tipo_documento' => TipoDocumentoEnum::class
     ];
+
 }

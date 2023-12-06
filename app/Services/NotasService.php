@@ -48,6 +48,17 @@ class NotasService
         ]);
     }
 
+    public function deleteMDFe($mdfeId)
+    {
+        $mdfe = MDFE::find($mdfeId);
+        return $mdfe->delete();
+    }
+
+    public function buscarMDFe($mdfeId)
+    {
+        return MDFE::with('empresa', 'veiculoTracao', 'veiculoReboque', 'motorista', 'notas')->find($mdfeId);
+    }
+
     public function buscarMDFes($empresaId)
     {
         return MDFE::select('m_d_f_e_s.*', 'empresas.fantasia')
