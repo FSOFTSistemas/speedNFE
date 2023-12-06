@@ -1,9 +1,9 @@
 <li>
 
-    <form class="form-inline my-2" action="{{ $item['href'] }}" method="{{ $item['method'] }}">
+    <form class="form-inline my-2" action="{{ $item['href'] }}" method="{{ $item['method'] }}" >
         {{ csrf_field() }}
 
-        <div class="input-group">
+        <div class="input-group" >
 
             {{-- Search input --}}
             <input class="form-control form-control-sidebar" type="search"

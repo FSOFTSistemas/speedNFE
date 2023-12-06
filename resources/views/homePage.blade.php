@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-5v3YT0auvSjDz7JeF5VpJ0wWJ1R3r1Pj+Za5r+yF3e8sd9pWcTo1g2Bd25gT5toL50Rlh24RZjLOt4L/2ecClcA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ asset('css/homePage.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Telas_Principais/homePage.css') }}">
     <title>speedNFE</title>
 </head>
 <body>
@@ -32,7 +32,7 @@
             <div class="text-right">
                 <h1>Emissor de Nota Fiscal Eletrônica e WEB DANFE Online</h1>
                 <h4>Conheça os benefícios de ter um <br>Certificado Digital</h4>
-                <a href="{{ route('Planos') }}"><button class="verPlanos" > Clique Aqui</button></a>
+                <a href="{{ route('Planos') }}"><button class="verPlanos" > Connheça nossos Planos</button></a>
             </div>
         </div>
     </div>
