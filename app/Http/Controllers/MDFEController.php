@@ -135,18 +135,17 @@ class MDFEController extends Controller
     public function enviarMDFe($mdfeId)
     {
         try {
-            $empresa = $this->empresaService->buscarEmpresa(Auth::user()->empresa_id);
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
             $MDFeService = new MDFeService([
                 "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $empresa->ambiente,
-                "razaosocial" => $empresa->razao,
-                "siglaUF" => $empresa->endereco->uf,
+                "tpAmb" => (int) $mdfe->empresa->ambiente,
+                "razaosocial" => $mdfe->empresa->razao,
+                "siglaUF" => $mdfe->empresa->endereco->uf,
                 "cnpj" => '42879649000174',
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
-            ], $empresa);
-            $xml = $MDFeService->gerarXml($mdfe, $empresa);
+            ], $mdfe->empresa);
+            $xml = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
             dd($xml);
         } catch (Exception $e) {
             dd($e);
