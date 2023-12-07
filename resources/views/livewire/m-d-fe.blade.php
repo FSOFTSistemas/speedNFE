@@ -221,24 +221,20 @@
                                                 for=""><b> Local de Carregamento:</b></label>
                                         </div>
                                         <div class="col-md-2 col-xs-4">
-                                            {{-- <input class="form-control" type="text" name="localCarregamento"
-                                                wire:model="localCarregamento" required
-                                                placeholder="Local carregamento..."> --}}
-
                                             <select class="form-control" name="localCarregamento"
-                                                wire:model="localCarregamento" required>
+                                                wire:model="localCarregamento" wire:change="buscarCidades(false)" required>
                                                 @foreach ($ufs as $uf)
                                                     <option value="{{ $uf }}">{{ $uf }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-5 col-xs-4">
-                                            <input class="form-control" type="text" name="municipio"
-                                                wire:model="municipio" required placeholder="Município...">
-
-                                            {{-- <select class="form-control" name="municipio"
+                                            <select class="form-control" name="municipio"
                                                 wire:model="municipio" required>
-                                            </select> --}}
+                                                @foreach ($cidadesCarregamento as $city)
+                                                    <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
+                                                @endforeach
+                                            </select>
 
                                             <input class="form-control" type="hidden" name="codMunCarregamento"
                                                 wire:model="codMunCarregamento" required
@@ -362,6 +358,7 @@
 
             <div class="row" style="text-align: center; margin-bottom: 2%">
                 <div class="col">
+                    <a class="btn btn-info">Mais Opções</a>
                     <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
                     <button class="btn btn-success" type="submit" style="width: 25%">Concluir</button>
                 </div>
@@ -404,7 +401,7 @@
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
                                     <select class="form-control" wire:model="localDescarregamento" id="meuSelect"
-                                        wire:change="buscarCidades()" required>
+                                        wire:change="buscarCidades(true)" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($ufs as $uf)
                                             <option value="{{ $uf }}">{{ $uf }}</option>
@@ -513,7 +510,7 @@
                                     <div class="form-group">
                                         <label for="">Cidade *</label>
                                         <select class="form-control" wire:model="cidade" required>
-                                            @foreach (json_decode($cidades) as $city)
+                                            @foreach (json_decode($cidadesCarregamento) as $city)
                                                 <option value="{{ $city->cidade . '@' . $city->municipio }}">
                                                     {{ $city->cidade }}</option>
                                             @endforeach

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
-use App\Models\MDFE;
 use App\Services\EmpresasService;
 use App\Services\MDFeService;
 use App\Services\MotoristaService;
