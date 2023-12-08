@@ -1,0 +1,665 @@
+<div>
+
+    <form method="POST">
+        @csrf
+
+        <main>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card" style="height: 80dvh">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>NFes importadas</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div
+                                        style="background-color: rgb(230, 230, 230); height: 85%; width: 100%; max-height: 85%; overflow-y: auto;">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th width="50%"></th>
+                                                    <th width="30%"></th>
+                                                    <th width="20%"></th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody style="font-size: 70%">
+                                                @foreach ($notas as $index => $nt)
+                                                    <tr>
+                                                        <td>{{ $nt['tipoDocumento'] }}
+                                                            {{ $nt['numeroNota'] }}/{{ $nt['serieNota'] }}</td>
+                                                        <td>{{ $nt['cidade'] }}/{{ $nt['ufNota'] }}
+                                                        </td>
+                                                        <td>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <a wire:click.prevent="editNote({{ json_encode($nt) }}, {{ $index }})"
+                                                                        title="Editar {{ $nt['tipoDocumento'] }}"
+                                                                        class="text-info"><i class="fa fa-edit"></i></a>
+                                                                </div>
+                                                                @if (count($notas) > 1)
+                                                                    <div class="col">
+                                                                        <a wire:click.prevent="deleteNote({{ $index }})"
+                                                                            title="Remover {{ $nt['tipoDocumento'] }}"
+                                                                            class="text-danger"><i
+                                                                                class="fa fa-trash"></i></a>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+
+                                        @foreach ($notas as $index => $nt)
+                                            <input type="hidden" name="notas[{{ $index }}][tipoDocumento]"
+                                                wire:model="notas.{{ $index }}.tipoDocumento">
+                                            <input type="hidden" name="notas[{{ $index }}][ufNota]"
+                                                wire:model="notas.{{ $index }}.ufNota" />
+                                            <input type="hidden" name="notas[{{ $index }}][cidade]"
+                                                wire:model="notas.{{ $index }}.cidade" />
+                                            <input type="hidden" name="notas[{{ $index }}][codMun]"
+                                                wire:model="notas.{{ $index }}.codMun" />
+                                            <input type="hidden" name="notas[{{ $index }}][valor]"
+                                                wire:model="notas.{{ $index }}.valor" />
+                                            <input type="hidden" name="notas[{{ $index }}][peso]"
+                                                wire:model="notas.{{ $index }}.peso" />
+                                            <input type="hidden" name="notas[{{ $index }}][chave]"
+                                                wire:model="notas.{{ $index }}.chave" />
+                                            <input type="hidden" name="notas[{{ $index }}][serieNota]"
+                                                wire:model="notas.{{ $index }}.serieNota" />
+                                            <input type="hidden" name="notas[{{ $index }}][numeroNota]"
+                                                wire:model="notas.{{ $index }}.numeroNota" />
+                                        @endforeach
+
+                                    </div>
+
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <a class="btn btn-dark" wire:click="addNote()"
+                                                style="margin-top: 2%;">Importar mais Notas <i
+                                                    class="fas fa-upload"></i></a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>Transporte</h5>
+                                            <p class="text-danger">Modal Rodoviário <i class="fa fa-car"></i></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="">Veículo de tração *</label>
+                                                <select class="form-control" name="veiculoTracao"
+                                                    wire:model="veiculoTracao" required>
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($veiculosTracao as $veiculoT)
+                                                        <option value="{{ $veiculoT->id }}">{{ $veiculoT->placa }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input class="form-control" type="text" name="veiculoTracao"
+                                                    wire:model="veiculoTracao" required
+                                                    placeholder="Veículo de tração..."> --}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="">Motorista *</label>
+                                                <select class="form-control" name="motorista" wire:model="motorista"
+                                                    required>
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($motoristas as $motorista)
+                                                        <option value="{{ $motorista->id }}">{{ $motorista->nome }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input class="form-control" type="text" name="motorista"
+                                                    wire:model="motorista" required placeholder="Motorista..."> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="">Veículo de reboque</label>
+                                                <select class="form-control" name="veiculoReboque"
+                                                    wire:model="veiculoReboque">
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($veiculosReboque as $veiculoR)
+                                                        <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input class="form-control" type="text" name="veiculoReboque"
+                                                    wire:model="veiculoReboque" placeholder="Veículo de reboque..."> --}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-4 col-xs-6" style="margin-bottom: 2%">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="">Tipo de Transporte</label>
+                                    <select class="form-control" name="tipoTransporte" wire:model="tipoTransporte"
+                                        required>
+                                        <option value="Carga própria">Carga própria</option>
+                                        <option value="CT-e globalizado">CT-e golbalizado</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-xs-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Nº documento</label>
+                                        <input class="form-control" type="text" name="numero" min="0"
+                                            wire:model="numero" required placeholder="Nº...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-xs-6">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Série</label>
+                                        <input class="form-control" type="number" name="serie" wire:model="serie"
+                                            min="0" required placeholder="Série...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>Viagem</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-5 col-xs-4">
+                                            <i class="fas fa-map-marker-alt" style="margin-right: 2%"></i><label
+                                                for=""><b> Local de Carregamento:</b></label>
+                                        </div>
+                                        <div class="col-md-2 col-xs-4">
+                                            <select class="form-control" name="localCarregamento"
+                                                wire:model="localCarregamento" wire:change="buscarCidades(false)" required>
+                                                @foreach ($ufs as $uf)
+                                                    <option value="{{ $uf }}">{{ $uf }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-5 col-xs-4">
+                                            <select class="form-control" name="municipio"
+                                                wire:model="municipio" required>
+                                                @foreach ($cidadesCarregamento as $city)
+                                                    <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
+                                                @endforeach
+                                            </select>
+
+                                            <input class="form-control" type="hidden" name="codMunCarregamento"
+                                                wire:model="codMunCarregamento" required
+                                                placeholder="Cód. Município...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-4">
+                                            <i class="fas fa-map-marker-alt text-info"
+                                                style="margin-right: 2%"></i><label for=""><b> Local de
+                                                    Descarregamento:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="text" name="localDescarregamento"
+                                                readonly wire:model="localDescarregamento" required
+                                                placeholder="Local descarregamento...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-4">
+                                            <i class="fas fa-map-marker-alt text-primary"
+                                                style="margin-right: 2%"></i><label for=""><b>
+                                                    Percurso:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="text" name="percurso"
+                                                wire:model="percurso" required placeholder="Percurso...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-4">
+                                            <i class="fas fa-calendar-week" style="margin-right: 2%"></i><label
+                                                for=""><b> Data de viagem:</b></label>
+                                        </div>
+                                        <div class="col-md-6 col-xs-4">
+                                            <input class="form-control" type="date" name="dataInicio"
+                                                wire:model="dataInicio" required placeholder="Data de viagem...">
+                                        </div>
+                                    </div><br>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row" style="text-align: center">
+                                        <div class="col">
+                                            <h5>Carga</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-md-5 col-xs-4">
+                                            <i class="fas fa-dollar-sign" style="margin-right: 2%"></i><label
+                                                for=""><b> Valor total da Carga (R$):</b></label>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <input class="form-control" type="number" name="valorTotal"
+                                                min="0" wire:model="valorTotal" required
+                                                placeholder="Valor total...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-4">
+                                            <i class="fas fa-weight-hanging" style="margin-right: 2%"></i><label
+                                                for=""><b> Peso total (Kg):</b></label>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <input class="form-control" type="number" name="pesoTotal"
+                                                min="0" wire:model="pesoTotal" required placeholder="Peso...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-5 col-xs-5">
+                                            <i class="fas fa-box-open" style="margin-right: 2%"></i><label
+                                                for=""><b> Produto predominante:</b></label>
+                                        </div>
+                                        <div class="col-md-5 col-xs-5">
+                                            <input class="form-control" type="text" name="produtoPredominante"
+                                                wire:model="produtoPredominante" required
+                                                placeholder="Produto predominante...">
+                                        </div>
+                                    </div><br>
+
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-4">
+                                            <i class="fas fa-box-open" style="margin-right: 2%"></i><label
+                                                for=""><b> Tipo de carga:</b></label>
+                                        </div>
+                                        <div class="col-md-4 col-xs-4">
+                                            <select class="form-control" name="tipoCarga" wire:model="tipoCarga"
+                                                required>
+                                                <option value="">Selecionar</option>
+                                                @foreach ($tiposCarga as $tipoC)
+                                                    <option value="{{ $tipoC }}">{{ $tipoC }}</option>
+                                                @endforeach
+                                            </select>
+                                            {{-- <input class="form-control" type="text" name="tipoCarga"
+                                                wire:model="tipoCarga" required placeholder="Tipo de carga..."> --}}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="text-align: center; margin-bottom: 2%">
+                <div class="col">
+                    <a class="btn btn-info">Mais Opções</a>
+                    <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
+                    <button class="btn btn-success" type="submit" style="width: 25%">Concluir</button>
+                </div>
+            </div>
+        </main>
+
+    </form>
+
+    <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="col" style="text-align: center">
+                        <div class="modal-title" style="text: center">
+                            <h4>Adicionar documento</h4>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-body">
+
+                    <form wire:submit.prevent="salvarDocumento">
+
+                        <div class="row">
+                            <div class="col-md-3 col-xs-3">
+                                <div class="form-group">
+                                    <label for="">Tipo de Documento *</label>
+                                    <select class="form-control" wire:model="tipoDocumento" required>
+                                        <option value="">Selecionar</option>
+                                        @foreach ($tiposDocumentos as $tipoDocumento)
+                                            <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-xs-4">
+                                <div class="form-group">
+                                    <label for="">Local de descarregamento *</label>
+                                    <select class="form-control" wire:model="localDescarregamento" id="meuSelect"
+                                        wire:change="buscarCidades(true)" required>
+                                        <option value="">Selecionar</option>
+                                        @foreach ($ufs as $uf)
+                                            <option value="{{ $uf }}">{{ $uf }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5 col-xs-5">
+                                <div class="form-group">
+                                    <label for="">Cidade *</label>
+                                    <select class="form-control" wire:model="cidade" id="cidade" required>
+                                        <option value="">Selecionar</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Valor total *</label>
+                                    <input class="form-control" type="number" step="0.01" min="0"
+                                        wire:model="valor" required placeholder="Valor...">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Peso (Kg) *</label>
+                                    <input class="form-control" type="number" step="0.01" min="0"
+                                        wire:model="peso" required placeholder="Peso...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Chave de acesso *</label>
+                                    <input class="form-control" type="number" wire:model="chave" required
+                                        oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
+                                    <span class="text-danger" style="display: none;" id="chaveInvalida"><i
+                                            class="fas fa-exclamation-circle"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="text-align: center">
+                            <div class="col">
+                                <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="modal-footer" id="cancelar">
+                    <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (count($notas) >= 1)
+        <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
+            aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <div class="col" style="text-align: center">
+                            <div class="modal-title" style="text: center">
+                                <h4>Editar documento</h4>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <form wire:submit.prevent="updateNote">
+
+                            <div class="row">
+                                <div class="col-md-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label for="">Tipo de Documento *</label>
+                                        <select class="form-control" wire:model="tipoDocumento" required>
+                                            @foreach ($tiposDocumentos as $tipoDocumento)
+                                                <option value="{{ $tipoDocumento }}">{{ $tipoDocumento }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-xs-4">
+                                    <div class="form-group">
+                                        <label for="">Local de descarregamento *</label>
+                                        <input class="form-control" type="text" wire:model="localDescarregamento"
+                                            readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5 col-xs-5">
+                                    <div class="form-group">
+                                        <label for="">Cidade *</label>
+                                        <select class="form-control" wire:model="cidade" required>
+                                            @foreach (json_decode($cidadesCarregamento) as $city)
+                                                <option value="{{ $city->cidade . '@' . $city->municipio }}">
+                                                    {{ $city->cidade }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Valor total *</label>
+                                        <input class="form-control" type="number" step="0.01" min="0"
+                                            wire:model="valor" required placeholder="Valor...">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Peso (Kg) *</label>
+                                        <input class="form-control" type="number" step="0.01" min="0"
+                                            wire:model="peso" required placeholder="Peso...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Chave de acesso *</label>
+                                        <input class="form-control" type="number" wire:model="chave" required
+                                            oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
+                                        <span class="text-danger" style="display: none;"
+                                            id="chaveInvalidaEdit"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="text-align: center">
+                                <div class="col">
+                                    <button class="btn btn-success" type="submit" style="width: 25%">Salvar</button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" wire:click="cancelEdit()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#meuModal').modal('show');
+    });
+
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('fecharModal', function() {
+            $('#meuModal').modal('hide');
+        });
+
+        Livewire.on('abrirModal', function() {
+            $('#meuModal').modal('show');
+        });
+
+        Livewire.on('abrirModalEdit', function() {
+            $('#meuModalEdit').modal('show');
+        });
+
+        Livewire.on('fecharModalEdit', function() {
+            $('#meuModalEdit').modal('hide');
+        });
+
+        Livewire.on('btnCancelar', function() {
+            var cancelar = document.getElementById('cancelar');
+            cancelar.innerHTML =
+                '<button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>';
+        });
+
+        Livewire.on('cidades', function(value) {
+            var select = document.getElementById('cidade');
+            select.innerHTML = '';
+            var option1 = document.createElement('option');
+            option1.value = '';
+            option1.text = 'Selecionar';
+            select.add(option1);
+            value.forEach(element => {
+                var option2 = document.createElement('option');
+                option2.value = element.cidade + '@' + element.municipio;
+                option2.text = element.cidade;
+                select.add(option2);
+            });
+        });
+
+        Livewire.on('atualizarSelect', function(value) {
+            var select = document.getElementById('meuSelect');
+            select.innerHTML = '';
+            select.readonly = true;
+            var option = document.createElement('option');
+            option.value = value;
+            option.text = value;
+            select.add(option);
+        });
+
+        Livewire.on('chaveJaExiste', function() {
+            let errorBox = document.getElementById('chaveInvalida');
+            let errorBox2 = document.getElementById('chaveInvalidaEdit');
+            errorBox.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave já utilizada, tente com uma nova chave!";
+            errorBox.style.display = 'block';
+            errorBox2.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave já utilizada, tente com uma nova chave!";
+            errorBox2.style.display = 'block';
+            setTimeout(function() {
+                errorBox.style.display = 'none';
+                errorBox2.style.display = 'none';
+            }, 3000);
+        });
+
+        Livewire.on('chaveInvalida', function() {
+            let errorBox = document.getElementById('chaveInvalida');
+            let errorBox2 = document.getElementById('chaveInvalidaEdit');
+            errorBox.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave inválida, tente com uma chave válida!";
+            errorBox.style.display = 'block';
+            errorBox2.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> Chave inválida, tente com uma chave válida!";
+            errorBox2.style.display = 'block';
+            setTimeout(function() {
+                errorBox.style.display = 'none';
+                errorBox2.style.display = 'none';
+            }, 3000);
+        });
+    });
+
+    function limitarCaracteres(elemento, limite) {
+        let valor = elemento.value.toString();
+        if (valor.length > limite) {
+            valor = valor.slice(0, limite);
+            elemento.value = valor;
+        }
+    }
+</script>

@@ -17,6 +17,7 @@
         "livewire/livewire": "^2.10",
         "maennchen/zipstream-php": "^2.4",
         "nfephp-org/sped-da": "^1.1",
+        "nfephp-org/sped-mdfe": "dev-master",
         "nfephp-org/sped-nfe": "^5.1",
         "php-flasher/flasher-laravel": "^1.15",
         "realrashid/sweet-alert": "^5.1",

@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h3 class="m-0 text-black" width="100%">Resumo de Notas</h3>
+            <h3 class="m-0 text-black" width="100%">Resumo de Notas NFe</h3>
         </div>
     </div>
 
@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                {{-- EMITIR --}}
                                 <div class="col-md-3 col-xs-2">
                                     <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
                                         class="text-success"><i class="fas fa-upload"></i></a>
