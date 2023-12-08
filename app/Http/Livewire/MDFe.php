@@ -49,7 +49,8 @@ class MDFe extends Component
 
     //Dados para preemcher a teça
     public $tiposDocumentos = [];
-    public $cidades = [];
+    public $cidadesDescarregamento = [];
+    public $cidadesCarregamento = [];
     public $tiposCarga = [];
     public $ufs = [];
     public $veiculosTracao = [];
@@ -62,6 +63,7 @@ class MDFe extends Component
         $motoristaService = new MotoristaService();
         $veiculoService = new VeiculosService();
         $empresaService = new EmpresasService();
+        $cidadeService = new CidadeService();
         $empresa = $empresaService->buscarEmpresa(Auth::user()->empresa_id);
 
         $this->numero = "Geração Automática";
@@ -71,18 +73,23 @@ class MDFe extends Component
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
+        $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
         $this->dataInicio = now()->format('Y-m-d');
         $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
         $this->veiculosReboque = $veiculoService->buscarReboques();
         $this->motoristas = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
     }
 
-    public function buscarCidades()
+    public function buscarCidades($cargaDescarga)
     {
         // Injetar Service
         $cidadeService = new CidadeService();
-        $this->cidades = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
-        return $this->emit('cidades', $this->cidades);
+        if ($cargaDescarga) {
+            $this->cidadesDescarregamento = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
+            return $this->emit('cidades', $this->cidadesDescarregamento);
+        } else {
+            $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
+        }
     }
 
     public function salvarDocumento()
@@ -235,7 +242,6 @@ class MDFe extends Component
 
     public function addNote()
     {
-        $this->ufs = [];
         $this->emit('atualizarSelect', $this->localDescarregamento);
         return $this->emit('abrirModal');
     }
