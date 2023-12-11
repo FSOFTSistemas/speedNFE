@@ -53,6 +53,7 @@ class MDFe extends Component
     public $cidadesCarregamento = [];
     public $tiposCarga = [];
     public $ufs = [];
+    public $percursos = [];
     public $veiculosTracao = [];
     public $veiculosReboque = [];
     public $motoristas = [];
@@ -199,6 +200,20 @@ class MDFe extends Component
             }
         }
         return false;
+    }
+
+    public function addPercurso()
+    {
+        if ($this->percurso && !in_array($this->percurso, $this->percursos)) {
+            $this->percursos[] = $this->percurso;
+            $this->percurso = null;
+            return $this->emit('percursos', $this->percursos);
+        }
+    }
+
+    public function removePercurso($percurso)
+    {
+        dd('oi');
     }
 
     public function editNote($nota, $index)

@@ -12,7 +12,7 @@
                                 <div class="card-header">
                                     <div class="row" style="text-align: center">
                                         <div class="col">
-                                            <h5>NFes importadas</h5>
+                                            <h5>Notas importadas</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -222,15 +222,16 @@
                                         </div>
                                         <div class="col-md-2 col-xs-4">
                                             <select class="form-control" name="localCarregamento"
-                                                wire:model="localCarregamento" wire:change="buscarCidades(false)" required>
+                                                wire:model="localCarregamento" wire:change="buscarCidades(false)"
+                                                required>
                                                 @foreach ($ufs as $uf)
                                                     <option value="{{ $uf }}">{{ $uf }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-5 col-xs-4">
-                                            <select class="form-control" name="municipio"
-                                                wire:model="municipio" required>
+                                            <select class="form-control" name="municipio" wire:model="municipio"
+                                                required>
                                                 @foreach ($cidadesCarregamento as $city)
                                                     <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
                                                 @endforeach
@@ -261,9 +262,21 @@
                                                 style="margin-right: 2%"></i><label for=""><b>
                                                     Percurso:</b></label>
                                         </div>
-                                        <div class="col-md-6 col-xs-4">
-                                            <input class="form-control" type="text" name="percurso"
-                                                wire:model="percurso" required placeholder="Percurso...">
+                                        <div class="col-md-9 col-xs-4">
+                                            <div class="row">
+                                                <div class="col-md-11 col-xs-6">
+                                                    <input class="form-control" type="text" name="percursos"
+                                                        wire:model="percursos" required placeholder="Percurso...">
+                                                </div>
+
+                                                <div class="col-md-1 col-xs-6">
+                                                    <a title="Adicionar ou Remover Percurso" data-toggle="modal"
+                                                        data-target="#modalPercurso">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div><br>
 
@@ -468,6 +481,36 @@
         </div>
     </div>
 
+    @component('components.modal', ['modalId' => 'modalPercurso', 'modalTitle' => 'Adicionar ou Remover Percurso'])
+        <form wire:submit.prevent="addPercurso">
+            <div class="row">
+                <div class="col">
+                    <label for="">Percurso</label>
+                    <select class="form-control" name="percurso" wire:model="percurso" required>
+                        <option value="">Selecionar</option>
+                        @foreach ($ufs as $uf)
+                            <option value="{{ $uf }}">{{ $uf }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="row" style="text-align: center; margin-top: 2%;">
+                <div class="col">
+                    <button class="btn"><i class="fa fa-plus"> adicionar</i></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col">
+                <ul id="percursos">
+
+                </ul>
+            </div>
+        </div>
+    @endcomponent
+
     @if (count($notas) >= 1)
         <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
             aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
@@ -611,6 +654,21 @@
                 option2.value = element.cidade + '@' + element.municipio;
                 option2.text = element.cidade;
                 select.add(option2);
+            });
+        });
+
+        Livewire.on('percursos', function(value) {
+            var percursos = document.getElementById('percursos');
+            percursos.innerHTML = '';
+            value.forEach(element => {
+                var li = document.createElement('li');
+                li.textContent = element;
+                var button = document.createElement('i');
+                button.className = 'fa fa-trash text-danger';
+                button.title = 'Apagar';
+                button.setAttribute('wire:click', `removePercurso('${element}')`);
+                li.appendChild(button);
+                percursos.appendChild(li);
             });
         });
 
