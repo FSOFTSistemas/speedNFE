@@ -205,15 +205,18 @@ class MDFe extends Component
     public function addPercurso()
     {
         if ($this->percurso && !in_array($this->percurso, $this->percursos)) {
+            if ($this->percurso == $this->localCarregamento) {
+                return $this->emit('percursoInvalido');
+            }
             $this->percursos[] = $this->percurso;
             $this->percurso = null;
             return $this->emit('percursos', $this->percursos);
         }
     }
 
-    public function removePercurso($percurso)
+    public function removePercurso()
     {
-        dd('oi');
+        dd('Oi');
     }
 
     public function editNote($nota, $index)

@@ -52,6 +52,7 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -65,7 +66,7 @@ class MDFEController extends Controller
                 'municipio' => 'required',
                 'codMunCarregamento' => 'required',
                 'localDescarregamento' => 'required',
-                'percurso' => 'required',
+                'percursos' => 'required',
                 'dataInicio' => 'required|date',
                 'valorTotal' => 'required|numeric',
                 'pesoTotal' => 'required|numeric',

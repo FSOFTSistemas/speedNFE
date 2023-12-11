@@ -62,21 +62,21 @@
                                             <input type="hidden" name="notas[{{ $index }}][tipoDocumento]"
                                                 wire:model="notas.{{ $index }}.tipoDocumento">
                                             <input type="hidden" name="notas[{{ $index }}][ufNota]"
-                                                wire:model="notas.{{ $index }}.ufNota" />
+                                                wire:model="notas.{{ $index }}.ufNota">
                                             <input type="hidden" name="notas[{{ $index }}][cidade]"
-                                                wire:model="notas.{{ $index }}.cidade" />
+                                                wire:model="notas.{{ $index }}.cidade">
                                             <input type="hidden" name="notas[{{ $index }}][codMun]"
-                                                wire:model="notas.{{ $index }}.codMun" />
+                                                wire:model="notas.{{ $index }}.codMun">
                                             <input type="hidden" name="notas[{{ $index }}][valor]"
-                                                wire:model="notas.{{ $index }}.valor" />
+                                                wire:model="notas.{{ $index }}.valor">
                                             <input type="hidden" name="notas[{{ $index }}][peso]"
-                                                wire:model="notas.{{ $index }}.peso" />
+                                                wire:model="notas.{{ $index }}.peso">
                                             <input type="hidden" name="notas[{{ $index }}][chave]"
-                                                wire:model="notas.{{ $index }}.chave" />
+                                                wire:model="notas.{{ $index }}.chave">
                                             <input type="hidden" name="notas[{{ $index }}][serieNota]"
-                                                wire:model="notas.{{ $index }}.serieNota" />
+                                                wire:model="notas.{{ $index }}.serieNota">
                                             <input type="hidden" name="notas[{{ $index }}][numeroNota]"
-                                                wire:model="notas.{{ $index }}.numeroNota" />
+                                                wire:model="notas.{{ $index }}.numeroNota">
                                         @endforeach
 
                                     </div>
@@ -119,9 +119,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input class="form-control" type="text" name="veiculoTracao"
-                                                    wire:model="veiculoTracao" required
-                                                    placeholder="Veículo de tração..."> --}}
                                             </div>
                                         </div>
 
@@ -136,8 +133,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input class="form-control" type="text" name="motorista"
-                                                    wire:model="motorista" required placeholder="Motorista..."> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -154,8 +149,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input class="form-control" type="text" name="veiculoReboque"
-                                                    wire:model="veiculoReboque" placeholder="Veículo de reboque..."> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -265,8 +258,11 @@
                                         <div class="col-md-9 col-xs-4">
                                             <div class="row">
                                                 <div class="col-md-11 col-xs-6">
-                                                    <input class="form-control" type="text" name="percursos"
-                                                        wire:model="percursos" required placeholder="Percurso...">
+                                                    <input class="form-control" type="text" value="{{ implode(' - ', $this->percursos) }}" readonly>
+                                                    @foreach ($percursos as $index => $pcs)
+                                                        <input type="hidden" name="percursos[{{ $index }}]"
+                                                            wire:model="percursos.{{ $index }}" required>
+                                                    @endforeach
                                                 </div>
 
                                                 <div class="col-md-1 col-xs-6">
@@ -458,8 +454,7 @@
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
-                                    <span class="text-danger" style="display: none;" id="chaveInvalida"><i
-                                            class="fas fa-exclamation-circle"></i></span>
+                                    <span class="text-danger" style="display: none;" id="chaveInvalida"></span>
                                 </div>
                             </div>
                         </div>
@@ -494,6 +489,8 @@
                     </select>
                 </div>
             </div>
+
+            <span class="text-danger" style="display: none;" id="percursoInvalido"></span>
 
             <div class="row" style="text-align: center; margin-top: 2%;">
                 <div class="col">
@@ -663,10 +660,10 @@
             value.forEach(element => {
                 var li = document.createElement('li');
                 li.textContent = element;
-                var button = document.createElement('i');
+                var button = document.createElement('button');
                 button.className = 'fa fa-trash text-danger';
                 button.title = 'Apagar';
-                button.setAttribute('wire:click', `removePercurso('${element}')`);
+                button.setAttribute('wire:click', `removePercurso()`);
                 li.appendChild(button);
                 percursos.appendChild(li);
             });
@@ -694,6 +691,16 @@
             setTimeout(function() {
                 errorBox.style.display = 'none';
                 errorBox2.style.display = 'none';
+            }, 3000);
+        });
+
+        Livewire.on('percursoInvalido', function() {
+            let errorBox = document.getElementById('percursoInvalido');
+            errorBox.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> O Local de Carregamento não pode estar incluso no percurso!";
+            errorBox.style.display = 'block';
+            setTimeout(function() {
+                errorBox.style.display = 'none';
             }, 3000);
         });
 

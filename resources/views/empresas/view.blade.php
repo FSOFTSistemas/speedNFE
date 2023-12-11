@@ -225,7 +225,7 @@
                                     <input class=form-control type="number" name="produtos" id="produtos" value="{{ $empresa->limProdutos }}"/>
 
                                     <label>Limite de Notas</label>
-                                    <input class=form-control type="number" name="notas" id="notas" value="{{ $empresa->limNotas }}"/>
+                                    <input class=form-control type="number" name="notas" id="notas" value="{{ $empresa->limNFes }}"/>
 
                                 </div>
 

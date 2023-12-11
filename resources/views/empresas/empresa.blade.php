@@ -12,7 +12,7 @@
 
 @section('content')
 
-    @if($user->empresa_id == 1)
+    @if ($user->empresa_id == 1)
         <a href="{{ route('empresa.index') }}" class="btn btn-secondary" style="margin-bottom: 2%">Voltar</a>
     @endif
 
@@ -58,14 +58,16 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Razão Social</label>
-                                            <input required placeholder="Razão Social..." class="form-control" type="text" id="nome"
-                                                name="nome" value="{{ $empresa->razao }}" />
+                                            <input required placeholder="Razão Social..." class="form-control"
+                                                type="text" id="nome" name="nome"
+                                                value="{{ $empresa->razao }}" />
                                         </div>
 
                                         <div class="col">
                                             <label>Nome Fantasia</label>
-                                            <input required placeholder="Nome Fantasia..." class="form-control" type="text" id="fantasia"
-                                                name="fantasia" value="{{ $empresa->fantasia }}" />
+                                            <input required placeholder="Nome Fantasia..." class="form-control"
+                                                type="text" id="fantasia" name="fantasia"
+                                                value="{{ $empresa->fantasia }}" />
                                         </div>
                                     </div>
 
@@ -74,9 +76,10 @@
                                             <label>CPF ou CNPJ</label>
                                             <div class="row">
                                                 <div class="col">
-                                                    <input required placeholder="CPF/CNPJ..." class="form-control" type="text" id="cpf_cnpj"
-                                                        name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);"
-                                                        maxlength="14" value="{{ $empresa->cpf_cnpj }}" />
+                                                    <input required placeholder="CPF/CNPJ..." class="form-control"
+                                                        type="text" id="cpf_cnpj" name="cpf_cnpj"
+                                                        onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14"
+                                                        value="{{ $empresa->cpf_cnpj }}" />
                                                 </div>
                                                 <button id="cnpj_button" type="button" class="btn btn-light"><i
                                                         class="fa fa-search"></i></button>
@@ -85,8 +88,8 @@
 
                                         <div class="col">
                                             <label>RG ou IE</label>
-                                            <input required placeholder="RG/IE..." class="form-control" type="text" id="rg_ie" name="rg_ie"
-                                                value="{{ $empresa->rg_ie }}" />
+                                            <input required placeholder="RG/IE..." class="form-control" type="text"
+                                                id="rg_ie" name="rg_ie" value="{{ $empresa->rg_ie }}" />
                                         </div>
                                     </div>
 
@@ -94,8 +97,9 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Celular</label>
-                                            <input required placeholder="Celular..." class="form-control" type="text" id="telefone" name="telefone" maxlength="15" onkeyup="handlePhone(event)"
-                                                value="{{ $empresa->celular }}" />
+                                            <input required placeholder="Celular..." class="form-control" type="text"
+                                                id="telefone" name="telefone" maxlength="15"
+                                                onkeyup="handlePhone(event)" value="{{ $empresa->celular }}" />
                                         </div>
                                     </div>
 
@@ -106,20 +110,21 @@
                                         <div class="row">
                                             <div class="col-9">
                                                 <label>Rua</label>
-                                                <input required placeholder="Rua..." class="form-control" type="text" id="rua" name="rua"
-                                                    value="{{ $empresa->rua }}" />
+                                                <input required placeholder="Rua..." class="form-control" type="text"
+                                                    id="rua" name="rua" value="{{ $empresa->rua }}" />
                                             </div>
                                             <div class="col-3">
                                                 <label>Número</label>
-                                                <input required placeholder="Nº..." class="form-control" type="text" id="numero" name="numero"
-                                                    value="{{ $empresa->numero }}" />
+                                                <input required placeholder="Nº..." class="form-control" type="text"
+                                                    id="numero" name="numero" value="{{ $empresa->numero }}" />
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-8">
                                                 <label>Bairro</label>
-                                                <input required placeholder="Bairro..." class="form-control" type="text" id="bairro" name="bairro"
+                                                <input required placeholder="Bairro..." class="form-control"
+                                                    type="text" id="bairro" name="bairro"
                                                     value="{{ $empresa->bairro }}" />
                                             </div>
                                             <div class="col">
@@ -127,8 +132,9 @@
                                                 <div class="row">
                                                     <div class="col">
 
-                                                        <input required placeholder="Cep..." class="form-control" type="text" id="cep"
-                                                            name="cep" value="{{ $empresa->cep }}" />
+                                                        <input required placeholder="Cep..." class="form-control"
+                                                            type="text" id="cep" name="cep"
+                                                            value="{{ $empresa->cep }}" />
                                                     </div>
                                                     <button class="btn btn-light" type="button" id="cep_button"><i
                                                             class="fa fa-search"></i></button>
@@ -140,7 +146,8 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <input required placeholder="Cidade..." class="form-control" type="text" id="cidade" name="cidade"
+                                                <input required placeholder="Cidade..." class="form-control"
+                                                    type="text" id="cidade" name="cidade"
                                                     value="{{ $empresa->cidade }}" />
                                             </div>
                                             <div class="col">
@@ -184,14 +191,16 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Complemento</label>
-                                                <input placeholder="Complemento..." class="form-control" type="text" id="complemento"
-                                                    name="complemento" value="{{ $empresa->complemento }}" />
+                                                <input placeholder="Complemento..." class="form-control" type="text"
+                                                    id="complemento" name="complemento"
+                                                    value="{{ $empresa->complemento }}" />
 
                                             </div>
                                             <div class="col">
 
                                                 <label>Código IBGE</label>
-                                                <input required placeholder="Código IBGE..." class="form-control" type="number" id="ibge" name="ibge"
+                                                <input required placeholder="Código IBGE..." class="form-control"
+                                                    type="number" id="ibge" name="ibge"
                                                     value="{{ $empresa->codigoIBGE }}" />
                                             </div>
                                         </div>
@@ -203,48 +212,58 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Nº da Última NFe</label>
-                                            <input required placeholder="Nº Última NFe..." class=form-control type="number" name="nfe" id="nfe"
+                                            <input required placeholder="Nº Última NFe..." class=form-control
+                                                type="number" name="nfe" id="nfe"
                                                 value="{{ $empresa->ultimaNFe }}" />
-
+                                        </div>
+                                        <div class="col">
+                                            <label>Nº da Última MDFe</label>
+                                            <input required placeholder="Nº Última MDFe..." class=form-control
+                                                type="number" name="mdfe" id="mdfe"
+                                                value="{{ $empresa->ultimaMDFe }}" />
                                         </div>
                                         <div class="col">
                                             <label>Serie</label>
-                                            <input required placeholder="Série..." class=form-control type="number" name="serie" id="serie"
-                                                value="{{ $empresa->serie }}" />
+                                            <input required placeholder="Série..." class=form-control type="number"
+                                                name="serie" id="serie" value="{{ $empresa->serie }}" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input placeholder="Certificado..." accept=".pfx" type="file" name="certificado" id="certificado"
-                                                class="file-upload-default" value="{{ $empresa->certificado }}">
+                                            <input placeholder="Certificado..." accept=".pfx" type="file"
+                                                name="certificado" id="certificado" class="file-upload-default"
+                                                value="{{ $empresa->certificado }}">
 
                                         </div>
                                         <div class="col">
                                             <label>Senha Certificado</label>
-                                            <input placeholder="Senha Certificado..." class=form-control type="text" name="senha" id="senha" />
+                                            <input placeholder="Senha Certificado..." class=form-control type="text"
+                                                name="senha" id="senha" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <label>CSC</label>
-                                            <input required placeholder="Csc..." class="form-control" type="text" name="csc" id="csc"
-                                                value="{{ $empresa->csc }}">
+                                            <input required placeholder="Csc..." class="form-control" type="text"
+                                                name="csc" id="csc" value="{{ $empresa->csc }}">
 
 
                                         </div>
                                         <div class="col">
                                             <label>Id Token CSC</label>
-                                            <input required placeholder="Id Token Csc..." class="form-control" type="text" name="idCsc" id="idCsc"
+                                            <input required placeholder="Id Token Csc..." class="form-control"
+                                                type="text" name="idCsc" id="idCsc"
                                                 value="{{ $empresa->idCsc }}">
 
                                         </div>
                                         <div class="col">
                                             <label>Ambiente</label>
                                             <select required class="form-control" name="ambiente" id="ambiente">
-                                                <option value="{{ $empresa->ambiente }}">{{ $empresa->ambiente == 1 ? 'Produção' : 'Homologação' }}</option>
+                                                <option value="{{ $empresa->ambiente }}">
+                                                    {{ $empresa->ambiente == 1 ? 'Produção' : 'Homologação' }}</option>
                                                 <option value="1">Produção</option>
                                                 <option value="2">Homologação</option>
                                             </select>
@@ -256,17 +275,20 @@
                                 <div class="tab-pane fade" id="limite" role="tabpanel" aria-labelledby="limite-tab">
 
                                     <label>Limite de Clientes</label>
-                                    <input required placeholder="Limite de Clientes..." class=form-control type="number" name="clientes" id="clientes"
-                                        value="{{ $empresa->limClientes }}" />
+                                    <input required placeholder="Limite de Clientes..." class=form-control type="number"
+                                        name="clientes" id="clientes" value="{{ $empresa->limClientes }}" />
 
                                     <label>Limite de Produtos</label>
-                                    <input required placeholder="Limite de Produtos..." class=form-control type="number" name="produtos" id="produtos"
-                                        value="{{ $empresa->limProdutos }}" />
+                                    <input required placeholder="Limite de Produtos..." class=form-control type="number"
+                                        name="produtos" id="produtos" value="{{ $empresa->limProdutos }}" />
 
-                                    <label>Limite de Notas</label>
-                                    <input required placeholder="Limite de Notas..." class=form-control type="number" name="notas" id="notas"
-                                        value="{{ $empresa->limNotas }}" />
+                                    <label>Limite de Notas (NFe)</label>
+                                    <input required placeholder="Limite de NFes)..." class=form-control
+                                        type="number" name="nfes" id="nfes" value="{{ $empresa->limNFes }}" />
 
+                                    <label>Limite de Notas (MDFe)</label>
+                                    <input required placeholder="Limite de MDFes..." class=form-control
+                                        type="number" name="mdfes" id="mdfes" value="{{ $empresa->limMDFes }}" />
                                 </div>
 
                                 <br>
