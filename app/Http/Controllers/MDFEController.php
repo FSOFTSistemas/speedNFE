@@ -12,6 +12,8 @@ use App\Services\VeiculosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class MDFEController extends Controller
 {
@@ -52,7 +54,7 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -72,40 +74,54 @@ class MDFEController extends Controller
                 'pesoTotal' => 'required|numeric',
                 'produtoPredominante' => 'required',
                 'tipoCarga' => 'required'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!'
             ]);
+            DB::beginTransaction();
             $MDFe = $this->notasService->save(
                 1,
                 $request->serie,
                 $request->dataInicio,
                 $request->localCarregamento,
                 $request->localDescarregamento,
-                $request->percurso,
+                $request->percursos,
                 $request->valorTotal,
                 $request->pesoTotal,
                 $request->produtoPredominante,
                 $request->ncm,
                 $request->tipoCarga,
-                Auth::user()->empresa_id,
+                $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
                 $request->veiculoTracao,
                 $request->veiculoReboque,
                 $request->motorista
             );
-            foreach ($request->notas as $nota) {
-                $this->notasService->saveNotas(
-                    $nota['tipoDocumento'],
-                    $nota['chave'],
-                    $nota['ufNota'],
-                    $nota['cidade'],
-                    $nota['codMun'],
-                    $nota['valor'],
-                    $nota['peso'],
-                    $nota['serieNota'],
-                    $nota['numeroNota'],
-                    $MDFe->id
-                );
+            if ($MDFe) {
+                foreach ($request->notas as $nota) {
+                    $this->notasService->saveNotas(
+                        $nota['tipoDocumento'],
+                        $nota['chave'],
+                        $nota['ufNota'],
+                        $nota['cidade'],
+                        $nota['codMun'],
+                        $nota['valor'],
+                        $nota['peso'],
+                        $nota['serieNota'],
+                        $nota['numeroNota'],
+                        $MDFe->id
+                    );
+                }
+                DB::commit();
+                return redirect()->route('mdfe.index')->with('success', 'MDFe foi criada com sucesso!');
             }
-            return redirect()->route('mdfe.index')->with('success', 'MDFe foi criada com sucesso!');
-        } catch (Exception $e) {
+            return back()->with('warning', 'Limite de MDFes foi atingido, assine um plano com mais vantagens para aumentar o limite!');
+         } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
+         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
@@ -125,9 +141,12 @@ class MDFEController extends Controller
             $request->validate([
                 'mdfeId' => 'required|numeric'
             ]);
+            DB::beginTransaction();
             $this->notasService->deleteMDFe($request->mdfeId);
+            DB::commit();
             return redirect()->route('mdfe.index')->with('success', 'MDFe foi deletada com sucesso!');
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
