@@ -54,8 +54,8 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         try {
+            // dd($request->all());
             $request->validate([
                 'notas' => 'required',
                 'veiculoTracao' => 'required|numeric',
@@ -65,19 +65,30 @@ class MDFEController extends Controller
                 'numero' => 'required',
                 'serie' => 'required',
                 'localCarregamento' => 'required',
-                'municipio' => 'required',
+                'municipio' => 'required|max:255',
                 'codMunCarregamento' => 'required',
                 'localDescarregamento' => 'required',
                 'percursos' => 'required',
                 'dataInicio' => 'required|date',
                 'valorTotal' => 'required|numeric',
                 'pesoTotal' => 'required|numeric',
-                'produtoPredominante' => 'required',
-                'tipoCarga' => 'required'
+                'produtoPredominante' => 'required|max:255',
+                'tipoCarga' => 'required',
+                "info_fisco" => 'nullable|max:255',
+                "info_contribuinte" => 'nullable|max:255',
+                "numeroLacre" => 'required',
+                "codigo_gtin" => 'required',
+                "ncm" => 'required',
+                "lat_carregamento" => 'required',
+                "lon_carregamento" => 'required',
+                "lat_descarregamento" => 'required',
+                "lon_descarregamento" => 'required'
             ], [
-                'required' => 'O campo :attribute é obrigatório!'
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attibute pode ter no máximo 255 dígitos!'
             ]);
             DB::beginTransaction();
+            $prod_pred_id = 1;
             $MDFe = $this->notasService->save(
                 1,
                 $request->serie,
@@ -87,13 +98,13 @@ class MDFEController extends Controller
                 $request->percursos,
                 $request->valorTotal,
                 $request->pesoTotal,
-                $request->produtoPredominante,
-                $request->ncm,
                 $request->tipoCarga,
-                $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
+                Auth::user()->empresa_id,
                 $request->veiculoTracao,
-                $request->veiculoReboque,
-                $request->motorista
+                $request->numeroLacre,
+                $request->info_fisco,
+                $request->info_contribuinte,
+                $prod_pred_id
             );
             if ($MDFe) {
                 foreach ($request->notas as $nota) {

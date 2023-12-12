@@ -24,13 +24,13 @@ class MDFE extends Model
         'chave_acesso',
         'valor_total',
         'peso',
-        'carga_predominante',
-        'ncm',
         'tipo_carga',
+        'info_fisco',
+        'info_contribuinte',
+        'numeroLacre',
+        'prod_pred_id',
         'empresa_id',
         'veiculo_tracao_id',
-        'veiculo_reboque_id',
-        'motoristaId'
     ];
 
     protected $casts = [
@@ -46,21 +46,26 @@ class MDFE extends Model
 
     public function veiculoTracao()
     {
-        return $this->belongsTo(Veiculo::class, 'veiculo_tracao_id');
+        return $this->hasOne(Veiculo::class, 'veiculo_tracao_id');
     }
 
     public function veiculoReboque()
     {
-        return $this->belongsTo(Veiculo::class, 'veiculo_reboque_id');
+        return $this->hasMany(MDFeReboque::class, 'mdfe_id');
     }
 
     public function motorista()
     {
-        return $this->belongsTo(Motorista::class, 'motoristaId');
+        return $this->hasMany(MDFeMotorista::class, 'mdfe_id');
     }
 
     public function notas()
     {
         return $this->hasMany(MDFeNota::class, 'mdfe_id');
+    }
+
+    public function proPred()
+    {
+        return $this->hasOne(MDFeProdPred::class, 'prod_pred_id');
     }
 }

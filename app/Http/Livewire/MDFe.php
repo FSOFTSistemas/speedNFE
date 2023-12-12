@@ -235,6 +235,7 @@ class MDFe extends Component
 
     public function editNote($nota, $index)
     {
+        dd($this->info_fisco, $this->info_contribuinte, $this->numeroLacre, $this->codGTIN, $this->codNCM, $this->latCarregamento, $this->lonCarregamento, $this->latDescarregamento, $this->lonDescarregamento);
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];

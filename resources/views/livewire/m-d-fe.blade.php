@@ -258,7 +258,8 @@
                                         <div class="col-md-9 col-xs-4">
                                             <div class="row">
                                                 <div class="col-md-11 col-xs-6">
-                                                    <input class="form-control" type="text" value="{{ implode(' - ', $this->percursos) }}" readonly>
+                                                    <input class="form-control" type="text"
+                                                        value="{{ implode(' - ', $this->percursos) }}" readonly>
                                                     @foreach ($percursos as $index => $pcs)
                                                         <input type="hidden" name="percursos[{{ $index }}]"
                                                             wire:model="percursos.{{ $index }}" required>
@@ -374,6 +375,158 @@
             </div>
         </main>
 
+        @component('components.modal', [
+            'modalId' => 'modalMoreOptions',
+            'modalTitle' => 'Mais Opções',
+            'sizeModal' => 'modal-lg',
+        ])
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="content">
+                            <div class="container-fluid">
+                                <div class="col-xs-12 col-sm-12" style="width: 100%">
+
+                                    <div class="card card-primary card-outline card-tabs">
+
+                                        <div class="card-header p-0 pt-1 border-bottom-0">
+                                            <ul class="nav nav-tabs" id="tab" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="home-tab" data-toggle="pill"
+                                                        href="#home" role="tab" aria-controls="home"
+                                                        aria-selected="true">Observações</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="lacres-tab" data-toggle="pill"
+                                                        href="#lacres" role="tab" aria-controls="lacres"
+                                                        aria-selected="false">Lacres</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="prod-tab" data-toggle="pill" href="#prod"
+                                                        role="tab" aria-controls="prod" aria-selected="false">Produto
+                                                        Predominante</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="tab-content" id="tabContent">
+                                                <div class="tab-pane fade show active" id="home" role="tabpanel"
+                                                    aria-labelledby="home-tab">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h4>Informações Adicionais</h4>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Informações de interesse ao
+                                                                fisco</label>
+                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" maxlength="255" cols="10" rows="5"
+                                                                placeholder="Informações ao fisco..."></textarea>
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Informações de interesse ao
+                                                                contribuinte</label>
+                                                            <textarea class="form-control" name="info_contribuinte" wire:model="info_contribuinte" maxlength="255" cols="10"
+                                                                rows="5" placeholder="Informações ao contribuinte..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="tab-pane fade" id="lacres" role="tabpanel"
+                                                    aria-labelledby="lacres-tab">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h4>Lacres</h4>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Número</label>
+                                                            <input class="form-control" type="text" name="numeroLacre"
+                                                                wire:model="numeroLacre" placeholder="Número do lacre...">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="tab-pane fade" id="prod" role="tabpanel"
+                                                    aria-labelledby="prod-tab">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h4>Produto Predominante</h4>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Código GTIN</label>
+                                                            <input class="form-control" type="text" name="codigo_gtin"
+                                                                wire:model="codGTIN"
+                                                                placeholder="Código GTIN...">
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Código NCM</label>
+                                                            <input class="form-control" type="text" name="ncm"
+                                                                wire:model="codNCM"  placeholder="Ncm...">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Latitude local de
+                                                                Carregamento</label>
+                                                            <input class="form-control" type="number" min="0"
+                                                                name="lat_carregamento" required wire:model="latCarregamento"
+                                                                placeholder="Latitude do local de Carregamento...">
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Longitude local de
+                                                                Carregamento</label>
+                                                            <input class="form-control" type="number" min="0"
+                                                                name="lon_carregamento" required wire:model="lonCarregamento"
+                                                                placeholder="Longitude do local de Carregamento...">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Latitude local de
+                                                                Descarregamento</label>
+                                                            <input class="form-control" type="number" min="0"
+                                                                name="lat_descarregamento" required wire:model="latDescarregamento"
+                                                                placeholder="Latitude do local de Descarregamento...">
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Longitude local de
+                                                                Descarregamento</label>
+                                                            <input class="form-control" type="number" min="0"
+                                                                name="lon_descarregamento" required wire:model="lonDescarregamento"
+                                                                placeholder="Longitude do local de Descarregamento...">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endcomponent
+
     </form>
 
     <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
@@ -476,7 +629,11 @@
         </div>
     </div>
 
-    @component('components.modal', ['modalId' => 'modalPercurso', 'modalTitle' => 'Adicionar ou Remover Percurso', 'sizeModal' => 'modal-md'])
+    @component('components.modal', [
+        'modalId' => 'modalPercurso',
+        'modalTitle' => 'Adicionar ou Remover Percurso',
+        'sizeModal' => 'modal-md',
+    ])
         <form wire:submit.prevent="addPercurso">
             <div class="row">
                 <div class="col">
@@ -504,139 +661,6 @@
                 <ul id="percursos">
 
                 </ul>
-            </div>
-        </div>
-    @endcomponent
-
-    @component('components.modal', ['modalId' => 'modalMoreOptions', 'modalTitle' => 'Mais Opções', 'sizeModal' => 'modal-lg'])
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="content">
-                        <div class="container-fluid">
-                            <div class="col-xs-12 col-sm-12" style="width: 100%">
-
-                                <div class="card card-primary card-outline card-tabs">
-
-                                    <div class="card-header p-0 pt-1 border-bottom-0">
-                                        <ul class="nav nav-tabs" id="tab" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                                                    aria-controls="home" aria-selected="true">Observações</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="lacres-tab" data-toggle="pill" href="#lacres" role="tab"
-                                                    aria-controls="lacres" aria-selected="false">Lacres</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="prod-tab" data-toggle="pill" href="#prod" role="tab"
-                                                    aria-controls="prod" aria-selected="false">Produto Predominante</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="card-body">
-                                        <form method="POST" action="">
-                                            @csrf
-
-                                            <div class="tab-content" id="tabContent">
-                                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <h4>Informações Adicionais</h4>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Informações de interesse ao fisco</label>
-                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" cols="10" rows="5" placeholder="Informações ao fisco..."></textarea>
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Informações de interesse ao contribuinte</label>
-                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" cols="10" rows="5" placeholder="Informações ao contribuinte..."></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="tab-pane fade" id="lacres" role="tabpanel" aria-labelledby="lacres-tab">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <h4>Lacres</h4>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Número</label>
-                                                            <input class="form-control" type="text" name="numeroLacre" wire:model="numeroLacre" required placeholder="Número do lacre...">
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="tab-pane fade" id="prod" role="tabpanel" aria-labelledby="prod-tab">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <h4>Produto Predominante</h4>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Código GTIN</label>
-                                                            <input class="form-control" type="text" name="codigo_gtin" wire:model="codGTIN" required placeholder="Código GTIN...">
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Código NCM</label>
-                                                            <input class="form-control" type="text" name="ncm" wire:model="codNCM" required placeholder="Ncm...">
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Latitude local de Carregamento</label>
-                                                            <input class="form-control" type="text" name="lat_carregamento" wire:model="latCarregamento" required placeholder="Latitude do local de Carregamento...">
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Longitude local de Carregamento</label>
-                                                            <input class="form-control" type="text" name="lon_carregamento" id="lonCarregamento" required placeholder="Longitude do local de Carregamento...">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Latitude local de Descarregamento</label>
-                                                            <input class="form-control" type="text" name="lat_descarregamento" id="latDescarregamento" required placeholder="Latitude do local de Descarregamento...">
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Longitude local de Descarregamento</label>
-                                                            <input class="form-control" type="text" name="lon_descarregamento" id="lonDescarregamento" required placeholder="Longitude do local de Descarregamento...">
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <br>
-                                                <div class="row" style="text-align: center">
-                                                    <div class="col">
-                                                        <button type="submit" class="btn btn-success form-control" style="width: 25%;">Salvar</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </form>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     @endcomponent

@@ -28,13 +28,13 @@
                             <div class="form-group">
                                 <label for="placa">Placa *</label>
                                 <input type="text" class="form-control" required placeholder="Placa..." name="placa"
-                                    id="placa" onkeyup="validarPlaca(this)" maxlength="8">
+                                    id="placa" onkeyup="validarPlaca(this, event)" maxlength="8">
                             </div>
                         </div>
                         <div class="col-md-4 col-xs-4">
                             <div class="form-group">
                                 <label for="capacidade">Capacidade (Kg) *</label>
-                                <input type="number" class="form-control" step="0.1" required
+                                <input type="number" class="form-control" step="0.1" required min="0"
                                     placeholder="Capacidade (Kg)..." name="capacidade" id="capacidade">
                             </div>
                         </div>
@@ -52,14 +52,14 @@
                             <div class="form-group">
                                 <label for="float">Tara (kg) *</label>
                                 <input type="number" class="form-control" step="0.1" required placeholder="Tara..."
-                                    name="tara" id="tara">
+                                    min="0" name="tara" id="tara">
                             </div>
                         </div>
                         <div class="col-md-3 col-xs-3">
                             <div class="form-group">
                                 <label for="capacidade_m3">Capacidade (M³) *</label>
                                 <input type="number" class="form-control" step="0.1" required
-                                    placeholder="Capacidade (M³)..." name="capacidade_m3" id="capacidade_m3">
+                                    placeholder="Capacidade (M³)..." name="capacidade_m3" id="capacidade_m3" min="0">
                             </div>
                         </div>
                         <div class="col-md-3 col-xs-3">
@@ -164,15 +164,16 @@
 
 @section('js')
     <script>
-        function validarPlaca(entradaDoUsuario) {
-            var placa = entradaDoUsuario.value; // Passa para a variável 'placa' o que o usuário digitar no formulário
-            placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
-            document.forms['veiculo']['placa'].value = placaMaiuscula; // Coloca a nova string de volta no formulário
-
-        if (placa.length === 3) { // Quando a string possuir 3 dígitos
-                placa += "-"; // Adiciona um hífen
-                document.forms['veiculo']['placa'].value = placa;
-                return true;
+        function validarPlaca(entradaDoUsuario, tecla) {
+            if (event.keyCode != 8) {
+                var placa = entradaDoUsuario.value; // Passa para a variável 'placa' o que o usuário digitar no formulário
+                placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
+                document.forms['veiculo']['placa'].value = placaMaiuscula; // Coloca a nova string de volta no formulário
+                if (placa.length === 3) { // Quando a string possuir 3 dígitos
+                    placa += "-"; // Adiciona um hífen
+                    document.forms['veiculo']['placa'].value = placa;
+                    return true;
+                }
             }
         }
     </script>
