@@ -30,7 +30,7 @@ return new class extends Migration
             'rua' => 'Rua Dom Luiz de brito',
             'bairro' => 'Centro',
             'numero' => '53',
-            'cidade' => 'Garanhuns',
+            'cidade' => 'GARANHUNS',
             'uf' => 'PE',
             'codigoIBGE' => '123456',
             'complemento' => 'n/d',

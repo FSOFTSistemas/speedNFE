@@ -476,7 +476,7 @@
         </div>
     </div>
 
-    @component('components.modal', ['modalId' => 'modalPercurso', 'modalTitle' => 'Adicionar ou Remover Percurso'])
+    @component('components.modal', ['modalId' => 'modalPercurso', 'modalTitle' => 'Adicionar ou Remover Percurso', 'sizeModal' => 'modal-md'])
         <form wire:submit.prevent="addPercurso">
             <div class="row">
                 <div class="col">
@@ -508,7 +508,7 @@
         </div>
     @endcomponent
 
-    @component('components.modal', ['modalId' => 'modalMoreOptions', 'modalTitle' => 'Mais Opções'])
+    @component('components.modal', ['modalId' => 'modalMoreOptions', 'modalTitle' => 'Mais Opções', 'sizeModal' => 'modal-lg'])
         <div class="container">
             <div class="row">
                 <div class="col">
@@ -540,24 +540,91 @@
 
                                             <div class="tab-content" id="tabContent">
                                                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                                    <h2>Obs</h2>
-                                                </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h4>Informações Adicionais</h4>
+                                                        </div>
+                                                    </div>
 
-                                                <div class="tab-pane fade" id="lacres" role="tabpanel" aria-labelledby="lacres-tab">
-                                                    <h2>Lacres</h2>
-                                                </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Informações de interesse ao fisco</label>
+                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" cols="10" rows="5" placeholder="Informações ao fisco..."></textarea>
+                                                        </div>
 
-                                                <div class="tab-pane fade" id="prod" role="tabpanel" aria-labelledby="prod-tab">
-                                                    <h2>Prod Pred</h2>
-                                                </div>
-
-                                                <br>
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <button type="submit" class="btn btn-success form-control">Salvar</button>
+                                                        <div class="col">
+                                                            <label for="">Informações de interesse ao contribuinte</label>
+                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" cols="10" rows="5" placeholder="Informações ao contribuinte..."></textarea>
+                                                        </div>
                                                     </div>
                                                 </div>
 
+                                                <div class="tab-pane fade" id="lacres" role="tabpanel" aria-labelledby="lacres-tab">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h4>Lacres</h4>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Número</label>
+                                                            <input class="form-control" type="text" name="numeroLacre" wire:model="numeroLacre" required placeholder="Número do lacre...">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="tab-pane fade" id="prod" role="tabpanel" aria-labelledby="prod-tab">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <h4>Produto Predominante</h4>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Código GTIN</label>
+                                                            <input class="form-control" type="text" name="codigo_gtin" wire:model="codGTIN" required placeholder="Código GTIN...">
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Código NCM</label>
+                                                            <input class="form-control" type="text" name="ncm" wire:model="codNCM" required placeholder="Ncm...">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Latitude local de Carregamento</label>
+                                                            <input class="form-control" type="text" name="lat_carregamento" wire:model="latCarregamento" required placeholder="Latitude do local de Carregamento...">
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Longitude local de Carregamento</label>
+                                                            <input class="form-control" type="text" name="lon_carregamento" id="lonCarregamento" required placeholder="Longitude do local de Carregamento...">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <label for="">Latitude local de Descarregamento</label>
+                                                            <input class="form-control" type="text" name="lat_descarregamento" id="latDescarregamento" required placeholder="Latitude do local de Descarregamento...">
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <label for="">Longitude local de Descarregamento</label>
+                                                            <input class="form-control" type="text" name="lon_descarregamento" id="lonDescarregamento" required placeholder="Longitude do local de Descarregamento...">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <br>
+                                                <div class="row" style="text-align: center">
+                                                    <div class="col">
+                                                        <button type="submit" class="btn btn-success form-control" style="width: 25%;">Salvar</button>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                         </form>

@@ -38,6 +38,20 @@ class MDFe extends Component
     public $tipoCarga = null;
     public $valorTotal = 0;
     public $pesoTotal = 0;
+    public $info_fisco = null;
+    public $info_contribuinte = null;
+
+    //Lacres
+    public $lacres = [];
+    public $numeroLacre = null;
+
+    // Produto Predominante
+    public $codGTIN = null;
+    public $codNCM = null;
+    public $latCarregamento = null;
+    public $lonCarregamento = null;
+    public $latDescarregamento = null;
+    public $lonDescarregamento = null;
 
     //Dados da NFe
     public $serieNota = null;
