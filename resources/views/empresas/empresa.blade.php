@@ -146,15 +146,22 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <input required placeholder="Cidade..." class="form-control"
+                                                <select class="form-control" name="cidade" id="cidade" required>
+                                                    <option value="{{ $empresa->cidade }}">{{ $empresa->cidade }}</option>
+                                                    @foreach ($cidades as $city)
+                                                        <option value="{{ $city->cidade }}">{{ $city->cidade }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                {{-- <input required placeholder="Cidade..." class="form-control"
                                                     type="text" id="cidade" name="cidade"
-                                                    value="{{ $empresa->cidade }}" />
+                                                    value="{{ $empresa->cidade }}" /> --}}
                                             </div>
                                             <div class="col">
                                                 <label>UF</label>
-                                                <select class="form-control" id="uf" name="uf" required>
+                                                <select class="form-control" id="uf" name="uf" required
+                                                    onchange="updateCities(this.value)">
                                                     <option value="{{ $empresa->uf }}">{{ $empresa->uf }}</option>
-                                                    <option>-- Escolha uma Unidade Federativa --</option>
                                                     <option value='RO'>RO</option>
                                                     <option value='AC'>AC</option>
                                                     <option value='AM'>AM</option>
@@ -283,12 +290,12 @@
                                         name="produtos" id="produtos" value="{{ $empresa->limProdutos }}" />
 
                                     <label>Limite de Notas (NFe)</label>
-                                    <input required placeholder="Limite de NFes)..." class=form-control
-                                        type="number" name="nfes" id="nfes" value="{{ $empresa->limNFes }}" />
+                                    <input required placeholder="Limite de NFes)..." class=form-control type="number"
+                                        name="nfes" id="nfes" value="{{ $empresa->limNFes }}" />
 
                                     <label>Limite de Notas (MDFe)</label>
-                                    <input required placeholder="Limite de MDFes..." class=form-control
-                                        type="number" name="mdfes" id="mdfes" value="{{ $empresa->limMDFes }}" />
+                                    <input required placeholder="Limite de MDFes..." class=form-control type="number"
+                                        name="mdfes" id="mdfes" value="{{ $empresa->limMDFes }}" />
                                 </div>
 
                                 <br>
@@ -317,6 +324,30 @@
 
     @section('js')
         <script>
+            function updateCities(uf) {
+                $.ajax({
+                    type: "GET",
+                    url: '/empresa/' + uf + "/atualizar-cidades",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(resultado) {
+                        console.log(resultado)
+                        if (resultado.length > 0) {
+                            var selectCidades = $("#cidade");
+                            selectCidades.empty();
+                            selectCidades.append('<option value="">Selecionar</option>');
+                            resultado.forEach(function(cidade) {
+                                selectCidades.append('<option value="' + cidade.cidade + '">' + cidade
+                                    .cidade + '</option>');
+                            });
+                        } else {
+                            alert("UF inválido, informe um UF válido!");
+                        }
+                    }
+                });
+            }
+
             function formatarCpfCnpj(valor) {
                 // Remove qualquer caracter que não seja número
                 valor = valor.replace(/\D/g, '');
@@ -380,7 +411,7 @@
                     },
                     success: function(resultado) {
                         if (resultado != 0) {
-                            // console.log(resultado);
+                            console.log(resultado);
                             document.getElementById('nome').value = resultado.nome;
                             document.getElementById('fantasia').value = resultado.fantasia;
                             document.getElementById("bairro").value = resultado.bairro;

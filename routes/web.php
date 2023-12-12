@@ -57,6 +57,7 @@ Route::prefix('empresa')->group(function () {
     Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware('auth');
     Route::post('/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware('auth');
     Route::post('', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware('auth');
+    Route::get('/{uf}/atualizar-cidades', [EmpresasController::class, 'updateCities'])->name('updateCities')->middleware('auth');
 });
 
 //CLIENTE

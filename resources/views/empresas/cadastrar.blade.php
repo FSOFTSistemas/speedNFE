@@ -83,8 +83,8 @@
 
                                         <div class="col">
                                             <label>RG ou IE</label>
-                                            <input required placeholder="Razão RG/IE..." class="form-control" type="text"
-                                                id="rg_ie" name="rg_ie" />
+                                            <input required placeholder="Razão RG/IE..." class="form-control"
+                                                type="text" id="rg_ie" name="rg_ie" />
                                         </div>
                                     </div>
 
@@ -106,29 +106,29 @@
                                         <div class="row">
                                             <div class="col-9">
                                                 <label>Rua</label>
-                                                <input required placeholder="Rua..." class="form-control" type="text" id="rua"
-                                                    name="rua" />
+                                                <input required placeholder="Rua..." class="form-control" type="text"
+                                                    id="rua" name="rua" />
                                             </div>
                                             <div class="col-3">
                                                 <label>Número</label>
-                                                <input required placeholder="Nº..." class="form-control" type="text" id="numero"
-                                                    name="numero" />
+                                                <input required placeholder="Nº..." class="form-control" type="text"
+                                                    id="numero" name="numero" />
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-8">
                                                 <label>Bairro</label>
-                                                <input required placeholder="Bairro..." class="form-control" type="text" id="bairro"
-                                                    name="bairro" />
+                                                <input required placeholder="Bairro..." class="form-control"
+                                                    type="text" id="bairro" name="bairro" />
                                             </div>
                                             <div class="col">
                                                 <label>CEP</label>
                                                 <div class="row">
                                                     <div class="col">
 
-                                                        <input required placeholder="Cep..." class="form-control" type="text" id="cep"
-                                                            name="cep" />
+                                                        <input required placeholder="Cep..." class="form-control"
+                                                            type="text" id="cep" name="cep" />
                                                     </div>
                                                     <button class="btn btn-light" type="button" id="cep_button"><i
                                                             class="fa fa-search"></i></button>
@@ -140,12 +140,18 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <input required placeholder="Cidade..." class="form-control" type="text" id="cidade"
-                                                    name="cidade" />
+                                                <select class="form-control" name="cidade" id="cidade" required>
+                                                    <option value="">Selecionar</option>
+                                                    @foreach ($cidades as $cidade)
+                                                        <option value="{{ $cidade->cidade }}">{{ $cidade->cidade }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="col">
                                                 <label>UF</label>
-                                                <select class="form-control" id="uf" name="uf" required>
+                                                <select class="form-control" id="uf" name="uf" required
+                                                    onchange="updateCities(this.value)">
                                                     <option value="">-- Escolha uma Unidade Federativa --</option>
                                                     <option value='RO'>RO</option>
                                                     <option value='AC'>AC</option>
@@ -183,15 +189,15 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label>Complemento</label>
-                                                <input placeholder="Complemento..." class="form-control" type="text" id="complemento"
-                                                    name="complemento" />
+                                                <input placeholder="Complemento..." class="form-control" type="text"
+                                                    id="complemento" name="complemento" />
 
                                             </div>
                                             <div class="col">
 
                                                 <label>Código IBGE</label>
-                                                <input required placeholder="Código IBGE..." class="form-control" type="number" id="ibge"
-                                                    name="ibge" />
+                                                <input required placeholder="Código IBGE..." class="form-control"
+                                                    type="number" id="ibge" name="ibge" />
                                             </div>
                                         </div>
                                     </div>
@@ -202,43 +208,49 @@
                                     <div class="row">
                                         <div class="col">
                                             <label>Nº da Última NFe</label>
-                                            <input required placeholder="Nº Última NFe..." class=form-control type="number" name="nfe" id="nfe" />
+                                            <input required placeholder="Nº Última NFe..." class=form-control
+                                                type="number" name="nfe" id="nfe" />
 
                                         </div>
                                         <div class="col">
                                             <label>Nº da Última MDFe</label>
-                                            <input required placeholder="Nº Última MDFe..." class=form-control type="number" name="mdfe" id="mdfe" />
+                                            <input required placeholder="Nº Última MDFe..." class=form-control
+                                                type="number" name="mdfe" id="mdfe" />
 
                                         </div>
                                         <div class="col">
                                             <label>Série</label>
-                                            <input required placeholder="Série..." class=form-control type="number" name="serie" id="serie" />
+                                            <input required placeholder="Série..." class=form-control type="number"
+                                                name="serie" id="serie" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input required placeholder="Certificado..." accept=".pfx" type="file" name="certificado" id="certificado"
-                                                class="file-upload-default">
+                                            <input required placeholder="Certificado..." accept=".pfx" type="file"
+                                                name="certificado" id="certificado" class="file-upload-default">
 
                                         </div>
                                         <div class="col">
                                             <label>Senha Certificado</label>
-                                            <input required placeholder="Senha Certificado..." class=form-control type="text" name="senha" id="senha" />
+                                            <input required placeholder="Senha Certificado..." class=form-control
+                                                type="text" name="senha" id="senha" />
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col">
                                             <label>CSC</label>
-                                            <input required placeholder="Csc..." class="form-control" type="text" name="csc" id="csc">
+                                            <input required placeholder="Csc..." class="form-control" type="text"
+                                                name="csc" id="csc">
 
 
                                         </div>
                                         <div class="col">
                                             <label>Id Token CSC</label>
-                                            <input required placeholder="Id Token Csc..." class="form-control" type="text" name="idCsc" id="idCsc">
+                                            <input required placeholder="Id Token Csc..." class="form-control"
+                                                type="text" name="idCsc" id="idCsc">
 
                                         </div>
                                         <div class="col">
@@ -256,36 +268,44 @@
                                 <div class="tab-pane fade" id="limite" role="tabpanel" aria-labelledby="limite-tab">
 
                                     <label>Limite de Clientes</label>
-                                    <input required placeholder="Limite de Clientes..." class=form-control type="number" name="clientes" id="clientes" />
+                                    <input required placeholder="Limite de Clientes..." class=form-control type="number"
+                                        name="clientes" id="clientes" />
 
                                     <label>Limite de Produtos</label>
-                                    <input required placeholder="Limite de Produtos..." class=form-control type="number" name="produtos" id="produtos" />
+                                    <input required placeholder="Limite de Produtos..." class=form-control type="number"
+                                        name="produtos" id="produtos" />
 
                                     <label>Limite de Notas (NFe)</label>
-                                    <input required placeholder="Limite de NFes..." class=form-control type="number" name="nfes" id="nfes" />
+                                    <input required placeholder="Limite de NFes..." class=form-control type="number"
+                                        name="nfes" id="nfes" />
 
                                     <label>Limite de Notas (MDFe)</label>
-                                    <input required placeholder="Limite de MDFes..." class=form-control type="number" name="mdfes" id="mdfes" />
+                                    <input required placeholder="Limite de MDFes..." class=form-control type="number"
+                                        name="mdfes" id="mdfes" />
 
                                 </div>
 
                                 <div class="tab-pane fade" id="user" role="tabpanel" aria-labelledby="user-tab">
 
                                     <label>Nome</label>
-                                    <input required placeholder="Nome..." class=form-control type="text" name="name" id="name" />
+                                    <input required placeholder="Nome..." class=form-control type="text"
+                                        name="name" id="name" />
 
                                     <label>Email</label>
-                                    <input required placeholder="Email..." class=form-control type="text" name="email" id="email" />
+                                    <input required placeholder="Email..." class=form-control type="text"
+                                        name="email" id="email" />
 
                                     <label>Confirmação de Email</label>
-                                    <input required placeholder="Confirmação Email..." class=form-control type="text" name="confirm_email" id="confirm_email" />
+                                    <input required placeholder="Confirmação Email..." class=form-control type="text"
+                                        name="confirm_email" id="confirm_email" />
 
                                     <label>Senha</label>
-                                    <input required placeholder="Senha..." class=form-control type="text" name="password" id="password" />
+                                    <input required placeholder="Senha..." class=form-control type="text"
+                                        name="password" id="password" />
 
                                     <label>Confirmação de Senha</label>
-                                    <input required placeholder="Confirmação Senha..." class=form-control type="text" name="confirm_password"
-                                        id="confirm_password" />
+                                    <input required placeholder="Confirmação Senha..." class=form-control type="text"
+                                        name="confirm_password" id="confirm_password" />
                                 </div>
                                 <br>
                                 <div>
@@ -313,6 +333,29 @@
 
 @section('js')
     <script>
+        function updateCities(uf) {
+            $.ajax({
+                type: "GET",
+                url: uf + "/atualizar-cidades",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(resultado) {
+                    if (resultado.length > 0) {
+                        var selectCidades = $("#cidade");
+                        selectCidades.empty();
+                        selectCidades.append('<option value="">Selecionar</option>');
+                        resultado.forEach(function(cidade) {
+                            selectCidades.append('<option value="' + cidade.cidade + '">' + cidade
+                                .cidade + '</option>');
+                        });
+                    } else {
+                        alert("UF inválido, informe um UF válido!");
+                    }
+                }
+            });
+        }
+
         function formatarCpfCnpj(valor) {
             // Remove qualquer caracter que não seja número
             valor = valor.replace(/\D/g, '');
@@ -350,12 +393,12 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log(data);
+                    // console.log(data);
                     document.getElementById("ibge").value = data.ibge;
                     document.getElementById("rua").value = data.logradouro;
                     document.getElementById("bairro").value = data.bairro;
                     document.getElementById("uf").value = data.uf;
-                    document.getElementById("cidade").value = data.localidade;
+                    document.getElementById("cidade").value = data.localidade.toUpperCase();
                 },
             });
         });
@@ -380,7 +423,7 @@
                         document.getElementById('nome').value = resultado.nome;
                         document.getElementById('fantasia').value = resultado.fantasia;
                         document.getElementById("bairro").value = resultado.bairro;
-                        document.getElementById("cidade").value = resultado.municipio;
+                        document.getElementById("cidade").value = resultado.municipio.toUpperCase();
                         document.getElementById("rua").value = resultado.logradouro;
                         document.getElementById("ibge").value = resultado.ibge;
                         document.getElementById("uf").value = resultado.uf;
