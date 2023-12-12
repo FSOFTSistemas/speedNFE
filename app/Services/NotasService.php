@@ -9,7 +9,7 @@ class NotasService
 {
 
     public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $percursos, $valor_total,
-        $peso, $carga_predominante, $ncm, $tipo_carga, $empresa, $veicTracao, $veicReboque, $motorista) {
+        $peso, $tipo_carga, $empresa, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte, $prod_pred_id) {
         if ($this->qtdeEmitMDFe($empresa->id) < $empresa->limMDFes || $empresa->id == 1) {
             return MDFE::create([
                 'numero' => $numero,
@@ -23,13 +23,13 @@ class NotasService
                 'chave_acesso' => null,
                 'valor_total' => $valor_total,
                 'peso' => $peso,
-                'carga_predominante' => $carga_predominante,
-                'ncm' => '95030022',
                 'tipo_carga' => $tipo_carga,
-                'empresa_id' => $empresa->id,
+                'info_fisco' => $info_fisco,
+                'info_contribuinte' => $info_contribuinte,
+                'numeroLacre' => $numeroLacre,
+                'prod_pred_id' => $prod_pred_id,
+                'empresa_id' => $empresa,
                 'veiculo_tracao_id' => $veicTracao,
-                'veiculo_reboque_id' => $veicReboque,
-                'motoristaId' => $motorista,
             ]);
         }
     }

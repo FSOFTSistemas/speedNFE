@@ -26,17 +26,14 @@ return new class extends Migration
             $table->string('chave_acesso')->nullable();
             $table->double('valor_total');
             $table->double('peso');
-            $table->string('carga_predominante');
+            $table->string('numeroLacre')->nullable();
             $table->string('tipo_carga');
-            $table->string('ncm');
+            $table->string('info_fisco', 255)->nullable();
+            $table->string('info_contribuinte', 255)->nullable();
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedBigInteger('veiculo_tracao_id');
             $table->foreign('veiculo_tracao_id')->references('id')->on('veiculos')->onDelete('cascade');
-            $table->unsignedBigInteger('veiculo_reboque_id')->nullable();
-            $table->foreign('veiculo_reboque_id')->references('id')->on('veiculos')->onDelete('cascade');
-            $table->unsignedBigInteger('motoristaId');
-            $table->foreign('motoristaId')->references('id')->on('motoristas')->onDelete('cascade');
             $table->timestamps();
         });
     }
