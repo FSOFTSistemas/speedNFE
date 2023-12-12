@@ -8,28 +8,30 @@ use App\Models\MDFeNota;
 class NotasService
 {
 
-    public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $uf_percurso, $valor_total,
+    public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $percursos, $valor_total,
         $peso, $carga_predominante, $ncm, $tipo_carga, $empresa, $veicTracao, $veicReboque, $motorista) {
-        return MDFE::create([
-            'numero' => $numero,
-            'serie' => $serie,
-            'data' => $data,
-            'situacao' => 'Pendente',
-            'uf_inicio' => $uf_inicio,
-            'uf_termino' => $uf_termino,
-            'uf_percurso' => $uf_percurso,
-            'tipo_documento' => 'MDFe',
-            'chave_acesso' => null,
-            'valor_total' => $valor_total,
-            'peso' => $peso,
-            'carga_predominante' => $carga_predominante,
-            'ncm' => '95030022',
-            'tipo_carga' => $tipo_carga,
-            'empresa_id' => $empresa,
-            'veiculo_tracao_id' => $veicTracao,
-            'veiculo_reboque_id' => $veicReboque,
-            'motoristaId' => $motorista,
-        ]);
+        if ($this->qtdeEmitMDFe($empresa->id) < $empresa->limMDFes || $empresa->id == 1) {
+            return MDFE::create([
+                'numero' => $numero,
+                'serie' => $serie,
+                'data' => $data,
+                'situacao' => 'Pendente',
+                'uf_inicio' => $uf_inicio,
+                'uf_termino' => $uf_termino,
+                'uf_percurso' => implode(' - ', $percursos),
+                'tipo_documento' => 'MDFe',
+                'chave_acesso' => null,
+                'valor_total' => $valor_total,
+                'peso' => $peso,
+                'carga_predominante' => $carga_predominante,
+                'ncm' => '95030022',
+                'tipo_carga' => $tipo_carga,
+                'empresa_id' => $empresa->id,
+                'veiculo_tracao_id' => $veicTracao,
+                'veiculo_reboque_id' => $veicReboque,
+                'motoristaId' => $motorista,
+            ]);
+        }
     }
 
     public function saveNotas($tipoDocumento, $chave, $uf, $municipio, $codMun, $valor, $peso, $serie, $numero, $mdfe)
@@ -44,7 +46,7 @@ class NotasService
             'peso' => $peso,
             'serie' => $serie,
             'numero' => $numero,
-            'mdfe_id' => $mdfe
+            'mdfe_id' => $mdfe,
         ]);
     }
 
@@ -67,4 +69,8 @@ class NotasService
             ->get();
     }
 
+    public function qtdeEmitMDFe($empresa_id)
+    {
+        return MDFE::where('empresa_id', $empresa_id)->count();
+    }
 }

@@ -62,21 +62,21 @@
                                             <input type="hidden" name="notas[{{ $index }}][tipoDocumento]"
                                                 wire:model="notas.{{ $index }}.tipoDocumento">
                                             <input type="hidden" name="notas[{{ $index }}][ufNota]"
-                                                wire:model="notas.{{ $index }}.ufNota" />
+                                                wire:model="notas.{{ $index }}.ufNota">
                                             <input type="hidden" name="notas[{{ $index }}][cidade]"
-                                                wire:model="notas.{{ $index }}.cidade" />
+                                                wire:model="notas.{{ $index }}.cidade">
                                             <input type="hidden" name="notas[{{ $index }}][codMun]"
-                                                wire:model="notas.{{ $index }}.codMun" />
+                                                wire:model="notas.{{ $index }}.codMun">
                                             <input type="hidden" name="notas[{{ $index }}][valor]"
-                                                wire:model="notas.{{ $index }}.valor" />
+                                                wire:model="notas.{{ $index }}.valor">
                                             <input type="hidden" name="notas[{{ $index }}][peso]"
-                                                wire:model="notas.{{ $index }}.peso" />
+                                                wire:model="notas.{{ $index }}.peso">
                                             <input type="hidden" name="notas[{{ $index }}][chave]"
-                                                wire:model="notas.{{ $index }}.chave" />
+                                                wire:model="notas.{{ $index }}.chave">
                                             <input type="hidden" name="notas[{{ $index }}][serieNota]"
-                                                wire:model="notas.{{ $index }}.serieNota" />
+                                                wire:model="notas.{{ $index }}.serieNota">
                                             <input type="hidden" name="notas[{{ $index }}][numeroNota]"
-                                                wire:model="notas.{{ $index }}.numeroNota" />
+                                                wire:model="notas.{{ $index }}.numeroNota">
                                         @endforeach
 
                                     </div>
@@ -119,9 +119,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input class="form-control" type="text" name="veiculoTracao"
-                                                    wire:model="veiculoTracao" required
-                                                    placeholder="Veículo de tração..."> --}}
                                             </div>
                                         </div>
 
@@ -136,8 +133,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input class="form-control" type="text" name="motorista"
-                                                    wire:model="motorista" required placeholder="Motorista..."> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -154,8 +149,6 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input class="form-control" type="text" name="veiculoReboque"
-                                                    wire:model="veiculoReboque" placeholder="Veículo de reboque..."> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -265,8 +258,11 @@
                                         <div class="col-md-9 col-xs-4">
                                             <div class="row">
                                                 <div class="col-md-11 col-xs-6">
-                                                    <input class="form-control" type="text" name="percursos"
-                                                        wire:model="percursos" required placeholder="Percurso...">
+                                                    <input class="form-control" type="text" value="{{ implode(' - ', $this->percursos) }}" readonly>
+                                                    @foreach ($percursos as $index => $pcs)
+                                                        <input type="hidden" name="percursos[{{ $index }}]"
+                                                            wire:model="percursos.{{ $index }}" required>
+                                                    @endforeach
                                                 </div>
 
                                                 <div class="col-md-1 col-xs-6">
@@ -371,7 +367,7 @@
 
             <div class="row" style="text-align: center; margin-bottom: 2%">
                 <div class="col">
-                    <a class="btn btn-info">Mais Opções</a>
+                    <a class="btn btn-info" data-toggle="modal" data-target="#modalMoreOptions">Mais Opções</a>
                     <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
                     <button class="btn btn-success" type="submit" style="width: 25%">Concluir</button>
                 </div>
@@ -458,8 +454,7 @@
                                     <label for="">Chave de acesso *</label>
                                     <input class="form-control" type="number" wire:model="chave" required
                                         oninput="limitarCaracteres(this, 44)" placeholder="Chave...">
-                                    <span class="text-danger" style="display: none;" id="chaveInvalida"><i
-                                            class="fas fa-exclamation-circle"></i></span>
+                                    <span class="text-danger" style="display: none;" id="chaveInvalida"></span>
                                 </div>
                             </div>
                         </div>
@@ -495,6 +490,8 @@
                 </div>
             </div>
 
+            <span class="text-danger" style="display: none;" id="percursoInvalido"></span>
+
             <div class="row" style="text-align: center; margin-top: 2%;">
                 <div class="col">
                     <button class="btn"><i class="fa fa-plus"> adicionar</i></button>
@@ -507,6 +504,72 @@
                 <ul id="percursos">
 
                 </ul>
+            </div>
+        </div>
+    @endcomponent
+
+    @component('components.modal', ['modalId' => 'modalMoreOptions', 'modalTitle' => 'Mais Opções'])
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="content">
+                        <div class="container-fluid">
+                            <div class="col-xs-12 col-sm-12" style="width: 100%">
+
+                                <div class="card card-primary card-outline card-tabs">
+
+                                    <div class="card-header p-0 pt-1 border-bottom-0">
+                                        <ul class="nav nav-tabs" id="tab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
+                                                    aria-controls="home" aria-selected="true">Observações</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="lacres-tab" data-toggle="pill" href="#lacres" role="tab"
+                                                    aria-controls="lacres" aria-selected="false">Lacres</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="prod-tab" data-toggle="pill" href="#prod" role="tab"
+                                                    aria-controls="prod" aria-selected="false">Produto Predominante</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <form method="POST" action="">
+                                            @csrf
+
+                                            <div class="tab-content" id="tabContent">
+                                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                                    <h2>Obs</h2>
+                                                </div>
+
+                                                <div class="tab-pane fade" id="lacres" role="tabpanel" aria-labelledby="lacres-tab">
+                                                    <h2>Lacres</h2>
+                                                </div>
+
+                                                <div class="tab-pane fade" id="prod" role="tabpanel" aria-labelledby="prod-tab">
+                                                    <h2>Prod Pred</h2>
+                                                </div>
+
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <button type="submit" class="btn btn-success form-control">Salvar</button>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </form>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     @endcomponent
@@ -663,10 +726,10 @@
             value.forEach(element => {
                 var li = document.createElement('li');
                 li.textContent = element;
-                var button = document.createElement('i');
+                var button = document.createElement('button');
                 button.className = 'fa fa-trash text-danger';
                 button.title = 'Apagar';
-                button.setAttribute('wire:click', `removePercurso('${element}')`);
+                button.setAttribute('wire:click', `removePercurso`);
                 li.appendChild(button);
                 percursos.appendChild(li);
             });
@@ -694,6 +757,16 @@
             setTimeout(function() {
                 errorBox.style.display = 'none';
                 errorBox2.style.display = 'none';
+            }, 3000);
+        });
+
+        Livewire.on('percursoInvalido', function() {
+            let errorBox = document.getElementById('percursoInvalido');
+            errorBox.innerHTML =
+                "<i class='fas fa-exclamation-circle'></i> O Local de Carregamento não pode estar incluso no percurso!";
+            errorBox.style.display = 'block';
+            setTimeout(function() {
+                errorBox.style.display = 'none';
             }, 3000);
         });
 

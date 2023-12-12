@@ -47,12 +47,9 @@
                         @csrf
                         <div class="card-body">
 
-
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
-
-
 
                                     <input type='hidden' name="action" id="action" value="new" />
 
@@ -209,6 +206,11 @@
 
                                         </div>
                                         <div class="col">
+                                            <label>Nº da Última MDFe</label>
+                                            <input required placeholder="Nº Última MDFe..." class=form-control type="number" name="mdfe" id="mdfe" />
+
+                                        </div>
+                                        <div class="col">
                                             <label>Série</label>
                                             <input required placeholder="Série..." class=form-control type="number" name="serie" id="serie" />
                                         </div>
@@ -259,8 +261,11 @@
                                     <label>Limite de Produtos</label>
                                     <input required placeholder="Limite de Produtos..." class=form-control type="number" name="produtos" id="produtos" />
 
-                                    <label>Limite de Notas</label>
-                                    <input required placeholder="Limite de Notas..." class=form-control type="number" name="notas" id="notas" />
+                                    <label>Limite de Notas (NFe)</label>
+                                    <input required placeholder="Limite de NFes..." class=form-control type="number" name="nfes" id="nfes" />
+
+                                    <label>Limite de Notas (MDFe)</label>
+                                    <input required placeholder="Limite de MDFes..." class=form-control type="number" name="mdfes" id="mdfes" />
 
                                 </div>
 
