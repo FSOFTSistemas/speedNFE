@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enum\TipoDocumentoEnum;
 use App\Enum\UfEnum;
+use App\Services\MDFeMotoristaService;
 use App\Services\EmpresasService;
+use App\Services\MDFeReboqueService;
 use App\Services\MDFeService;
-use App\Services\MotoristaService;
 use App\Services\NotasService;
-use App\Services\VeiculosService;
+use App\Services\ProdPredService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,15 +20,17 @@ class MDFEController extends Controller
 {
 
     private NotasService $notasService;
+    private ProdPredService $prodPredService;
     private EmpresasService $empresaService;
-    private VeiculosService $veiculoService;
-    private MotoristaService $motoristaService;
+    private MDFeReboqueService $reboqueService;
+    private MDFeMotoristaService $motoristaService;
 
-    public function __construct(NotasService $notasService, EmpresasService $empresaService, VeiculosService $veiculoService, MotoristaService $motoristaService)
+    public function __construct(NotasService $notasService, EmpresasService $empresaService, ProdPredService $prodPredService, MDFeReboqueService $reboqueService, MDFeMotoristaService $motoristaService)
     {
         $this->notasService = $notasService;
         $this->empresaService = $empresaService;
-        $this->veiculoService = $veiculoService;
+        $this->prodPredService = $prodPredService;
+        $this->reboqueService = $reboqueService;
         $this->motoristaService = $motoristaService;
     }
 
@@ -55,12 +58,12 @@ class MDFEController extends Controller
     public function store(Request $request)
     {
         try {
-            // dd($request->all());
+            dd($request->all());
             $request->validate([
                 'notas' => 'required',
                 'veiculoTracao' => 'required|numeric',
-                'motorista' => 'required|numeric',
-                'veiculoReboque' => 'nullable|numeric',
+                'motoristas' => 'required',
+                'veiculosReboque' => 'nullable',
                 'tipoTransporte' => 'required',
                 'numero' => 'required',
                 'serie' => 'required',
@@ -82,30 +85,40 @@ class MDFEController extends Controller
                 "lat_carregamento" => 'required',
                 "lon_carregamento" => 'required',
                 "lat_descarregamento" => 'required',
-                "lon_descarregamento" => 'required'
+                "lon_descarregamento" => 'required',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
-                'max' => 'O campo :attibute pode ter no máximo 255 dígitos!'
+                'max' => 'O campo :attibute pode ter no máximo 255 dígitos!',
             ]);
             DB::beginTransaction();
-            $prod_pred_id = 1;
-            $MDFe = $this->notasService->save(
-                1,
-                $request->serie,
-                $request->dataInicio,
-                $request->localCarregamento,
-                $request->localDescarregamento,
-                $request->percursos,
-                $request->valorTotal,
-                $request->pesoTotal,
-                $request->tipoCarga,
-                Auth::user()->empresa_id,
-                $request->veiculoTracao,
-                $request->numeroLacre,
-                $request->info_fisco,
-                $request->info_contribuinte,
-                $prod_pred_id
+            $prod_pred_id = $this->prodPredService->createProdPred(
+                $request->produtoPredominante,
+                $request->ncm,
+                $request->codigo_gtin,
+                $request->lat_carregamento,
+                $request->lon_carregamento,
+                $request->lat_descarregamento,
+                $request->lon_descarregamento
             );
+            if ($prod_pred_id) {
+                $MDFe = $this->notasService->save(
+                    1,
+                    $request->serie,
+                    $request->dataInicio,
+                    $request->localCarregamento,
+                    $request->localDescarregamento,
+                    $request->percursos,
+                    $request->valorTotal,
+                    $request->pesoTotal,
+                    $request->tipoCarga,
+                    Auth::user()->empresa_id,
+                    $request->veiculoTracao,
+                    $request->numeroLacre,
+                    $request->info_fisco,
+                    $request->info_contribuinte,
+                    $prod_pred_id->id
+                );
+            }
             if ($MDFe) {
                 foreach ($request->notas as $nota) {
                     $this->notasService->saveNotas(
@@ -121,17 +134,29 @@ class MDFEController extends Controller
                         $MDFe->id
                     );
                 }
+                foreach ($request->veiculoReboque as $reboque) {
+                    $this->reboqueService->createReboque(
+                        $reboque->id,
+                        $MDFe->id
+                    );
+                }
+                foreach ($request->motoristas as $motorista) {
+                    $this->motoristaService->createMotorista(
+                        $motorista->id,
+                        $MDFe->id
+                    );
+                }
                 DB::commit();
                 return redirect()->route('mdfe.index')->with('success', 'MDFe foi criada com sucesso!');
             }
             return back()->with('warning', 'Limite de MDFes foi atingido, assine um plano com mais vantagens para aumentar o limite!');
-         } catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
             return back()->with('warning', implode(PHP_EOL, $errors));
-         } catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -150,7 +175,7 @@ class MDFEController extends Controller
     {
         try {
             $request->validate([
-                'mdfeId' => 'required|numeric'
+                'mdfeId' => 'required|numeric',
             ]);
             DB::beginTransaction();
             $this->notasService->deleteMDFe($request->mdfeId);
