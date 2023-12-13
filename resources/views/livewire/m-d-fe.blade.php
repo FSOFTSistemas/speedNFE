@@ -125,15 +125,20 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Motorista *</label>
-                                                <select class="form-control" name="motorista" wire:model="motorista"
-                                                    required>
+                                                <select class="form-control" wire:model="motorista" wire:change="addMotorista()">
                                                     <option value="">Selecionar</option>
-                                                    @foreach ($motoristas as $motorista)
+                                                    @foreach ($motoristasDisponiveis as $motorista)
                                                         <option value="{{ $motorista->id }}">{{ $motorista->nome }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
+
+                                        @foreach ($motoristas as $index => $mtr)
+                                            <input type="hidden" name="motoristas[{{ $index }}]"
+                                                wire:model="motoristas.{{ $index }}">
+                                        @endforeach
+
                                         </div>
                                     </div>
 
@@ -141,15 +146,20 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Veículo de reboque</label>
-                                                <select class="form-control" name="veiculoReboque"
-                                                    wire:model="veiculoReboque">
+                                                <select class="form-control" wire:model="veiculoReboque" wire:change="addReboque()">
                                                     <option value="">Selecionar</option>
-                                                    @foreach ($veiculosReboque as $veiculoR)
+                                                    @foreach ($veiculosReboqueDisponiveis as $veiculoR)
                                                         <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
+
+                                            @foreach ($reboques as $index => $rbq)
+                                                <input type="hidden" name="reboques[{{ $index }}]"
+                                                    wire:model="reboques.{{ $index }}">
+                                            @endforeach
+
                                         </div>
                                     </div>
                                 </div>

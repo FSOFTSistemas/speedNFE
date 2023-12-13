@@ -40,6 +40,8 @@ class MDFe extends Component
     public $pesoTotal = 0;
     public $info_fisco = null;
     public $info_contribuinte = null;
+    public $motoristas = [];
+    public $reboques = [];
 
     //Lacres
     public $lacres = [];
@@ -61,7 +63,7 @@ class MDFe extends Component
     public $notas = [];
     public $indexEdit = null;
 
-    //Dados para preemcher a teça
+    //Dados para preemcher a tela
     public $tiposDocumentos = [];
     public $cidadesDescarregamento = [];
     public $cidadesCarregamento = [];
@@ -69,8 +71,8 @@ class MDFe extends Component
     public $ufs = [];
     public $percursos = [];
     public $veiculosTracao = [];
-    public $veiculosReboque = [];
-    public $motoristas = [];
+    public $veiculosReboqueDisponiveis = [];
+    public $motoristasDisponiveis = [];
 
     public function mount()
     {
@@ -91,8 +93,8 @@ class MDFe extends Component
         $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
         $this->dataInicio = now()->format('Y-m-d');
         $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
-        $this->veiculosReboque = $veiculoService->buscarReboques();
-        $this->motoristas = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
+        $this->veiculosReboqueDisponiveis = $veiculoService->buscarReboques();
+        $this->motoristasDisponiveis = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
     }
 
     public function buscarCidades($cargaDescarga)
@@ -123,6 +125,18 @@ class MDFe extends Component
             $this->emit('btnCancelar');
             return $this->emit('fecharModal');
         }
+    }
+
+    public function addMotorista()
+    {
+        $this->motoristas = ['id' => $this->motorista];
+        $this->motorista = null;
+    }
+
+    public function addReboque()
+    {
+        $this->reboques = ['id' => $this->veiculoReboque];
+        $this->veiculoReboque = null;
     }
 
     public function buscarChave($chave)
@@ -235,7 +249,6 @@ class MDFe extends Component
 
     public function editNote($nota, $index)
     {
-        dd($this->info_fisco, $this->info_contribuinte, $this->numeroLacre, $this->codGTIN, $this->codNCM, $this->latCarregamento, $this->lonCarregamento, $this->latDescarregamento, $this->lonDescarregamento);
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];
