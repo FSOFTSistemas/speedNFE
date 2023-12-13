@@ -129,13 +129,13 @@ class MDFe extends Component
 
     public function addMotorista()
     {
-        $this->motoristas = ['id' => $this->motorista];
+        $this->motoristas[] = $this->motorista;
         $this->motorista = null;
     }
 
     public function addReboque()
     {
-        $this->reboques = ['id' => $this->veiculoReboque];
+        $this->reboques[] = $this->veiculoReboque;
         $this->veiculoReboque = null;
     }
 
@@ -249,6 +249,7 @@ class MDFe extends Component
 
     public function editNote($nota, $index)
     {
+        dd($this->motoristas);
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];

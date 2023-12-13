@@ -16,6 +16,6 @@ class MDFeMotorista extends Model
 
     public function motorista()
     {
-        return $this->hasOne(Motorista::class, 'motorista_id');
+        return $this->belongsTo(Motorista::class, 'motorista_id');
     }
 }

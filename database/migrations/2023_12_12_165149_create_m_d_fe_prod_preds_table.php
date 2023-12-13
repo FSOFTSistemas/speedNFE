@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('lon_carregamento');
             $table->string('lat_descarregamento');
             $table->string('lon_descarregamento');
+            $table->unsignedBigInteger('mdfe_id');
+            $table->foreign('mdfe_id')->references('id')->on('m_d_f_e_s')->onDelete('cascade');
             $table->timestamps();
         });
     }
