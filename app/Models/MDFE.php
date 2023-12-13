@@ -28,7 +28,6 @@ class MDFE extends Model
         'info_fisco',
         'info_contribuinte',
         'numeroLacre',
-        'prod_pred_id',
         'empresa_id',
         'veiculo_tracao_id',
     ];
@@ -46,15 +45,15 @@ class MDFE extends Model
 
     public function veiculoTracao()
     {
-        return $this->hasOne(Veiculo::class, 'veiculo_tracao_id');
+        return $this->belongsTo(Veiculo::class, 'veiculo_tracao_id');
     }
 
-    public function veiculoReboque()
+    public function reboques()
     {
         return $this->hasMany(MDFeReboque::class, 'mdfe_id');
     }
 
-    public function motorista()
+    public function motoristas()
     {
         return $this->hasMany(MDFeMotorista::class, 'mdfe_id');
     }
@@ -64,8 +63,8 @@ class MDFE extends Model
         return $this->hasMany(MDFeNota::class, 'mdfe_id');
     }
 
-    public function proPred()
+    public function prodPred()
     {
-        return $this->hasOne(MDFeProdPred::class, 'prod_pred_id');
+        return $this->hasOne(MDFeProdPred::class, 'mdfe_id');
     }
 }

@@ -58,7 +58,7 @@ class MDFEController extends Controller
     public function store(Request $request)
     {
         try {
-            dd($request->all());
+            // dd($request->all());
             $request->validate([
                 'notas' => 'required',
                 'veiculoTracao' => 'required|numeric',
@@ -91,16 +91,6 @@ class MDFEController extends Controller
                 'max' => 'O campo :attibute pode ter no máximo 255 dígitos!',
             ]);
             DB::beginTransaction();
-            $prod_pred_id = $this->prodPredService->createProdPred(
-                $request->produtoPredominante,
-                $request->ncm,
-                $request->codigo_gtin,
-                $request->lat_carregamento,
-                $request->lon_carregamento,
-                $request->lat_descarregamento,
-                $request->lon_descarregamento
-            );
-            if ($prod_pred_id) {
                 $MDFe = $this->notasService->save(
                     1,
                     $request->serie,
@@ -111,15 +101,23 @@ class MDFEController extends Controller
                     $request->valorTotal,
                     $request->pesoTotal,
                     $request->tipoCarga,
-                    Auth::user()->empresa_id,
+                    $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
                     $request->veiculoTracao,
                     $request->numeroLacre,
                     $request->info_fisco,
                     $request->info_contribuinte,
-                    $prod_pred_id->id
                 );
-            }
             if ($MDFe) {
+                $this->prodPredService->createProdPred(
+                    $request->produtoPredominante,
+                    $request->ncm,
+                    $request->codigo_gtin,
+                    $request->lat_carregamento,
+                    $request->lon_carregamento,
+                    $request->lat_descarregamento,
+                    $request->lon_descarregamento,
+                    $MDFe->id
+                );
                 foreach ($request->notas as $nota) {
                     $this->notasService->saveNotas(
                         $nota['tipoDocumento'],
@@ -134,15 +132,15 @@ class MDFEController extends Controller
                         $MDFe->id
                     );
                 }
-                foreach ($request->veiculoReboque as $reboque) {
+                foreach ($request->reboques as $reboque) {
                     $this->reboqueService->createReboque(
-                        $reboque->id,
+                        $reboque,
                         $MDFe->id
                     );
                 }
                 foreach ($request->motoristas as $motorista) {
                     $this->motoristaService->createMotorista(
-                        $motorista->id,
+                        $motorista,
                         $MDFe->id
                     );
                 }

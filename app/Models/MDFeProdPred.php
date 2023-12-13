@@ -13,9 +13,10 @@ class MDFeProdPred extends Model
         'carga_predominante',
         'ncm',
         'codigo_gtin',
-        'lat_carrregamento',
-        'lon_carrregamento',
-        'lat_descarrregamento',
-        'lon_descarrregamento'
+        'lat_carregamento',
+        'lon_carregamento',
+        'lat_descarregamento',
+        'lon_descarregamento',
+        'mdfe_id'
     ];
 }

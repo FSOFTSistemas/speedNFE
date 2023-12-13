@@ -49,7 +49,7 @@ class MDFeService
         $mdfe->taginfMunCarrega($infMunCarrega);
 
         //Informações dos Municípios de Percurso
-        foreach ($transporte->percurso as $UFPer) {
+        foreach (explode(' - ', $transporte->uf_percurso) as $UFPer) {
             $infPercurso = new \stdClass();
             $infPercurso->UFPer = $UFPer;
             $mdfe->taginfPercurso($infPercurso);
@@ -101,11 +101,14 @@ class MDFeService
         $veicTracao->capM3 = $transporte->veiculoTracao->capacidade_m3;
 
         //Identificação do Motorista
-        $condutor = new \stdClass();
-        $condutor->xNome = $transporte->motorista->nome;
-        $condutor->CPF = $transporte->motorista->cpf;
-        $veicTracao->condutor = [$condutor];
+        foreach ($transporte->motoristas as $cond) {
+            $condutor = new \stdClass();
+            $condutor->xNome = $cond->motorista->nome;
+            $condutor->CPF = $cond->motorista->cpf;
+            $veicTracao->condutor = [$condutor];
+        }
 
+        dd($transporte->veiculoTracao);
         //Identificação do Proprietário do Veículo
         $prop = new \stdClass();
         $proprietario = $transporte->veiculoTracao->proprietario;

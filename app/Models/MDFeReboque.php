@@ -16,7 +16,7 @@ class MDFeReboque extends Model
 
     public function reboque()
     {
-        return $this->hasOne(Veiculo::class, 'reboque_id');
+        return $this->belongsTo(Veiculo::class, 'reboque_id');
     }
 
 }
