@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Proprietario;
 use App\Models\Veiculo;
 
 class VeiculosService
@@ -22,6 +23,35 @@ class VeiculosService
     {
         $veiculo = Veiculo::find($veiculoID);
         return $veiculo->delete();
+    }
+
+    public function salvarProprietario($cpf_cnpj, $ie, $isento, $nome, $uf_prop, $rntrc, $tipo_proprietario, $tipo_transportador, $veiculo, $empresa)
+    {
+        if ($cpf_cnpj) {
+            return Proprietario::create([
+                'cpf_cnpj' => $cpf_cnpj,
+                'ie' => $ie,
+                'isento' => $isento ? true : false,
+                'nome_proprietario' => $nome,
+                'uf_proprietario' => $uf_prop,
+                'rntrc' => $rntrc,
+                'tipo_proprietario' => $tipo_proprietario,
+                'tipo_transportador' => $tipo_transportador,
+                'veiculo_id' => $veiculo->id
+            ]);
+        } else {
+            return Proprietario::create([
+                'cpf_cnpj' => $empresa->cpf_cnpj,
+                'ie' => $empresa->rg_ie,
+                'isento' => $empresa->isento,
+                'nome_proprietario' => $empresa->razao,
+                'uf_proprietario' => $empresa->endereco->uf,
+                'rntrc' => 'null',
+                'tipo_proprietario' => 'n sei',
+                'tipo_transportador' => 'n sei',
+                'veiculo_id' => $veiculo->id
+            ]);
+        }
     }
 
     public function buscarVeiculo($veiculoID)

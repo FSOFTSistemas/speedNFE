@@ -112,7 +112,8 @@
                         <div class="col-md-3 col-xs-3">
                             <div class="form-group">
                                 <label for="float">Tipo Propriedade *</label>
-                                <select class="form-control" required name="tipo_propriedade" id="tipo_propriedade">
+                                <select class="form-control" required name="tipo_propriedade" id="tipo_propriedade"
+                                    onchange="tipoProp(this.value)">
                                     <option value="">-- Selecione um tipo de propriedade --</option>
                                     @foreach ($tiposPropriedades as $tipoPropriedade)
                                         <option value="{{ $tipoPropriedade }}">{{ $tipoPropriedade->value }}</option>
@@ -132,8 +133,75 @@
                                     </select>
                                 </div>
                             </div>
+                        @else
+                            <input type="text" name="empresaId" id="empresaId" value="{{ Auth::user()->empresa_id }}">
                         @endif
                     </div>
+
+                    <div class="row" id="proprietario" style="display: none">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="">CPF/CNPJ</label>
+                                    <input class="form-control" type="text" name="cpf_cnpj" id="cpf_cnpj"
+                                        placeholder="CPF/CNPJ...">
+                                </div>
+                                <div class="col">
+                                    <label for="">Inscrição Estadual</label>
+                                    <input class="form-control" type="text" name="ie" id="ie"
+                                        placeholder="Inscrição estadual...">
+                                </div>
+                                <div class="col">
+                                    <label for="">Isento</label>
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="checkbox" name="isento" id="isento">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="">Nome Proprietário</label>
+                                    <input class="form-control" type="text" name="nome" id="nome"
+                                        placeholder="Nome do proprietário...">
+                                </div>
+                                <div class="col">
+                                    <label for="">UF proprietário</label>
+                                    <select class="form-control" name="uf_prop" id="uf_prop">
+                                        <option value="">Selecionar</option>
+                                        @foreach ($ufs as $uf)
+                                            <option value="{{ $uf }}">{{ $uf }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="">RNTRC</label>
+                                    <input class="form-control" type="text" name="rntrc" id="rntrc"
+                                        placeholder="RNTRC...">
+                                </div>
+                                <div class="col">
+                                    <label for="">Tipo propritário</label>
+                                    <select class="form-control" name="tipo_proprietario" id="tipo_proprietario">
+                                        <option value="">Selecionar</option>
+                                        @foreach ($tipoProprietarios as $tpProp)
+                                            <option value="{{ $tpProp }}">{{ $tpProp }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="">Tipo transportador</label>
+                                    <select class="form-control" name="tipo_transportador" id="tipo_transportador">
+                                        <option value="">Selecionar</option>
+                                        @foreach ($tipoTransportadores as $tpTransp)
+                                            <option value="{{ $tpTransp }}">{{ $tpTransp }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
                             <div class="form-group">
@@ -166,14 +234,32 @@
     <script>
         function validarPlaca(entradaDoUsuario, tecla) {
             if (event.keyCode != 8) {
-                var placa = entradaDoUsuario.value; // Passa para a variável 'placa' o que o usuário digitar no formulário
-                placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
-                document.forms['veiculo']['placa'].value = placaMaiuscula; // Coloca a nova string de volta no formulário
-                if (placa.length === 3) { // Quando a string possuir 3 dígitos
-                    placa += "-"; // Adiciona um hífen
+                var placa = entradaDoUsuario.value;
+                placaMaiuscula = placa.toUpperCase();
+                document.forms['veiculo']['placa'].value = placaMaiuscula;
+                if (placa.length === 3) {
+                    placa += "-";
                     document.forms['veiculo']['placa'].value = placa;
                     return true;
                 }
+            }
+        }
+
+        function tipoProp(value) {
+            var prop = document.getElementById('proprietario');
+            var inputs = prop.querySelectorAll('input, select, textarea');
+            if (value === "Terceiro") {
+                prop.style.display = 'block';
+                inputs.forEach(function(input) {
+                    if (input.type != 'checkbox') {
+                        input.required = true;
+                    }
+                });
+            } else {
+                prop.style.display = 'none';
+                inputs.forEach(function(input) {
+                    input.required = false;
+                });
             }
         }
     </script>

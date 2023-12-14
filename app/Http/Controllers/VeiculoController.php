@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Enum\TipoCarroceriaEnum;
 use App\Enum\TipoPropriedadeEnum;
+use App\Enum\TipoProprietarioEnum;
 use App\Enum\TipoRodadoEnum;
+use App\Enum\TipoTransportadorEnum;
 use App\Enum\TipoVeiculoEnum;
 use App\Enum\UfEnum;
-use App\Models\Veiculo;
 use App\Services\EmpresasService;
 use App\Services\VeiculosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class VeiculoController extends Controller
 {
@@ -42,6 +44,8 @@ class VeiculoController extends Controller
             $tiposVeiculos = TipoVeiculoEnum::cases();
             $tiposRodados = TipoRodadoEnum::cases();
             $tiposPropriedades = TipoPropriedadeEnum::cases();
+            $tipoProprietarios = TipoProprietarioEnum::cases();
+            $tipoTransportadores = TipoTransportadorEnum::cases();
             $Ufs = UfEnum::cases();
             $empresas = $this->empresaService->todos(Auth::user()->empresa_id);
             return view(
@@ -53,6 +57,8 @@ class VeiculoController extends Controller
                     'tiposRodados' => $tiposRodados,
                     'ufs' => $Ufs,
                     'empresas' => $empresas,
+                    'tipoProprietarios' => $tipoProprietarios,
+                    'tipoTransportadores' => $tipoTransportadores,
                 ]
             );
         } catch (Exception $e) {
@@ -74,11 +80,35 @@ class VeiculoController extends Controller
                 'tipo_rodado' => 'required',
                 'uf_veiculo' => 'required',
                 'tipo_propriedade' => 'required',
-                'descricao' => 'nullable|max:512',
+                'descricao' => 'nullable|max:255',
+                'empresaId' => 'required',
+                'cpf_cnpj' => 'nullable',
+                'ie' => 'nullable',
+                'isento' => 'nullable',
+                'nome' => 'nullable|max:255',
+                'uf_prop' => 'nullable',
+                'rntrc' => 'nullable',
+                'tipo_proprietario' => 'nullable',
+                'tipo_transportador' => 'nullable',
             ]);
-            $this->veiculosServices->salvar($request->all());
+            DB::beginTransaction();
+            $veiculo = $this->veiculosServices->salvar($request->all());
+            $this->veiculosServices->salvarProprietario(
+                $request->cpf_cnpj,
+                $request->ie,
+                $request->isento,
+                $request->nome,
+                $request->uf_prop,
+                $request->rntrc,
+                $request->tipo_proprietario,
+                $request->tipo_transportador,
+                $veiculo,
+                $this->empresaService->buscarEmpresa($request->empresaId)
+            );
+            DB::commit();
             return redirect()->route('veiculos.index')->with('success', 'Veículo cadastrado com sucesso!');
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
@@ -91,7 +121,7 @@ class VeiculoController extends Controller
             $tiposRodados = TipoRodadoEnum::cases();
             $tiposPropriedades = TipoPropriedadeEnum::cases();
             $Ufs = UfEnum::cases();
-            $veiculo = $this->veiculosServices->buscarVeiculo( $veiculoID);
+            $veiculo = $this->veiculosServices->buscarVeiculo($veiculoID);
             $empresas = $this->empresaService->todos(Auth::user()->empresa_id);
             return view('veiculos.edit', [
                 'veiculo' => $veiculo,
@@ -122,10 +152,14 @@ class VeiculoController extends Controller
                 'uf_veiculo' => 'required',
                 'tipo_propriedade' => 'required',
                 'descricao' => 'nullable|max:512',
+                'empresaId' => 'required',
             ]);
+            DB::beginTransaction();
             $this->veiculosServices->update($request->all(), $veiculoID);
+            DB::commit();
             return redirect()->route('veiculos.edit', [$veiculoID])->with('success', 'Veículo atualizado com sucesso!');
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
@@ -134,11 +168,14 @@ class VeiculoController extends Controller
     {
         try {
             $request->validate([
-                'veiculoID' => 'required|numeric'
+                'veiculoID' => 'required|numeric',
             ]);
+            DB::beginTransaction();
             $this->veiculosServices->delete($request->veiculoID);
+            DB::commit();
             return redirect()->route('veiculos.index')->with('success', 'Veículo deletado com sucesso!');
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }

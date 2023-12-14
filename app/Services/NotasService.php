@@ -57,7 +57,7 @@ class NotasService
 
     public function buscarMDFe($mdfeId)
     {
-        return MDFE::with('empresa', 'veiculoTracao', 'reboques.reboque', 'motoristas.motorista', 'notas', 'prodPred')->find($mdfeId);
+        return MDFE::with('empresa', 'veiculoTracao.proprietario', 'reboques.reboque', 'motoristas.motorista', 'notas', 'prodPred')->find($mdfeId);
     }
 
     public function buscarMDFes($empresaId)
