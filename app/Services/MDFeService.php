@@ -57,7 +57,11 @@ class MDFeService
 
         //Identificação do Emitente do Manifesto
         $emit = new \stdClass();
-        $emit->CNPJ = $emitente->cnpj;
+        if (strlen($emitente->cpf_cnpj) > 14) {
+            $emit->CNPJ = $emitente->cpf_cnpj;
+        } else {
+            $emit->CPF = $emitente->cpf_cnpj;
+        }
         $emit->IE = $emitente->ie;
         $emit->xNome = $emitente->razao;
         $emit->xFant = $emitente->fantasia;
@@ -65,14 +69,14 @@ class MDFeService
 
         //Endereço do Emitente
         $enderEmit = new \stdClass();
-        $enderEmit->xLgr = $emitente->rua;
-        $enderEmit->nro = $emitente->numero;
-        $enderEmit->xBairro = $emitente->bairro;
-        $enderEmit->cMun = $emitente->codMun;
-        $enderEmit->xMun = $emitente->cidade;
-        $enderEmit->CEP = $emitente->cep;
-        $enderEmit->UF = $emitente->uf;
-        $enderEmit->fone = $emitente->contato;
+        $enderEmit->xLgr = $emitente->endereco->rua;
+        $enderEmit->nro = $emitente->endereco->numero;
+        $enderEmit->xBairro = $emitente->endereco->bairro;
+        $enderEmit->cMun = $emitente->endereco->codigoIBGE;
+        $enderEmit->xMun = $emitente->endereco->cidade;
+        $enderEmit->CEP = $emitente->endereco->cep;
+        $enderEmit->UF = $emitente->endereco->uf;
+        $enderEmit->fone = $emitente->celular;
         $enderEmit->email = $emitente->email;
         $mdfe->tagenderEmit($enderEmit);
 
@@ -95,9 +99,9 @@ class MDFeService
         $veicTracao->RENAVAM = $transporte->veiculoTracao->renavam;
         $veicTracao->tara = $transporte->veiculoTracao->tara;
         $veicTracao->capKG = $transporte->veiculoTracao->capacidade;
-        $veicTracao->tpRod = $transporte->veiculoTracao->tipo_rodado;
-        $veicTracao->tpCar = $transporte->veiculoTracao->tipo_carroceria;
-        $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo;
+        $veicTracao->tpRod = $transporte->veiculoTracao->tipo_rodado->value;
+        $veicTracao->tpCar = $transporte->veiculoTracao->tipo_carroceria->value;
+        $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo->value;
         $veicTracao->capM3 = $transporte->veiculoTracao->capacidade_m3;
 
         //Identificação do Motorista
@@ -108,60 +112,57 @@ class MDFeService
             $veicTracao->condutor = [$condutor];
         }
 
-        dd($transporte->veiculoTracao);
         //Identificação do Proprietário do Veículo
         $prop = new \stdClass();
         $proprietario = $transporte->veiculoTracao->proprietario;
-        if (strlen($proprietario->cnpj_cpf) == 14) {
-            $prop->CPF = $proprietario->cnpj_cpf;
+        if (strlen($proprietario->cpf_cnpj) == 14) {
+            $prop->CPF = $proprietario->cpf_cnpj;
         } else {
-            $prop->CNPJ = $proprietario->cnpj_cpf;
+            $prop->CNPJ = $proprietario->cpf_cnpj;
         }
-        if ($proprietario->RNTRC) {
-            $prop->RNTRC = $proprietario->RNTRC;
-        }
-        $prop->xNome = $proprietario->nome;
+        $prop->RNTRC = $proprietario->rntrc;
+        $prop->xNome = $proprietario->nome_proprietario;
         $prop->IE = $proprietario->ie;
-        $prop->UF = $proprietario->uf;
-        $prop->tpProp = $proprietario->tipo_proprietario;
+        $prop->UF = $proprietario->uf_proprietario->value;
+        $prop->tpProp = $proprietario->tipo_proprietario->value;
         $veicTracao->prop = $prop;
         $mdfe->tagveicTracao($veicTracao);
 
-        if ($transporte->veiculoReboque) {
-            //Dados dos Reboques
-            $veicReboque = new \stdClass();
-            $veicReboque->cInt = $transporte->veiculoReboque->id;
-            $veicReboque->placa = $transporte->veicReboque->placa;
-            $veicReboque->RENAVAM = $transporte->veicReboque->renavam;
-            $veicReboque->tara = $transporte->veicReboque->tara;
-            $veicReboque->capKG = $transporte->veicReboque->capacidade;
-            $veicReboque->capM3 = $transporte->veicReboque->capacidade_m3;
-            $veicReboque->tpCar = $transporte->veicReboque->tipo_carroceria;
-            $veicReboque->UF = $transporte->veicReboque->uf_veiculo;
+        if (count($transporte->reboques) > 0) {
+            foreach ($transporte->reboques as $rbq) {
+                //Dados dos Reboques
+                $veicReboque = new \stdClass();
+                $veicReboque->cInt = $rbq->reboque->id;
+                $veicReboque->placa = $rbq->reboque->placa;
+                $veicReboque->RENAVAM = $rbq->reboque->renavam;
+                $veicReboque->tara = $rbq->reboque->tara;
+                $veicReboque->capKG = $rbq->reboque->capacidade;
+                $veicReboque->capM3 = $rbq->reboque->capacidade_m3;
+                $veicReboque->tpCar = $rbq->reboque->tipo_carroceria->value;
+                $veicReboque->UF = $rbq->reboque->uf_veiculo->value;
 
-            //Identificação do Proprietário do Reboque
-            $prop = new \stdClass();
-            $proprietario = $transporte->veiculoReboque->proprietario;
-            if (strlen($proprietario->cnpj_cpf) == 14) {
-                $prop->CPF = $proprietario->cnpj_cpf;
-            } else {
-                $prop->CNPJ = $proprietario->cnpj_cpf;
+                //Identificação do Proprietário do Reboque
+                $prop = new \stdClass();
+                $proprietario = $rbq->reboque->proprietario;
+                if (strlen($proprietario->cpf_cnpj) == 14) {
+                    $prop->CPF = $proprietario->cpf_cnpj;
+                } else {
+                    $prop->CNPJ = $proprietario->cpf_cnpj;
+                }
+                $prop->RNTRC = $proprietario->rntrc;
+                $prop->xNome = $proprietario->nome_proprietario;
+                $prop->IE = $proprietario->ie;
+                $prop->UF = $proprietario->uf_proprietario->value;
+                $prop->tpProp = $proprietario->tipo_proprietario->value;
+                $veicReboque->prop = $prop;
+                $mdfe->tagveicReboque($veicReboque);
             }
-            if ($proprietario->RNTRC) {
-                $prop->RNTRC = $proprietario->RNTRC;
-            }
-            $prop->xNome = $proprietario->nome;
-            $prop->IE = $proprietario->ie;
-            $prop->UF = $proprietario->uf;
-            $prop->tpProp = $proprietario->tipo_proprietario;
-            $veicReboque->prop = $prop;
-            $mdfe->tagveicReboque($veicReboque);
         }
 
         //Informações dos lacres de um trasnporte especial
-        if ($transporte->nLacre) {
+        if ($transporte->numeroLacre) {
             $lacRodo = new \stdClass();
-            $lacRodo->nLacre = $transporte->nLacre;
+            $lacRodo->nLacre = $transporte->numeroLacre;
             $mdfe->taglacRodo($lacRodo);
         }
 
@@ -248,38 +249,45 @@ class MDFeService
         $infMDFe->chMDFe = '0';
 
         //Informações das Unidades de Transporte (Carreta/Reboque/Vagão)
-        $unidades = [$transporte->veiculoTracao, $transporte->veiculoReboque];
+        $unidades = [];
+        $unidades[] = $transporte->veiculoTracao;
+        foreach ($transporte->reboques as $rbq) {
+            $unidades[] = $rbq->reboque;
+        }
         foreach ($unidades as $un) {
             $stdinfUnidTransp = new \stdClass();
-            $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo == 'Tração' ? '1' : '2';
+            $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo->value == 'Tração' ? '1' : '2';
             $stdinfUnidTransp->idUnidTransp = $un->placa;
         }
 
-        //Lacres das Unidades de Transporte
-        $stdlacUnidTransp = new \stdClass();
-        $stdlacUnidTransp->nLacre = ['00000001', '00000002'];
+            // IMPLEMENTAR EM UM FURUTO PRÓXIMO
+        // if ($transporte->lacres) {
+            //Lacres das Unidades de Transporte
+            $stdlacUnidTransp = new \stdClass();
+            $stdlacUnidTransp->nLacre = [$transporte->numeroLacre];
 
-        $stdinfUnidTransp->lacUnidaTransp = $stdlacUnidTransp;
+            $stdinfUnidTransp->lacUnidTransp = $stdlacUnidTransp;
 
-        //Informações das Unidades de Carga (Containeres/ULD/Outros)
-        $stdinfUnidCarga = new \stdClass();
-        $stdinfUnidCarga->tpUnidCarga = '1';
-        $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
+            //Informações das Unidades de Carga (Containeres/ULD/Outros)
+            $stdinfUnidCarga = new \stdClass();
+            $stdinfUnidCarga->tpUnidCarga = '1';
+            $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
 
-        //Lacres das Unidades de Carga
-        $stdlacUnidCarga = new \stdClass();
-        $stdlacUnidCarga->nLacre = ['00000001', '00000001'];
+            //Lacres das Unidades de Carga
+            $stdlacUnidCarga = new \stdClass();
+            $stdlacUnidCarga->nLacre = ['00000001', '00000001'];
 
-        $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
-        $stdinfUnidCarga->qtdRat = '3.50';
+            $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
+            $stdinfUnidCarga->qtdRat = '3.50';
 
-        $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
-        $stdinfUnidTransp->qtdRat = '3.50';
+            $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
+            $stdinfUnidTransp->qtdRat = '3.50';
 
-        $infMDFe->infUnidTransp = [$stdinfUnidTransp];
+            $infMDFe->infUnidTransp = [$stdinfUnidTransp];
+        // }
 
         //Transporte de produtos classificados pela ONU como perigosos
-        if ($transporte->prodsPrerigosos) {
+        // if ($transporte->prodsPrerigosos) {
             $stdperi = new \stdClass();
             $stdperi->nONU = '1234';
             $stdperi->xNomeAE = 'testeNome';
@@ -287,36 +295,34 @@ class MDFeService
             $stdperi->grEmb = 'testegrEmb';
             $stdperi->qTotProd = '1';
             $stdperi->qVolTipo = '1';
-
             $infMDFe->peri = [$stdperi];
-        }
-
+        // }
         $mdfe->taginfMDFeTransp($infMDFe);
 
         $tot = new \stdClass();
         $tot->qCTe = '0';
         $tot->qNFe = count($transporte->notas);
-        $tot->qMDFe = '0';
+        $tot->qMDFe = '1';
         $tot->vCarga = $transporte->valorTotal;
         $tot->cUnid = '01';
         $tot->qCarga = $transporte->pesoTotal;
         $mdfe->tagtot($tot);
 
         $prodPred = new \stdClass();
-        $prodPred->tpCarga = $transporte->tipoCarga;
-        $prodPred->xProd = $transporte->produtoPredominante;
-        $prodPred->cEAN = null;
-        $prodPred->NCM = null;
+        $prodPred->tpCarga = $transporte->tipo_carga->value;
+        $prodPred->xProd = $transporte->prodPred->carga_predominante;
+        $prodPred->cEAN = $transporte->prodPred->codigo_gtin;
+        $prodPred->NCM = $transporte->prodPred->ncm;
 
         $localCarrega = new \stdClass();
         $localCarrega->CEP = '00000000';
-        $localCarrega->latitude = null;
-        $localCarrega->longitude = null;
+        $localCarrega->latitude = $transporte->prodPred->lat_carregamento;
+        $localCarrega->longitude = $transporte->prodPred->lon_carregamento;
 
         $localDescarrega = new \stdClass();
         $localDescarrega->CEP = '00000000';
-        $localDescarrega->latitude = null;
-        $localDescarrega->longitude = null;
+        $localDescarrega->latitude = $transporte->prodPred->lat_descarregamento;
+        $localDescarrega->longitude = $transporte->prodPred->lon_descarregamento;
 
         $lotacao = new \stdClass();
         $lotacao->infLocalCarrega = $localCarrega;
@@ -334,13 +340,17 @@ class MDFeService
         $mdfe->taginfRespTec($infRespTec);
 
         $infAdic = new \stdClass();
-        $infAdic->infCpl = 'Hello my friend';
-        $infAdic->infAdFisco = 'Very good bro!';
+        $infAdic->infCpl = $transporte->info_contribuinte;
+        $infAdic->infAdFisco = $transporte->info_fisco;
         $mdfe->taginfAdic($infAdic);
-
-        $xml = $mdfe->getXml();
-        header("Content-type: text/xml");
-        echo $mdfe->getXML();
+        try {
+            $xml = $mdfe->getXML();
+            return $xml;
+        } catch (\Exception $e) {
+            return [
+                'erros_xml' => $mdfe->getErrors(),
+            ];
+        }
     }
 
 }
