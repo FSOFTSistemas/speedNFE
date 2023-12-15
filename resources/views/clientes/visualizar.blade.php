@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('content')
+
+
     <div class="container">
             <label>Tipo</label>
             <div name="tipo" id="tipo" class="mb-3" for="tipo">
