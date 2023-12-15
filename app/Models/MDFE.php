@@ -20,6 +20,8 @@ class MDFE extends Model
         'uf_inicio',
         'uf_termino',
         'uf_percurso',
+        'codMunCarregamento',
+        'municipioCarregamento',
         'tipo_documento',
         'chave_acesso',
         'valor_total',

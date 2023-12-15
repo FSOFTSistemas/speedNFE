@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('uf_proprietario');
             $table->string('rntrc');
             $table->string('tipo_proprietario');
-            $table->string('tipo_transportador');
+            $table->string('tipo_transportador')->nullable();
             $table->unsignedBigInteger('veiculo_id');
             $table->foreign('veiculo_id')->references('id')->on('veiculos')->onDelete('cascade');
             $table->timestamps();

@@ -97,6 +97,8 @@ class MDFEController extends Controller
                     $request->dataInicio,
                     $request->localCarregamento,
                     $request->localDescarregamento,
+                    $request->codMundCarregamento,
+                    $request->municipio,
                     $request->percursos,
                     $request->valorTotal,
                     $request->pesoTotal,

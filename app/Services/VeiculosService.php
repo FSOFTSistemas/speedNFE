@@ -43,12 +43,12 @@ class VeiculosService
             return Proprietario::create([
                 'cpf_cnpj' => $empresa->cpf_cnpj,
                 'ie' => $empresa->rg_ie,
-                'isento' => $empresa->isento,
+                'isento' => 1,
                 'nome_proprietario' => $empresa->razao,
-                'uf_proprietario' => $empresa->endereco->uf,
-                'rntrc' => 'null',
-                'tipo_proprietario' => 'n sei',
-                'tipo_transportador' => 'n sei',
+                'uf_proprietario' => $empresa->uf,
+                'rntrc' => null,
+                'tipo_proprietario' => 'TAC independente',
+                'tipo_transportador' => 'TAC',
                 'veiculo_id' => $veiculo->id
             ]);
         }

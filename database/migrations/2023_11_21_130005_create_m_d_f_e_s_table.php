@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('uf_inicio');
             $table->string('uf_termino');
             $table->string('uf_percurso');
+            $table->string('codMunCarregamento');
+            $table->string('municipioCarregamento');
             $table->string('tipo_documento');
             $table->string('chave_acesso')->nullable();
             $table->double('valor_total');

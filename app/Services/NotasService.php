@@ -8,7 +8,7 @@ use App\Models\MDFeNota;
 class NotasService
 {
 
-    public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $percursos, $valor_total,
+    public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $codMunCarregamento, $municipioCarregamento, $percursos, $valor_total,
         $peso, $tipo_carga, $empresa, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte) {
         if ($this->qtdeEmitMDFe($empresa->id) < $empresa->limMDFes || $empresa->id == 1) {
             return MDFE::create([
@@ -19,6 +19,8 @@ class NotasService
                 'uf_inicio' => $uf_inicio,
                 'uf_termino' => $uf_termino,
                 'uf_percurso' => implode(' - ', $percursos),
+                'codMunCarregamento' => $codMunCarregamento,
+                'municipioCarregamento' => $municipioCarregamento,
                 'tipo_documento' => 'MDFe',
                 'chave_acesso' => null,
                 'valor_total' => $valor_total,
