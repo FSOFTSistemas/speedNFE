@@ -39,7 +39,8 @@
                             <div class="form-group">
                                 <label for="placa">Placa *</label>
                                 <input type="text" class="form-control" required placeholder="Placa..." name="placa"
-                                    id="placa" onkeyup="validarPlaca(this)" maxlength="8" value="{{ $veiculo->placa }}">
+                                    id="placa" onkeyup="validarPlaca(this)" maxlength="8"
+                                    value="{{ $veiculo->placa }}">
                             </div>
                         </div>
                         <div class="col-md-4 col-xs-4">
@@ -125,29 +126,91 @@
                         <div class="col-md-3 col-xs-3">
                             <div class="form-group">
                                 <label for="float">Tipo Propriedade *</label>
-                                <select class="form-control" required name="tipo_propriedade" id="tipo_propriedade">
+                                <select class="form-control" required name="tipo_propriedade" id="tipo_propriedade"
+                                    readonly>
                                     <option value="{{ $veiculo->tipo_propriedade }}">{{ $veiculo->tipo_propriedade }}
                                     </option>
-                                    @foreach ($tiposPropriedades as $tipoPropriedade)
-                                        <option value="{{ $tipoPropriedade }}">{{ $tipoPropriedade->value }}</option>
-                                    @endforeach
                                 </select>
                             </div>
                         </div>
-                        @if (Auth::user()->empresa_id == 1)
-                            <div class="col-md-3 col-xs-3">
-                                <div class="form-group">
-                                    <label for="">Empresa</label>
-                                    <select class="form-control" name="empresaId" id="empresaId" required>
-                                        <option value="{{ $veiculo->empresaId }}">{{ $veiculo->fantasia }}</option>
-                                        @foreach ($empresas as $empresa)
-                                            <option value="{{ $empresa->id }}">{{ $empresa->fantasia }}</option>
-                                        @endforeach
-                                    </select>
+                        <div class="col-md-3 col-xs-3">
+                            <div class="form-group">
+                                <label for="">Empresa</label>
+                                <select class="form-control" name="empresaId" id="empresaId" required readonly>
+                                    <option value="{{ $veiculo->empresaId }}">{{ $veiculo->fantasia }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if ($veiculo->tipo_propriedade->value == 'Terceiro')
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="">CPF/CNPJ</label>
+                                        <input class="form-control" type="text" name="cpf_cnpj" id="cpf_cnpj"
+                                            onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" required value="{{ $veiculo->proprietario->cpf_cnpj }}"
+                                            placeholder="CPF/CNPJ...">
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Inscrição Estadual</label>
+                                        <input class="form-control" type="text" name="ie" id="ie" required value="{{ $veiculo->proprietario->ie }}"
+                                            placeholder="Inscrição estadual...">
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Isento</label>
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="checkbox" name="isento" id="isento" {{ $veiculo->proprietario->isento ? 'checked' : '' }}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="">Nome Proprietário</label>
+                                        <input class="form-control" type="text" name="nome" id="nome" required value="{{ $veiculo->proprietario->nome_proprietario }}"
+                                            placeholder="Nome do proprietário...">
+                                    </div>
+                                    <div class="col">
+                                        <label for="">UF proprietário</label>
+                                        <select class="form-control" name="uf_prop" id="uf_prop" required>
+                                            <option value="{{ $veiculo->proprietario->uf_proprietario }}">{{ $veiculo->proprietario->uf_proprietario }}</option>
+                                            @foreach ($ufs as $uf)
+                                                <option value="{{ $uf }}">{{ $uf }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="">RNTRC</label>
+                                        <input class="form-control" type="text" name="rntrc" id="rntrc" required value="{{ $veiculo->proprietario->rntrc}}"
+                                            placeholder="RNTRC...">
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Tipo propritário</label>
+                                        <select class="form-control" name="tipo_proprietario" id="tipo_proprietario" required>
+                                            <option value="{{ $veiculo->proprietario->tipo_proprietario }}">{{ $veiculo->proprietario->tipo_proprietario }}</option>
+                                            @foreach ($tipoProprietarios as $tpProp)
+                                                <option value="{{ $tpProp }}">{{ $tpProp }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Tipo transportador</label>
+                                        <select class="form-control" name="tipo_transportador" id="tipo_transportador" required>
+                                            <option value="{{ $veiculo->proprietario->tipo_transportador }}">{{ $veiculo->proprietario->tipo_transportador }}</option>
+                                            @foreach ($tipoTransportadores as $tpTransp)
+                                                <option value="{{ $tpTransp }}">{{ $tpTransp }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
+
+
                     <div class="row">
                         <div class="col-md-12 col-xs-12">
                             <div class="form-group">
@@ -176,15 +239,37 @@
 
 @section('js')
     <script>
-        function validarPlaca(entradaDoUsuario) {
-            var placa = entradaDoUsuario.value; // Passa para a variável 'placa' o que o usuário digitar no formulário
-            placaMaiuscula = placa.toUpperCase(); // Passa a string para letras maiúsculas
-            document.forms['veiculo']['placa'].value = placaMaiuscula; // Coloca a nova string de volta no formulário
+        function validarPlaca(entradaDoUsuario, tecla) {
+            if (event.keyCode != 8) {
+                var placa = entradaDoUsuario.value;
+                placaMaiuscula = placa.toUpperCase();
+                document.forms['veiculo']['placa'].value = placaMaiuscula;
+                if (placa.length === 3) {
+                    placa += "-";
+                    document.forms['veiculo']['placa'].value = placa;
+                    return true;
+                }
+            }
+        }
 
-            if (placa.length === 3) { // Quando a string possuir 3 dígitos
-                placa += "-"; // Adiciona um hífen
-                document.forms['veiculo']['placa'].value = placa;
-                return true;
+        function formatarCpfCnpj(valor) {
+            // Remove qualquer caracter que não seja número
+            valor = valor.replace(/\D/g, '');
+
+            // Verifica se é CPF (11 dígitos)
+            if (valor.length === 11) {
+                // Formata o CPF ###.###.###-##
+                return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+
+            // Verifica se é CNPJ (14 dígitos)
+            else if (valor.length === 14) {
+                // Formata o CNPJ ##.###.###/####-##
+                return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+            }
+            // Não é CPF nem CNPJ
+            else {
+                return valor;
             }
         }
     </script>
