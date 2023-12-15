@@ -28,13 +28,13 @@ class MDFeService
         $stdIde = new \stdClass();
         $stdIde->cUF = \App\Models\Empresa::getCUF($emitente->endereco->uf);
         $stdIde->tpAmb = $emitente->ambiente;
-        $stdIde->tpEmit = '1';
+        $stdIde->tpEmit = '2';
         $stdIde->mod = $mdfe->mod;
         $stdIde->serie = $emitente->serie;
         $stdIde->nMDF = $numeroMDFe;
         $stdIde->cDV = '0';
         $stdIde->modal = '1';
-        $stdIde->dhEmi = $transporte->created_at;
+        $stdIde->dhEmi = date("Y-m-d\TH:i:sP");
         $stdIde->tpEmis = '1';
         $stdIde->procEmi = '0';
         $stdIde->verProc = '1.0';
@@ -44,8 +44,8 @@ class MDFeService
 
         //Informações do Município de Carregamento
         $infMunCarrega = new \stdClass();
-        $infMunCarrega->cMunCarrega = $transporte->codMunCarregamento;
-        $infMunCarrega->xMunCarrega = $transporte->municipioCarregamento;
+        $infMunCarrega->cMunCarrega = $this->retiraPontuacoes($transporte->codMunCarregamento);
+        $infMunCarrega->xMunCarrega = $this->retiraAcentos($transporte->municipioCarregamento);
         $mdfe->taginfMunCarrega($infMunCarrega);
 
         //Informações dos Municípios de Percurso
@@ -58,32 +58,31 @@ class MDFeService
         //Identificação do Emitente do Manifesto
         $emit = new \stdClass();
         if (strlen($emitente->cpf_cnpj) > 14) {
-            $emit->CNPJ = $emitente->cpf_cnpj;
+            $emit->CNPJ = $this->retiraPontuacoes($emitente->cpf_cnpj);
         } else {
-            $emit->CPF = $emitente->cpf_cnpj;
+            $emit->CPF = $this->retiraPontuacoes($emitente->cpf_cnpj);
         }
-        $emit->IE = $emitente->ie;
-        $emit->xNome = $emitente->razao;
-        $emit->xFant = $emitente->fantasia;
+        $emit->IE = $this->retiraPontuacoes($emitente->ie);
+        $emit->xNome = $this->retiraAcentos($emitente->razao);
+        $emit->xFant = $this->retiraAcentos($emitente->fantasia);
         $mdfe->tagemit($emit);
 
         //Endereço do Emitente
         $enderEmit = new \stdClass();
-        $enderEmit->xLgr = $emitente->endereco->rua;
+        $enderEmit->xLgr = $this->retiraAcentos($emitente->endereco->rua);
         $enderEmit->nro = $emitente->endereco->numero;
-        $enderEmit->xBairro = $emitente->endereco->bairro;
-        $enderEmit->cMun = $emitente->endereco->codigoIBGE;
-        $enderEmit->xMun = $emitente->endereco->cidade;
-        $enderEmit->CEP = $emitente->endereco->cep;
+        $enderEmit->xBairro = $this->retiraAcentos($emitente->endereco->bairro);
+        $enderEmit->cMun = $this->retiraPontuacoes($emitente->endereco->codigoIBGE);
+        $enderEmit->xMun = $this->retiraAcentos($emitente->endereco->cidade);
+        $enderEmit->CEP = $this->retiraPontuacoes($emitente->endereco->cep);
         $enderEmit->UF = $emitente->endereco->uf;
-        $enderEmit->fone = $emitente->celular;
-        $enderEmit->email = $emitente->email;
+        $enderEmit->fone = $this->retiraPontuacoes($emitente->celular);
         $mdfe->tagenderEmit($enderEmit);
 
         //Grupo de informações para Agência Reguladora
         if ($transporte->veiculoTracao->tipo_propriedade == 'Terceiro') {
             $infANTT = new \stdClass();
-            $infANTT->RNTRC = $transporte->veiculoTracao->RNTRC;
+            $infANTT->RNTRC = $this->retiraPontuacoes($transporte->veiculoTracao->RNTRC);
             $mdfe->taginfANTT($infANTT);
         }
 
@@ -95,20 +94,20 @@ class MDFeService
         //Dados do Veículo com a Tração
         $veicTracao = new \stdClass();
         $veicTracao->cInt = $transporte->veiculoTracao->id;
-        $veicTracao->placa = $transporte->veiculoTracao->placa;
-        $veicTracao->RENAVAM = $transporte->veiculoTracao->renavam;
-        $veicTracao->tara = $transporte->veiculoTracao->tara;
-        $veicTracao->capKG = $transporte->veiculoTracao->capacidade;
-        $veicTracao->tpRod = $transporte->veiculoTracao->tipo_rodado->value;
-        $veicTracao->tpCar = $transporte->veiculoTracao->tipo_carroceria->value;
+        $veicTracao->placa = $this->retiraPontuacoes($transporte->veiculoTracao->placa);
+        $veicTracao->RENAVAM = $this->retiraPontuacoes($transporte->veiculoTracao->renavam);
+        $veicTracao->tara = intval($transporte->veiculoTracao->tara);
+        $veicTracao->capKG = intval($transporte->veiculoTracao->capacidade);
+        $veicTracao->tpRod = explode('_', $transporte->veiculoTracao->tipo_rodado->name)[1];
+        $veicTracao->tpCar = explode('_', $transporte->veiculoTracao->tipo_carroceria->name)[1];
         $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo->value;
-        $veicTracao->capM3 = $transporte->veiculoTracao->capacidade_m3;
+        $veicTracao->capM3 = intval($transporte->veiculoTracao->capacidade_m3);
 
         //Identificação do Motorista
         foreach ($transporte->motoristas as $cond) {
             $condutor = new \stdClass();
-            $condutor->xNome = $cond->motorista->nome;
-            $condutor->CPF = $cond->motorista->cpf;
+            $condutor->xNome = $this->retiraAcentos($cond->motorista->nome);
+            $condutor->CPF = $this->retiraPontuacoes($cond->motorista->cpf);
             $veicTracao->condutor = [$condutor];
         }
 
@@ -116,15 +115,15 @@ class MDFeService
         $prop = new \stdClass();
         $proprietario = $transporte->veiculoTracao->proprietario;
         if (strlen($proprietario->cpf_cnpj) == 14) {
-            $prop->CPF = $proprietario->cpf_cnpj;
+            $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
         } else {
-            $prop->CNPJ = $proprietario->cpf_cnpj;
+            $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
         }
-        $prop->RNTRC = $proprietario->rntrc;
-        $prop->xNome = $proprietario->nome_proprietario;
-        $prop->IE = $proprietario->ie;
+        $prop->RNTRC = $this->retiraPontuacoes($proprietario->rntrc);
+        $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
+        $prop->IE = $this->retiraPontuacoes($proprietario->ie);
         $prop->UF = $proprietario->uf_proprietario->value;
-        $prop->tpProp = $proprietario->tipo_proprietario->value;
+        $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
         $veicTracao->prop = $prop;
         $mdfe->tagveicTracao($veicTracao);
 
@@ -133,27 +132,27 @@ class MDFeService
                 //Dados dos Reboques
                 $veicReboque = new \stdClass();
                 $veicReboque->cInt = $rbq->reboque->id;
-                $veicReboque->placa = $rbq->reboque->placa;
-                $veicReboque->RENAVAM = $rbq->reboque->renavam;
-                $veicReboque->tara = $rbq->reboque->tara;
-                $veicReboque->capKG = $rbq->reboque->capacidade;
-                $veicReboque->capM3 = $rbq->reboque->capacidade_m3;
-                $veicReboque->tpCar = $rbq->reboque->tipo_carroceria->value;
+                $veicReboque->placa = $this->retiraPontuacoes($rbq->reboque->placa);
+                $veicReboque->RENAVAM = $this->retiraPontuacoes($rbq->reboque->renavam);
+                $veicReboque->tara = intval($rbq->reboque->tara);
+                $veicReboque->capKG = intval($rbq->reboque->capacidade);
+                $veicReboque->capM3 = intval($rbq->reboque->capacidade_m3);
+                $veicReboque->tpCar = explode('_', $rbq->reboque->tipo_carroceria->name)[1];
                 $veicReboque->UF = $rbq->reboque->uf_veiculo->value;
 
                 //Identificação do Proprietário do Reboque
                 $prop = new \stdClass();
                 $proprietario = $rbq->reboque->proprietario;
                 if (strlen($proprietario->cpf_cnpj) == 14) {
-                    $prop->CPF = $proprietario->cpf_cnpj;
+                    $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
                 } else {
-                    $prop->CNPJ = $proprietario->cpf_cnpj;
+                    $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
                 }
-                $prop->RNTRC = $proprietario->rntrc;
-                $prop->xNome = $proprietario->nome_proprietario;
-                $prop->IE = $proprietario->ie;
+                $prop->RNTRC = $this->retiraPontuacoes($proprietario->rntrc);
+                $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
+                $prop->IE = $this->retiraPontuacoes($proprietario->ie);
                 $prop->UF = $proprietario->uf_proprietario->value;
-                $prop->tpProp = $proprietario->tipo_proprietario->value;
+                $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
                 $veicReboque->prop = $prop;
                 $mdfe->tagveicReboque($veicReboque);
             }
@@ -167,10 +166,12 @@ class MDFeService
         }
 
         //Informações dos Municípios de Descarregamento
-        $infMunDescarga = new \stdClass();
-        $infMunDescarga->cMunDescarga = $transporte->codMunDescarregamento;
-        $infMunDescarga->xMunDescarga = $transporte->municipioDescarregamento;
-        $mdfe->taginfMunDescarga($infMunDescarga);
+        foreach ($transporte->notas as $nota) {
+            $infMunDescarga = new \stdClass();
+            $infMunDescarga->cMunDescarga = $this->retiraPontuacoes($nota->codMun);
+            $infMunDescarga->xMunDescarga = $nota->municipio;
+            $mdfe->taginfMunDescarga($infMunDescarga);
+        }
 
         //Informações para CT-e, implementar no futuro
 //         $std = new \stdClass();
@@ -257,7 +258,7 @@ class MDFeService
         foreach ($unidades as $un) {
             $stdinfUnidTransp = new \stdClass();
             $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo->value == 'Tração' ? '1' : '2';
-            $stdinfUnidTransp->idUnidTransp = $un->placa;
+            $stdinfUnidTransp->idUnidTransp = $this->retiraPontuacoes($un->placa);
         }
 
             // IMPLEMENTAR EM UM FURUTO PRÓXIMO
@@ -299,13 +300,14 @@ class MDFeService
         // }
         $mdfe->taginfMDFeTransp($infMDFe);
 
+        //Falta ajeitar daqui
         $tot = new \stdClass();
         $tot->qCTe = '0';
         $tot->qNFe = count($transporte->notas);
         $tot->qMDFe = '1';
-        $tot->vCarga = $transporte->valorTotal;
+        $tot->vCarga = $transporte->valor_total;
         $tot->cUnid = '01';
-        $tot->qCarga = $transporte->pesoTotal;
+        $tot->qCarga = $transporte->peso;
         $mdfe->tagtot($tot);
 
         $prodPred = new \stdClass();
@@ -353,4 +355,22 @@ class MDFeService
         }
     }
 
+    private function retiraAcentos($texto)
+    {
+        return preg_replace(array("/(á|à|ã|â|ä)/", "/(Á|À|Ã|Â|Ä)/", "/(é|è|ê|ë)/", "/(É|È|Ê|Ë)/", "/(í|ì|î|ï)/", "/(Í|Ì|Î|Ï)/", "/(ó|ò|õ|ô|ö)/", "/(Ó|Ò|Õ|Ô|Ö)/", "/(ú|ù|û|ü)/", "/(Ú|Ù|Û|Ü)/", "/(ñ)/", "/(Ñ)/", "/(ç)/"), explode(" ", "a A e E i I o O u U n N c"), $texto);
+    }
+
+    public function format($number, $dec = 2)
+    {
+        return number_format((float) $number, $dec, ".", "");
+    }
+
+    public function retiraPontuacoes($texto)
+    {
+        $texto = str_replace(".", "", $texto);
+        $texto = str_replace("/", "", $texto);
+        $texto = str_replace("-", "", $texto);
+        $texto = str_replace(" ", "", $texto);
+        return $texto;
+    }
 }
