@@ -4,7 +4,7 @@ namespace App\Enum;
 
 enum TipoProprietarioEnum:string
 {
-    case TACAGREGADO = 'TAC agregado';
-    case TACINDEPENDENTE = 'TAC independente';
-    case OUTROS = 'Outros';
+    case TACAGREGADO_0 = 'TAC agregado';
+    case TACINDEPENDENTE_1 = 'TAC independente';
+    case OUTROS_2 = 'Outros';
 }
