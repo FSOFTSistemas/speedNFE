@@ -1,4 +1,4 @@
-<aside class="main-sidebar {{ config('adminlte.classes_sidebar', 'sidebar-light-primary elevation-4') }}" style="background:#193D55">
+<aside class="main-sidebar {{ config('adminlte.classes_sidebar', 'sidebar-light-primary elevation-4') }}" style="background:#193D55; position:fixed" >
 
     {{-- Sidebar brand logo --}}
     @if(config('adminlte.logo_img_xl'))
@@ -8,7 +8,8 @@
     @endif
 
     {{-- Sidebar menu --}}
-    <div class="sidebar" style="background-color: #193D55" >
+    <div class="sidebar" style="background-color: #193D55; height: 200dvh;  position: fixed; height: 100%; overflow-y: auto">
+        
         <nav class="pt-2" >
             <ul  class="nav nav-pills nav-sidebar flex-column {{ config('adminlte.classes_sidebar_nav', '') }}"
                 data-widget="treeview" role="menu"
