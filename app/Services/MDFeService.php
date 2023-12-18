@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
+use NFePHP\MDFe\Common\Standardize;
+use NFePHP\MDFe\Complements;
 use NFePHP\MDFe\Make;
 use NFePHP\MDFe\Tools;
 
@@ -20,8 +23,10 @@ class MDFeService
 
     public function gerarXml($transporte, $emitente)
     {
+        if ($transporte->situacao == 'Autorizado' || $transporte->situacao == 'Cancelado') {
+            return false;
+        }
         $mdfe = new Make();
-        // dd($transporte, $mdfe, $emitente);
 
         //Identificação do MDF-e
         $numeroMDFe = $emitente->ultimaMDFe + 1;
@@ -101,7 +106,7 @@ class MDFeService
         $veicTracao->tpRod = explode('_', $transporte->veiculoTracao->tipo_rodado->name)[1];
         $veicTracao->tpCar = explode('_', $transporte->veiculoTracao->tipo_carroceria->name)[1];
         $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo->value;
-        $veicTracao->capM3 = intval($transporte->veiculoTracao->capacidade_m3);
+        $veicTracao->capM3 = $this->format($transporte->veiculoTracao->capacidade_m3);
 
         //Identificação do Motorista
         foreach ($transporte->motoristas as $cond) {
@@ -245,24 +250,25 @@ class MDFeService
             $mdfe->taginfNFe($infNFe);
         }
 
-        //Informações de Transporte da MDFe
-        $infMDFe = new \stdClass();
-        $infMDFe->chMDFe = '0';
+        if ($transporte->mdfes) {
+            //Informações de Transporte da MDFe
+            $infMDFe = new \stdClass();
+            $infMDFe->chMDFe = '0';
 
-        //Informações das Unidades de Transporte (Carreta/Reboque/Vagão)
-        $unidades = [];
-        $unidades[] = $transporte->veiculoTracao;
-        foreach ($transporte->reboques as $rbq) {
-            $unidades[] = $rbq->reboque;
-        }
-        foreach ($unidades as $un) {
-            $stdinfUnidTransp = new \stdClass();
-            $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo->value == 'Tração' ? '1' : '2';
-            $stdinfUnidTransp->idUnidTransp = $this->retiraPontuacoes($un->placa);
-        }
+            //Informações das Unidades de Transporte (Carreta/Reboque/Vagão)
+            $unidades = [];
+            $unidades[] = $transporte->veiculoTracao;
+            foreach ($transporte->reboques as $rbq) {
+                $unidades[] = $rbq->reboque;
+            }
+            foreach ($unidades as $un) {
+                $stdinfUnidTransp = new \stdClass();
+                $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo->value == 'Tração' ? '1' : '2';
+                $stdinfUnidTransp->idUnidTransp = $this->retiraPontuacoes($un->placa);
+            }
 
             // IMPLEMENTAR EM UM FURUTO PRÓXIMO
-        // if ($transporte->lacres) {
+            // if ($transporte->lacres) {
             //Lacres das Unidades de Transporte
             $stdlacUnidTransp = new \stdClass();
             $stdlacUnidTransp->nLacre = [$transporte->numeroLacre];
@@ -285,20 +291,21 @@ class MDFeService
             $stdinfUnidTransp->qtdRat = '3.50';
 
             $infMDFe->infUnidTransp = [$stdinfUnidTransp];
-        // }
+            // }
 
-        //Transporte de produtos classificados pela ONU como perigosos
-        // if ($transporte->prodsPrerigosos) {
+            //Transporte de produtos classificados pela ONU como perigosos
+            // if ($transporte->prodsPrerigosos) {
             $stdperi = new \stdClass();
             $stdperi->nONU = '1234';
             $stdperi->xNomeAE = 'testeNome';
             $stdperi->xClaRisco = 'testeClaRisco';
-            $stdperi->grEmb = 'testegrEmb';
+            $stdperi->grEmb = 'teste';
             $stdperi->qTotProd = '1';
             $stdperi->qVolTipo = '1';
             $infMDFe->peri = [$stdperi];
-        // }
-        $mdfe->taginfMDFeTransp($infMDFe);
+            // }
+            $mdfe->taginfMDFeTransp($infMDFe);
+        }
 
         //Falta ajeitar daqui
         $tot = new \stdClass();
@@ -313,7 +320,7 @@ class MDFeService
         $prodPred = new \stdClass();
         $prodPred->tpCarga = explode('_', $transporte->tipo_carga->name)[1];
         $prodPred->xProd = $this->retiraAcentos($transporte->prodPred->carga_predominante);
-        $prodPred->cEAN = $this->retiraPontuacoes($transporte->prodPred->codigo_gtin);
+        $prodPred->cEAN = $transporte->prodPred->codigo_gtin;
         $prodPred->NCM = $this->retiraPontuacoes($transporte->prodPred->ncm);
 
         $localCarrega = new \stdClass();
@@ -346,11 +353,54 @@ class MDFeService
         $infAdic->infAdFisco = $transporte->info_fisco;
         $mdfe->taginfAdic($infAdic);
         try {
-            $xml = $mdfe->getXML();
-            return $xml;
+            $arr = [
+                'xml' => $mdfe->getXML(),
+                'chave' => $mdfe->getChave(),
+                'nMDF' => $stdIde->nMDF,
+            ];
+            return $arr;
         } catch (\Exception $e) {
             return [
                 'erros_xml' => $mdfe->getErrors(),
+            ];
+        }
+    }
+
+    public function sign($xml)
+    {
+        // dd($xml);
+        return $this->tools->signMDFe($xml);
+    }
+
+    public function transmitir($signXml, $chave, $caminho)
+    {
+        try {
+            $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
+            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            if ($std->cStat != 103) {
+
+                return [
+                    'erro' => "[$std->cStat] - $std->xMotivo",
+                ];
+
+            }
+            $recibo = $std->infRec->nRec;
+            $protocolo = $this->tools->sefazConsultaRecibo($recibo);
+            sleep(3);
+            $xml = Complements::toAuthorize($signXml, $protocolo);
+            if (!File::exists(public_path($caminho . '/'))) {
+                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+            }
+            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+            return [
+                'sucesso' => $recibo,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'erro' => $e->getMessage(),
             ];
         }
     }

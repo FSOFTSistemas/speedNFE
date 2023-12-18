@@ -201,7 +201,26 @@ class MDFEController extends Controller
                 "versao" => "3.00",
             ], $mdfe->empresa);
             $xml = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
-            dd($xml);
+            if ($xml && !isset($xml['erros_xml'])) {
+                $signedXml = $MDFeService->sign($xml['xml']);
+                $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'MDFes' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
+                if (isset($result['sucesso'])) {
+                    $mdfe->chave = $xml['chave'];
+                    $mdfe->status = 1;
+                    $mdfe->estado = 'Autorizado';
+                    $mdfe->numero_nfe = $xml['nMDF'];
+                    $mdfe->save();
+                    $mdfe->empresa->update(['ultimaNFe' => $mdfe->empresa->ultimaNFe + 1]);
+                    return redirect()->route('mdfe.index')->with('success', 'Nota enviada com sucesso');
+                } else {
+                    $mdfe->status = 3;
+                    $mdfe->estado = 'Rejeitado';
+                    $mdfe->save();
+                    return redirect()->route('mdfe.index')->with('warning', $result['erro']);
+                }
+            }
+            dd($xml['erros_xml']);
+            return redirect()->route('mdfe.index')->with('warning', 'Não foi possível enviar a nota, pois sua situação não permite!');
         } catch (Exception $e) {
             dd($e);
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
