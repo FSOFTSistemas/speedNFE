@@ -120,6 +120,8 @@ class VeiculoController extends Controller
             $tiposVeiculos = TipoVeiculoEnum::cases();
             $tiposRodados = TipoRodadoEnum::cases();
             $tiposPropriedades = TipoPropriedadeEnum::cases();
+            $tipoProprietarios = TipoProprietarioEnum::cases();
+            $tipoTransportadores = TipoTransportadorEnum::cases();
             $Ufs = UfEnum::cases();
             $veiculo = $this->veiculosServices->buscarVeiculo($veiculoID);
             $empresas = $this->empresaService->todos(Auth::user()->empresa_id);
@@ -129,6 +131,8 @@ class VeiculoController extends Controller
                 'tiposVeiculos' => $tiposVeiculos,
                 'tiposPropriedades' => $tiposPropriedades,
                 'tiposRodados' => $tiposRodados,
+                'tipoProprietarios' => $tipoProprietarios,
+                'tipoTransportadores' => $tipoTransportadores,
                 'ufs' => $Ufs,
                 'empresas' => $empresas,
             ]);
@@ -151,11 +155,30 @@ class VeiculoController extends Controller
                 'tipo_rodado' => 'required',
                 'uf_veiculo' => 'required',
                 'tipo_propriedade' => 'required',
-                'descricao' => 'nullable|max:512',
+                'descricao' => 'nullable|max:255',
                 'empresaId' => 'required',
+                'cpf_cnpj' => 'nullable',
+                'ie' => 'nullable',
+                'isento' => 'nullable',
+                'nome' => 'nullable|max:255',
+                'uf_prop' => 'nullable',
+                'rntrc' => 'nullable',
+                'tipo_proprietario' => 'nullable',
+                'tipo_transportador' => 'nullable'
             ]);
             DB::beginTransaction();
-            $this->veiculosServices->update($request->all(), $veiculoID);
+            $proprietario = $this->veiculosServices->update($request->all(), $veiculoID);
+            $this->veiculosServices->atualizarProprietario(
+                $request->cpf_cnpj,
+                $request->ie,
+                $request->isento,
+                $request->nome,
+                $request->uf_prop,
+                $request->rntrc,
+                $request->tipo_proprietario,
+                $request->tipo_transportador,
+                $proprietario
+            );
             DB::commit();
             return redirect()->route('veiculos.edit', [$veiculoID])->with('success', 'Veículo atualizado com sucesso!');
         } catch (Exception $e) {

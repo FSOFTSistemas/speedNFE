@@ -4,7 +4,7 @@ namespace App\Enum;
 
 enum TipoTransportadorEnum:string
 {
-    case ETC = 'ETC';
-    case TAC = 'TAC';
-    case CTC = 'CTC';
+    case ETC_1 = 'ETC';
+    case TAC_2 = 'TAC';
+    case CTC_3 = 'CTC';
 }
