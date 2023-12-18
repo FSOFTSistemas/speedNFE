@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
+use App\Services\CidadeService;
 use App\Services\EmpresasService;
 use App\Services\EnderecosService;
 use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmpresasController extends Controller
 {
@@ -17,17 +19,25 @@ class EmpresasController extends Controller
     private EmpresasService $empresaServices;
     private UsersService $userServices;
     private EnderecosService $enderecoServices;
+    private CidadeService $cidadeServices;
 
-    public function __construct(EmpresasService $empresaServices, UsersService $userServices, EnderecosService $enderecoServices)
+    public function __construct(EmpresasService $empresaServices, UsersService $userServices, EnderecosService $enderecoServices, CidadeService $cidadeServices)
     {
         $this->empresaServices = $empresaServices;
         $this->userServices = $userServices;
         $this->enderecoServices = $enderecoServices;
+        $this->cidadeServices = $cidadeServices;
     }
 
     public function cadastrar()
     {
-        return view('empresas.cadastrar');
+        $cidades = $this->cidadeServices->buscarCidades();
+        return view('empresas.cadastrar', ['cidades' => $cidades]);
+    }
+
+    public function updateCities($uf)
+    {
+        return $this->cidadeServices->buscarCidadesPorUf($uf);
     }
 
     public function desativarReativar($id)
@@ -44,7 +54,8 @@ class EmpresasController extends Controller
     {
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
-            return view('empresas.empresa', ['empresa' => $empresa, 'user' => Auth::user()]);
+            $cidades = $this->cidadeServices->buscarCidadesPorUf($empresa->uf);
+            return view('empresas.empresa', ['empresa' => $empresa, 'user' => Auth::user(), 'cidades' => $cidades]);
         } catch (Exception $e) {
             return back();
         }
@@ -92,15 +103,17 @@ class EmpresasController extends Controller
                 'uf' => 'required',
                 'complemento' => 'max:255',
                 'ibge' => 'required',
-                'nfe' => 'required',
+                'nfe' => 'required|numeric',
+                'mdfe' => 'required|numeric',
                 'serie' => 'required',
                 'senha' => '',
                 'csc' => 'required',
                 'idCsc' => 'required',
-                'ambiente' => 'required',
-                'clientes' => 'required',
-                'produtos' => 'required',
-                'notas' => 'required'
+                'ambiente' => 'required|numeric',
+                'clientes' => 'required|numeric',
+                'produtos' => 'required|numeric',
+                'nfes' => 'required|numeric',
+                'mdfes' => 'required|numeric'
             ]);
             $empresa = $this->empresaServices->atualizar($id, $request);
             $this->enderecoServices->editar(
@@ -114,9 +127,9 @@ class EmpresasController extends Controller
                 $request->cep,
                 $request->complemento,
             );
-            return redirect()->route('editar_empresa', [$empresa->id]);
+            return redirect()->route('editar_empresa', [$empresa->id])->with('success', 'Empresa foi atualizada com sucesso!');
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
         }
     }
 
@@ -138,6 +151,7 @@ class EmpresasController extends Controller
                 'complemento' => 'nullable',
                 'ibge' => 'required',
                 'nfe' => 'required',
+                'mdfe' => 'required',
                 'serie' => 'required',
                 'senha' => 'required',
                 'csc' => 'required',
@@ -145,13 +159,15 @@ class EmpresasController extends Controller
                 'ambiente' => 'required',
                 'clientes' => 'required',
                 'produtos' => 'required',
-                'notas' => 'required',
+                'nfes' => 'required|numeric',
+                'mdfes' => 'required|numeric',
                 'name' => 'required|max:255',
                 'email' => 'required',
                 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
             ]);
+            DB::beginTransaction();
             $endereco = $this->enderecoServices->salvar(
                 $request->rua,
                 $request->bairro,
@@ -174,13 +190,15 @@ class EmpresasController extends Controller
                 $request->rg_ie,
                 $request->telefone,
                 $request->nfe,
+                $request->mdfe,
                 $request->serie,
                 $ctx,
                 $request->senha,
                 $request->ambiente,
                 $request->csc,
                 $request->idCsc,
-                $request->notas,
+                $request->nfes,
+                $request->mdfes,
                 $request->clientes,
                 $request->produtos
             );
@@ -191,9 +209,11 @@ class EmpresasController extends Controller
                 $empresa->id,
                 $request->name
             );
-            return redirect()->route('empresa.index');
+            DB::commit();
+            return redirect()->route('empresa.index')->with('success', 'Empresa foi criada com sucesso!');
         } catch (Exception $e) {
-            return back();
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
         }
     }
 }

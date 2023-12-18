@@ -27,6 +27,8 @@ class MDFe extends Component
     public $motorista = null;
     public $veiculoReboque = null;
     public $localCarregamento = null;
+    public $municipio = null;
+    public $codMunCarregamento = null;
     public $percurso = null;
     public $dataInicio = null;
     public $tipoTransporte = null;
@@ -36,21 +38,41 @@ class MDFe extends Component
     public $tipoCarga = null;
     public $valorTotal = 0;
     public $pesoTotal = 0;
+    public $info_fisco = null;
+    public $info_contribuinte = null;
+    public $motoristas = [];
+    public $reboques = [];
+
+    //Lacres
+    public $lacres = [];
+    public $numeroLacre = null;
+
+    // Produto Predominante
+    public $codGTIN = null;
+    public $codNCM = null;
+    public $latCarregamento = null;
+    public $lonCarregamento = null;
+    public $latDescarregamento = null;
+    public $lonDescarregamento = null;
 
     //Dados da NFe
-    public $serieNFe = null;
-    public $numeroNFe = null;
-    public $NFe = [];
-    public $NFes = [];
+    public $serieNota = null;
+    public $numeroNota = null;
+    public $ufNota = null;
+    public $nota = [];
+    public $notas = [];
+    public $indexEdit = null;
 
-    //Dados para preemcher a teça
+    //Dados para preemcher a tela
     public $tiposDocumentos = [];
-    public $cidades = [];
+    public $cidadesDescarregamento = [];
+    public $cidadesCarregamento = [];
     public $tiposCarga = [];
     public $ufs = [];
+    public $percursos = [];
     public $veiculosTracao = [];
-    public $veiculosReboque = [];
-    public $motoristas = [];
+    public $veiculosReboqueDisponiveis = [];
+    public $motoristasDisponiveis = [];
 
     public function mount()
     {
@@ -58,43 +80,95 @@ class MDFe extends Component
         $motoristaService = new MotoristaService();
         $veiculoService = new VeiculosService();
         $empresaService = new EmpresasService();
+        $cidadeService = new CidadeService();
         $empresa = $empresaService->buscarEmpresa(Auth::user()->empresa_id);
 
         $this->numero = "Geração Automática";
-        $this->localCarregamento = $empresa->uf . ' - ' . $empresa->cidade;
+        $this->localCarregamento = $empresa->uf;
+        $this->municipio = $empresa->cidade;
+        $this->codMunCarregamento = '2600206';
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
+        $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
         $this->dataInicio = now()->format('Y-m-d');
         $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
-        $this->veiculosReboque = $veiculoService->buscarReboques();
-        $this->motoristas = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
+        $this->veiculosReboqueDisponiveis = $veiculoService->buscarReboques();
+        $this->motoristasDisponiveis = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
     }
 
-    public function buscarCidades()
+    public function buscarCidades($cargaDescarga)
     {
         // Injetar Service
         $cidadeService = new CidadeService();
-        $this->cidades = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
+        if ($cargaDescarga) {
+            $this->cidadesDescarregamento = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
+            return $this->emit('cidades', $this->cidadesDescarregamento);
+        } else {
+            $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
+        }
     }
 
     public function salvarDocumento()
     {
         if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
-            if (!$this->validarChaveNFe($this->chave)) {
+            if ($this->buscarChave($this->chave) >= 1) {
+                return $this->emit('chaveJaExiste');
+            } else if (!$this->validarChaveNFe($this->chave)) {
                 return $this->emit('chaveInvalida');
             }
-            $this->NFe = ['tipoDocumento' => $this->tipoDocumento, 'localDescarregamento' => $this->localDescarregamento, 'cidade' => $this->cidade, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNFe' => $this->serieNFe, 'numeroNFe' => $this->numeroNFe];
-            $this->NFes[] = $this->NFe;
+            $local = explode('@', $this->cidade);
+            $this->nota = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
+            $this->notas[] = $this->nota;
             $this->calcularTotais();
+            $this->limparCampos();
+            $this->emit('btnCancelar');
             return $this->emit('fecharModal');
         }
     }
 
+    public function addMotorista()
+    {
+        $this->motoristas[] = $this->motorista;
+        $this->motorista = null;
+    }
+
+    public function addReboque()
+    {
+        $this->reboques[] = $this->veiculoReboque;
+        $this->veiculoReboque = null;
+    }
+
+    public function buscarChave($chave)
+    {
+        $achou = 0;
+        foreach ($this->notas as $nota) {
+            if ($nota['chave'] == $chave) {
+                $achou++;
+            }
+        }
+        return $achou;
+    }
+
     public function calcularTotais()
     {
-        $this->valorTotal += $this->valor;
-        $this->pesoTotal += $this->peso;
+        $valor = 0;
+        $peso = 0;
+        foreach ($this->notas as $nota) {
+            $valor += $nota['valor'];
+            $peso += $nota['peso'];
+        }
+        $this->valorTotal = $valor;
+        $this->pesoTotal = $peso;
+    }
+
+    public function limparCampos()
+    {
+        $this->cidade = null;
+        $this->valor = null;
+        $this->peso = null;
+        $this->chave = null;
+        $this->indexEdit = null;
     }
 
     public function validarChaveNFe($chave)
@@ -102,12 +176,12 @@ class MDFe extends Component
         if (strlen($chave) != 44) {
             return false;
         }
-        $uf = $this->ufNFe(substr($chave, 0, 2));
+        $uf = $this->ufNota(substr($chave, 0, 2));
         // $anoMesEmissao = substr($chave, 2, 4);
         $cnpjEmitente = substr($chave, 6, 14);
         // $modelo = substr($chave, 20, 2);
         $serie = substr($chave, 22, 3);
-        $numeroNFe = substr($chave, 25, 9);
+        $numeroNota = substr($chave, 25, 9);
         // $tipoEmisao = substr($chave, 34, 1);
         // $codigoNumerico = substr($chave, 35, 8);
         $digitoVerificador = substr($chave, 43, 1);
@@ -118,9 +192,9 @@ class MDFe extends Component
         if ($dvCalculado != $digitoVerificador) {
             return false;
         }
-        $this->localDescarregamento = $uf;
-        $this->serieNFe = $serie;
-        $this->numeroNFe = $numeroNFe;
+        $this->ufNota = $this->localDescarregamento;
+        $this->serieNota = $serie;
+        $this->numeroNota = $numeroNota;
         return true;
     }
 
@@ -145,7 +219,7 @@ class MDFe extends Component
         return $dv;
     }
 
-    public function ufNFe($codigo)
+    public function ufNota($codigo)
     {
         foreach (UfEnum::cases() as $uf) {
             $cod = explode('_', $uf->name)[1];
@@ -156,8 +230,66 @@ class MDFe extends Component
         return false;
     }
 
-    public function addNFe()
+    public function addPercurso()
     {
+        if ($this->percurso && !in_array($this->percurso, $this->percursos)) {
+            if ($this->percurso == $this->localCarregamento) {
+                return $this->emit('percursoInvalido');
+            }
+            $this->percursos[] = $this->percurso;
+            $this->percurso = null;
+            return $this->emit('percursos', $this->percursos);
+        }
+    }
+
+    public function removePercurso()
+    {
+        dd('Oi');
+    }
+
+    public function editNote($nota, $index)
+    {
+        dd($this->motoristas);
+        $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
+        $this->valor = $nota['valor'];
+        $this->peso = $nota['peso'];
+        $this->chave = $nota['chave'];
+        $this->indexEdit = $index;
+        return $this->emit('abrirModalEdit');
+    }
+
+    public function cancelEdit()
+    {
+        $this->limparCampos();
+        return $this->emit('fecharModalEdit');
+    }
+
+    public function updateNote()
+    {
+        if ($this->tipoDocumento && $this->localDescarregamento && $this->cidade && $this->valor && $this->peso && $this->chave) {
+            if ($this->buscarChave($this->chave) > 1) {
+                return $this->emit('chaveJaExiste');
+            } else if (!$this->validarChaveNFe($this->chave)) {
+                return $this->emit('chaveInvalida');
+            }
+            $local = explode('@', $this->cidade);
+            $this->notas[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
+            $this->calcularTotais();
+            $this->limparCampos();
+            return $this->emit('fecharModalEdit');
+        }
+    }
+
+    public function deleteNote($nota)
+    {
+        unset($this->notas[$nota]);
+        $this->notas = array_values($this->notas);
+        return $this->calcularTotais();
+    }
+
+    public function addNote()
+    {
+        $this->emit('atualizarSelect', $this->localDescarregamento);
         return $this->emit('abrirModal');
     }
 

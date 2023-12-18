@@ -4,10 +4,10 @@ namespace App\Enum;
 
 enum TipoRodadoEnum: string
 {
-    case CAVALO_MECANICO = 'Cavalo mecanico';
-    case TOCO = 'Toco';
-    case CAMINHAO = 'Caminhão';
-    case UTILITARIO = 'Utilitário';
-    case VAN = 'Van';
-    case OUTROS = 'Outros';
+    case CAVALOMECANICO_03 = 'Cavalo mecanico';
+    case TOCO_02 = 'Toco';
+    case CAMINHAO_01 = 'Caminhão';
+    case UTILITARIO_05 = 'Utilitário';
+    case VAN_04 = 'Van';
+    case OUTROS_06 = 'Outros';
 }

@@ -37,4 +37,9 @@ class Veiculo extends Model
         'uf_veiculo' => UfEnum::class,
         'tipo_propriedade' => TipoPropriedadeEnum::class
     ];
+
+    public function proprietario()
+    {
+        return $this->hasOne(Proprietario::class, 'veiculo_id');
+    }
 }

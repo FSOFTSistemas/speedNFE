@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\MDFeProdPred;
+
+class ProdPredService
+{
+
+    public function createProdPred($carga_predominante, $ncm, $codigo_gtin, $lat_carregamento, $lon_carregamento, $lat_descarregamento, $lon_descarregamento, $mdfe)
+    {
+        return MDFeProdPred::create([
+            'carga_predominante' => $carga_predominante,
+            'ncm' => $ncm,
+            'codigo_gtin' => $codigo_gtin,
+            'lat_carregamento' => $lat_carregamento,
+            'lon_carregamento' => $lon_carregamento,
+            'lat_descarregamento' => $lat_descarregamento,
+            'lon_descarregamento' => $lon_descarregamento,
+            'mdfe_id' => $mdfe
+        ]);
+    }
+
+}
