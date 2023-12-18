@@ -54,7 +54,7 @@
                         <div class="col-md-4 col-xs-4">
                             <div class="form-group">
                                 <label for="renavan">Renavan *</label>
-                                <input type="text" class="form-control" required placeholder="Renavan..." name="renavan"
+                                <input type="number" class="form-control" required placeholder="Renavan..." name="renavan"
                                     id="renavan" maxlength="9" value="{{ $veiculo->renavan }}">
                             </div>
                         </div>
@@ -71,7 +71,7 @@
                         <div class="col-md-3 col-xs-3">
                             <div class="form-group">
                                 <label for="capacidade_m3">Capacidade (M³) *</label>
-                                <input type="number" class="form-control" step="0.1" required
+                                <input type="text" class="form-control" required
                                     placeholder="Capacidade (M³)..." name="capacidade_m3" id="capacidade_m3"
                                     value="{{ $veiculo->capacidade_m3 }}">
                             </div>
@@ -150,19 +150,21 @@
                                     <div class="col">
                                         <label for="">CPF/CNPJ</label>
                                         <input class="form-control" type="text" name="cpf_cnpj" id="cpf_cnpj"
-                                            onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" required value="{{ $veiculo->proprietario->cpf_cnpj }}"
-                                            placeholder="CPF/CNPJ...">
+                                            onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" required
+                                            value="{{ $veiculo->proprietario->cpf_cnpj }}" placeholder="CPF/CNPJ...">
                                     </div>
                                     <div class="col">
                                         <label for="">Inscrição Estadual</label>
-                                        <input class="form-control" type="text" name="ie" id="ie" required value="{{ $veiculo->proprietario->ie }}"
+                                        <input class="form-control" type="text" name="ie" id="ie"
+                                            required value="{{ $veiculo->proprietario->ie }}"
                                             placeholder="Inscrição estadual...">
                                     </div>
                                     <div class="col">
                                         <label for="">Isento</label>
                                         <div class="row">
                                             <div class="col">
-                                                <input type="checkbox" name="isento" id="isento" {{ $veiculo->proprietario->isento ? 'checked' : '' }}>
+                                                <input type="checkbox" name="isento" id="isento"
+                                                    {{ $veiculo->proprietario->isento ? 'checked' : '' }}>
                                             </div>
                                         </div>
                                     </div>
@@ -170,13 +172,15 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="">Nome Proprietário</label>
-                                        <input class="form-control" type="text" name="nome" id="nome" required value="{{ $veiculo->proprietario->nome_proprietario }}"
+                                        <input class="form-control" type="text" name="nome" id="nome"
+                                            required value="{{ $veiculo->proprietario->nome_proprietario }}"
                                             placeholder="Nome do proprietário...">
                                     </div>
                                     <div class="col">
                                         <label for="">UF proprietário</label>
                                         <select class="form-control" name="uf_prop" id="uf_prop" required>
-                                            <option value="{{ $veiculo->proprietario->uf_proprietario }}">{{ $veiculo->proprietario->uf_proprietario }}</option>
+                                            <option value="{{ $veiculo->proprietario->uf_proprietario }}">
+                                                {{ $veiculo->proprietario->uf_proprietario }}</option>
                                             @foreach ($ufs as $uf)
                                                 <option value="{{ $uf }}">{{ $uf }}</option>
                                             @endforeach
@@ -184,13 +188,15 @@
                                     </div>
                                     <div class="col">
                                         <label for="">RNTRC</label>
-                                        <input class="form-control" type="text" name="rntrc" id="rntrc" required value="{{ $veiculo->proprietario->rntrc}}"
-                                            placeholder="RNTRC...">
+                                        <input class="form-control" type="text" name="rntrc" id="rntrc"
+                                            required value="{{ $veiculo->proprietario->rntrc }}" placeholder="RNTRC...">
                                     </div>
                                     <div class="col">
                                         <label for="">Tipo propritário</label>
-                                        <select class="form-control" name="tipo_proprietario" id="tipo_proprietario" required>
-                                            <option value="{{ $veiculo->proprietario->tipo_proprietario }}">{{ $veiculo->proprietario->tipo_proprietario }}</option>
+                                        <select class="form-control" name="tipo_proprietario" id="tipo_proprietario"
+                                            required>
+                                            <option value="{{ $veiculo->proprietario->tipo_proprietario }}">
+                                                {{ $veiculo->proprietario->tipo_proprietario }}</option>
                                             @foreach ($tipoProprietarios as $tpProp)
                                                 <option value="{{ $tpProp }}">{{ $tpProp }}</option>
                                             @endforeach
@@ -198,8 +204,10 @@
                                     </div>
                                     <div class="col">
                                         <label for="">Tipo transportador</label>
-                                        <select class="form-control" name="tipo_transportador" id="tipo_transportador" required>
-                                            <option value="{{ $veiculo->proprietario->tipo_transportador }}">{{ $veiculo->proprietario->tipo_transportador }}</option>
+                                        <select class="form-control" name="tipo_transportador" id="tipo_transportador"
+                                            required>
+                                            <option value="{{ $veiculo->proprietario->tipo_transportador }}">
+                                                {{ $veiculo->proprietario->tipo_transportador }}</option>
                                             @foreach ($tipoTransportadores as $tpTransp)
                                                 <option value="{{ $tpTransp }}">{{ $tpTransp }}</option>
                                             @endforeach
@@ -272,5 +280,37 @@
                 return valor;
             }
         }
+
+        document.getElementById('capacidade_m3').addEventListener('input', function() {
+            // Obtém o valor atual do campo
+            var inputValue = this.value;
+
+            // Remove caracteres não numéricos e não ponto
+            var numericValue = inputValue.replace(/[^0-9.]/g, '');
+
+            // Se o ponto não estiver presente e houver pelo menos um dígito, adiciona o ponto
+            if (numericValue.indexOf('.') === -1 && numericValue.length > 0) {
+                numericValue += '.';
+            }
+
+            // Divide o valor em partes antes e depois do ponto
+            var parts = numericValue.split('.');
+
+            // Se houver mais de uma parte, garante que a parte decimal tenha no máximo duas casas
+            if (parts.length > 1) {
+                parts[1] = parts[1].substring(0, 2);
+            }
+
+            // Se houver mais de um dígito antes do ponto, mantenha apenas o primeiro
+            if (parts[0].length > 1) {
+                parts[0] = parts[0].substring(0, 1);
+            }
+
+            // Recria o valor formatado
+            var formattedValue = parts.join('.');
+
+            // Atualiza o valor no campo
+            this.value = formattedValue;
+        });
     </script>
 @stop

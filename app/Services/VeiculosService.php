@@ -41,15 +41,20 @@ class VeiculosService
                 'veiculo_id' => $veiculo->id
             ]);
         } else {
+            $prop = Proprietario::where('empresa_id', $empresa->id)->first();
+            if ($prop) {
+                return $prop->id;
+            }
             return Proprietario::create([
                 'cpf_cnpj' => $empresa->cpf_cnpj,
                 'ie' => $empresa->rg_ie,
                 'isento' => 1,
                 'nome_proprietario' => $empresa->razao,
                 'uf_proprietario' => $empresa->uf,
-                'rntrc' => 'Não informado',
+                'rntrc' => '00000000',
                 'tipo_proprietario' => 'TAC independente',
                 'tipo_transportador' => 'TAC',
+                'empresa_id' => $empresa->id,
                 'veiculo_id' => $veiculo->id
             ]);
         }

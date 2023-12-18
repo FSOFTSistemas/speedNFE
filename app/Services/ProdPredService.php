@@ -12,7 +12,7 @@ class ProdPredService
         return MDFeProdPred::create([
             'carga_predominante' => $carga_predominante,
             'ncm' => $ncm,
-            'codigo_gtin' => $codigo_gtin,
+            'codigo_gtin' => is_int($codigo_gtin) ? $codigo_gtin : 'SEM GTIN',
             'lat_carregamento' => $lat_carregamento,
             'lon_carregamento' => $lon_carregamento,
             'lat_descarregamento' => $lat_descarregamento,

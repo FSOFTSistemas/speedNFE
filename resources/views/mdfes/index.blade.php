@@ -54,7 +54,7 @@
                                             class="fa fa-trash" data-toggle="modal"
                                             data-target=".bd-delete-modal-lg"></i></a>
                                 </div>
-                                @if ($mdfe->situacao->value === 'Pendente')
+                                @if ($mdfe->situacao->value === 'Pendente' || $mdfe->situacao->value === 'Rejeitado')
                                     <div class="col">
                                         <a title="Enviar MDFe" href="{{ route('mdfe.enviar', [$mdfe->id]) }}" class='text-success'><i class="fa fa-upload"></i></a>
                                     </div>
