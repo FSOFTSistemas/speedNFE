@@ -119,7 +119,7 @@ class MDFeService
         } else {
             $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
         }
-        $prop->RNTRC = $this->retiraPontuacoes($proprietario->rntrc);
+        $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
         $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
         $prop->IE = $this->retiraPontuacoes($proprietario->ie);
         $prop->UF = $proprietario->uf_proprietario->value;
@@ -148,7 +148,7 @@ class MDFeService
                 } else {
                     $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
                 }
-                $prop->RNTRC = $this->retiraPontuacoes($proprietario->rntrc);
+                $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
                 $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
                 $prop->IE = $this->retiraPontuacoes($proprietario->ie);
                 $prop->UF = $proprietario->uf_proprietario->value;
@@ -311,10 +311,10 @@ class MDFeService
         $mdfe->tagtot($tot);
 
         $prodPred = new \stdClass();
-        $prodPred->tpCarga = $transporte->tipo_carga->value;
-        $prodPred->xProd = $transporte->prodPred->carga_predominante;
-        $prodPred->cEAN = $transporte->prodPred->codigo_gtin;
-        $prodPred->NCM = $transporte->prodPred->ncm;
+        $prodPred->tpCarga = explode('_', $transporte->tipo_carga->name)[1];
+        $prodPred->xProd = $this->retiraAcentos($transporte->prodPred->carga_predominante);
+        $prodPred->cEAN = $this->retiraPontuacoes($transporte->prodPred->codigo_gtin);
+        $prodPred->NCM = $this->retiraPontuacoes($transporte->prodPred->ncm);
 
         $localCarrega = new \stdClass();
         $localCarrega->CEP = '00000000';
