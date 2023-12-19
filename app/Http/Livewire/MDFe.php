@@ -86,7 +86,7 @@ class MDFe extends Component
         $this->numero = "Geração Automática";
         $this->localCarregamento = $empresa->uf;
         $this->municipio = $empresa->cidade;
-        $this->codMunCarregamento = '2600206';
+        $this->codMunCarregamento = $empresa->codigoIBGE;
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
@@ -233,7 +233,7 @@ class MDFe extends Component
     public function addPercurso()
     {
         if ($this->percurso && !in_array($this->percurso, $this->percursos)) {
-            if ($this->percurso == $this->localCarregamento) {
+            if ($this->percurso == $this->localCarregamento || $this->percurso == $this->localDescarregamento) {
                 return $this->emit('percursoInvalido');
             }
             $this->percursos[] = $this->percurso;
@@ -249,7 +249,6 @@ class MDFe extends Component
 
     public function editNote($nota, $index)
     {
-        dd($this->motoristas);
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];

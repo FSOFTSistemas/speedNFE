@@ -21,7 +21,6 @@ class Proprietario extends Model
         'rntrc',
         'tipo_proprietario',
         'tipo_transportador',
-        'empresa_id',
         'veiculo_id'
     ];
 

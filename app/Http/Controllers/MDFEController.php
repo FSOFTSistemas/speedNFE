@@ -71,7 +71,7 @@ class MDFEController extends Controller
                 'municipio' => 'required|max:255',
                 'codMunCarregamento' => 'required',
                 'localDescarregamento' => 'required',
-                'percursos' => 'required',
+                'percursos' => 'nullable',
                 'dataInicio' => 'required|date',
                 'valorTotal' => 'required|numeric',
                 'pesoTotal' => 'required|numeric',
@@ -134,11 +134,13 @@ class MDFEController extends Controller
                         $MDFe->id
                     );
                 }
-                foreach ($request->reboques as $reboque) {
-                    $this->reboqueService->createReboque(
-                        $reboque,
-                        $MDFe->id
-                    );
+                if ($request->reboques) {
+                    foreach ($request->reboques as $reboque) {
+                        $this->reboqueService->createReboque(
+                            $reboque,
+                            $MDFe->id
+                        );
+                    }
                 }
                 foreach ($request->motoristas as $motorista) {
                     $this->motoristaService->createMotorista(
@@ -204,22 +206,22 @@ class MDFEController extends Controller
             $xml = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
             if ($xml && !isset($xml['erros_xml'])) {
                 $signedXml = $MDFeService->sign($xml['xml']);
-                $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'MDFes' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
+                $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
                 if (isset($result['sucesso'])) {
                     $mdfe->chave_acesso = $xml['chave'];
                     $mdfe->situacao = 'Autorizado';
                     $mdfe->numero = $xml['nMDF'];
                     $mdfe->save();
                     $mdfe->empresa->update(['ultimaMDFe' => $mdfe->empresa->ultimaMDFe + 1]);
+                    DB::commit();
                     return redirect()->route('mdfe.index')->with('success', 'Nota enviada com sucesso');
                 } else {
                     $mdfe->situacao = 'Rejeitado';
                     $mdfe->save();
+                    DB::commit();
                     return redirect()->route('mdfe.index')->with('warning', $result['erro']);
                 }
-                DB::commit();
             }
-            dd($xml['erros_xml']);
             DB::rollBack();
             return redirect()->route('mdfe.index')->with('warning', 'Não foi possível enviar a nota, pois sua situação não permite!');
         } catch (Exception $e) {

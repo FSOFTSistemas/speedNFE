@@ -108,8 +108,7 @@ class VeiculoController extends Controller
                 $request->rntrc,
                 $request->tipo_proprietario,
                 $request->tipo_transportador,
-                $veiculo,
-                $this->empresaService->buscarEmpresa($request->empresaId)
+                $veiculo
             );
             DB::commit();
             return redirect()->route('veiculos.index')->with('success', 'Veículo cadastrado com sucesso!');
