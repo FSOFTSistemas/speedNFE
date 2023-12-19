@@ -18,7 +18,7 @@ class NotasService
                 'situacao' => 'Pendente',
                 'uf_inicio' => $uf_inicio,
                 'uf_termino' => $uf_termino,
-                'uf_percurso' => implode(' - ', $percursos),
+                'uf_percurso' => $percursos ? implode(' - ', $percursos) : null,
                 'codMunCarregamento' => $codMunCarregamento,
                 'municipioCarregamento' => $municipioCarregamento,
                 'tipo_documento' => 'MDFe',

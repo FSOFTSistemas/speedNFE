@@ -864,7 +864,7 @@
         Livewire.on('percursoInvalido', function() {
             let errorBox = document.getElementById('percursoInvalido');
             errorBox.innerHTML =
-                "<i class='fas fa-exclamation-circle'></i> O Local de Carregamento não pode estar incluso no percurso!";
+                "<i class='fas fa-exclamation-circle'></i> O Local de Carregamento e o Local de Descarregamento não podem estar inclusos no percurso!";
             errorBox.style.display = 'block';
             setTimeout(function() {
                 errorBox.style.display = 'none';

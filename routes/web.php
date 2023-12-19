@@ -104,7 +104,6 @@ Route::prefix('usuarios')->group(function () {
     Route::get('/del/{id}', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware('auth');
     Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware('auth');
     Route::post('/editar/{id}', [UsersController::class, 'update'])->name('update_usuario')->middleware('auth');
-   
 });
 
 //PRODUTOS

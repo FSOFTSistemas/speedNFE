@@ -23,8 +23,6 @@ return new class extends Migration
             $table->string('rntrc');
             $table->string('tipo_proprietario');
             $table->string('tipo_transportador')->nullable();
-            $table->unsignedBigInteger('empresa_id')->nullable();
-            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedBigInteger('veiculo_id');
             $table->foreign('veiculo_id')->references('id')->on('veiculos')->onDelete('cascade');
             $table->timestamps();

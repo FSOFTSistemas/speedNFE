@@ -54,10 +54,12 @@ class MDFeService
         $mdfe->taginfMunCarrega($infMunCarrega);
 
         //Informações dos Municípios de Percurso
-        foreach (explode(' - ', $transporte->uf_percurso) as $UFPer) {
-            $infPercurso = new \stdClass();
-            $infPercurso->UFPer = $UFPer;
-            $mdfe->taginfPercurso($infPercurso);
+        if ($transporte->uf_percurso) {
+            foreach (explode(' - ', $transporte->uf_percurso) as $UFPer) {
+                $infPercurso = new \stdClass();
+                $infPercurso->UFPer = $UFPer;
+                $mdfe->taginfPercurso($infPercurso);
+            }
         }
 
         //Identificação do Emitente do Manifesto
@@ -67,7 +69,7 @@ class MDFeService
         } else {
             $emit->CPF = $this->retiraPontuacoes($emitente->cpf_cnpj);
         }
-        $emit->IE = $this->retiraPontuacoes($emitente->ie);
+        $emit->IE = $this->retiraPontuacoes($emitente->rg_ie);
         $emit->xNome = $this->retiraAcentos($emitente->razao);
         $emit->xFant = $this->retiraAcentos($emitente->fantasia);
         $mdfe->tagemit($emit);
@@ -117,19 +119,23 @@ class MDFeService
         }
 
         //Identificação do Proprietário do Veículo
-        $prop = new \stdClass();
-        $proprietario = $transporte->veiculoTracao->proprietario;
-        if (strlen($proprietario->cpf_cnpj) == 14) {
-            $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
-        } else {
-            $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+        if ($transporte->veiculoTracao->tipo_propriedade->value === 'Terceiro') {
+            $prop = new \stdClass();
+            $proprietario = $transporte->veiculoTracao->proprietario;
+            if (strlen($proprietario->cpf_cnpj) == 14) {
+                $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+            } else {
+                $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+            }
+            $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
+            $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
+            $prop->IE = $this->retiraPontuacoes($proprietario->ie);
+            $prop->UF = $proprietario->uf_proprietario->value;
+            $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
+            $prop->tpTransp = explode('_', $proprietario->tipo_transportador->name)[1];
+            $veicTracao->prop = $prop;
         }
-        $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
-        $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
-        $prop->IE = $this->retiraPontuacoes($proprietario->ie);
-        $prop->UF = $proprietario->uf_proprietario->value;
-        $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
-        $veicTracao->prop = $prop;
+
         $mdfe->tagveicTracao($veicTracao);
 
         if (count($transporte->reboques) > 0) {
@@ -146,19 +152,23 @@ class MDFeService
                 $veicReboque->UF = $rbq->reboque->uf_veiculo->value;
 
                 //Identificação do Proprietário do Reboque
-                $prop = new \stdClass();
-                $proprietario = $rbq->reboque->proprietario;
-                if (strlen($proprietario->cpf_cnpj) == 14) {
-                    $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
-                } else {
-                    $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+                if ($rbq->reboque->tipo_propriedade === 'Terceiro') {
+                    $prop = new \stdClass();
+                    $proprietario = $rbq->reboque->proprietario;
+                    if (strlen($proprietario->cpf_cnpj) == 14) {
+                        $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+                    } else {
+                        $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+                    }
+                    $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
+                    $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
+                    $prop->IE = $this->retiraPontuacoes($proprietario->ie);
+                    $prop->UF = $proprietario->uf_proprietario->value;
+                    $prop->tpTransp = explode('_', $proprietario->tipo_transportador->name)[1];
+                    $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
+                    $veicReboque->prop = $prop;
                 }
-                $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
-                $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
-                $prop->IE = $this->retiraPontuacoes($proprietario->ie);
-                $prop->UF = $proprietario->uf_proprietario->value;
-                $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
-                $veicReboque->prop = $prop;
+
                 $mdfe->tagveicReboque($veicReboque);
             }
         }
@@ -311,7 +321,7 @@ class MDFeService
         $tot = new \stdClass();
         $tot->qCTe = '0';
         $tot->qNFe = count($transporte->notas);
-        $tot->qMDFe = '1';
+        $tot->qMDFe = '0';
         $tot->vCarga = $transporte->valor_total;
         $tot->cUnid = '01';
         $tot->qCarga = $transporte->peso;
