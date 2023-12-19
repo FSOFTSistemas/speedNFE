@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use PhpParser\Node\Expr;
 
 class MDFEController extends Controller
 {
@@ -58,7 +59,6 @@ class MDFEController extends Controller
     public function store(Request $request)
     {
         try {
-            // dd($request->all());
             $request->validate([
                 'notas' => 'required',
                 'veiculoTracao' => 'required|numeric',
@@ -207,14 +207,15 @@ class MDFEController extends Controller
             if ($xml && !isset($xml['erros_xml'])) {
                 $signedXml = $MDFeService->sign($xml['xml']);
                 $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
-                if (isset($result['sucesso'])) {
+                if (isset($result['sucesso']) && isset($result['nProt'])) {
                     $mdfe->chave_acesso = $xml['chave'];
                     $mdfe->situacao = 'Autorizado';
                     $mdfe->numero = $xml['nMDF'];
+                    $mdfe->nProtocolo = $result['nProt'];
                     $mdfe->save();
                     $mdfe->empresa->update(['ultimaMDFe' => $mdfe->empresa->ultimaMDFe + 1]);
                     DB::commit();
-                    return redirect()->route('mdfe.index')->with('success', 'Nota enviada com sucesso');
+                    return redirect()->route('mdfe.index')->with('success', 'Nota enviada com sucesso!');
                 } else {
                     $mdfe->situacao = 'Rejeitado';
                     $mdfe->save();
@@ -224,6 +225,29 @@ class MDFEController extends Controller
             }
             DB::rollBack();
             return redirect()->route('mdfe.index')->with('warning', 'Não foi possível enviar a nota, pois sua situação não permite!');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function encerrarMDFe($mdfeId)
+    {
+        try {
+            $mdfe = $this->notasService->buscarMDFe($mdfeId);
+            $MDFeService = new MDFeService([
+                "atualizacao" => date('Y-m-d h:i:s'),
+                "tpAmb" => (int) $mdfe->empresa->ambiente,
+                "razaosocial" => $mdfe->empresa->razao,
+                "siglaUF" => $mdfe->empresa->endereco->uf,
+                "cnpj" => '42879649000174',
+                "schemes" => "PL_MDFe_300a",
+                "versao" => "3.00",
+            ], $mdfe->empresa);
+            DB::beginTransaction();
+            $result = $MDFeService->encerrar($mdfe->chave_acesso, $mdfe->nProtocolo, $mdfe->empresa);
+            DB::commit();
+            return redirect()->route('mdfe.index')->with('success', 'Nota encerrada com sucesso!');
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());

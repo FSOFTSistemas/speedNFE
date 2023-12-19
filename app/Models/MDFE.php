@@ -24,6 +24,7 @@ class MDFE extends Model
         'municipioCarregamento',
         'tipo_documento',
         'chave_acesso',
+        'nProtocolo',
         'valor_total',
         'peso',
         'tipo_carga',

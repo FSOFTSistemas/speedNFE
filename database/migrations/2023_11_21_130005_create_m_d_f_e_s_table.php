@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('municipioCarregamento');
             $table->string('tipo_documento');
             $table->string('chave_acesso')->nullable();
+            $table->string('nProtocolo')->nullable();
             $table->double('valor_total');
             $table->double('peso');
             $table->string('numeroLacre')->nullable();

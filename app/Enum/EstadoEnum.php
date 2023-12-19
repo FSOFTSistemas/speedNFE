@@ -8,4 +8,5 @@ enum EstadoEnum:string
     case AUTORIZADO = 'Autorizado';
     case CANCELADO = 'Cancelado';
     case REJEITADO = 'Rejeitado';
+    case ENCERRADO = 'Encerrado';
 }

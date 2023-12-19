@@ -45,18 +45,32 @@
                         <td>{{ $mdfe->uf_percurso }}</td>
                         <td>
                             <div class="row">
-                                <div class="col">
-                                    <a title="Editar" href='{{ route('mdfe.edit', [$mdfe->id]) }}' class='text-warning'><i
-                                            class="fa fa-edit"></i></a>
-                                </div>
-                                <div class="col">
-                                    <a title="Excluir" onclick="setaDadosModal({{ $mdfe->id }})" class='text-danger'><i
-                                            class="fa fa-trash" data-toggle="modal"
-                                            data-target=".bd-delete-modal-lg"></i></a>
-                                </div>
                                 @if ($mdfe->situacao->value === 'Pendente' || $mdfe->situacao->value === 'Rejeitado')
                                     <div class="col">
-                                        <a title="Enviar MDFe" href="{{ route('mdfe.enviar', [$mdfe->id]) }}" class='text-success'><i class="fa fa-upload"></i></a>
+                                        <a title="Editar" href='{{ route('mdfe.edit', [$mdfe->id]) }}'
+                                            class='text-warning'><i class="fa fa-edit"></i></a>
+                                    </div>
+                                    <div class="col">
+                                        <a title="Excluir" onclick="setaDadosModal({{ $mdfe->id }})"
+                                            class='text-danger'><i class="fa fa-trash" data-toggle="modal"
+                                                data-target=".bd-delete-modal-lg"></i></a>
+                                    </div>
+                                    <div class="col">
+                                        <a title="Enviar MDFe" href="{{ route('mdfe.enviar', [$mdfe->id]) }}"
+                                            class='text-success'><i class="fa fa-upload"></i></a>
+                                    </div>
+                                @elseif ($mdfe->situacao->value === 'Autorizado')
+                                    <div class="col">
+                                        <a title="Cancelar" href='{{ route('mdfe.cancel', [$mdfe->id]) }}'
+                                            class='text-danger'><i class="fa fa-ban"></i></a>
+                                    </div>
+                                    <div class="col">
+                                        <a title="Encerrar" href='{{ route('mdfe.close', [$mdfe->id]) }}'
+                                            class='text-info'><i class="fas fa-truck-loading"></i></a>
+                                    </div>
+                                    <div class="col">
+                                        <a title="Imprimir" href='{{ route('mdfe.print', [$mdfe->id]) }}'
+                                            class='text-dark'><i class="fa fa-print"></i></a>
                                     </div>
                                 @endif
                             </div>

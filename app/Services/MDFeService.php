@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\MDFe\Common\Standardize;
@@ -407,10 +408,28 @@ class MDFeService
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
                 'sucesso' => $recibo,
+                'nProt' => $protocolo
             ];
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function encerrar($chave, $protocolo, $emitente)
+    {
+        try {
+            $resp = $this->tools->sefazEncerra($chave, '926230000012537', '26', $emitente->endereco->codigoIBGE);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            return [
+                'sucesso' => $std
+            ];
+        } catch (Exception $e) {
+            return [
+                'erro' => $e->getMessage()
             ];
         }
     }
