@@ -46,8 +46,8 @@
                 <div class="pricing-plan">
                     <h2 class="pricing-header"> Emissão de Notas Gratuitas</h2>
                     <ul class="pricing-features">
-                        <li class="pricing-features-item"><i class="fa fa-check"></i> Todo mês, até 15 notas sem custo algum</li>
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Atualizações e melhorias constantes sem custo adicional</li>
+                        <li class="pricing-features-item">Teste de Emissão Gratuito</li>
+                        <li class="pricing-features-item">Atualizações e melhorias constantes sem custo adicional</li>
                     </ul>
                 </div>
                 
