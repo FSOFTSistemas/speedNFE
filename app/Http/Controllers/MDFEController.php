@@ -200,29 +200,30 @@ class MDFEController extends Controller
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
+            DB::beginTransaction();
             $xml = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
             if ($xml && !isset($xml['erros_xml'])) {
                 $signedXml = $MDFeService->sign($xml['xml']);
                 $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'MDFes' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
                 if (isset($result['sucesso'])) {
-                    $mdfe->chave = $xml['chave'];
-                    $mdfe->status = 1;
-                    $mdfe->estado = 'Autorizado';
-                    $mdfe->numero_nfe = $xml['nMDF'];
+                    $mdfe->chave_acesso = $xml['chave'];
+                    $mdfe->situacao = 'Autorizado';
+                    $mdfe->numero = $xml['nMDF'];
                     $mdfe->save();
-                    $mdfe->empresa->update(['ultimaNFe' => $mdfe->empresa->ultimaNFe + 1]);
+                    $mdfe->empresa->update(['ultimaMDFe' => $mdfe->empresa->ultimaMDFe + 1]);
                     return redirect()->route('mdfe.index')->with('success', 'Nota enviada com sucesso');
                 } else {
-                    $mdfe->status = 3;
-                    $mdfe->estado = 'Rejeitado';
+                    $mdfe->situacao = 'Rejeitado';
                     $mdfe->save();
                     return redirect()->route('mdfe.index')->with('warning', $result['erro']);
                 }
+                DB::commit();
             }
             dd($xml['erros_xml']);
+            DB::rollBack();
             return redirect()->route('mdfe.index')->with('warning', 'Não foi possível enviar a nota, pois sua situação não permite!');
         } catch (Exception $e) {
-            dd($e);
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }

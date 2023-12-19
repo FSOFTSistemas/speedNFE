@@ -41,7 +41,7 @@
                         <div class="col-md-4 col-xs-4">
                             <div class="form-group">
                                 <label for="renavan">Renavan *</label>
-                                <input type="text" class="form-control" required placeholder="Renavan..." name="renavan"
+                                <input type="number" class="form-control" required placeholder="Renavan..." name="renavan"
                                     id="renavan" maxlength="9">
                             </div>
                         </div>
@@ -58,8 +58,8 @@
                         <div class="col-md-3 col-xs-3">
                             <div class="form-group">
                                 <label for="capacidade_m3">Capacidade (M³) *</label>
-                                <input type="number" class="form-control" step="0.1" required
-                                    placeholder="Capacidade (M³)..." name="capacidade_m3" id="capacidade_m3" min="0">
+                                <input type="text" class="form-control" required placeholder="Capacidade (M³)..."
+                                    name="capacidade_m3" id="capacidade_m3" min="0">
                             </div>
                         </div>
                         <div class="col-md-3 col-xs-3">
@@ -179,7 +179,7 @@
                                 </div>
                                 <div class="col">
                                     <label for="">RNTRC</label>
-                                    <input class="form-control" type="text" name="rntrc" id="rntrc"
+                                    <input class="form-control" type="number" name="rntrc" id="rntrc"
                                         placeholder="RNTRC...">
                                 </div>
                                 <div class="col">
@@ -285,5 +285,37 @@
                 return valor;
             }
         }
+
+        document.getElementById('capacidade_m3').addEventListener('input', function() {
+            // Obtém o valor atual do campo
+            var inputValue = this.value;
+
+            // Remove caracteres não numéricos e não ponto
+            var numericValue = inputValue.replace(/[^0-9.]/g, '');
+
+            // Se o ponto não estiver presente e houver pelo menos um dígito, adiciona o ponto
+            if (numericValue.indexOf('.') === -1 && numericValue.length > 0) {
+                numericValue += '.';
+            }
+
+            // Divide o valor em partes antes e depois do ponto
+            var parts = numericValue.split('.');
+
+            // Se houver mais de uma parte, garante que a parte decimal tenha no máximo duas casas
+            if (parts.length > 1) {
+                parts[1] = parts[1].substring(0, 2);
+            }
+
+            // Se houver mais de um dígito antes do ponto, mantenha apenas o primeiro
+            if (parts[0].length > 1) {
+                parts[0] = parts[0].substring(0, 1);
+            }
+
+            // Recria o valor formatado
+            var formattedValue = parts.join('.');
+
+            // Atualiza o valor no campo
+            this.value = formattedValue;
+        });
     </script>
 @stop

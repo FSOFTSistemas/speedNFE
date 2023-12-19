@@ -106,7 +106,7 @@ class MDFeService
         $veicTracao->tpRod = explode('_', $transporte->veiculoTracao->tipo_rodado->name)[1];
         $veicTracao->tpCar = explode('_', $transporte->veiculoTracao->tipo_carroceria->name)[1];
         $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo->value;
-        $veicTracao->capM3 = $this->format($transporte->veiculoTracao->capacidade_m3);
+        $veicTracao->capM3 = intval($transporte->veiculoTracao->capacidade_m3);
 
         //Identificação do Motorista
         foreach ($transporte->motoristas as $cond) {
@@ -368,7 +368,6 @@ class MDFeService
 
     public function sign($xml)
     {
-        // dd($xml);
         return $this->tools->signMDFe($xml);
     }
 
@@ -389,7 +388,7 @@ class MDFeService
             }
             $recibo = $std->infRec->nRec;
             $protocolo = $this->tools->sefazConsultaRecibo($recibo);
-            sleep(3);
+            sleep(2);
             $xml = Complements::toAuthorize($signXml, $protocolo);
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 755, true, true);
