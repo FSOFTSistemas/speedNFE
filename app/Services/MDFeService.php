@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\MDFe\Common\Standardize;
@@ -34,6 +35,9 @@ class MDFeService
         $stdIde->cUF = \App\Models\Empresa::getCUF($emitente->endereco->uf);
         $stdIde->tpAmb = $emitente->ambiente;
         $stdIde->tpEmit = '2';
+        if ($transporte->veiculoTracao->tipo_propriedade->value === 'Terceiro') {
+            $stdIde->tpTransp = explode('_', $transporte->veiculoTracao->proprietario->tipo_transportador->name)[1];
+        }
         $stdIde->mod = $mdfe->mod;
         $stdIde->serie = $emitente->serie;
         $stdIde->nMDF = $numeroMDFe;
@@ -132,7 +136,6 @@ class MDFeService
             $prop->IE = $this->retiraPontuacoes($proprietario->ie);
             $prop->UF = $proprietario->uf_proprietario->value;
             $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
-            $prop->tpTransp = explode('_', $proprietario->tipo_transportador->name)[1];
             $veicTracao->prop = $prop;
         }
 
@@ -164,7 +167,6 @@ class MDFeService
                     $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
                     $prop->IE = $this->retiraPontuacoes($proprietario->ie);
                     $prop->UF = $proprietario->uf_proprietario->value;
-                    $prop->tpTransp = explode('_', $proprietario->tipo_transportador->name)[1];
                     $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
                     $veicReboque->prop = $prop;
                 }
@@ -406,10 +408,28 @@ class MDFeService
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
                 'sucesso' => $recibo,
+                'nProt' => $protocolo
             ];
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function encerrar($chave, $protocolo, $emitente)
+    {
+        try {
+            $resp = $this->tools->sefazEncerra($chave, '926230000012537', '26', $emitente->endereco->codigoIBGE);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            return [
+                'sucesso' => $std
+            ];
+        } catch (Exception $e) {
+            return [
+                'erro' => $e->getMessage()
             ];
         }
     }
