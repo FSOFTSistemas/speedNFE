@@ -207,7 +207,7 @@ class MDFEController extends Controller
             if ($xml && !isset($xml['erros_xml'])) {
                 $signedXml = $MDFeService->sign($xml['xml']);
                 $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
-                if (isset($result['sucesso']) && isset($result['nProt'])) {
+                if (isset($result['sucesso'])) {
                     $mdfe->chave_acesso = $xml['chave'];
                     $mdfe->situacao = 'Autorizado';
                     $mdfe->numero = $xml['nMDF'];
@@ -224,7 +224,7 @@ class MDFEController extends Controller
                 }
             }
             DB::rollBack();
-            return redirect()->route('mdfe.index')->with('warning', 'Não foi possível enviar a nota, pois sua situação não permite!');
+            return redirect()->route('mdfe.index')->with('warning', $xml['erros_xml']);
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -245,9 +245,17 @@ class MDFEController extends Controller
                 "versao" => "3.00",
             ], $mdfe->empresa);
             DB::beginTransaction();
-            $result = $MDFeService->encerrar($mdfe->chave_acesso, $mdfe->nProtocolo, $mdfe->empresa);
-            DB::commit();
-            return redirect()->route('mdfe.index')->with('success', 'Nota encerrada com sucesso!');
+            $result = $MDFeService->encerrar($mdfe, 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Encerradas');
+            if (!isset($result['erro'])) {
+                $mdfe->situacao = 'Encerrado';
+                $mdfe->nProtocolo = $result['nProt'];
+                $mdfe->save();
+                DB::commit();
+                return redirect()->route('mdfe.index')->with('success', 'Nota encerrada com sucesso!');
+            } else {
+                DB::rollBack();
+                return redirect()->route('mdfe.index')->with('warning', $result['erro']);
+            }
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
