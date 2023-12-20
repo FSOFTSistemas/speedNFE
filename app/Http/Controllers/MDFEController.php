@@ -15,8 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use PhpParser\Node\Expr;
-use Psy\CodeCleaner\IssetPass;
+use NFePHP\DA\MDFe\Daevento;
+use NFePHP\DA\MDFe\Damdfe;
 
 class MDFEController extends Controller
 {
@@ -260,6 +260,78 @@ class MDFEController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function cancelarMDFe(Request $request)
+    {
+        try {
+            $request->validate([
+                'justificativa' => 'required|max:255',
+                'mdfe_id' => 'required|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attribute deve conter no máximo :max dígitos!'
+            ]);
+            $mdfe = $this->notasService->buscarMDFe($request->mdfe_id);
+            $MDFeService = new MDFeService([
+                "atualizacao" => date('Y-m-d h:i:s'),
+                "tpAmb" => (int) $mdfe->empresa->ambiente,
+                "razaosocial" => $mdfe->empresa->razao,
+                "siglaUF" => $mdfe->empresa->endereco->uf,
+                "cnpj" => '42879649000174',
+                "schemes" => "PL_MDFe_300a",
+                "versao" => "3.00",
+            ], $mdfe->empresa);
+            DB::beginTransaction();
+            $result = $MDFeService->cancelar($mdfe, $request->justificativa,  'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas');
+            if (!isset($result['erro'])) {
+                $mdfe->situacao = 'Cancelado';
+                $mdfe->nProtocolo = $result['nProt'];
+                $mdfe->save();
+                DB::commit();
+                return redirect()->route('mdfe.index')->with('success', 'Nota cancelada com sucesso!');
+            } else {
+                DB::rollBack();
+                return redirect()->route('mdfe.index')->with('warning', $result['erro']);
+            }
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function imprimirMDFe($mdfeId, $modo)
+    {
+        try {
+            $mdfe = $this->notasService->buscarMDFe($mdfeId);
+            if ($modo == 0) {
+                $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas/' . $mdfe->chave_acesso . '.xml');
+                $danfe = new Damdfe($xml);
+                $pdf = $danfe->render();
+                return response($pdf)
+                    ->header('Content-Type', 'application/pdf');
+            } else if ($modo == 1) {
+                $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Encerradas/' . $mdfe->chave_acesso . '.xml');
+                $daevento = new Daevento($xml, $mdfe->empresa);
+                $daevento->debugMode(true);
+                $pdf = $daevento->render();
+                return response($pdf)->header('Content-Type', 'application/pdf');
+            } else {
+                $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas/' . $mdfe->chave_acesso . '.xml');
+                $daevento = new Daevento($xml, $mdfe->empresa);
+                $daevento->debugMode(true);
+                $pdf = $daevento->render();
+                return response($pdf)->header('Content-Type', 'application/pdf');
+            }
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
 
