@@ -19,7 +19,6 @@
                 <a href="{{ route('homePage') }}">Home</a>
                 <a href="{{ route('Planos') }}">Planos</a>
                 <a href="{{ route('login') }}">Login</a>
-                
             </nav>
         </header>
     </div>
@@ -27,12 +26,13 @@
     <div class="background">
         <div class="container-2" id="text-home">
             <div class="text-left">
-                <img id="laptop" src="{{ asset("css/Nota-fiscal-eletronica-Saiba-como-emitir-removebg-preview.png") }}">
+                <img id="laptop"
+                    src="{{ asset("css/Nota-fiscal-eletronica-Saiba-como-emitir-removebg-preview.png") }}">
             </div>
             <div class="text-right">
                 <h1>Emissor de Nota Fiscal Eletrônica e WEB DANFE Online</h1>
                 <h4>Conheça os benefícios de ter um <br>Certificado Digital</h4>
-                <a href="{{ route('Planos') }}"><button class="verPlanos" > Connheça nossos Planos</button></a>
+                <a href="{{ route('Planos') }}"><button class="verPlanos">Conheça nossos Planos</button></a>
             </div>
         </div>
     </div>
@@ -40,40 +40,55 @@
 
     <div class="background">
         <div class="container" id="card-plano">
-            <div class="panel pricing-table">
-            
-                
+            <div class="panel pricing-table card-1">
                 <div class="pricing-plan">
                     <h2 class="pricing-header"> Emissão de Notas Gratuitas</h2>
                     <ul class="pricing-features">
-                        <li class="pricing-features-item"><i class="fa fa-check"></i> Todo mês, até 15 notas sem custo algum</li>
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Atualizações e melhorias constantes sem custo adicional</li>
+                        <li class="pricing-features-item">Teste de Emissão Gratuito</li>
+                        <li class="pricing-features-item">Atualizações e melhorias constantes sem custo adicional</li>
                     </ul>
                 </div>
-                
-                <div class="pricing-plan">
-                    <h2 class="pricing-header">Plano Profissional</h2>
-                    <ul class="pricing-features">
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Envio ilimitado do seu plano profissional</li>
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Envio de e-mail com o arquivo XML e DANFE</li>
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Emissão a partir de qualquer computador, sem precisar baixar nada.</li>
-                    </ul>
-                </div>
-                
-                <div class="pricing-plan">
-                    <h2 class="pricing-header">Comprometimento e Segurança</h2>
-                    <ul class="pricing-features">
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Armazenamento dos arquivos em segurança</li>
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Responsabilidade com a legislação</li>
-                        <li class="pricing-features-item"><i class="fas fa-check"></i> Cópias de segurança automáticas</li>
-                    </ul>
-                </div>
-                
-            
             </div>
         </div>
     </div>
+
+
+    <div class="background">
+        <div class="container" id="card-plano">
+            <div class="panel pricing-table card-2">
+                <div class="pricing-plan">
+                    <h2 class="pricing-header">Plano Profissional</h2>
+                    <ul class="pricing-features">
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Envio ilimitado do seu plano
+                            profissional</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Envio de e-mail com o arquivo
+                            XML e DANFE</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Emissão a partir de qualquer
+                            computador, sem precisar baixar nada.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     
-    
+    <div class="background">
+        <div class="container" id="card-plano">
+            <div class="panel pricing-table card-3">
+                <div class="pricing-plan">
+                    <h2 class="pricing-header">Comprometimento e Segurança</h2>
+                    <ul class="pricing-features">
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Armazenamento dos arquivos em
+                            segurança</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Responsabilidade com a
+                            legislação</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Cópias de segurança
+                            automáticas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
-</html>
+<
