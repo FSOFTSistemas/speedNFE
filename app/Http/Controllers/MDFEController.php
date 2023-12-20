@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use PhpParser\Node\Expr;
+use Psy\CodeCleaner\IssetPass;
 
 class MDFEController extends Controller
 {
@@ -207,7 +208,7 @@ class MDFEController extends Controller
             if ($xml && !isset($xml['erros_xml'])) {
                 $signedXml = $MDFeService->sign($xml['xml']);
                 $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
-                if (isset($result['sucesso'])) {
+                if (isset($result['sucesso']) && isset($result['nProt'])) {
                     $mdfe->chave_acesso = $xml['chave'];
                     $mdfe->situacao = 'Autorizado';
                     $mdfe->numero = $xml['nMDF'];

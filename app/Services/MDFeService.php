@@ -400,14 +400,13 @@ class MDFeService
             $protocolo = $this->tools->sefazConsultaRecibo($recibo);
             sleep(2);
             $xml = Complements::toAuthorize($signXml, $protocolo);
-            dd(simplexml_load_string($xml));
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 755, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
                 'sucesso' => $recibo,
-                'nProt' => simplexml_load_string($xml)->nProt
+                'nProt' => simplexml_load_string($xml)->protMDFe->infProt->nProt
             ];
         } catch (\Exception $e) {
             return [
