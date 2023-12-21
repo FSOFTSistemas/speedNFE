@@ -117,12 +117,6 @@
                     </div>
                 </form>
 
-                {{-- Register link --}}
-                @if($register_url)
-                <p class="my-0" id="registrar" style="padding-top: 10px;">
-                    <a href="{{ route('createMedico') }}"> Registre-se </a>
-                </p>
-                @endif
             </div>
         </div>
     </div>
