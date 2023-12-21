@@ -128,14 +128,28 @@
                                                 <select class="form-control" wire:model="motorista" wire:change="addMotorista()">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($motoristasDisponiveis as $motorista)
-                                                        <option value="{{ $motorista->id }}">{{ $motorista->nome }}
+                                                        <option value="{{ $motorista->id . '/' . $motorista->nome}}">{{ $motorista->nome }}
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <ul style="list-style: circle;">
+                                                    @foreach ($motoristas as $index => $motorista)
+                                                        <li>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <b>{{ explode('/', $motorista)[1] }}</b>
+                                                                </div>
+                                                                <div class="col" style="text-align: center">
+                                                                    <i class="fa fa-trash" title="Remover" wire:click="removeMotorista({{ $index }})"></i>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
 
                                         @foreach ($motoristas as $index => $mtr)
-                                            <input type="hidden" name="motoristas[{{ $index }}]"
+                                            <input type="hidden" required name="motoristas[{{ $index }}]"
                                                 wire:model="motoristas.{{ $index }}">
                                         @endforeach
 
@@ -143,23 +157,36 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-6">
                                             <div class="form-group">
                                                 <label for="">Veículo de reboque</label>
                                                 <select class="form-control" wire:model="veiculoReboque" wire:change="addReboque()">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($veiculosReboqueDisponiveis as $veiculoR)
-                                                        <option value="{{ $veiculoR->id }}">{{ $veiculoR->placa }}
+                                                        <option value="{{ $veiculoR->id . '/' . $veiculoR->placa }}">{{ $veiculoR->placa }}
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <ul style="list-style: circle;">
+                                                    @foreach ($reboques as $index => $rbq)
+                                                        <li>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <b>{{ explode('/', $rbq)[1] }}</b>
+                                                                </div>
+                                                                <div class="col" style="text-align: center">
+                                                                    <i class="fa fa-trash" title="Remover" wire:click="removeReboque({{ $index }})"></i>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
 
                                             @foreach ($reboques as $index => $rbq)
                                                 <input type="hidden" name="reboques[{{ $index }}]"
                                                     wire:model="reboques.{{ $index }}">
                                             @endforeach
-
                                         </div>
                                     </div>
                                 </div>
@@ -829,8 +856,9 @@
                 li.textContent = element;
                 var button = document.createElement('button');
                 button.className = 'fa fa-trash text-danger';
+                button.id = 'gay';
                 button.title = 'Apagar';
-                button.setAttribute('wire:click', `removePercurso`);
+                button.setAttribute('wire:click', `removePercurso()`);
                 li.appendChild(button);
                 percursos.appendChild(li);
             });

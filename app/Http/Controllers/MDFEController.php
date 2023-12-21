@@ -59,6 +59,7 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -138,14 +139,14 @@ class MDFEController extends Controller
                 if ($request->reboques) {
                     foreach ($request->reboques as $reboque) {
                         $this->reboqueService->createReboque(
-                            $reboque,
+                            explode('/', $reboque)[0],
                             $MDFe->id
                         );
                     }
                 }
                 foreach ($request->motoristas as $motorista) {
                     $this->motoristaService->createMotorista(
-                        $motorista,
+                        explode('/', $motorista)[0],
                         $MDFe->id
                     );
                 }
@@ -313,8 +314,9 @@ class MDFEController extends Controller
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
             if ($modo == 0) {
                 $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas/' . $mdfe->chave_acesso . '.xml');
-                $danfe = new Damdfe($xml);
-                $pdf = $danfe->render();
+                $damdfe = new Damdfe($xml);
+                $damdfe->printParameters('L');
+                $pdf = $damdfe->render();
                 return response($pdf)
                     ->header('Content-Type', 'application/pdf');
             } else if ($modo == 1) {
