@@ -436,11 +436,13 @@ button {
 }
 
 .main_footer_copy {
-  background-color: #E3E3E3;
+  background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
+  background: -webkit-linear-gradient(top, #54BCE1 0%, #E3E3E3 100%);
+  background: linear-gradient(to bottom, #4394f4 0%, #E3E3E3 100%);
   width: 100%;
   float: left;
   text-align: center;
-  padding-top: 10px;
+  padding-top: 20px;
 }
 
 .main_footer_copy a {
