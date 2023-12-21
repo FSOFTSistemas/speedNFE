@@ -63,6 +63,7 @@ class MDFEController extends Controller
         try {
             $request->validate([
                 'notas' => 'required',
+                'numeroNotas_' => 'required',
                 'veiculoTracao' => 'required|numeric',
                 'motoristas' => 'required',
                 'veiculosReboque' => 'nullable',
@@ -81,7 +82,7 @@ class MDFEController extends Controller
                 'tipoCarga' => 'required',
                 "info_fisco" => 'nullable|max:255',
                 "info_contribuinte" => 'nullable|max:255',
-                "numeroLacre" => 'required',
+                "numeroLacre" => 'nullable',
                 "codigo_gtin" => 'required',
                 "ncm" => 'required',
                 "lat_carregamento" => 'required',
@@ -105,6 +106,9 @@ class MDFEController extends Controller
                     $request->valorTotal,
                     $request->pesoTotal,
                     $request->tipoCarga,
+                    $request->numeroNotas_->NFe,
+                    $request->numeroNotas_->MDFe,
+                    $request->numeroNotas_->CTe,
                     $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
                     $request->veiculoTracao,
                     $request->numeroLacre,

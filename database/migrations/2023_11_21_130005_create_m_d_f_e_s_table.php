@@ -31,6 +31,9 @@ return new class extends Migration
             $table->double('peso');
             $table->string('numeroLacre')->nullable();
             $table->string('tipo_carga');
+            $table->integer('nMDFe');
+            $table->integer('nNFe');
+            $table->integer('nCTe');
             $table->string('info_fisco', 255)->nullable();
             $table->string('info_contribuinte', 255)->nullable();
             $table->unsignedBigInteger('empresa_id');

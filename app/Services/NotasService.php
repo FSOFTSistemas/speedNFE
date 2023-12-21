@@ -9,7 +9,7 @@ class NotasService
 {
 
     public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $codMunCarregamento, $municipioCarregamento, $percursos, $valor_total,
-        $peso, $tipo_carga, $empresa, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte) {
+        $peso, $tipo_carga, $nNFe, $nMDFe, $nCTe, $empresa, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte) {
         if ($this->qtdeEmitMDFe($empresa->id) < $empresa->limMDFes || $empresa->id == 1) {
             return MDFE::create([
                 'numero' => $numero,
@@ -26,6 +26,9 @@ class NotasService
                 'valor_total' => $valor_total,
                 'peso' => $peso,
                 'tipo_carga' => $tipo_carga,
+                'nNFe' => $nNFe,
+                'nMDFe' => $nMDFe,
+                'nCTe' => $nCTe,
                 'info_fisco' => $info_fisco,
                 'info_contribuinte' => $info_contribuinte,
                 'numeroLacre' => $numeroLacre,

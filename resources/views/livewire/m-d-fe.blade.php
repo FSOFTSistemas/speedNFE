@@ -79,6 +79,10 @@
                                                 wire:model="notas.{{ $index }}.numeroNota">
                                         @endforeach
 
+                                        @foreach ($numeroNotas as $index => $nNotas)
+                                            <input type="hidden" name="numeroNotas.[{{ $index }}]" wire:model='numeroNotas.{{ $index }}'>
+                                        @endforeach
+
                                     </div>
 
                                     <div class="row" style="text-align: center">
@@ -695,9 +699,15 @@
 
         <div class="row">
             <div class="col">
-                <ul id="percursos">
+                <ul id="percursos" style="list-style: circle;">
 
                 </ul>
+            </div>
+        </div>
+
+        <div class="row" style="text-align: center">
+            <div class="col">
+                <button wire:click="removePercurso()" class="btn"><i class="fa fa-minus"> remover</i></button>
             </div>
         </div>
     @endcomponent
@@ -854,12 +864,6 @@
             value.forEach(element => {
                 var li = document.createElement('li');
                 li.textContent = element;
-                var button = document.createElement('button');
-                button.className = 'fa fa-trash text-danger';
-                button.id = 'gay';
-                button.title = 'Apagar';
-                button.setAttribute('wire:click', `removePercurso()`);
-                li.appendChild(button);
                 percursos.appendChild(li);
             });
         });

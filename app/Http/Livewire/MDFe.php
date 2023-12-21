@@ -64,6 +64,7 @@ class MDFe extends Component
     public $indexEdit = null;
 
     //Dados para preemcher a tela
+    public $numeroNotas = [];
     public $tiposDocumentos = [];
     public $cidadesDescarregamento = [];
     public $cidadesCarregamento = [];
@@ -95,6 +96,7 @@ class MDFe extends Component
         $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
         $this->veiculosReboqueDisponiveis = $veiculoService->buscarReboques();
         $this->motoristasDisponiveis = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
+        $this->numeroNotas = ['NFe' => 0, 'MDFe' => 0, 'CTe' => 0];
     }
 
     public function buscarCidades($cargaDescarga)
@@ -120,10 +122,18 @@ class MDFe extends Component
             $local = explode('@', $this->cidade);
             $this->nota = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
             $this->notas[] = $this->nota;
+            $this->numberNotes($this->tipoDocumento);
             $this->calcularTotais();
             $this->limparCampos();
             $this->emit('btnCancelar');
             return $this->emit('fecharModal');
+        }
+    }
+
+    public function numberNotes($tpDoc)
+    {
+        if (array_key_exists($tpDoc, $this->numeroNotas)) {
+            $this->numeroNotas[$tpDoc]++;
         }
     }
 
@@ -184,6 +194,7 @@ class MDFe extends Component
 
     public function limparCampos()
     {
+        $this->tipoDocumento = null;
         $this->cidade = null;
         $this->valor = null;
         $this->peso = null;
@@ -196,14 +207,9 @@ class MDFe extends Component
         if (strlen($chave) != 44) {
             return false;
         }
-        $uf = $this->ufNota(substr($chave, 0, 2));
-        // $anoMesEmissao = substr($chave, 2, 4);
         $cnpjEmitente = substr($chave, 6, 14);
-        // $modelo = substr($chave, 20, 2);
         $serie = substr($chave, 22, 3);
         $numeroNota = substr($chave, 25, 9);
-        // $tipoEmisao = substr($chave, 34, 1);
-        // $codigoNumerico = substr($chave, 35, 8);
         $digitoVerificador = substr($chave, 43, 1);
         if (!$this->validarCNPJ($cnpjEmitente)) {
             return false;
@@ -239,17 +245,6 @@ class MDFe extends Component
         return $dv;
     }
 
-    public function ufNota($codigo)
-    {
-        foreach (UfEnum::cases() as $uf) {
-            $cod = explode('_', $uf->name)[1];
-            if ($cod == $codigo) {
-                return $uf;
-            }
-        }
-        return false;
-    }
-
     public function addPercurso()
     {
         if ($this->percurso && !in_array($this->percurso, $this->percursos)) {
@@ -262,9 +257,10 @@ class MDFe extends Component
         }
     }
 
-    public function removePercurso($oi)
+    public function removePercurso()
     {
-        dd($oi);
+        array_pop($this->percursos);
+        return $this->emit('percursos', $this->percursos);
     }
 
     public function editNote($nota, $index)
