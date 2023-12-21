@@ -19,7 +19,7 @@
     <div class="container">
         <header>
             <div class="logo">
-                <img src="{{ asset(" css/logo.png") }}">
+                <img src="{{ asset("css/logo.png") }}">
             </div>
             <nav>
                 <a href="{{ route('homePage') }}">Home</a>
@@ -32,8 +32,7 @@
     <div class="background">
         <div class="container-2" id="text-home">
             <div class="text-left">
-                <img id="laptop" src="{{ asset(" css/Nota-fiscal-eletronica-Saiba-como-emitir-removebg-preview.png")
-                    }}">
+                <img id="laptop" src="{{ asset("css/Nota-fiscal-eletronica-Saiba-como-emitir-removebg-preview.png")}}">
             </div>
             <div class="text-right">
                 <h1>Emissor de Nota Fiscal Eletrônica e WEB DANFE Online</h1>
