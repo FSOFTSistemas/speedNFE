@@ -183,8 +183,8 @@ Route::prefix('mdfes')->group(function () {
     Route::get('/download/xmls', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
     Route::get('/{mdfeId}/enviar-nota', [MDFEController::class, 'enviarMDFe'])->name('mdfe.enviar')->middleware('auth');
     Route::get('/{mdfeId}/encerrar-nota', [MDFEController::class, 'encerrarMDFe'])->name('mdfe.close')->middleware('auth');
-    Route::get('/{mdfeId}/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware('auth');
-    Route::get('/{mdfeId}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware('auth');
+    Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware('auth');
+    Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware('auth');
 });
 
 //MOTORISTAS

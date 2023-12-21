@@ -400,14 +400,13 @@ class MDFeService
             $protocolo = $this->tools->sefazConsultaRecibo($recibo);
             sleep(2);
             $xml = Complements::toAuthorize($signXml, $protocolo);
-            dd(simplexml_load_string($xml));
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 755, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
                 'sucesso' => $recibo,
-                'nProt' => simplexml_load_string($xml)->nProt
+                'nProt' => simplexml_load_string($xml)->protMDFe->infProt->nProt
             ];
         } catch (\Exception $e) {
             return [
@@ -416,15 +415,15 @@ class MDFeService
         }
     }
 
-    public function encerrar($signXml, $caminho)
+    public function encerrar($mdfe, $caminho)
     {
         try {
-            if ($signXml->situacao->value != 'Autorizado') {
+            if ($mdfe->situacao->value != 'Autorizado') {
                 return [
                     'erro' => "Situação da nota não permite essa ação!"
                 ];
             }
-            $resp = $this->tools->sefazEncerra($signXml->chave_acesso, $signXml->nProtocolo, '26', $signXml->empresa->endereco->codigoIBGE);
+            $resp = $this->tools->sefazEncerra($mdfe->chave_acesso, $mdfe->nProtocolo, '26', $mdfe->empresa->endereco->codigoIBGE);
             $st = new Standardize();
             $std = $st->toStd($resp);
             sleep(2);
@@ -433,13 +432,46 @@ class MDFeService
                     'erro' => "[" . $std->infEvento->cStat . "] - " . $std->infEvento->xMotivo,
                 ];
             }
-            $closedXml = $this->tools->sefazConsultaChave($signXml->chave_acesso);
+            $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 755, true, true);
             }
-            file_put_contents(public_path($caminho . '/') . $signXml->chave_acesso . '.xml', $closedXml);
+            file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
             return [
-                'sucesso' => $std,
+                'sucesso' => true,
+                'nProt' => $std->infEvento->nProt
+            ];
+        } catch (Exception $e) {
+            return [
+                'erro' => $e->getMessage()
+            ];
+        }
+    }
+
+    public function cancelar($mdfe, $just, $caminho)
+    {
+        try {
+            if ($mdfe->situacao->value != 'Autorizado') {
+                return [
+                    'erro' => "Situação de nota não permite essa ação!"
+                ];
+            }
+            $resp = $this->tools->sefazCancela($mdfe->chave_acesso, $just, $mdfe->nProtocolo);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            if ($std->infEvento->cStat != 135) {
+                return [
+                    'erro' => "[" . $std->infEvento->cStat . "] - " . $std->infEvento->xMotivo
+                ];
+            }
+            $canceledXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
+            if (!File::exists(public_path($caminho . '/'))) {
+                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+            }
+            file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $canceledXml);
+            return [
+                'sucesso' => true,
                 'nProt' => $std->infEvento->nProt
             ];
         } catch (Exception $e) {

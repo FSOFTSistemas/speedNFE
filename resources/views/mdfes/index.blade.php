@@ -51,7 +51,7 @@
                                             class='text-warning'><i class="fa fa-edit"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Excluir" onclick="setaDadosModal({{ $mdfe->id }})"
+                                        <a title="Excluir" onclick="setaDadosModalExcluir({{ $mdfe->id }})"
                                             class='text-danger'><i class="fa fa-trash" data-toggle="modal"
                                                 data-target=".bd-delete-modal-lg"></i></a>
                                     </div>
@@ -61,15 +61,25 @@
                                     </div>
                                 @elseif ($mdfe->situacao->value === 'Autorizado')
                                     <div class="col">
-                                        <a title="Cancelar" href='{{ route('mdfe.cancel', [$mdfe->id]) }}'
-                                            class='text-danger'><i class="fa fa-ban"></i></a>
+                                        <a title="Cancelar" onclick="setaDadosModalCancelar({{ $mdfe->id }})" class='text-danger'><i class="fa fa-ban" data-toggle="modal"
+                                                data-target=".bd-cancel-modal-lg"></i></a>
                                     </div>
                                     <div class="col">
                                         <a title="Encerrar" href='{{ route('mdfe.close', [$mdfe->id]) }}'
                                             class='text-info'><i class="fas fa-truck-loading"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Imprimir" href='{{ route('mdfe.print', [$mdfe->id]) }}'
+                                        <a title="Imprimir" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 0]) }}'
+                                            class='text-dark'><i class="fa fa-print"></i></a>
+                                    </div>
+                                @elseif ($mdfe->situacao->value === 'Encerrado')
+                                    <div class="col">
+                                        <a title="Imprimir Encerramento" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 1]) }}'
+                                            class='text-dark'><i class="fa fa-print"></i></a>
+                                    </div>
+                                @else
+                                    <div class="col">
+                                        <a title="Imprimir Cancelamento" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 2]) }}'
                                             class='text-dark'><i class="fa fa-print"></i></a>
                                     </div>
                                 @endif
@@ -81,6 +91,7 @@
         </table>
     </div>
 
+    {{-- MODAL PARA EXCLUIR --}}
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered">
@@ -108,12 +119,67 @@
                             @csrf
                             @method('DELETE')
                             <div class="form-group">
-                                <input type="hidden" step="0.01" class="form-control" id="mdfeId" name="mdfeId"
+                                <input type="hidden" class="form-control" id="mdfeId" name="mdfeId"
                                     value="">
                             </div>
 
                             <div class="text-center">
                                 <button type="submit" style="width: 50%;" class="btn btn-danger">EXCLUIR</button>
+                            </div>
+                            <br>
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL PARA CANCELAR --}}
+    <div class="modal fade bd-cancel-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="col" style="text-align: center">
+                        <div class="modal-title" style="text: center">
+                            <h4>Cancelar esta Nota?</h4>
+                        </div>
+                    </div>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <p style="color: red; text-align: center">OBS: Você irá cancelar esta nota!
+                    </p>
+
+                    <div class="" style="text-align: center">
+
+                        <form action="{{ route('mdfe.cancel') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                <div class="col">
+                                    <label for="">Justificativa *</label>
+                                    <textarea class="form-control" required name="justificativa" id="justificativa" placeholder="Justificativa..." maxlength="255" cols="10" rows="8"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="hidden" required class="form-control" id="mdfe_id" name="mdfe_id"
+                                    value="">
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" style="width: 50%;" class="btn btn-warning">CONFIRMAR</button>
                             </div>
                             <br>
                         </form>
@@ -140,8 +206,12 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script>
-        function setaDadosModal(mdfeId) {
+        function setaDadosModalExcluir(mdfeId) {
             document.getElementById('mdfeId').value = mdfeId;
+        }
+
+        function setaDadosModalCancelar(mdfeId) {
+            document.getElementById('mdfe_id').value = mdfeId;
         }
 
         $(document).ready(function() {
