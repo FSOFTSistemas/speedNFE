@@ -102,8 +102,8 @@
                 <h3 class="titleFooter">Menu</h3>
                 <ul>
                     <li><a href="#" title="Página Inícial">Página Inícial</a></li>
-                    <li><a href="#" title="Sobre a Empresa">Planos</a></li>
-                    <li><a href="#" title="Fale Conosco">Login</a></li>
+                    <li><a href="{{ route('Planos') }}" title="Sobre a Empresa">Planos</a></li>
+                    <li><a href="{{ route('login') }}" title="Fale Conosco">Login</a></li>
                 </ul>
             </div>
 

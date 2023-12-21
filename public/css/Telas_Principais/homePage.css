@@ -44,7 +44,7 @@ header a {
   width: 100%;
   z-index: 1;
   transform: skewX(-25deg);
-  transform: skewY(-10deg);
+  transform: skewY(-15deg);
 
 
 }
@@ -249,6 +249,7 @@ button {
 
   float: left;
   width: 100%;
+
   margin-top: 50px;
   background: #54BCE1;
   background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
@@ -436,13 +437,13 @@ button {
 }
 
 .main_footer_copy {
-  background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
+  background: -moz-linear-gradient(top, #52B8E3 0%, #54BCE1 100%);
   background: -webkit-linear-gradient(top, #54BCE1 0%, #E3E3E3 100%);
-  background: linear-gradient(to bottom, #4394f4 0%, #E3E3E3 100%);
+  background: linear-gradient(to bottom, #52B8E3 0%, #E3E3E3 100%);
   width: 100%;
   float: left;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 30px;
 }
 
 .main_footer_copy a {
