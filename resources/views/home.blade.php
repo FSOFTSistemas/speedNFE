@@ -15,67 +15,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ asset("css/Telas_Internas/home.css") }}">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-5v3YT0auvSjDz7JeF5VpJ0wWJ1R3r1Pj+Za5r+yF3e8sd9pWcTo1g2Bd25gT5toL50Rlh24RZjLOt4L/2ecClcA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ asset('css/Telas_Principais/homePage.css') }}">
+    <title>speedNFE</title>
 </head>
+
 <body>
 
-    <canvas id="Emissão_Mês"></canvas>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="{{ asset("css/logo.png") }}">
+            </div>
+            <nav>
+                <a href="{{ route('homePage') }}">Home</a>
+                <a href="{{ route('Planos') }}">Planos</a>
+                <a href="{{ route('login') }}">Login</a>
+            </nav>
+        </header>
+    </div>
 
-    <script>
-        var dados = [50, 80, 120, 150, 200, 250, 300, 350, 400, 450, 500, 550];
-        var ctx = document.getElementById("Emissão_Mês").getContext("2d");
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-                datasets: [{
-                    label: 'Emissão de Notas Por Mês',
-                    data: dados,
-                    backgroundColor: '#224B66',
-                    borderColor: '#224B66',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
+    <div class="background">
+        <div class="container-2" id="text-home">
+            <div class="text-left">
+                <img id="laptop"
+                    src="{{ asset("css/Nota-fiscal-eletronica-Saiba-como-emitir-removebg-preview.png") }}">
+            </div>
+            <div class="text-right">
+                <h1>Emissor de Nota Fiscal Eletrônica e WEB DANFE Online</h1>
+                <h4>Conheça os benefícios de ter um <br>Certificado Digital</h4>
+                <a href="{{ route('Planos') }}"><button class="verPlanos">Conheça nossos Planos</button></a>
+            </div>
+        </div>
+    </div>
 
-    <canvas id="Produtos_Estoque" width="400" height="180" style="margin-top: 50px;" ></canvas>
 
-    <script>
-        var dadosProdutos = [550, 500, 450, 400, 350, 300, 250, 200, 150, 120, 80, 50];
-        var ctxProdutos = document.getElementById("Produtos_Estoque").getContext("2d");
-        var myChartProdutos = new Chart(ctxProdutos, {
-            type: 'bar',
-            data: {
-                labels: ['Macarrão', 'Arroz', 'Batata', 'Carro', 'Boi', 'Cavalo', 'Carroça', 'Teclado', 'Mouse', 'Boné', 'Pirulito', 'Garrafa'],
-                datasets: [{
-                    label: 'Produtos em Estoque',
-                    data: dadosProdutos,
-                    backgroundColor: '#224B66',
-                    borderColor: '#224B66',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
+    <div class="background">
+        <div class="container" id="card-plano">
+            <div class="panel pricing-table card-1">
+                <div class="pricing-plan">
+                    <h2 class="pricing-header"> Emissão de Notas Gratuitas</h2>
+                    <ul class="pricing-features">
+                        <li class="pricing-features-item">Teste de Emissão Gratuito</li>
+                        <li class="pricing-features-item">Atualizações e melhorias constantes sem custo adicional</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="background">
+        <div class="container" id="card-plano">
+            <div class="panel pricing-table card-2">
+                <div class="pricing-plan">
+                    <h2 class="pricing-header">Plano Profissional</h2>
+                    <ul class="pricing-features">
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Envio ilimitado do seu plano
+                            profissional</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Envio de e-mail com o arquivo
+                            XML e DANFE</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Emissão a partir de qualquer
+                            computador, sem precisar baixar nada.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="background">
+        <div class="container" id="card-plano">
+            <div class="panel pricing-table card-3">
+                <div class="pricing-plan">
+                    <h2 class="pricing-header">Comprometimento e Segurança</h2>
+                    <ul class="pricing-features">
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Armazenamento dos arquivos em
+                            segurança</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Responsabilidade com a
+                            legislação</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i> Cópias de segurança
+                            automáticas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
+
 </html>
+
 
 @stop
