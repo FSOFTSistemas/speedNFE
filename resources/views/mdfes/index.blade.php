@@ -38,7 +38,7 @@
                     <tr>
                         <td>{{ $mdfe->numero }}</td>
                         <td>{{ $mdfe->serie }}</td>
-                        <td>{{ $mdfe->data }}</td>
+                        <td>{{ date('d/m/Y', strtotime($mdfe->data)) }}</td>
                         <td>{{ $mdfe->situacao }}</td>
                         <td>{{ $mdfe->uf_inicio }}</td>
                         <td>{{ $mdfe->uf_termino }}</td>

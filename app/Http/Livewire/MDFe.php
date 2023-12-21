@@ -129,14 +129,34 @@ class MDFe extends Component
 
     public function addMotorista()
     {
-        $this->motoristas[] = $this->motorista;
-        $this->motorista = null;
+        if ($this->motorista && !in_array($this->motorista, $this->motoristas)) {
+            $this->motoristas[] = $this->motorista;
+            $this->motorista = null;
+        }
+    }
+
+    public function removeMotorista($motorista)
+    {
+        if (is_numeric($motorista)) {
+            unset($this->motoristas[$motorista]);
+            $this->motoristas = array_values($this->motoristas);
+        }
     }
 
     public function addReboque()
     {
-        $this->reboques[] = $this->veiculoReboque;
-        $this->veiculoReboque = null;
+        if ($this->veiculoReboque && !in_array($this->veiculoReboque, $this->reboques)) {
+            $this->reboques[] = $this->veiculoReboque;
+            $this->veiculoReboque = null;
+        }
+    }
+
+    public function removeReboque($reboque)
+    {
+        if (is_numeric($reboque)) {
+            unset($this->reboques[$reboque]);
+            $this->reboques = array_values($this->reboques);
+        }
     }
 
     public function buscarChave($chave)
@@ -242,9 +262,9 @@ class MDFe extends Component
         }
     }
 
-    public function removePercurso()
+    public function removePercurso($oi)
     {
-        dd('Oi');
+        dd($oi);
     }
 
     public function editNote($nota, $index)
