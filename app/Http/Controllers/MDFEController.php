@@ -91,7 +91,8 @@ class MDFEController extends Controller
                 "lon_descarregamento" => 'required',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
-                'max' => 'O campo :attibute pode ter no máximo 255 dígitos!',
+                'max' => 'O campo :attribute pode ter no máximo 255 dígitos!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!'
             ]);
             DB::beginTransaction();
                 $MDFe = $this->notasService->save(
@@ -106,9 +107,9 @@ class MDFEController extends Controller
                     $request->valorTotal,
                     $request->pesoTotal,
                     $request->tipoCarga,
-                    $request->numeroNotas_->NFe,
-                    $request->numeroNotas_->MDFe,
-                    $request->numeroNotas_->CTe,
+                    $request->numeroNotas_['NFe'],
+                    $request->numeroNotas_['MDFe'],
+                    $request->numeroNotas_['CTe'],
                     $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
                     $request->veiculoTracao,
                     $request->numeroLacre,
@@ -173,7 +174,8 @@ class MDFEController extends Controller
     public function edit($mdfeId)
     {
         try {
-            return view('mdfes.edit');
+            $nota = $this->notasService->buscarMDFe($mdfeId);
+            return view('mdfes.edit', ['nota' => $nota]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -319,7 +321,6 @@ class MDFEController extends Controller
             if ($modo == 0) {
                 $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas/' . $mdfe->chave_acesso . '.xml');
                 $damdfe = new Damdfe($xml);
-                $damdfe->printParameters('L');
                 $pdf = $damdfe->render();
                 return response($pdf)
                     ->header('Content-Type', 'application/pdf');
