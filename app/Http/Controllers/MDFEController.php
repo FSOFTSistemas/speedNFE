@@ -114,7 +114,7 @@ class MDFEController extends Controller
                     $request->veiculoTracao,
                     $request->numeroLacre,
                     $request->info_fisco,
-                    $request->info_contribuinte,
+                    $request->info_contribuinte
                 );
             if ($MDFe) {
                 $this->prodPredService->createProdPred(
@@ -177,6 +177,72 @@ class MDFEController extends Controller
             $nota = $this->notasService->buscarMDFe($mdfeId);
             return view('mdfes.edit', ['nota' => $nota]);
         } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function update(Request $request, $mdfeId)
+    {
+        try {
+            $request->validate([
+                'notas' => 'required',
+                'numeroNotas_' => 'required',
+                'veiculoTracao' => 'required|numeric',
+                'motoristas' => 'required',
+                'veiculosReboque' => 'nullable',
+                'tipoTransporte' => 'required',
+                'numero' => 'required',
+                'serie' => 'required',
+                'localCarregamento' => 'required',
+                'municipio' => 'required|max:255',
+                'codMunCarregamento' => 'required',
+                'localDescarregamento' => 'required',
+                'percursos' => 'nullable',
+                'dataInicio' => 'required|date',
+                'valorTotal' => 'required|numeric',
+                'pesoTotal' => 'required|numeric',
+                'produtoPredominante' => 'required|max:255',
+                'tipoCarga' => 'required',
+                "info_fisco" => 'nullable|max:255',
+                "info_contribuinte" => 'nullable|max:255',
+                "numeroLacre" => 'nullable',
+                "codigo_gtin" => 'required',
+                "ncm" => 'required',
+                "lat_carregamento" => 'required',
+                "lon_carregamento" => 'required',
+                "lat_descarregamento" => 'required',
+                "lon_descarregamento" => 'required',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attribute pode ter no máximo 255 dígitos!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!'
+            ]);
+            DB::beginTransaction();
+            $this->notasService->update(
+                $request->numero,
+                $request->serie,
+                $request->dataInicio,
+                $request->localCarregamento,
+                $request->localDescarregamento,
+                $request->codMunCarregamento,
+                $request->municipio,
+                $request->percursos,
+                $request->valorTotal,
+                $request->pesoTotal,
+                $request->tipoCarga,
+                $request->numeroNotas_['NFe'],
+                $request->numeroNotas_['MDFe'],
+                $request->numeroNotas_['CTe'],
+                $request->veiculoTracao,
+                $request->numeroLacre,
+                $request->info_fisco,
+                $request->info_contribuinte,
+                $mdfeId
+            );
+            DB::commit();
+            return redirect()->route('mdfe.edit', [$mdfeId]);
+        } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
