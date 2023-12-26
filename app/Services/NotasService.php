@@ -82,6 +82,45 @@ class NotasService
         ]);
     }
 
+    public function updateOrCreateNotas($tipoDocumento, $chave, $uf, $municipio, $codMun, $valor, $peso, $serie, $numero, $nota_id, $mdfeId)
+    {
+        if (!$nota_id) {
+            return $this->saveNotas(
+                $tipoDocumento,
+                $chave,
+                $uf,
+                $municipio,
+                $codMun,
+                $valor,
+                $peso,
+                $serie,
+                $numero,
+                $mdfeId
+            );
+        } else {
+            $nota = MDFeNota::find($nota_id);
+            return $nota->update([
+                'chave' => $chave,
+                'uf' => $uf,
+                'municipio' => $municipio,
+                'codMun' => $codMun,
+                'valor' => $valor,
+                'peso' => $peso,
+                'serie' => $serie,
+                'numero' => $numero,
+            ]);
+        }
+    }
+
+    public function deleteNotas($notas, $mdfeId)
+    {
+        $notas_ids = collect($notas)->pluck('nota_id')->toArray();
+        $ids = MDFeNota::where('mdfe_id', $mdfeId)->get()->pluck('id')->toArray();
+        $notasParaDeletar = array_diff($ids, $notas_ids);
+        dd($notasParaDeletar);
+        return MDFeNota::whereIn('id', $notasParaDeletar)->delete();
+    }
+
     public function deleteMDFe($mdfeId)
     {
         $mdfe = MDFE::find($mdfeId);
