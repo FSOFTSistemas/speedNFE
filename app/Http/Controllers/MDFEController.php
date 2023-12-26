@@ -183,6 +183,7 @@ class MDFEController extends Controller
 
     public function update(Request $request, $mdfeId)
     {
+        // dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -202,6 +203,7 @@ class MDFEController extends Controller
                 'valorTotal' => 'required|numeric',
                 'pesoTotal' => 'required|numeric',
                 'produtoPredominante' => 'required|max:255',
+                'prodPred_id' => 'required|numeric',
                 'tipoCarga' => 'required',
                 "info_fisco" => 'nullable|max:255',
                 "info_contribuinte" => 'nullable|max:255',
@@ -239,6 +241,48 @@ class MDFEController extends Controller
                 $request->info_contribuinte,
                 $mdfeId
             );
+            $this->prodPredService->updateProdPred(
+                $request->produtoPredominante,
+                $request->ncm,
+                $request->codigo_gtin,
+                $request->lat_carregamento,
+                $request->lon_carregamento,
+                $request->lat_descarregamento,
+                $request->lon_descarregamento,
+                $request->prodPred_id
+            );
+            foreach ($request->notas as $nota) {
+                $this->notasService->updateOrCreateNotas(
+                    $nota['tipoDocumento'],
+                    $nota['chave'],
+                    $nota['ufNota'],
+                    $nota['cidade'],
+                    $nota['codMun'],
+                    $nota['valor'],
+                    $nota['peso'],
+                    $nota['serieNota'],
+                    $nota['numeroNota'],
+                    $nota['nota_id'],
+                    $mdfeId
+                );
+            }
+            $this->notasService->deleteNotas($request->notas, $mdfeId);
+            if ($request->reboques) {
+                foreach ($request->reboques as $reboque) {
+                    $this->reboqueService->createReboque(
+                        explode('/', $reboque)[0],
+                        $mdfeId
+                    );
+                }
+                $this->reboqueService->deleteReboques($request->reboques, $mdfeId);
+            }
+            foreach ($request->motoristas as $motorista) {
+                $this->motoristaService->createMotorista(
+                    explode('/', $motorista)[0],
+                    $mdfeId
+                );
+            }
+            $this->motoristaService->deleteMotoristas($request->motoristas, $mdfeId);
             DB::commit();
             return redirect()->route('mdfe.edit', [$mdfeId]);
         } catch (Exception $e) {

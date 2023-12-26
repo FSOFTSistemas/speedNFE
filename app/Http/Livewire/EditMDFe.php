@@ -16,6 +16,7 @@ class EditMDFe extends Component
 
     public $MDFe;
 
+    public $nota_id = null;
     public $tipoDocumento = null;
     public $localDescarregamento = null;
     public $cidade = null;
@@ -49,6 +50,7 @@ class EditMDFe extends Component
     public $numeroLacre = null;
 
     // Produto Predominante
+    public $prodPred_id = null;
     public $codGTIN = null;
     public $codNCM = null;
     public $latCarregamento = null;
@@ -104,6 +106,7 @@ class EditMDFe extends Component
         $this->veiculoTracao = $this->MDFe->veiculoTracao->id;
         $this->tipoCarga = $this->MDFe->tipo_carga;
         foreach ($this->MDFe->notas as $nota) {
+            $this->nota_id = $nota->id;
             $this->tipoDocumento = $nota->tipo_documento;
             $this->localDescarregamento = $nota->uf;
             $this->cidade = $nota->municipio . '@' . $nota->codMun;
@@ -112,6 +115,7 @@ class EditMDFe extends Component
             $this->chave = $nota->chave;
             $this->salvarDocumento();
         }
+        $this->cidadesDescarregamento = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
         foreach (explode(' - ', $this->MDFe->uf_percurso) as $percurso) {
             $this->percurso = $percurso;
             $this->addPercurso();
@@ -125,6 +129,7 @@ class EditMDFe extends Component
             $this->addReboque();
         }
         $this->numeroLacre = $this->MDFe->numeroLacre;
+        $this->prodPred_id = $this->MDFe->prodPred->id;
         $this->codGTIN = $this->MDFe->prodPred->codigo_gtin;
         $this->codNCM = $this->MDFe->prodPred->ncm;
         $this->latCarregamento = $this->MDFe->prodPred->lat_carregamento;
@@ -156,7 +161,7 @@ class EditMDFe extends Component
                 return $this->emit('chaveInvalida');
             }
             $local = explode('@', $this->cidade);
-            $this->nota = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
+            $this->nota = ['nota_id' => $this->nota_id, 'tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
             $this->notas[] = $this->nota;
             $this->numberNotes($this->tipoDocumento);
             $this->calcularTotais();
@@ -230,6 +235,7 @@ class EditMDFe extends Component
 
     public function limparCampos()
     {
+        $this->nota_id = null;
         $this->tipoDocumento = null;
         $this->cidade = null;
         $this->valor = null;
@@ -301,6 +307,7 @@ class EditMDFe extends Component
 
     public function editNote($nota, $index)
     {
+        $this->nota_id = $nota['nota_id'];
         $this->tipoDocumento = $nota['tipoDocumento'];
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
@@ -325,7 +332,7 @@ class EditMDFe extends Component
                 return $this->emit('chaveInvalida');
             }
             $local = explode('@', $this->cidade);
-            $this->notas[$this->indexEdit] = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
+            $this->notas[$this->indexEdit] = ['nota_id' => $this->nota_id, 'tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
             $this->calcularTotais();
             $this->limparCampos();
             return $this->emit('fecharModalEdit');

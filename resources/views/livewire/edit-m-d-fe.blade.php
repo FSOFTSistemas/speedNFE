@@ -60,6 +60,8 @@
                                         </table>
 
                                         @foreach ($notas as $index => $nt)
+                                            <input type="hidden" name="notas[{{ $index }}][nota_id]"
+                                                wire:model="notas.{{ $index }}.nota_id">
                                             <input type="hidden" name="notas[{{ $index }}][tipoDocumento]"
                                                 wire:model="notas.{{ $index }}.tipoDocumento">
                                             <input type="hidden" name="notas[{{ $index }}][ufNota]"
@@ -81,7 +83,8 @@
                                         @endforeach
 
                                         @foreach ($numeroNotas as $index => $nNotas)
-                                            <input type="hidden" name="numeroNotas.[{{ $index }}]" wire:model='numeroNotas.{{ $index }}'>
+                                            <input type="hidden" name="numeroNotas.[{{ $index }}]"
+                                                wire:model='numeroNotas.{{ $index }}'>
                                         @endforeach
 
                                     </div>
@@ -130,10 +133,12 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Motorista *</label>
-                                                <select class="form-control" wire:model="motorista" wire:change="addMotorista()">
+                                                <select class="form-control" wire:model="motorista"
+                                                    wire:change="addMotorista()">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($motoristasDisponiveis as $motorista)
-                                                        <option value="{{ $motorista->id . '/' . $motorista->nome}}">{{ $motorista->nome }}
+                                                        <option value="{{ $motorista->id . '/' . $motorista->nome }}">
+                                                            {{ $motorista->nome }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -145,7 +150,8 @@
                                                                     <b>{{ explode('/', $motorista)[1] }}</b>
                                                                 </div>
                                                                 <div class="col" style="text-align: center">
-                                                                    <i class="fa fa-trash" title="Remover" wire:click="removeMotorista({{ $index }})"></i>
+                                                                    <i class="fa fa-trash" title="Remover"
+                                                                        wire:click="removeMotorista({{ $index }})"></i>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -153,10 +159,10 @@
                                                 </ul>
                                             </div>
 
-                                        @foreach ($motoristas as $index => $mtr)
-                                            <input type="hidden" required name="motoristas[{{ $index }}]"
-                                                wire:model="motoristas.{{ $index }}">
-                                        @endforeach
+                                            @foreach ($motoristas as $index => $mtr)
+                                                <input type="hidden" required name="motoristas[{{ $index }}]"
+                                                    wire:model="motoristas.{{ $index }}">
+                                            @endforeach
 
                                         </div>
                                     </div>
@@ -165,10 +171,12 @@
                                         <div class="col-md-6 col-xs-6">
                                             <div class="form-group">
                                                 <label for="">Veículo de reboque</label>
-                                                <select class="form-control" wire:model="veiculoReboque" wire:change="addReboque()">
+                                                <select class="form-control" wire:model="veiculoReboque"
+                                                    wire:change="addReboque()">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($veiculosReboqueDisponiveis as $veiculoR)
-                                                        <option value="{{ $veiculoR->id . '/' . $veiculoR->placa }}">{{ $veiculoR->placa }}
+                                                        <option value="{{ $veiculoR->id . '/' . $veiculoR->placa }}">
+                                                            {{ $veiculoR->placa }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -180,7 +188,8 @@
                                                                     <b>{{ explode('/', $rbq)[1] }}</b>
                                                                 </div>
                                                                 <div class="col" style="text-align: center">
-                                                                    <i class="fa fa-trash" title="Remover" wire:click="removeReboque({{ $index }})"></i>
+                                                                    <i class="fa fa-trash" title="Remover"
+                                                                        wire:click="removeReboque({{ $index }})"></i>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -377,6 +386,7 @@
                                                 for=""><b> Produto predominante:</b></label>
                                         </div>
                                         <div class="col-md-5 col-xs-5">
+                                            <input class="form-control" type="hidden" name="prodPred_id" wire:model="prodPred_id" required>
                                             <input class="form-control" type="text" name="produtoPredominante"
                                                 wire:model="produtoPredominante" required
                                                 placeholder="Produto predominante...">
@@ -464,15 +474,15 @@
                                                         <div class="col">
                                                             <label for="">Informações de interesse ao
                                                                 fisco</label>
-                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" maxlength="255" cols="10" rows="5"
-                                                                placeholder="Informações ao fisco..."></textarea>
+                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" maxlength="255" cols="10"
+                                                                rows="5" placeholder="Informações ao fisco..."></textarea>
                                                         </div>
 
                                                         <div class="col">
                                                             <label for="">Informações de interesse ao
                                                                 contribuinte</label>
-                                                            <textarea class="form-control" name="info_contribuinte" wire:model="info_contribuinte" maxlength="255" cols="10"
-                                                                rows="5" placeholder="Informações ao contribuinte..."></textarea>
+                                                            <textarea class="form-control" name="info_contribuinte" wire:model="info_contribuinte" maxlength="255"
+                                                                cols="10" rows="5" placeholder="Informações ao contribuinte..."></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -506,14 +516,13 @@
                                                         <div class="col">
                                                             <label for="">Código GTIN</label>
                                                             <input class="form-control" type="text" name="codigo_gtin"
-                                                                wire:model="codGTIN"
-                                                                placeholder="Código GTIN...">
+                                                                wire:model="codGTIN" placeholder="Código GTIN...">
                                                         </div>
 
                                                         <div class="col">
                                                             <label for="">Código NCM</label>
                                                             <input class="form-control" type="text" name="ncm"
-                                                                wire:model="codNCM"  placeholder="Ncm...">
+                                                                wire:model="codNCM" placeholder="Ncm...">
                                                         </div>
                                                     </div>
 
@@ -523,7 +532,8 @@
                                                             <label for="">Latitude local de
                                                                 Carregamento</label>
                                                             <input class="form-control" type="number" min="0"
-                                                                name="lat_carregamento" required wire:model="latCarregamento"
+                                                                name="lat_carregamento" required
+                                                                wire:model="latCarregamento"
                                                                 placeholder="Latitude do local de Carregamento...">
                                                         </div>
 
@@ -531,7 +541,8 @@
                                                             <label for="">Longitude local de
                                                                 Carregamento</label>
                                                             <input class="form-control" type="number" min="0"
-                                                                name="lon_carregamento" required wire:model="lonCarregamento"
+                                                                name="lon_carregamento" required
+                                                                wire:model="lonCarregamento"
                                                                 placeholder="Longitude do local de Carregamento...">
                                                         </div>
                                                     </div>
@@ -541,7 +552,8 @@
                                                             <label for="">Latitude local de
                                                                 Descarregamento</label>
                                                             <input class="form-control" type="number" min="0"
-                                                                name="lat_descarregamento" required wire:model="latDescarregamento"
+                                                                name="lat_descarregamento" required
+                                                                wire:model="latDescarregamento"
                                                                 placeholder="Latitude do local de Descarregamento...">
                                                         </div>
 
@@ -549,7 +561,8 @@
                                                             <label for="">Longitude local de
                                                                 Descarregamento</label>
                                                             <input class="form-control" type="number" min="0"
-                                                                name="lon_descarregamento" required wire:model="lonDescarregamento"
+                                                                name="lon_descarregamento" required
+                                                                wire:model="lonDescarregamento"
                                                                 placeholder="Longitude do local de Descarregamento...">
                                                         </div>
                                                     </div>
@@ -604,12 +617,7 @@
                             <div class="col-md-4 col-xs-4">
                                 <div class="form-group">
                                     <label for="">Local de descarregamento *</label>
-                                    <select class="form-control" wire:model="localDescarregamento" id="meuSelect"
-                                        wire:change="buscarCidades(true)" required>
-                                        <option value="">Selecionar</option>
-                                        @foreach ($ufs as $uf)
-                                            <option value="{{ $uf }}">{{ $uf }}</option>
-                                        @endforeach
+                                    <select class="form-control" wire:model="localDescarregamento" id="meuSelect" required>
                                     </select>
                                 </div>
                             </div>
@@ -619,6 +627,9 @@
                                     <label for="">Cidade *</label>
                                     <select class="form-control" wire:model="cidade" id="cidade" required>
                                         <option value="">Selecionar</option>
+                                        @foreach ($cidadesDescarregamento as $city)
+                                            <option value="{{ $city->cidade . '@' . $city->municipio }}">{{ $city->cidade }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -665,7 +676,7 @@
                 </div>
 
                 <div class="modal-footer" id="cancelar">
-                    <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
+                    <a class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
                 </div>
             </div>
         </div>
@@ -834,12 +845,6 @@
             $('#meuModalEdit').modal('hide');
         });
 
-        Livewire.on('btnCancelar', function() {
-            var cancelar = document.getElementById('cancelar');
-            cancelar.innerHTML =
-                '<button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>';
-        });
-
         Livewire.on('cidades', function(value) {
             var select = document.getElementById('cidade');
             select.innerHTML = '';
@@ -870,6 +875,7 @@
             select.innerHTML = '';
             select.readonly = true;
             var option = document.createElement('option');
+            console.log(select, option);
             option.value = value;
             option.text = value;
             select.add(option);
