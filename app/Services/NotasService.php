@@ -38,6 +38,34 @@ class NotasService
         }
     }
 
+    public function update($numero, $serie, $data, $uf_inicio, $uf_termino, $codMunCarregamento, $municipioCarregamento, $percursos, $valor_total,
+        $peso, $tipo_carga, $nNFe, $nMDFe, $nCTe, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte, $mdfeId) {
+            $mdfe = MDFE::find($mdfeId);
+            return $mdfe->update([
+                'numero' => $numero,
+                'serie' => $serie,
+                'data' => $data,
+                'situacao' => 'Pendente',
+                'uf_inicio' => $uf_inicio,
+                'uf_termino' => $uf_termino,
+                'uf_percurso' => $percursos ? implode(' - ', $percursos) : null,
+                'codMunCarregamento' => $codMunCarregamento,
+                'municipioCarregamento' => $municipioCarregamento,
+                'tipo_documento' => 'MDFe',
+                'chave_acesso' => null,
+                'valor_total' => $valor_total,
+                'peso' => $peso,
+                'tipo_carga' => $tipo_carga,
+                'nNFe' => $nNFe,
+                'nMDFe' => $nMDFe,
+                'nCTe' => $nCTe,
+                'info_fisco' => $info_fisco,
+                'info_contribuinte' => $info_contribuinte,
+                'numeroLacre' => $numeroLacre,
+                'veiculo_tracao_id' => $veicTracao,
+            ]);
+    }
+
     public function saveNotas($tipoDocumento, $chave, $uf, $municipio, $codMun, $valor, $peso, $serie, $numero, $mdfe)
     {
         return MDFeNota::create([

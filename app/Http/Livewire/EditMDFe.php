@@ -84,6 +84,8 @@ class EditMDFe extends Component
         $cidadeService = new CidadeService();
 
         $this->numero = $this->MDFe->numero;
+        $this->serie = $this->MDFe->serie;
+        // $this->tipoTransporte = $this->MDFe->tpTransporte;
         $this->localCarregamento = $this->MDFe->uf_inicio;
         $this->municipio = $this->MDFe->municipioCarregamento;
         $this->codMunCarregamento = $this->MDFe->codMunCarregamento;
@@ -95,16 +97,42 @@ class EditMDFe extends Component
         $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
         $this->veiculosReboqueDisponiveis = $veiculoService->buscarReboques();
         $this->motoristasDisponiveis = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
-        $this->numeroNotas = ['NFe' => $this->MDFe->nNFe, 'MDFe' => $this->MDFe->nMDFe, 'CTe' => $this->MDFe->nCTe];
+        $this->numeroNotas = ['NFe' => 0, 'MDFe' => 0, 'CTe' => 0];
+        $this->valorTotal = $this->MDFe->valor_total;
+        $this->pesoTotal = $this->MDFe->peso;
+        $this->produtoPredominante = $this->MDFe->prodPred->carga_predominante;
+        $this->veiculoTracao = $this->MDFe->veiculoTracao->id;
+        $this->tipoCarga = $this->MDFe->tipo_carga;
         foreach ($this->MDFe->notas as $nota) {
             $this->tipoDocumento = $nota->tipo_documento;
             $this->localDescarregamento = $nota->uf;
-            $this->cidade = $nota->municipio;
+            $this->cidade = $nota->municipio . '@' . $nota->codMun;
             $this->valor = $nota->valor;
             $this->peso = $nota->peso;
             $this->chave = $nota->chave;
             $this->salvarDocumento();
         }
+        foreach (explode(' - ', $this->MDFe->uf_percurso) as $percurso) {
+            $this->percurso = $percurso;
+            $this->addPercurso();
+        }
+        foreach ($this->MDFe->motoristas as $condutor) {
+            $this->motorista = $condutor->motorista->id . '/' . $condutor->motorista->nome;
+            $this->addMotorista();
+        }
+        foreach ($this->MDFe->reboques as $rbq) {
+            $this->veiculoReboque = $rbq->reboque->id . '/' . $rbq->reboque->placa;
+            $this->addReboque();
+        }
+        $this->numeroLacre = $this->MDFe->numeroLacre;
+        $this->codGTIN = $this->MDFe->prodPred->codigo_gtin;
+        $this->codNCM = $this->MDFe->prodPred->ncm;
+        $this->latCarregamento = $this->MDFe->prodPred->lat_carregamento;
+        $this->lonCarregamento = $this->MDFe->prodPred->lon_carregamento;
+        $this->latDescarregamento = $this->MDFe->prodPred->lat_descarregamento;
+        $this->lonDescarregamento = $this->MDFe->prodPred->lon_descarregamento;
+        $this->info_fisco = $this->MDFe->info_fisco;
+        $this->info_contribuinte = $this->MDFe->info_contribuinte;
     }
 
     public function buscarCidades($cargaDescarga)
@@ -273,6 +301,7 @@ class EditMDFe extends Component
 
     public function editNote($nota, $index)
     {
+        $this->tipoDocumento = $nota['tipoDocumento'];
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];

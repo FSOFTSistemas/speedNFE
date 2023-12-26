@@ -208,7 +208,7 @@
                                     <select class="form-control" name="tipoTransporte" wire:model="tipoTransporte"
                                         required>
                                         <option value="Carga própria">Carga própria</option>
-                                        <option value="CT-e globalizado">CT-e golbalizado</option>
+                                        <option value="CT-e globalizado">CT-e globalizado</option>
                                     </select>
                                 </div>
                             </div>

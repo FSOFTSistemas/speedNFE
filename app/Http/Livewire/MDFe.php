@@ -265,6 +265,7 @@ class MDFe extends Component
 
     public function editNote($nota, $index)
     {
+        $this->tipoDocumento = $nota['tipoDocumento'];
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];
