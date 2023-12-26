@@ -23,9 +23,9 @@ class MDFeMotoristaService
             $parts = explode('/', $item);
             return $parts[0];
         }, $motoristas);
-        $ids = MDFeMotorista::where('mdfe_id', $mdfeId)->get()->pluck('id')->toArray();
+        $ids = MDFeMotorista::where('mdfe_id', $mdfeId)->get()->pluck('motorista_id')->toArray();
         $motoristasParaDeletar = array_diff($ids, $motoristas_ids);
-        return MDFeMotorista::whereIn('id', $motoristasParaDeletar)->delete();
+        return MDFeMotorista::whereIn('motorista_id', $motoristasParaDeletar)->where('mdfe_id', $mdfeId)->delete();
     }
 
 }

@@ -117,7 +117,6 @@ class NotasService
         $notas_ids = collect($notas)->pluck('nota_id')->toArray();
         $ids = MDFeNota::where('mdfe_id', $mdfeId)->get()->pluck('id')->toArray();
         $notasParaDeletar = array_diff($ids, $notas_ids);
-        dd($notasParaDeletar);
         return MDFeNota::whereIn('id', $notasParaDeletar)->delete();
     }
 

@@ -421,7 +421,7 @@
             <div class="row" style="text-align: center; margin-bottom: 2%">
                 <div class="col">
                     <a class="btn btn-info" data-toggle="modal" data-target="#modalMoreOptions">Mais Opções</a>
-                    <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Cancelar</a>
+                    <a class="btn btn-secondary" href="{{ route('mdfe.index') }}">Voltar</a>
                     <button class="btn btn-success" type="submit" style="width: 25%">Concluir</button>
                 </div>
             </div>
@@ -875,7 +875,6 @@
             select.innerHTML = '';
             select.readonly = true;
             var option = document.createElement('option');
-            console.log(select, option);
             option.value = value;
             option.text = value;
             select.add(option);
