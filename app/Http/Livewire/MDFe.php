@@ -139,7 +139,7 @@ class MDFe extends Component
 
     public function addMotorista()
     {
-        if ($this->motorista && !in_array($this->motorista, $this->motoristas)) {
+        if ($this->motorista && !in_array($this->motorista, $this->motoristas) && count($this->motoristas) <= 3) {
             $this->motoristas[] = $this->motorista;
             $this->motorista = null;
         }
@@ -155,7 +155,7 @@ class MDFe extends Component
 
     public function addReboque()
     {
-        if ($this->veiculoReboque && !in_array($this->veiculoReboque, $this->reboques)) {
+        if ($this->veiculoReboque && !in_array($this->veiculoReboque, $this->reboques) && count($this->reboques) <= 3) {
             $this->reboques[] = $this->veiculoReboque;
             $this->veiculoReboque = null;
         }

@@ -23,9 +23,9 @@ class MDFeReboqueService
             $parts = explode('/', $item);
             return $parts[0];
         }, $reboques);
-        $ids = MDFeReboque::where('mdfe_id', $mdfeId)->get()->pluck('id')->toArray();
+        $ids = MDFeReboque::where('mdfe_id', $mdfeId)->get()->pluck('reboque_id')->toArray();
         $reboquesParaDeletar = array_diff($ids, $reboques_ids);
-        return MDFeReboque::whereIn('id', $reboquesParaDeletar)->delete();
+        return MDFeReboque::whereIn('reboque_id', $reboquesParaDeletar)->where('mdfe_id', $mdfeId)->delete();
     }
 
 }

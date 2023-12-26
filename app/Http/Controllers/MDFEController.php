@@ -59,7 +59,7 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -251,6 +251,7 @@ class MDFEController extends Controller
                 $request->lon_descarregamento,
                 $request->prodPred_id
             );
+            $this->notasService->deleteNotas($request->notas, $mdfeId);
             foreach ($request->notas as $nota) {
                 $this->notasService->updateOrCreateNotas(
                     $nota['tipoDocumento'],
@@ -266,25 +267,24 @@ class MDFEController extends Controller
                     $mdfeId
                 );
             }
-            $this->notasService->deleteNotas($request->notas, $mdfeId);
             if ($request->reboques) {
+                $this->reboqueService->deleteReboques($request->reboques, $mdfeId);
                 foreach ($request->reboques as $reboque) {
                     $this->reboqueService->createReboque(
                         explode('/', $reboque)[0],
                         $mdfeId
                     );
                 }
-                $this->reboqueService->deleteReboques($request->reboques, $mdfeId);
             }
+            $this->motoristaService->deleteMotoristas($request->motoristas, $mdfeId);
             foreach ($request->motoristas as $motorista) {
                 $this->motoristaService->createMotorista(
                     explode('/', $motorista)[0],
                     $mdfeId
                 );
             }
-            $this->motoristaService->deleteMotoristas($request->motoristas, $mdfeId);
             DB::commit();
-            return redirect()->route('mdfe.edit', [$mdfeId]);
+            return redirect()->route('mdfe.edit', [$mdfeId])->with('success', 'Nota atuzalizada com sucesso!');
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
