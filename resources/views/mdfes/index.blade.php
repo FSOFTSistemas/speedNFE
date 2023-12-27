@@ -76,15 +76,24 @@
                                         <a title="Imprimir" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 0]) }}'
                                             class='text-dark'><i class="fa fa-print"></i></a>
                                     </div>
+                                    <div class="col">
+                                        <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}" class="text-primary"><i class="fas fa-download"></i></a>
+                                    </div>
                                 @elseif ($mdfe->situacao->value === 'Encerrado')
                                     <div class="col">
                                         <a title="Imprimir Encerramento" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 1]) }}'
                                             class='text-dark'><i class="fa fa-print"></i></a>
                                     </div>
+                                    <div class="col">
+                                        <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}" class="text-primary"><i class="fas fa-download"></i></a>
+                                    </div>
                                 @else
                                     <div class="col">
                                         <a title="Imprimir Cancelamento" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 2]) }}'
                                             class='text-dark'><i class="fa fa-print"></i></a>
+                                    </div>
+                                    <div class="col">
+                                        <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}" class="text-primary"><i class="fas fa-download"></i></a>
                                     </div>
                                 @endif
                             </div>

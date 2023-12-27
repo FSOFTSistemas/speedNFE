@@ -475,10 +475,13 @@ class MDFEController extends Controller
         }
     }
 
-    public function downloadXML()
+    public function downloadXML($mdfeId)
     {
         try {
-            return view('mdfes.download-xml');
+            $mdfe = $this->notasService->buscarMDFe($mdfeId);
+            $situacao = $mdfe->situacao->value == 'Autorizado' ? 'Autorizadas' : ($mdfe->situacao->value == 'Cancelado' ? 'Canceladas' : 'Encerradas');
+            $xml = asset('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y', strtotime($mdfe->data)) . '/' . date('m', strtotime($mdfe->data)) . '/notas/' . $situacao . '/' . $mdfe->chave_acesso . '.xml');
+            return response()->download($xml);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
