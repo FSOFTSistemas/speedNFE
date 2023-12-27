@@ -264,16 +264,15 @@
                                             </select>
                                         </div>
                                         <div class="col-md-5 col-xs-4">
-                                            <select class="form-control" name="municipio" wire:model="municipio"
-                                                required>
+                                            <select class="form-control" wire:model="carregamento" wire:change="carregamento()" required>
                                                 @foreach ($cidadesCarregamento as $city)
-                                                    <option value="{{ $city->cidade }}">{{ $city->cidade }}</option>
+                                                    <option value="{{ $city }}">{{ $city->cidade }}</option>
                                                 @endforeach
                                             </select>
 
-                                            <input class="form-control" type="hidden" name="codMunCarregamento"
-                                                wire:model="codMunCarregamento" required
-                                                placeholder="Cód. Município...">
+                                            <input class="form-control" type="hidden" name="codMunCarregamento" wire:model="codMunCarregamento" required placeholder="Cód. Município...">
+
+                                            <input class="form-control" type="hidden" name="municipio" wire:model="municipio" required>
                                         </div>
                                     </div><br>
 

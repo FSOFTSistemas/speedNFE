@@ -59,7 +59,7 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -447,6 +447,29 @@ class MDFEController extends Controller
                 $pdf = $daevento->render();
                 return response($pdf)->header('Content-Type', 'application/pdf');
             }
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        }
+    }
+
+    public function visualizar($mdfeId)
+    {
+        try {
+            $mdfe = $this->notasService->buscarMDFe($mdfeId);
+            $MDFeService = new MDFeService([
+                "atualizacao" => date('Y-m-d h:i:s'),
+                "tpAmb" => (int) $mdfe->empresa->ambiente,
+                "razaosocial" => $mdfe->empresa->razao,
+                "siglaUF" => $mdfe->empresa->endereco->uf,
+                "cnpj" => '42879649000174',
+                "schemes" => "PL_MDFe_300a",
+                "versao" => "3.00",
+            ], $mdfe->empresa);
+            $result = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
+            $damdfe = new Damdfe($result['xml']);
+            $pdf = $damdfe->render();
+            return response($pdf)
+                ->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }

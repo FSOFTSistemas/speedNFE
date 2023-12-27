@@ -64,6 +64,7 @@ class MDFe extends Component
     public $indexEdit = null;
 
     //Dados para preemcher a tela
+    public $carregamento = null;
     public $numeroNotas = [];
     public $tiposDocumentos = [];
     public $cidadesDescarregamento = [];
@@ -86,8 +87,8 @@ class MDFe extends Component
 
         $this->numero = "Geração Automática";
         $this->localCarregamento = $empresa->uf;
-        $this->municipio = $empresa->cidade;
-        $this->codMunCarregamento = $empresa->codigoIBGE;
+        $this->carregamento = json_encode($cidadeService->buscarCidade($empresa->cidade));
+        $this->carregamento();
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
@@ -261,6 +262,13 @@ class MDFe extends Component
     {
         array_pop($this->percursos);
         return $this->emit('percursos', $this->percursos);
+    }
+
+    public function carregamento()
+    {
+        $carregamento = json_decode($this->carregamento);
+        $this->municipio = $carregamento->cidade;
+        $this->codMunCarregamento = $carregamento->municipio;
     }
 
     public function editNote($nota, $index)
