@@ -288,6 +288,11 @@ class EditMDFe extends Component
         return $dv;
     }
 
+    public function percursos()
+    {
+        return $this->emit('percursos', $this->percursos);
+    }
+
     public function addPercurso()
     {
         if ($this->percurso && !in_array($this->percurso, $this->percursos)) {

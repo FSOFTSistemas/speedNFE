@@ -47,6 +47,10 @@
                             <div class="row">
                                 @if ($mdfe->situacao->value === 'Pendente' || $mdfe->situacao->value === 'Rejeitado')
                                     <div class="col">
+                                        <a title="Visualizar" target="_blank" href='{{ route('mdfe.view', [$mdfe->id]) }}'
+                                            class='text-primary'><i class="fa fa-eye"></i></a>
+                                    </div>
+                                    <div class="col">
                                         <a title="Editar" href='{{ route('mdfe.edit', [$mdfe->id]) }}'
                                             class='text-warning'><i class="fa fa-edit"></i></a>
                                     </div>
