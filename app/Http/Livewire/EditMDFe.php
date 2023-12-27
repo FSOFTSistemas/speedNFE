@@ -67,6 +67,7 @@ class EditMDFe extends Component
     public $indexEdit = null;
 
     //Dados para preemcher a tela
+    public $carregamento = null;
     public $numeroNotas = [];
     public $tiposDocumentos = [];
     public $cidadesDescarregamento = [];
@@ -89,8 +90,8 @@ class EditMDFe extends Component
         $this->serie = $this->MDFe->serie;
         // $this->tipoTransporte = $this->MDFe->tpTransporte;
         $this->localCarregamento = $this->MDFe->uf_inicio;
-        $this->municipio = $this->MDFe->municipioCarregamento;
-        $this->codMunCarregamento = $this->MDFe->codMunCarregamento;
+        $this->carregamento = json_encode($cidadeService->buscarCidade($this->MDFe->municipioCarregamento));
+        $this->carregamento();
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
@@ -303,6 +304,13 @@ class EditMDFe extends Component
     {
         array_pop($this->percursos);
         return $this->emit('percursos', $this->percursos);
+    }
+
+    public function carregamento()
+    {
+        $carregamento = json_decode($this->carregamento);
+        $this->municipio = $carregamento->cidade;
+        $this->codMunCarregamento = $carregamento->municipio;
     }
 
     public function editNote($nota, $index)
