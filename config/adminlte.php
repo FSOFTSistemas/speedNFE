@@ -384,11 +384,6 @@ return [
                     'icon'        => 'far fa-fw fa-file',
                 ],
                 [
-                    'text'        => 'Baixar XML (MDFe)',
-                    'url'         => 'mdfes/download/xmls',
-                    'icon'        => 'fas fa-download',
-                ],
-                [
                     'text'        => 'Relatórios (MDFe)',
                     'url'         => 'relatorios/mdfe',
                     'icon'        => 'fas fa-chart-area',
