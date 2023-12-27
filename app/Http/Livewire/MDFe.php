@@ -38,6 +38,22 @@ class MDFe extends Component
     public $tipoCarga = null;
     public $valorTotal = 0;
     public $pesoTotal = 0;
+    public $info_fisco = null;
+    public $info_contribuinte = null;
+    public $motoristas = [];
+    public $reboques = [];
+
+    //Lacres
+    public $lacres = [];
+    public $numeroLacre = null;
+
+    // Produto Predominante
+    public $codGTIN = null;
+    public $codNCM = null;
+    public $latCarregamento = null;
+    public $lonCarregamento = null;
+    public $latDescarregamento = null;
+    public $lonDescarregamento = null;
 
     //Dados da NFe
     public $serieNota = null;
@@ -47,15 +63,18 @@ class MDFe extends Component
     public $notas = [];
     public $indexEdit = null;
 
-    //Dados para preemcher a teça
+    //Dados para preemcher a tela
+    public $carregamento = null;
+    public $numeroNotas = [];
     public $tiposDocumentos = [];
     public $cidadesDescarregamento = [];
     public $cidadesCarregamento = [];
     public $tiposCarga = [];
     public $ufs = [];
+    public $percursos = [];
     public $veiculosTracao = [];
-    public $veiculosReboque = [];
-    public $motoristas = [];
+    public $veiculosReboqueDisponiveis = [];
+    public $motoristasDisponiveis = [];
 
     public function mount()
     {
@@ -68,16 +87,17 @@ class MDFe extends Component
 
         $this->numero = "Geração Automática";
         $this->localCarregamento = $empresa->uf;
-        $this->municipio = $empresa->cidade;
-        $this->codMunCarregamento = '2600206';
+        $this->carregamento = json_encode($cidadeService->buscarCidade($empresa->cidade));
+        $this->carregamento();
         $this->tiposDocumentos = TipoDocumentoEnum::cases();
         $this->tiposCarga = TipoCargaEnum::cases();
         $this->ufs = UfEnum::cases();
         $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
         $this->dataInicio = now()->format('Y-m-d');
         $this->veiculosTracao = $veiculoService->buscarVeiculosTracao();
-        $this->veiculosReboque = $veiculoService->buscarReboques();
-        $this->motoristas = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
+        $this->veiculosReboqueDisponiveis = $veiculoService->buscarReboques();
+        $this->motoristasDisponiveis = $motoristaService->buscarMotoristas(Auth::user()->empresa_id);
+        $this->numeroNotas = ['NFe' => 0, 'MDFe' => 0, 'CTe' => 0];
     }
 
     public function buscarCidades($cargaDescarga)
@@ -103,10 +123,50 @@ class MDFe extends Component
             $local = explode('@', $this->cidade);
             $this->nota = ['tipoDocumento' => $this->tipoDocumento, 'cidade' => $local[0], 'codMun' => $local[1], 'ufNota' => $this->ufNota, 'valor' => $this->valor, 'peso' => $this->peso, 'chave' => $this->chave, 'serieNota' => $this->serieNota, 'numeroNota' => $this->numeroNota];
             $this->notas[] = $this->nota;
+            $this->numberNotes($this->tipoDocumento);
             $this->calcularTotais();
             $this->limparCampos();
             $this->emit('btnCancelar');
             return $this->emit('fecharModal');
+        }
+    }
+
+    public function numberNotes($tpDoc)
+    {
+        if (array_key_exists($tpDoc, $this->numeroNotas)) {
+            $this->numeroNotas[$tpDoc]++;
+        }
+    }
+
+    public function addMotorista()
+    {
+        if ($this->motorista && !in_array($this->motorista, $this->motoristas) && count($this->motoristas) <= 3) {
+            $this->motoristas[] = $this->motorista;
+            $this->motorista = null;
+        }
+    }
+
+    public function removeMotorista($motorista)
+    {
+        if (is_numeric($motorista)) {
+            unset($this->motoristas[$motorista]);
+            $this->motoristas = array_values($this->motoristas);
+        }
+    }
+
+    public function addReboque()
+    {
+        if ($this->veiculoReboque && !in_array($this->veiculoReboque, $this->reboques) && count($this->reboques) <= 3) {
+            $this->reboques[] = $this->veiculoReboque;
+            $this->veiculoReboque = null;
+        }
+    }
+
+    public function removeReboque($reboque)
+    {
+        if (is_numeric($reboque)) {
+            unset($this->reboques[$reboque]);
+            $this->reboques = array_values($this->reboques);
         }
     }
 
@@ -135,6 +195,7 @@ class MDFe extends Component
 
     public function limparCampos()
     {
+        $this->tipoDocumento = null;
         $this->cidade = null;
         $this->valor = null;
         $this->peso = null;
@@ -147,14 +208,9 @@ class MDFe extends Component
         if (strlen($chave) != 44) {
             return false;
         }
-        $uf = $this->ufNota(substr($chave, 0, 2));
-        // $anoMesEmissao = substr($chave, 2, 4);
         $cnpjEmitente = substr($chave, 6, 14);
-        // $modelo = substr($chave, 20, 2);
         $serie = substr($chave, 22, 3);
         $numeroNota = substr($chave, 25, 9);
-        // $tipoEmisao = substr($chave, 34, 1);
-        // $codigoNumerico = substr($chave, 35, 8);
         $digitoVerificador = substr($chave, 43, 1);
         if (!$this->validarCNPJ($cnpjEmitente)) {
             return false;
@@ -190,19 +246,34 @@ class MDFe extends Component
         return $dv;
     }
 
-    public function ufNota($codigo)
+    public function addPercurso()
     {
-        foreach (UfEnum::cases() as $uf) {
-            $cod = explode('_', $uf->name)[1];
-            if ($cod == $codigo) {
-                return $uf;
+        if ($this->percurso && !in_array($this->percurso, $this->percursos)) {
+            if ($this->percurso == $this->localCarregamento || $this->percurso == $this->localDescarregamento) {
+                return $this->emit('percursoInvalido');
             }
+            $this->percursos[] = $this->percurso;
+            $this->percurso = null;
+            return $this->emit('percursos', $this->percursos);
         }
-        return false;
+    }
+
+    public function removePercurso()
+    {
+        array_pop($this->percursos);
+        return $this->emit('percursos', $this->percursos);
+    }
+
+    public function carregamento()
+    {
+        $carregamento = json_decode($this->carregamento);
+        $this->municipio = $carregamento->cidade;
+        $this->codMunCarregamento = $carregamento->municipio;
     }
 
     public function editNote($nota, $index)
     {
+        $this->tipoDocumento = $nota['tipoDocumento'];
         $this->cidade = $nota['cidade'] . '@' . $nota['codMun'];
         $this->valor = $nota['valor'];
         $this->peso = $nota['peso'];

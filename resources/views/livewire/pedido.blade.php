@@ -52,7 +52,7 @@
                                 </option>
                             @endforeach
                         @else
-                            @foreach ($cfops as $cfop)
+                            @foreach (json_decode($cfops) as $cfop)
                                 <option value="{{ $cfop->id }}">{{ $cfop->cfop }} | {{ $cfop->natureza }}
                                 </option>
                             @endforeach

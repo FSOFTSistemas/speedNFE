@@ -11,7 +11,27 @@ class Empresa extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['razao', 'fantasia', 'cpf_cnpj', 'endereco_id', 'rg_ie', 'celular', 'ultimaNFe', 'serie', 'certificado', 'senhaCertificado', 'ambiente', 'status', 'csc', 'idCsc', 'limClientes', 'limProdutos', 'limNotas'];
+    protected $fillable = [
+		'razao',
+		'fantasia',
+		'cpf_cnpj',
+		'endereco_id',
+		'rg_ie',
+		'celular',
+		'ultimaNFe',
+		'ultimaMDFe',
+		'serie',
+		'certificado',
+		'senhaCertificado',
+		'ambiente',
+		'status',
+		'csc',
+		'idCsc',
+		'limClientes',
+		'limProdutos',
+		'limNFes',
+		'limMDFes'
+	];
 
     public function endereco(){
         return $this->hasOne(Endereco::class, 'id', 'endereco_id');
@@ -26,7 +46,7 @@ class Empresa extends Model
         return $empresa->ultimoNumeroNFe + 1;
     }
 
-    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $nfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $notas, $clientes, $produtos){
+    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $nfe, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $clientes, $produtos){
         $response = Empresa::create([
             'razao' => $nome,
             'fantasia' => $fantasia,
@@ -35,16 +55,18 @@ class Empresa extends Model
             'rg_ie' => $rg_ie,
             'celular' => $telefone,
             'ultimaNFe' => $nfe,
+            'ultimaMDFe' => $mdfe,
             'serie' => $serie,
+            'certificado' => $certificado,
             'senhaCertificado' => $senha,
             'ambiente' => $ambiente,
             'status' => 1,
             'csc' => $csc,
             'idCsc' => $idCsc,
-            'certificado' => $certificado,
-            'limNotas' => $notas,
             'limClientes' => $clientes,
-            'limProdutos' => $produtos
+            'limProdutos' => $produtos,
+            'limNFes' => $limNFes,
+            'limMDFes' => $limMDFes
         ]);
         return $response;
     }

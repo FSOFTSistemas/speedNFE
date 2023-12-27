@@ -20,17 +20,22 @@ class MDFE extends Model
         'uf_inicio',
         'uf_termino',
         'uf_percurso',
+        'codMunCarregamento',
+        'municipioCarregamento',
         'tipo_documento',
         'chave_acesso',
+        'nProtocolo',
         'valor_total',
         'peso',
-        'carga_predominante',
-        'ncm',
         'tipo_carga',
+        'nNFe',
+        'nMDFe',
+        'nCTe',
+        'info_fisco',
+        'info_contribuinte',
+        'numeroLacre',
         'empresa_id',
         'veiculo_tracao_id',
-        'veiculo_reboque_id',
-        'motoristaId'
     ];
 
     protected $casts = [
@@ -49,18 +54,23 @@ class MDFE extends Model
         return $this->belongsTo(Veiculo::class, 'veiculo_tracao_id');
     }
 
-    public function veiculoReboque()
+    public function reboques()
     {
-        return $this->belongsTo(Veiculo::class, 'veiculo_reboque_id');
+        return $this->hasMany(MDFeReboque::class, 'mdfe_id');
     }
 
-    public function motorista()
+    public function motoristas()
     {
-        return $this->belongsTo(Motorista::class, 'motoristaId');
+        return $this->hasMany(MDFeMotorista::class, 'mdfe_id');
     }
 
     public function notas()
     {
         return $this->hasMany(MDFeNota::class, 'mdfe_id');
+    }
+
+    public function prodPred()
+    {
+        return $this->hasOne(MDFeProdPred::class, 'mdfe_id');
     }
 }

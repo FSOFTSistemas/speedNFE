@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PlanoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PedidosController;
 use App\Http\Controllers\ProdutosController;
@@ -28,13 +31,28 @@ use App\Http\Controllers\VeiculoController;
 |
 */
 
+
+
+//Home
+Route::get('/', function(){
+
+    return view('homePage');
+});
+
+
+Route::get('/homePage', [HomeController::class, 'homePage'])->name('homePage');
+
+//Planos
+Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
+
+
 Route::get('/home', function () {
     return view('home');
 })->name('home')->middleware('auth');
 
-Route::get('/',  function () {
-    return view('home');
-})->middleware('auth');
+// Route::get('/',  function () {
+//     return view('home');
+// })->middleware('auth');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -57,6 +75,7 @@ Route::prefix('empresa')->group(function () {
     Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware('auth');
     Route::post('/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware('auth');
     Route::post('', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware('auth');
+    Route::get('/{uf}/atualizar-cidades', [EmpresasController::class, 'updateCities'])->name('updateCities')->middleware('auth');
 });
 
 //CLIENTE
@@ -160,9 +179,14 @@ Route::prefix('mdfes')->group(function () {
     Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware('auth');
     Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware('auth');
     Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware('auth');
+    Route::put('/{id}/update', [MDFEController::class, 'update'])->name('mdfe.update')->middleware('auth');
     Route::delete('/deletar', [MDFEController::class, 'delete'])->name('mdfe.delete')->middleware('auth');
-    Route::get('/download/xmls', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
+    Route::get('/{mdfeId}/visualizar', [MDFEController::class, 'visualizar'])->name('mdfe.view')->middleware('auth');
+    Route::get('/{mdfeId}/download-xml', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
     Route::get('/{mdfeId}/enviar-nota', [MDFEController::class, 'enviarMDFe'])->name('mdfe.enviar')->middleware('auth');
+    Route::get('/{mdfeId}/encerrar-nota', [MDFEController::class, 'encerrarMDFe'])->name('mdfe.close')->middleware('auth');
+    Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware('auth');
+    Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware('auth');
 });
 
 //MOTORISTAS
@@ -184,5 +208,7 @@ Route::prefix('veiculos')->group(function () {
     Route::put('/atualizar/{id}', [VeiculoController::class, 'update'])->name('veiculos.update')->middleware('auth');
     Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware('auth');
 });
+
+
 
 require __DIR__ . '/auth.php';

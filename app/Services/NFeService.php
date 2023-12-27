@@ -470,7 +470,6 @@ class NFeService
             return [
                 'sucesso' => $recibo,
             ];
-            // $this->printDanfe($xml);
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),

@@ -5,7 +5,6 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            {{-- <h3>Emitir MDFe</h3> --}}
         </div>
     </div>
 @stop
@@ -13,7 +12,7 @@
 @section('content')
 
     <div class="container">
-        @livewire('m-d-fe')
+        @livewire('edit-m-d-fe', ['MDFe' => $nota])
     </div>
 
 @stop

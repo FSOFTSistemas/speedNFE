@@ -2,6 +2,7 @@
 
 @section('title', 'AdminLTE')
 
+    
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
@@ -109,6 +110,7 @@
         </div>
     </div>
 @endsection
+
 
 @section('js')
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>

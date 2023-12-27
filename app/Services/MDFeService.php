@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use Exception;
+use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
+use NFePHP\MDFe\Common\Standardize;
+use NFePHP\MDFe\Complements;
 use NFePHP\MDFe\Make;
 use NFePHP\MDFe\Tools;
 
@@ -20,21 +24,26 @@ class MDFeService
 
     public function gerarXml($transporte, $emitente)
     {
+        if ($transporte->situacao == 'Autorizado' || $transporte->situacao == 'Cancelado') {
+            return false;
+        }
         $mdfe = new Make();
-        // dd($transporte, $mdfe, $emitente);
 
         //Identificação do MDF-e
         $numeroMDFe = $emitente->ultimaMDFe + 1;
         $stdIde = new \stdClass();
         $stdIde->cUF = \App\Models\Empresa::getCUF($emitente->endereco->uf);
         $stdIde->tpAmb = $emitente->ambiente;
-        $stdIde->tpEmit = '1';
+        $stdIde->tpEmit = '2';
+        if ($transporte->veiculoTracao->tipo_propriedade->value === 'Terceiro') {
+            $stdIde->tpTransp = explode('_', $transporte->veiculoTracao->proprietario->tipo_transportador->name)[1];
+        }
         $stdIde->mod = $mdfe->mod;
         $stdIde->serie = $emitente->serie;
         $stdIde->nMDF = $numeroMDFe;
         $stdIde->cDV = '0';
         $stdIde->modal = '1';
-        $stdIde->dhEmi = $transporte->created_at;
+        $stdIde->dhEmi = date("Y-m-d\TH:i:sP");
         $stdIde->tpEmis = '1';
         $stdIde->procEmi = '0';
         $stdIde->verProc = '1.0';
@@ -44,42 +53,47 @@ class MDFeService
 
         //Informações do Município de Carregamento
         $infMunCarrega = new \stdClass();
-        $infMunCarrega->cMunCarrega = $transporte->codMunCarregamento;
-        $infMunCarrega->xMunCarrega = $transporte->municipioCarregamento;
+        $infMunCarrega->cMunCarrega = $this->retiraPontuacoes($transporte->codMunCarregamento);
+        $infMunCarrega->xMunCarrega = $this->retiraAcentos($transporte->municipioCarregamento);
         $mdfe->taginfMunCarrega($infMunCarrega);
 
         //Informações dos Municípios de Percurso
-        foreach ($transporte->percurso as $UFPer) {
-            $infPercurso = new \stdClass();
-            $infPercurso->UFPer = $UFPer;
-            $mdfe->taginfPercurso($infPercurso);
+        if ($transporte->uf_percurso) {
+            foreach (explode(' - ', $transporte->uf_percurso) as $UFPer) {
+                $infPercurso = new \stdClass();
+                $infPercurso->UFPer = $UFPer;
+                $mdfe->taginfPercurso($infPercurso);
+            }
         }
 
         //Identificação do Emitente do Manifesto
         $emit = new \stdClass();
-        $emit->CNPJ = $emitente->cnpj;
-        $emit->IE = $emitente->ie;
-        $emit->xNome = $emitente->razao;
-        $emit->xFant = $emitente->fantasia;
+        if (strlen($emitente->cpf_cnpj) > 14) {
+            $emit->CNPJ = $this->retiraPontuacoes($emitente->cpf_cnpj);
+        } else {
+            $emit->CPF = $this->retiraPontuacoes($emitente->cpf_cnpj);
+        }
+        $emit->IE = $this->retiraPontuacoes($emitente->rg_ie);
+        $emit->xNome = $this->retiraAcentos($emitente->razao);
+        $emit->xFant = $this->retiraAcentos($emitente->fantasia);
         $mdfe->tagemit($emit);
 
         //Endereço do Emitente
         $enderEmit = new \stdClass();
-        $enderEmit->xLgr = $emitente->rua;
-        $enderEmit->nro = $emitente->numero;
-        $enderEmit->xBairro = $emitente->bairro;
-        $enderEmit->cMun = $emitente->codMun;
-        $enderEmit->xMun = $emitente->cidade;
-        $enderEmit->CEP = $emitente->cep;
-        $enderEmit->UF = $emitente->uf;
-        $enderEmit->fone = $emitente->contato;
-        $enderEmit->email = $emitente->email;
+        $enderEmit->xLgr = $this->retiraAcentos($emitente->endereco->rua);
+        $enderEmit->nro = $emitente->endereco->numero;
+        $enderEmit->xBairro = $this->retiraAcentos($emitente->endereco->bairro);
+        $enderEmit->cMun = $this->retiraPontuacoes($emitente->endereco->codigoIBGE);
+        $enderEmit->xMun = $this->retiraAcentos($emitente->endereco->cidade);
+        $enderEmit->CEP = $this->retiraPontuacoes($emitente->endereco->cep);
+        $enderEmit->UF = $emitente->endereco->uf;
+        $enderEmit->fone = $this->retiraPontuacoes($emitente->celular);
         $mdfe->tagenderEmit($enderEmit);
 
         //Grupo de informações para Agência Reguladora
         if ($transporte->veiculoTracao->tipo_propriedade == 'Terceiro') {
             $infANTT = new \stdClass();
-            $infANTT->RNTRC = $transporte->veiculoTracao->RNTRC;
+            $infANTT->RNTRC = $this->retiraPontuacoes($transporte->veiculoTracao->RNTRC);
             $mdfe->taginfANTT($infANTT);
         }
 
@@ -91,229 +105,250 @@ class MDFeService
         //Dados do Veículo com a Tração
         $veicTracao = new \stdClass();
         $veicTracao->cInt = $transporte->veiculoTracao->id;
-        $veicTracao->placa = $transporte->veiculoTracao->placa;
-        $veicTracao->RENAVAM = $transporte->veiculoTracao->renavam;
-        $veicTracao->tara = $transporte->veiculoTracao->tara;
-        $veicTracao->capKG = $transporte->veiculoTracao->capacidade;
-        $veicTracao->tpRod = $transporte->veiculoTracao->tipo_rodado;
-        $veicTracao->tpCar = $transporte->veiculoTracao->tipo_carroceria;
-        $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo;
-        $veicTracao->capM3 = $transporte->veiculoTracao->capacidade_m3;
+        $veicTracao->placa = $this->retiraPontuacoes($transporte->veiculoTracao->placa);
+        $veicTracao->RENAVAM = $this->retiraPontuacoes($transporte->veiculoTracao->renavam);
+        $veicTracao->tara = intval($transporte->veiculoTracao->tara);
+        $veicTracao->capKG = intval($transporte->veiculoTracao->capacidade);
+        $veicTracao->tpRod = explode('_', $transporte->veiculoTracao->tipo_rodado->name)[1];
+        $veicTracao->tpCar = explode('_', $transporte->veiculoTracao->tipo_carroceria->name)[1];
+        $veicTracao->UF = $transporte->veiculoTracao->uf_veiculo->value;
+        $veicTracao->capM3 = intval($transporte->veiculoTracao->capacidade_m3);
 
         //Identificação do Motorista
-        $condutor = new \stdClass();
-        $condutor->xNome = $transporte->motorista->nome;
-        $condutor->CPF = $transporte->motorista->cpf;
-        $veicTracao->condutor = [$condutor];
+        foreach ($transporte->motoristas as $cond) {
+            $condutor = new \stdClass();
+            $condutor->xNome = $this->retiraAcentos($cond->motorista->nome);
+            $condutor->CPF = $this->retiraPontuacoes($cond->motorista->cpf);
+            $veicTracao->condutor = [$condutor];
+        }
 
         //Identificação do Proprietário do Veículo
-        $prop = new \stdClass();
-        $proprietario = $transporte->veiculoTracao->proprietario;
-        if (strlen($proprietario->cnpj_cpf) == 14) {
-            $prop->CPF = $proprietario->cnpj_cpf;
-        } else {
-            $prop->CNPJ = $proprietario->cnpj_cpf;
+        if ($transporte->veiculoTracao->tipo_propriedade->value === 'Terceiro') {
+            $prop = new \stdClass();
+            $proprietario = $transporte->veiculoTracao->proprietario;
+            if (strlen($proprietario->cpf_cnpj) == 14) {
+                $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+            } else {
+                $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+            }
+            $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
+            $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
+            $prop->IE = $this->retiraPontuacoes($proprietario->ie);
+            $prop->UF = $proprietario->uf_proprietario->value;
+            $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
+            $veicTracao->prop = $prop;
         }
-        if ($proprietario->RNTRC) {
-            $prop->RNTRC = $proprietario->RNTRC;
-        }
-        $prop->xNome = $proprietario->nome;
-        $prop->IE = $proprietario->ie;
-        $prop->UF = $proprietario->uf;
-        $prop->tpProp = $proprietario->tipo_proprietario;
-        $veicTracao->prop = $prop;
+
         $mdfe->tagveicTracao($veicTracao);
 
-        if ($transporte->veiculoReboque) {
-            //Dados dos Reboques
-            $veicReboque = new \stdClass();
-            $veicReboque->cInt = $transporte->veiculoReboque->id;
-            $veicReboque->placa = $transporte->veicReboque->placa;
-            $veicReboque->RENAVAM = $transporte->veicReboque->renavam;
-            $veicReboque->tara = $transporte->veicReboque->tara;
-            $veicReboque->capKG = $transporte->veicReboque->capacidade;
-            $veicReboque->capM3 = $transporte->veicReboque->capacidade_m3;
-            $veicReboque->tpCar = $transporte->veicReboque->tipo_carroceria;
-            $veicReboque->UF = $transporte->veicReboque->uf_veiculo;
+        if (count($transporte->reboques) > 0) {
+            foreach ($transporte->reboques as $rbq) {
+                //Dados dos Reboques
+                $veicReboque = new \stdClass();
+                $veicReboque->cInt = $rbq->reboque->id;
+                $veicReboque->placa = $this->retiraPontuacoes($rbq->reboque->placa);
+                $veicReboque->RENAVAM = $this->retiraPontuacoes($rbq->reboque->renavam);
+                $veicReboque->tara = intval($rbq->reboque->tara);
+                $veicReboque->capKG = intval($rbq->reboque->capacidade);
+                $veicReboque->capM3 = intval($rbq->reboque->capacidade_m3);
+                $veicReboque->tpCar = explode('_', $rbq->reboque->tipo_carroceria->name)[1];
+                $veicReboque->UF = $rbq->reboque->uf_veiculo->value;
 
-            //Identificação do Proprietário do Reboque
-            $prop = new \stdClass();
-            $proprietario = $transporte->veiculoReboque->proprietario;
-            if (strlen($proprietario->cnpj_cpf) == 14) {
-                $prop->CPF = $proprietario->cnpj_cpf;
-            } else {
-                $prop->CNPJ = $proprietario->cnpj_cpf;
+                //Identificação do Proprietário do Reboque
+                if ($rbq->reboque->tipo_propriedade === 'Terceiro') {
+                    $prop = new \stdClass();
+                    $proprietario = $rbq->reboque->proprietario;
+                    if (strlen($proprietario->cpf_cnpj) == 14) {
+                        $prop->CPF = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+                    } else {
+                        $prop->CNPJ = $this->retiraPontuacoes($proprietario->cpf_cnpj);
+                    }
+                    $prop->RNTRC = $this->retiraPontuacoes($this->retiraAcentos($proprietario->rntrc));
+                    $prop->xNome = $this->retiraAcentos($proprietario->nome_proprietario);
+                    $prop->IE = $this->retiraPontuacoes($proprietario->ie);
+                    $prop->UF = $proprietario->uf_proprietario->value;
+                    $prop->tpProp = explode('_', $proprietario->tipo_proprietario->name)[1];
+                    $veicReboque->prop = $prop;
+                }
+
+                $mdfe->tagveicReboque($veicReboque);
             }
-            if ($proprietario->RNTRC) {
-                $prop->RNTRC = $proprietario->RNTRC;
-            }
-            $prop->xNome = $proprietario->nome;
-            $prop->IE = $proprietario->ie;
-            $prop->UF = $proprietario->uf;
-            $prop->tpProp = $proprietario->tipo_proprietario;
-            $veicReboque->prop = $prop;
-            $mdfe->tagveicReboque($veicReboque);
         }
 
         //Informações dos lacres de um trasnporte especial
-        if ($transporte->nLacre) {
+        if ($transporte->numeroLacre) {
             $lacRodo = new \stdClass();
-            $lacRodo->nLacre = $transporte->nLacre;
+            $lacRodo->nLacre = $transporte->numeroLacre;
             $mdfe->taglacRodo($lacRodo);
         }
 
         //Informações dos Municípios de Descarregamento
-        $infMunDescarga = new \stdClass();
-        $infMunDescarga->cMunDescarga = $transporte->codMunDescarregamento;
-        $infMunDescarga->xMunDescarga = $transporte->municipioDescarregamento;
-        $mdfe->taginfMunDescarga($infMunDescarga);
+        foreach ($transporte->notas as $nota) {
+            $infMunDescarga = new \stdClass();
+            $infMunDescarga->cMunDescarga = $this->retiraPontuacoes($nota->codMun);
+            $infMunDescarga->xMunDescarga = $nota->municipio;
+            $mdfe->taginfMunDescarga($infMunDescarga);
+        }
 
         //Informações para CT-e, implementar no futuro
-//         $std = new \stdClass();
-//         $std->chCTe = '35310800000000000372570010001999091000027765';
-//         $std->SegCodBarra = '012345678901234567890123456789012345';
-//         $std->indReentrega = '1';
-//         $std->nItem = 0;
+        // if ($transporte->nCTe > 0) {
+        //     $std = new \stdClass();
+        //     $std->chCTe = '35310800000000000372570010001999091000027765';
+        //     $std->SegCodBarra = '012345678901234567890123456789012345';
+        //     $std->indReentrega = '1';
+        //     $std->nItem = 0;
 
-// /* Informações das Unidades de Transporte (Carreta/Reboque/Vagão) */
-//         $stdinfUnidTransp = new \stdClass();
-//         $stdinfUnidTransp->tpUnidTransp = '1';
-//         $stdinfUnidTransp->idUnidTransp = 'AAA-1111';
+        //     /* Informações das Unidades de Transporte (Carreta/Reboque/Vagão) */
+        //     $stdinfUnidTransp = new \stdClass();
+        //     $stdinfUnidTransp->tpUnidTransp = '1';
+        //     $stdinfUnidTransp->idUnidTransp = 'AAA-1111';
 
-// /* Lacres das Unidades de Transporte */
-//         $stdlacUnidTransp = new \stdClass();
-//         $stdlacUnidTransp->nLacre = ['00000001', '00000002'];
+        //     /* Lacres das Unidades de Transporte */
+        //     $stdlacUnidTransp = new \stdClass();
+        //     $stdlacUnidTransp->nLacre = ['00000001', '00000002'];
 
-//         $stdinfUnidTransp->lacUnidTransp = $stdlacUnidTransp;
+        //     $stdinfUnidTransp->lacUnidTransp = $stdlacUnidTransp;
 
-// /* Informações das Unidades de Carga (Containeres/ULD/Outros) */
-//         $stdinfUnidCarga = new \stdClass();
-//         $stdinfUnidCarga->tpUnidCarga = '1';
-//         $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
+        //     /* Informações das Unidades de Carga (Containeres/ULD/Outros) */
+        //     $stdinfUnidCarga = new \stdClass();
+        //     $stdinfUnidCarga->tpUnidCarga = '1';
+        //     $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
 
-// /* Lacres das Unidades de Carga */
-//         $stdlacUnidCarga = new \stdClass();
-//         $stdlacUnidCarga->nLacre = ['00000001', '00000002'];
+        //     /* Lacres das Unidades de Carga */
+        //     $stdlacUnidCarga = new \stdClass();
+        //     $stdlacUnidCarga->nLacre = ['00000001', '00000002'];
 
-//         $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
-//         $stdinfUnidCarga->qtdRat = '3.50';
+        //     $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
+        //     $stdinfUnidCarga->qtdRat = '3.50';
 
-//         $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
-//         $stdinfUnidTransp->qtdRat = '3.50';
+        //     $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
+        //     $stdinfUnidTransp->qtdRat = '3.50';
 
-//         $std->infUnidTransp = [$stdinfUnidTransp];
+        //     $std->infUnidTransp = [$stdinfUnidTransp];
 
-// /* transporte de produtos classificados pela ONU como perigosos */
-//         $stdperi = new \stdClass();
-//         $stdperi->nONU = '1234';
-//         $stdperi->xNomeAE = 'testeNome';
-//         $stdperi->xClaRisco = 'testeClaRisco';
-//         $stdperi->grEmb = 'testegrEmb';
-//         $stdperi->qTotProd = '1';
-//         $stdperi->qVolTipo = '1';
-//         $std->peri = [$stdperi];
+        //     /* transporte de produtos classificados pela ONU como perigosos */
+        //     $stdperi = new \stdClass();
+        //     $stdperi->nONU = '1234';
+        //     $stdperi->xNomeAE = 'testeNome';
+        //     $stdperi->xClaRisco = 'testeClaRisco';
+        //     $stdperi->grEmb = 'testegrEmb';
+        //     $stdperi->qTotProd = '1';
+        //     $stdperi->qVolTipo = '1';
+        //     $std->peri = [$stdperi];
 
-// /* Grupo de informações da Entrega Parcial (Corte de Voo) */
-//         $stdinfEntregaParcial = new \stdClass();
-//         $stdinfEntregaParcial->qtdTotal = '1234.56';
-//         $stdinfEntregaParcial->qtdParcial = '1234.56';
-//         $std->infEntregaParcial = $stdinfEntregaParcial;
+        //     /* Grupo de informações da Entrega Parcial (Corte de Voo) */
+        //     $stdinfEntregaParcial = new \stdClass();
+        //     $stdinfEntregaParcial->qtdTotal = '1234.56';
+        //     $stdinfEntregaParcial->qtdParcial = '1234.56';
+        //     $std->infEntregaParcial = $stdinfEntregaParcial;
 
-//         $mdfe->taginfCTe($std);
+        //     $mdfe->taginfCTe($std);
 
-//         $infMunDescarga = new \stdClass();
-//         $infMunDescarga->cMunDescarga = '1502400';
-//         $infMunDescarga->xMunDescarga = 'CASTANHAL';
-//         $infMunDescarga->nItem = 1;
-//         $mdfe->taginfMunDescarga($infMunDescarga);
+        //     $infMunDescarga = new \stdClass();
+        //     $infMunDescarga->cMunDescarga = '1502400';
+        //     $infMunDescarga->xMunDescarga = 'CASTANHAL';
+        //     $infMunDescarga->nItem = 1;
+        //     $mdfe->taginfMunDescarga($infMunDescarga);
 
-// /* infCTe */
-//         $std = new \stdClass();
-//         $std->chCTe = '35310800000000000372570010001998991000614492';
-//         $std->nItem = 1;
-//         $mdfe->taginfCTe($std);
+        //     /* infCTe */
+        //     $std = new \stdClass();
+        //     $std->chCTe = '35310800000000000372570010001998991000614492';
+        //     $std->nItem = 1;
+        //     $mdfe->taginfCTe($std);
+        // }
 
         //Informações das NFes
-        foreach ($transporte->notas as $nota) {
-            $infNFe = new \stdClass();
-            $infNFe->chNFe = $nota->chave;
-            $mdfe->taginfNFe($infNFe);
+        if ($transporte->nNFe > 0) {
+            foreach ($transporte->notas as $nota) {
+                if ($nota->tipo_documento === 'NFe') {
+                    $infNFe = new \stdClass();
+                    $infNFe->chNFe = $nota->chave;
+                    $mdfe->taginfNFe($infNFe);
+                }
+            }
         }
 
-        //Informações de Transporte da MDFe
-        $infMDFe = new \stdClass();
-        $infMDFe->chMDFe = '0';
+        if ($transporte->nMDFe > 0) {
+            //Informações de Transporte da MDFe
+            $infMDFe = new \stdClass();
+            $infMDFe->chMDFe = '0';
 
-        //Informações das Unidades de Transporte (Carreta/Reboque/Vagão)
-        $unidades = [$transporte->veiculoTracao, $transporte->veiculoReboque];
-        foreach ($unidades as $un) {
-            $stdinfUnidTransp = new \stdClass();
-            $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo == 'Tração' ? '1' : '2';
-            $stdinfUnidTransp->idUnidTransp = $un->placa;
-        }
+            //Informações das Unidades de Transporte (Carreta/Reboque/Vagão)
+            $unidades = [];
+            $unidades[] = $transporte->veiculoTracao;
+            foreach ($transporte->reboques as $rbq) {
+                $unidades[] = $rbq->reboque;
+            }
+            foreach ($unidades as $un) {
+                $stdinfUnidTransp = new \stdClass();
+                $stdinfUnidTransp->tpUnidTransp = $un->tipo_veiculo->value == 'Tração' ? '1' : '2';
+                $stdinfUnidTransp->idUnidTransp = $this->retiraPontuacoes($un->placa);
+            }
 
-        //Lacres das Unidades de Transporte
-        $stdlacUnidTransp = new \stdClass();
-        $stdlacUnidTransp->nLacre = ['00000001', '00000002'];
+            // if ($transporte->lacres) {
+            //Lacres das Unidades de Transporte
+            $stdlacUnidTransp = new \stdClass();
+            $stdlacUnidTransp->nLacre = [$transporte->numeroLacre];
 
-        $stdinfUnidTransp->lacUnidaTransp = $stdlacUnidTransp;
+            $stdinfUnidTransp->lacUnidTransp = $stdlacUnidTransp;
 
-        //Informações das Unidades de Carga (Containeres/ULD/Outros)
-        $stdinfUnidCarga = new \stdClass();
-        $stdinfUnidCarga->tpUnidCarga = '1';
-        $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
+            //Informações das Unidades de Carga (Containeres/ULD/Outros)
+            $stdinfUnidCarga = new \stdClass();
+            $stdinfUnidCarga->tpUnidCarga = '1';
+            $stdinfUnidCarga->idUnidCarga = '01234567890123456789';
 
-        //Lacres das Unidades de Carga
-        $stdlacUnidCarga = new \stdClass();
-        $stdlacUnidCarga->nLacre = ['00000001', '00000001'];
+            //Lacres das Unidades de Carga
+            $stdlacUnidCarga = new \stdClass();
+            $stdlacUnidCarga->nLacre = ['00000001', '00000001'];
 
-        $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
-        $stdinfUnidCarga->qtdRat = '3.50';
+            $stdinfUnidCarga->lacUnidCarga = $stdlacUnidCarga;
+            $stdinfUnidCarga->qtdRat = '3.50';
 
-        $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
-        $stdinfUnidTransp->qtdRat = '3.50';
+            $stdinfUnidTransp->infUnidCarga = [$stdinfUnidCarga];
+            $stdinfUnidTransp->qtdRat = '3.50';
 
-        $infMDFe->infUnidTransp = [$stdinfUnidTransp];
+            $infMDFe->infUnidTransp = [$stdinfUnidTransp];
+            // }
 
-        //Transporte de produtos classificados pela ONU como perigosos
-        if ($transporte->prodsPrerigosos) {
+            //Transporte de produtos classificados pela ONU como perigosos
+            // if ($transporte->prodsPrerigosos) {
             $stdperi = new \stdClass();
             $stdperi->nONU = '1234';
             $stdperi->xNomeAE = 'testeNome';
             $stdperi->xClaRisco = 'testeClaRisco';
-            $stdperi->grEmb = 'testegrEmb';
+            $stdperi->grEmb = 'teste';
             $stdperi->qTotProd = '1';
             $stdperi->qVolTipo = '1';
-
             $infMDFe->peri = [$stdperi];
+            // }
+            $mdfe->taginfMDFeTransp($infMDFe);
         }
 
-        $mdfe->taginfMDFeTransp($infMDFe);
-
+        //Falta ajeitar daqui
         $tot = new \stdClass();
-        $tot->qCTe = '0';
-        $tot->qNFe = count($transporte->notas);
-        $tot->qMDFe = '0';
-        $tot->vCarga = $transporte->valorTotal;
+        $tot->qCTe = $transporte->nCTe;
+        $tot->qNFe = $transporte->nNFe;
+        $tot->qMDFe = $transporte->nMDFe;
+        $tot->vCarga = $transporte->valor_total;
         $tot->cUnid = '01';
-        $tot->qCarga = $transporte->pesoTotal;
+        $tot->qCarga = $transporte->peso;
         $mdfe->tagtot($tot);
 
         $prodPred = new \stdClass();
-        $prodPred->tpCarga = $transporte->tipoCarga;
-        $prodPred->xProd = $transporte->produtoPredominante;
-        $prodPred->cEAN = null;
-        $prodPred->NCM = null;
+        $prodPred->tpCarga = explode('_', $transporte->tipo_carga->name)[1];
+        $prodPred->xProd = $this->retiraAcentos($transporte->prodPred->carga_predominante);
+        $prodPred->cEAN = $transporte->prodPred->codigo_gtin;
+        $prodPred->NCM = $this->retiraPontuacoes($transporte->prodPred->ncm);
 
         $localCarrega = new \stdClass();
         $localCarrega->CEP = '00000000';
-        $localCarrega->latitude = null;
-        $localCarrega->longitude = null;
+        $localCarrega->latitude = $transporte->prodPred->lat_carregamento;
+        $localCarrega->longitude = $transporte->prodPred->lon_carregamento;
 
         $localDescarrega = new \stdClass();
         $localDescarrega->CEP = '00000000';
-        $localDescarrega->latitude = null;
-        $localDescarrega->longitude = null;
+        $localDescarrega->latitude = $transporte->prodPred->lat_descarregamento;
+        $localDescarrega->longitude = $transporte->prodPred->lon_descarregamento;
 
         $lotacao = new \stdClass();
         $lotacao->infLocalCarrega = $localCarrega;
@@ -331,13 +366,144 @@ class MDFeService
         $mdfe->taginfRespTec($infRespTec);
 
         $infAdic = new \stdClass();
-        $infAdic->infCpl = 'Hello my friend';
-        $infAdic->infAdFisco = 'Very good bro!';
+        $infAdic->infCpl = $transporte->info_contribuinte;
+        $infAdic->infAdFisco = $transporte->info_fisco;
         $mdfe->taginfAdic($infAdic);
-
-        $xml = $mdfe->getXml();
-        header("Content-type: text/xml");
-        echo $mdfe->getXML();
+        try {
+            $arr = [
+                'xml' => $mdfe->getXML(),
+                'chave' => $mdfe->getChave(),
+                'nMDF' => $stdIde->nMDF,
+            ];
+            return $arr;
+        } catch (\Exception $e) {
+            return [
+                'erros_xml' => $mdfe->getErrors(),
+            ];
+        }
     }
 
+    public function sign($xml)
+    {
+        return $this->tools->signMDFe($xml);
+    }
+
+    public function transmitir($signXml, $chave, $caminho)
+    {
+        try {
+            $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
+            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            if ($std->cStat != 103) {
+                return [
+                    'erro' => "[$std->cStat] - $std->xMotivo",
+                ];
+            }
+            $recibo = $std->infRec->nRec;
+            $protocolo = $this->tools->sefazConsultaRecibo($recibo);
+            sleep(2);
+            $xml = Complements::toAuthorize($signXml, $protocolo);
+            if (!File::exists(public_path($caminho . '/'))) {
+                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+            }
+            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+            return [
+                'sucesso' => $recibo,
+                'nProt' => simplexml_load_string($xml)->protMDFe->infProt->nProt,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'erro' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function encerrar($mdfe, $caminho)
+    {
+        try {
+            if ($mdfe->situacao->value != 'Autorizado') {
+                return [
+                    'erro' => "Situação da nota não permite essa ação!",
+                ];
+            }
+            $resp = $this->tools->sefazEncerra($mdfe->chave_acesso, $mdfe->nProtocolo, '26', $mdfe->empresa->endereco->codigoIBGE);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            if ($std->infEvento->cStat != 135) {
+                return [
+                    'erro' => "[" . $std->infEvento->cStat . "] - " . $std->infEvento->xMotivo,
+                ];
+            }
+            $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
+            if (!File::exists(public_path($caminho . '/'))) {
+                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+            }
+            file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
+            return [
+                'sucesso' => true,
+                'nProt' => $std->infEvento->nProt,
+            ];
+        } catch (Exception $e) {
+            return [
+                'erro' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function cancelar($mdfe, $just, $caminho)
+    {
+        try {
+            if ($mdfe->situacao->value != 'Autorizado') {
+                return [
+                    'erro' => "Situação de nota não permite essa ação!",
+                ];
+            }
+            $resp = $this->tools->sefazCancela($mdfe->chave_acesso, $just, $mdfe->nProtocolo);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            sleep(2);
+            if ($std->infEvento->cStat != 135) {
+                return [
+                    'erro' => "[" . $std->infEvento->cStat . "] - " . $std->infEvento->xMotivo,
+                ];
+            }
+            $canceledXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
+            if (!File::exists(public_path($caminho . '/'))) {
+                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+            }
+            file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $canceledXml);
+            return [
+                'sucesso' => true,
+                'nProt' => $std->infEvento->nProt,
+            ];
+        } catch (Exception $e) {
+            return [
+                'erro' => $e->getMessage(),
+            ];
+        }
+    }
+
+    private function retiraAcentos($texto)
+    {
+        return preg_replace(array("/(á|à|ã|â|ä)/", "/(Á|À|Ã|Â|Ä)/", "/(é|è|ê|ë)/", "/(É|È|Ê|Ë)/", "/(í|ì|î|ï)/", "/(Í|Ì|Î|Ï)/", "/(ó|ò|õ|ô|ö)/", "/(Ó|Ò|Õ|Ô|Ö)/", "/(ú|ù|û|ü)/", "/(Ú|Ù|Û|Ü)/", "/(ñ)/", "/(Ñ)/", "/(ç)/"), explode(" ", "a A e E i I o O u U n N c"), $texto);
+    }
+
+    public function format($number, $dec = 2)
+    {
+        return number_format((float) $number, $dec, ".", "");
+    }
+
+    public function retiraPontuacoes($texto)
+    {
+        $texto = str_replace(".", "", $texto);
+        $texto = str_replace("/", "", $texto);
+        $texto = str_replace("-", "", $texto);
+        $texto = str_replace(" ", "", $texto);
+        $texto = str_replace('(', '', $texto);
+        $texto = str_replace(')', '', $texto);
+        return $texto;
+    }
 }

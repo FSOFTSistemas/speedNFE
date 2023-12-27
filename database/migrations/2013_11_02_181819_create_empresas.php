@@ -27,11 +27,13 @@ return new class extends Migration
             $table->integer('idCsc');
             $table->string('status')->nullable();
             $table->integer('ultimaNFe')->nullable();
+            $table->integer('ultimaMDFe')->nullable();
             $table->integer('serie')->nullable();
             $table->binary('certificado')->nullable();
             $table->string('senhaCertificado')->nullable();
             $table->integer('ambiente')->nullable();
-            $table->integer('limNotas');
+            $table->integer('limNFes');
+            $table->integer('limMDFes');
             $table->integer('limClientes');
             $table->integer('limProdutos');
             $table->timestamps();
@@ -44,16 +46,18 @@ return new class extends Migration
             'rg_ie' => '00000000',
             'celular' => '87981445566',
             'ultimaNFe' => 1,
+            'ultimaMDFe' => 1,
             'serie' => 1,
             'certificado' => null,
             'senhaCertificado' => null,
-            'ambiente' => 1,
+            'ambiente' => 2,
             'status' => 1,
             'csc' => '060',
             'idCsc' => 1,
             'limClientes' => 10,
             'limProdutos' => 100,
-            'limNotas' => 1000
+            'limNFes' => 1000,
+            'limMDFes' => 1000
         ]);
     }
 

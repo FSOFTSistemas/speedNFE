@@ -193,7 +193,7 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-light-primary elevation-4',
+    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar bg-light',
     'classes_topnav_nav' => 'navbar-expand',
@@ -382,11 +382,6 @@ return [
                     'text'        => 'Notas Emitidas (MDFe)',
                     'url'         => 'mdfes',
                     'icon'        => 'far fa-fw fa-file',
-                ],
-                [
-                    'text'        => 'Baixar XML (MDFe)',
-                    'url'         => 'mdfes/download/xmls',
-                    'icon'        => 'fas fa-download',
                 ],
                 [
                     'text'        => 'Relatórios (MDFe)',
