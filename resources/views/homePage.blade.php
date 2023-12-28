@@ -104,17 +104,11 @@
             </div>
 
             <div class="colfooter">
-                <h3 class="titleFooter">Contato</h3>
+                <h3 class="titleFooter">Endereço</h3>
                 <ul>
                     
-                        <p><i class="fa-regular fa-envelope" id="envelope"></i> fsoftsistemas@gmail.com</p>
-                    
-                  
-                        <p><i class="fas fa-phone" id="phone" ></i> (87) 98122-0025</p>
-                    
-                   
-                        <p><i class="fab fa-whatsapp" id="whatsapp"></i> (87) 98175-3993</p>
-                    
+                <p><i class="fas fa-phone" id="phone"></i> Rua Luiz Brito N° 53, Centro, Garanhuns-PE</p>
+               
                 </ul>
             </div>
 
@@ -122,7 +116,7 @@
                 <h3 class="titleFooter">Redes Sociais</h3>
                 <a target="_blank" href="https://api.whatsapp.com/send?phone=5587981753993&text=Ola%20como%20posso%20ajudar%20voce" class="botao"><span> <i class="fab fa-whatsapp"></i> </span></a>
                 <a target="_blank" href="https://www.instagram.com/fsoft_sistemas?igsh=OGQ5ZDc2ODk2ZA==" class="botao"><span> <i class="fab fa-instagram"></i> </span></a>
-                <a target="_blank" href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox" class="botao"><span> <i class="fa-regular fa-envelope"></i> </span></a>
+                <a target="_blank" href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=CllgCJTJFqFvFbNvNzvRbgtJwSkMjMfpskWjLjNCslCGwQwMhrksCpKNWFrCnKVgKSQJgprcblq" class="botao"><span> <i class="fa-regular fa-envelope"></i> </span></a>
                 <a target="_blank" href="https://www.linkedin.com/in/fsoft-sistemas-2a8049238/" class="botao"><span> <i class="fa-brands fa-linkedin-in"></i> </span></a>
             </div>
 
