@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-3B6NwesSXE7YJlcLI9RpRqGf2p/EgVH8BgoKTaUrmKNDkHPStTQ3EyoYjCGXaOTS" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ asset("css/Telas_Principais/planos.css") }}">
     <title>Planos</title>
 </head>
@@ -26,7 +27,7 @@
           <div class="panel pricing-table">
             
             <div class="pricing-plan">
-              <h2 class="pricing-header">Produto 1</h2>
+              <h2 class="pricing-header">Classic</h2>
               <ul class="pricing-features">
                 <li class="pricing-features-item"> Descrição</li>
                 <li class="pricing-features-item"> Vantagens</li>
@@ -36,9 +37,9 @@
             </div>
             
             <div class="pricing-plan">
-              <h2 class="pricing-header">Produto 2</h2>
+              <h2 class="pricing-header">Advanced</h2>
               <ul class="pricing-features">
-                <li class="pricing-features-item"> Descrição</li>
+                <li class="pricing-features-item"> </li>
                 <li class="pricing-features-item">Vantagens</li>
               </ul>
               <span class="pricing-price">R$ 100,00</span>
@@ -46,7 +47,7 @@
             </div>
             
             <div class="pricing-plan">
-              <h2 class="pricing-header">Produto 3</h2>
+              <h2 class="pricing-header">Premium</h2>
               <ul class="pricing-features">
                 <li class="pricing-features-item">Descrição</li>
                 <li class="pricing-features-item">Vantagens</li>
@@ -72,33 +73,34 @@
             </div>
 
             <div class="colfooter">
-                <h3 class="titleFooter">Contato</h3>
-                <ul>
-                    <li>
-                        <p><i class="fab fa-whatsapp" id="envelope"></i> fsoftsistemas@gmail.com</p>
-                    </li>
-                    <li>
-                        <p><i class="fas fa-phone"></i> (87) 98122-0025</p>
-                    </li>
-                    <li>
-                        <p><i class="fab fa-whatsapp"></i> (87) 981753993</p>
-                    </li>
-                </ul>
+                <h3 class="titleFooter">Endereço</h3>
+               
+                    
+                <p><i class="fas fa-map-marker-alt" id="location"></i> Rua Luiz Brito N° 53, Centro, Garanhuns-PE</p>
+                <div class="mapouter">
+                  <div class="gmap_canvas">
+                      <iframe width="770" height="510" id="gmap_canvas" src="https://maps.google.com/maps?q=Rua Luiz Brito N° 53, Centro, Garanhuns-PE&t=&z=15&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                      <a href="https://2yu.co">2yu</a><br>
+                      <a href="https://embedgooglemap.2yu.co">html embed google map</a>
+                  </div>
+              </div>
+
+                
             </div>
 
             <div class="colfooter">
                 <h3 class="titleFooter">Redes Sociais</h3>
-                <a href="https://www.instagram.com/fsoft_sistemas?igsh=OGQ5ZDc2ODk2ZA==" class="botao"><span> <i class="fab fa-whatsapp"></i> </span></a>
-                <a href="#" class="botao"><span> <i class="fab fa-instagram"></i> </span></a>
-                <a href="#" class="botao"><span> <i class="fab fa-twitter"></i> </span></a>
-                <a href="#" class="botao"><span> <i class="fab fa-pinterest"></i> </span></a>
+                <a target="_blank" href="https://api.whatsapp.com/send?phone=5587981753993&text=Ola%20como%20posso%20ajudar%20voce" class="botao"><span> <i class="fab fa-whatsapp"></i> </span></a>
+                <a target="_blank" href="https://www.instagram.com/fsoft_sistemas?igsh=OGQ5ZDc2ODk2ZA==" class="botao"><span> <i class="fab fa-instagram"></i> </span></a>
+                <a target="_blank" href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox" class="botao"><span> <i class="fa-regular fa-envelope"></i> </span></a>
+                <a target="_blank" href="https://www.linkedin.com/in/fsoft-sistemas-2a8049238/" class="botao"><span> <i class="fa-brands fa-linkedin-in"></i> </span></a>
             </div>
 
             <div class="clear"></div>
         </div>
 
         <div class="main_footer_copy">
-            <a href="https://f-softsistemas.com.br/"> SpeedNFE - 2021, todos os direitos reservados. Desenvolvido por:
+            <a target='_blank' href="https://f-softsistemas.com.br/"> SpeedNFE - 2021, todos os direitos reservados. Desenvolvido por:
                 FsoftSistemas </a>
 
 
