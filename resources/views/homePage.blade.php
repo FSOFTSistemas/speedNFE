@@ -43,10 +43,10 @@
         <div class="container" id="card-plano">
             <div class="panel pricing-table card-1">
                 <div class="pricing-plan">
-                    <h2 class="pricing-header"> Emissão de Notas Gratuitas</h2>
+                    <h2 class="pricing-header">Emissão de Notas Gratuitas</h2>
                     <ul class="pricing-features">
-                        <li class="pricing-features-item">Teste de Emissão Gratuito</li>
-                        <li class="pricing-features-item">Atualizações e melhorias constantes sem custo adicional</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i>Teste de Emissão Gratuito</li>
+                        <li class="pricing-features-item"><i class="fas fa-check"></i>Atualizações e melhorias constantes sem custo adicional</li>
                     </ul>
                 </div>
             </div>
@@ -106,31 +106,31 @@
             <div class="colfooter">
                 <h3 class="titleFooter">Contato</h3>
                 <ul>
-                    <li>
-                        <p><i class="fab fa-whatsapp"></i> fsoftsistemas@gmail.com</p>
-                    </li>
-                    <li>
-                        <p><i class="fas fa-phone"></i> (87) 98122-0025</p>
-                    </li>
-                    <li>
-                        <p><i class="fab fa-whatsapp"></i> (87) 981753993</p>
-                    </li>
+                    
+                        <p><i class="fa-regular fa-envelope" id="envelope"></i> fsoftsistemas@gmail.com</p>
+                    
+                  
+                        <p><i class="fas fa-phone" id="phone" ></i> (87) 98122-0025</p>
+                    
+                   
+                        <p><i class="fab fa-whatsapp" id="whatsapp"></i> (87) 98175-3993</p>
+                    
                 </ul>
             </div>
 
             <div class="colfooter">
                 <h3 class="titleFooter">Redes Sociais</h3>
-                <a href="https://www.instagram.com/fsoft_sistemas?igsh=OGQ5ZDc2ODk2ZA==" class="botao"><span> <i class="fab fa-whatsapp"></i> </span></a>
-                <a href="#" class="botao"><span> <i class="fab fa-instagram"></i> </span></a>
-                <a href="#" class="botao"><span> <i class="fab fa-twitter"></i> </span></a>
-                <a href="#" class="botao"><span> <i class="fab fa-pinterest"></i> </span></a>
+                <a target="_blank" href="https://api.whatsapp.com/send?phone=5587981753993&text=Ola%20como%20posso%20ajudar%20voce" class="botao"><span> <i class="fab fa-whatsapp"></i> </span></a>
+                <a target="_blank" href="https://www.instagram.com/fsoft_sistemas?igsh=OGQ5ZDc2ODk2ZA==" class="botao"><span> <i class="fab fa-instagram"></i> </span></a>
+                <a target="_blank" href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox" class="botao"><span> <i class="fa-regular fa-envelope"></i> </span></a>
+                <a target="_blank" href="https://www.linkedin.com/in/fsoft-sistemas-2a8049238/" class="botao"><span> <i class="fa-brands fa-linkedin-in"></i> </span></a>
             </div>
 
             <div class="clear"></div>
         </div>
 
         <div class="main_footer_copy">
-            <a href="https://f-softsistemas.com.br/"> SpeedNFE - 2021, todos os direitos reservados. Desenvolvido por:
+            <a target='_blank' href="https://f-softsistemas.com.br/"> SpeedNFE - 2021, todos os direitos reservados. Desenvolvido por:
                 FsoftSistemas </a>
 
 
