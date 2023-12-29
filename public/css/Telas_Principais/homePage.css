@@ -473,12 +473,12 @@ margin-right: 10px;
 }
 
 .main_footer_copy a {
-  font-family: 'Montserrat';
-  font-size: 1em;
-  color: black;
-  height: 20px;
-  font-weight: 600;
-  padding-bottom: 10px;
+  font-family: 'Lora';
+    font-size: 2dvh;
+    color: #37499D;
+    height: 20px;
+    font-weight: 600;
+    padding-bottom: 10px;
 }
 
 .main_footer_copy .m-b-footer {

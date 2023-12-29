@@ -121,29 +121,9 @@
 
 
     </div>
-
+    
 
 </body>
 
 </html>
 
-
-{{-- @section('auth_footer')
-    Password reset link
-    @if($password_reset_url)
-        <p class="my-0">
-            <a href="{{ $password_reset_url }}">
-                Esqueci minha senha
-            </a>
-        </p>
-    @endif --}}
-
-    {{-- Register link --}}
-    {{-- @if($register_url)
-        <p class="my-0">
-            <a href="{{ $register_url }}">
-                {{ __('adminlte::adminlte.register_a_new_membership') }}
-            </a>
-        </p>
-    @endif --}}
-{{-- @stop --}}
