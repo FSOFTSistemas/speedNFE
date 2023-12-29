@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class VeiculoController extends Controller
 {
@@ -72,9 +73,9 @@ class VeiculoController extends Controller
             $request->validate([
                 'placa' => 'required',
                 'capacidade' => 'nullable|numeric',
-                'renavan' => 'required|max:255',
+                'renavan' => 'required|max:9|min:9',
                 'tara' => 'required|numeric',
-                'capacidade_m3' => 'required|numeric',
+                'capacidade_m3' => 'required',
                 'tipo_carroceria' => 'required',
                 'tipo_veiculo' => 'required',
                 'tipo_rodado' => 'required',
@@ -87,9 +88,14 @@ class VeiculoController extends Controller
                 'isento' => 'nullable',
                 'nome' => 'nullable|max:255',
                 'uf_prop' => 'nullable',
-                'rntrc' => 'nullable',
+                'rntrc' => 'nullable|min:8|max:8',
                 'tipo_proprietario' => 'nullable',
                 'tipo_transportador' => 'nullable',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ter um valor numérico!',
+                'max' => 'O campo :attribute deve conter no máximo :max',
+                'min' => 'O campo :attribute deve conter no mínimo :min'
             ]);
             DB::beginTransaction();
             $veiculo = $this->veiculosServices->salvar($request->all());
@@ -102,11 +108,16 @@ class VeiculoController extends Controller
                 $request->rntrc,
                 $request->tipo_proprietario,
                 $request->tipo_transportador,
-                $veiculo,
-                $this->empresaService->buscarEmpresa($request->empresaId)
+                $veiculo
             );
             DB::commit();
             return redirect()->route('veiculos.index')->with('success', 'Veículo cadastrado com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -147,9 +158,9 @@ class VeiculoController extends Controller
             $request->validate([
                 'placa' => 'required',
                 'capacidade' => 'nullable|numeric',
-                'renavan' => 'required|max:255',
+                'renavan' => 'required|max:9|min:9',
                 'tara' => 'required|numeric',
-                'capacidade_m3' => 'required|numeric',
+                'capacidade_m3' => 'required',
                 'tipo_carroceria' => 'required',
                 'tipo_veiculo' => 'required',
                 'tipo_rodado' => 'required',
@@ -162,9 +173,14 @@ class VeiculoController extends Controller
                 'isento' => 'nullable',
                 'nome' => 'nullable|max:255',
                 'uf_prop' => 'nullable',
-                'rntrc' => 'nullable',
+                'rntrc' => 'nullable|min:8|max:8',
                 'tipo_proprietario' => 'nullable',
-                'tipo_transportador' => 'nullable'
+                'tipo_transportador' => 'nullable',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ter um valor numérico!',
+                'max' => 'O campo :attribute deve conter no máximo :max',
+                'min' => 'O campo :attribute deve conter no mínimo :min'
             ]);
             DB::beginTransaction();
             $proprietario = $this->veiculosServices->update($request->all(), $veiculoID);

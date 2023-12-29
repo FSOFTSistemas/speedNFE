@@ -104,7 +104,6 @@ Route::prefix('usuarios')->group(function () {
     Route::get('/del/{id}', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware('auth');
     Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware('auth');
     Route::post('/editar/{id}', [UsersController::class, 'update'])->name('update_usuario')->middleware('auth');
-   
 });
 
 //PRODUTOS
@@ -180,9 +179,14 @@ Route::prefix('mdfes')->group(function () {
     Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware('auth');
     Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware('auth');
     Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware('auth');
+    Route::put('/{id}/update', [MDFEController::class, 'update'])->name('mdfe.update')->middleware('auth');
     Route::delete('/deletar', [MDFEController::class, 'delete'])->name('mdfe.delete')->middleware('auth');
-    Route::get('/download/xmls', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
+    Route::get('/{mdfeId}/visualizar', [MDFEController::class, 'visualizar'])->name('mdfe.view')->middleware('auth');
+    Route::get('/{mdfeId}/download-xml', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware('auth');
     Route::get('/{mdfeId}/enviar-nota', [MDFEController::class, 'enviarMDFe'])->name('mdfe.enviar')->middleware('auth');
+    Route::get('/{mdfeId}/encerrar-nota', [MDFEController::class, 'encerrarMDFe'])->name('mdfe.close')->middleware('auth');
+    Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware('auth');
+    Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware('auth');
 });
 
 //MOTORISTAS
