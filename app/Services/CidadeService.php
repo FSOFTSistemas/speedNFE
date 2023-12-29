@@ -16,4 +16,8 @@ class CidadeService {
         return Cidade::where('uf', $uf)->get();
     }
 
+    public function buscarCidade($cidade)
+    {
+        return Cidade::where('cidade', $cidade)->first();
+    }
 }

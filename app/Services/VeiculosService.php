@@ -26,7 +26,7 @@ class VeiculosService
         return $veiculo->delete();
     }
 
-    public function salvarProprietario($cpf_cnpj, $ie, $isento, $nome, $uf_prop, $rntrc, $tipo_proprietario, $tipo_transportador, $veiculo, $empresa)
+    public function salvarProprietario($cpf_cnpj, $ie, $isento, $nome, $uf_prop, $rntrc, $tipo_proprietario, $tipo_transportador, $veiculo)
     {
         if ($cpf_cnpj) {
             return Proprietario::create([
@@ -38,18 +38,6 @@ class VeiculosService
                 'rntrc' => $rntrc,
                 'tipo_proprietario' => $tipo_proprietario,
                 'tipo_transportador' => $tipo_transportador,
-                'veiculo_id' => $veiculo->id
-            ]);
-        } else {
-            return Proprietario::create([
-                'cpf_cnpj' => $empresa->cpf_cnpj,
-                'ie' => $empresa->rg_ie,
-                'isento' => 1,
-                'nome_proprietario' => $empresa->razao,
-                'uf_proprietario' => $empresa->uf,
-                'rntrc' => 'Não informado',
-                'tipo_proprietario' => 'TAC independente',
-                'tipo_transportador' => 'TAC',
                 'veiculo_id' => $veiculo->id
             ]);
         }
