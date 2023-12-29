@@ -310,7 +310,7 @@ return [
         ],
         [
             'text'        => 'Inicio',
-            'url'         => '/',
+            'url'         => '/home',
             'icon'        => 'fas fa-home',
         ],
         [

@@ -18,19 +18,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ asset("css/login.css") }}">
-    <title>Document</title>
-</head>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset("css/Telas_Principais/login.css") }}">
-    <title>Document</title>
+    <title>NFE Online</title>
 </head>
 
 <body>
@@ -57,7 +46,7 @@
                 <form action="{{ $login_url }}" method="post">
                     @csrf
 
-                    {{-- Seu formulário aqui --}}
+                    
                     <div class="input-group mb-3">
                         <p><label for="email" class="form-label" id="email_label">Email:</label></p><br><br>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
@@ -117,9 +106,19 @@
                     </div>
                 </form>
 
+
             </div>
         </div>
     </div>
+
+    <div class="main_footer_copy">
+        <a target='_blank' href="https://f-softsistemas.com.br/"> FNEOnline- 2023, todos os direitos reservados. Desenvolvido por:
+            FsoftSistemas </a>
+
+
+    </div>
+
+
 </body>
 
 </html>
