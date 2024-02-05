@@ -29,30 +29,30 @@
             <div class="pricing-plan">
               <h2 class="pricing-header">Classic</h2>
               <ul class="pricing-features">
-                <li class="pricing-features-item"> Descrição</li>
-                <li class="pricing-features-item"> Vantagens</li>
+                <li class="pricing-features-item"> Emissão de até 3 notas NFe </li>
+                <li class="pricing-features-item"> 1 Cadastro de CNPJ</li>
               </ul>
-              <span class="pricing-price">R$ 100,00</span>
+              <span class="pricing-price">R$ 29,99  </span>
               <a href="#/" class="pricing-button">Assinar</a>
             </div>
             
             <div class="pricing-plan">
               <h2 class="pricing-header">Advanced</h2>
               <ul class="pricing-features">
-                <li class="pricing-features-item"> </li>
-                <li class="pricing-features-item">Vantagens</li>
+                <li class="pricing-features-item"> Emissão de até 9 notas <br>(3 NFe, 3 MDFe ,3 CTe)  </li>
+                <li class="pricing-features-item"> 2 Cadastros de CNPJ</li>
               </ul>
-              <span class="pricing-price">R$ 100,00</span>
+              <span class="pricing-price">R$ 59,99</span>
               <a href="#/" class="pricing-button is-featured">Assinar</a>
             </div>
             
             <div class="pricing-plan">
               <h2 class="pricing-header">Premium</h2>
               <ul class="pricing-features">
-                <li class="pricing-features-item">Descrição</li>
-                <li class="pricing-features-item">Vantagens</li>
+                <li class="pricing-features-item">Emissão de notas Ilimitadas</li>
+                <li class="pricing-features-item">Cadastro de CNPJ Ilmitados</li>
               </ul>
-              <span class="pricing-price">R$ 100,00</span>
+              <span class="pricing-price">R$ 89,99</span>
               <a href="#/" class="pricing-button">Assinar</a>
             </div>
             
