@@ -46,9 +46,7 @@ Route::get('/homePage', [HomeController::class, 'homePage'])->name('homePage');
 Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
 
 
-Route::get('/home', function () {
-    return view('home');
-})->name('home')->middleware('auth');
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
 // Route::get('/',  function () {
 //     return view('home');
