@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\Pedido;
 use App\Models\Produto;
 use Illuminate\Http\Request;
@@ -23,13 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $quantidadePedidosPorMes = Pedido::select(DB::raw('YEAR(data) as ano, MONTH(data) as mes'), DB::raw('COUNT(*) as total_pedidos'))
-            ->groupBy(DB::raw('YEAR(data)'), DB::raw('MONTH(data)'))
-            ->orderBy('ano')
-            ->orderBy('mes')
-            ->get();
-    
-        return view('home', ['quantidadePedidosPorMes' => $quantidadePedidosPorMes]);
+        $quantidadePedidosPorMes = Pedido::where(DB::raw('MONTH(data)'), date('m'))->count();
+        $quantidadeProduto = Produto::count();
+        $quantidadeCliente = Cliente::count();
+        $quantidadeValorPedido = Pedido::where(DB::raw('MONTH(data)'), date('m'))->sum('total');
+        return view('home', ['quantidadePedidosPorMes' => $quantidadePedidosPorMes, 'quantidadeProduto' => $quantidadeProduto, 'quantidadeCliente' => $quantidadeCliente, 'quantidadeValorPedido' => $quantidadeValorPedido]);
     }
 
     public function homePage(){

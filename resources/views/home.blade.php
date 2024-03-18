@@ -1,64 +1,106 @@
-<html lang="en">
 @extends('adminlte::page')
 
 @section('title', 'AdminLTE')
 
 @section('content_header')
-<h1 class="m-0 text-dark">Gráficos</h1>
 @stop
-
-
-
 
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ asset(" css/Telas_Internas/home.css") }}">
-    <title>Document</title>
+    <link rel="stylesheet" href="{{ asset("css/Telas_Internas/home.css") }}">
 </head>
-
 <body>
 
+    <div class="card-container"> 
+        <div class="card card-red" onclick="toggleExtraInfo('red')">
+            <div class="card-content">
+                <div class="column-left">
+                    <div class="card-icon">
+                        <i class="fas fa-boxes" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="column-right">
+                    <div class="large-info">{{ $quantidadeCliente }}</div>
+          
+                    <div class="extra-info" id="extra-info-red" style="display: none;">
+                        <div class="small-info">
+                        <div class="small-info-1" >Clientes Cadastrados</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="card card-blue" onclick="toggleExtraInfo('blue')">
+            <div class="card-content">
+                <div class="column-left">
+                    <div class="card-icon">
+                        <i class="fas fa-user" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="column-right">
+                    <div class="large-info">{{ $quantidadeProduto }}</div>
+                    <div class="extra-info" id="extra-info-blue" style="display: none;">
+                        <div class="small-info">
+                        <div class="small-info-2">Produtos Cadastrados</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <canvas id="Emissão_Mês"></canvas>
+        <div class="card card-green" onclick="toggleExtraInfo('green')">
+            <div class="card-content">
+                <div class="column-left">
+                    <div class="card-icon">
+                        <i class="fas fa-sticky-note" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="column-right">
+                    <div class="large-info">{{ $quantidadePedidosPorMes }}</div>
+                    <div class="extra-info" id="extra-info-green" style="display: none;">
+                        <div class="small-info"  style="margin-left: 60px">
+                        <div class="small-info-3">Notas Emitidas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-yellow" onclick="toggleExtraInfo('yellow')">
+            <div class="card-content">
+                <div class="column-left">
+                    <div class="card-icon">
+                        <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="column-right">
+                    <div class="large-info" style="font-size: 18px;">R$ {{ $quantidadeValorPedido }}</div>
+                    
+                    <div class="extra-info" id="extra-info-yellow" style="display: none;">
+                        <div class="small-info">
+                        <div class="small-info-4">Valor Total da Notas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        var dados = {!! json_encode($quantidadePedidosPorMes->pluck('total_pedidos')->toArray()) !!};
-        var ctx = document.getElementById("Emissão_Mês").getContext("2d");
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($quantidadePedidosPorMes->pluck('mes')->map(function($mes) { return \Carbon\Carbon::createFromFormat('m', $mes)->locale('pt_BR')->format('F'); })->toArray()) !!},
-                datasets: [{
-                    label: 'Emissão de Notas Por Mês',
-                    data: dados,
-                    backgroundColor: '#224B66',
-                    borderColor: '#224B66',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    }
-                }
-            }
-        });
+        function toggleExtraInfo(color) {
+            var extraInfo = document.getElementById('extra-info-' + color);
+            extraInfo.style.display = extraInfo.style.display === 'none' ? 'block' : 'none';
+        }
     </script>
-    
-    
-
-
 
 </body>
-
 </html>
 
 @stop
