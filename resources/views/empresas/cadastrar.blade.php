@@ -54,13 +54,26 @@
                                     <input type='hidden' name="action" id="action" value="new" />
 
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
+                                            <label for="cpf_cnpj">CPF ou CNPJ</label>
+                                            <div class="input-group">
+                                                <input required placeholder="CPF/CNPJ..." class="form-control" type="text" id="cpf_cnpj" name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" />
+                                                <div class="input-group-append">
+                                                    <button id="cnpj_button" type="button" class="btn btn-light"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Razão Social</label>
                                             <input required placeholder="Razão Social..." class="form-control"
                                                 type="text" id="nome" name="nome" />
                                         </div>
 
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Nome Fantasia</label>
                                             <input required placeholder="Nome Fantasia..." class="form-control"
                                                 type="text" id="fantasia" name="fantasia" />
@@ -68,29 +81,16 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col">
-                                            <label>CPF ou CNPJ</label>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <input required placeholder="CPF/CNPJ..." class="form-control"
-                                                        type="text" id="cpf_cnpj" name="cpf_cnpj"
-                                                        onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" />
-                                                </div>
-                                                <button id="cnpj_button" type="button" class="btn btn-light"><i
-                                                        class="fa fa-search"></i></button>
-                                            </div>
-                                        </div>
-
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>RG ou IE</label>
                                             <input required placeholder="Razão RG/IE..." class="form-control"
                                                 type="text" id="rg_ie" name="rg_ie" />
                                         </div>
-                                    </div>
+                                    
 
 
-                                    <div class="row">
-                                        <div class="col">
+                                   
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Celular</label>
                                             <input required placeholder="Celular..." class="form-control" type="text"
                                                 id="telefone" name="telefone" maxlength="15"
@@ -102,7 +102,21 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                    <div class="col">
+                                    <div class="col-md-6 col-xs-10">
+
+                                        <div class="row">
+                                            <div class="col-md-6 col-xs-10">
+                                                <label for="cep">CEP</label>
+                                                <div class="input-group">
+                                                    <input required placeholder="Cep..." class="form-control" type="text" id="cep" name="cep" />
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-light" type="button" id="cep_button"><i class="fa fa-search"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+
                                         <div class="row">
                                             <div class="col-9">
                                                 <label>Rua</label>
@@ -117,28 +131,17 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-8">
+                                            <div class="col">
                                                 <label>Bairro</label>
                                                 <input required placeholder="Bairro..." class="form-control"
                                                     type="text" id="bairro" name="bairro" />
                                             </div>
-                                            <div class="col">
-                                                <label>CEP</label>
-                                                <div class="row">
-                                                    <div class="col">
-
-                                                        <input required placeholder="Cep..." class="form-control"
-                                                            type="text" id="cep" name="cep" />
-                                                    </div>
-                                                    <button class="btn btn-light" type="button" id="cep_button"><i
-                                                            class="fa fa-search"></i></button>
-                                                </div>
-                                            </div>
+                                            
 
                                         </div>
 
                                         <div class="row">
-                                            <div class="col">
+                                            <div class="col-md-6 col-xs-10">
                                                 <label>Cidade</label>
                                                 <select class="form-control" name="cidade" id="cidade" required>
                                                     <option value="">Selecionar</option>
@@ -148,7 +151,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col">
+                                            <div class="col-md-6 col-xs-10">
                                                 <label>UF</label>
                                                 <select class="form-control" id="uf" name="uf" required
                                                     onchange="updateCities(this.value)">
@@ -187,13 +190,13 @@
 
 
                                         <div class="row">
-                                            <div class="col">
+                                            <div class="col-md-6 col-xs-10">
                                                 <label>Complemento</label>
                                                 <input placeholder="Complemento..." class="form-control" type="text"
                                                     id="complemento" name="complemento" />
 
                                             </div>
-                                            <div class="col">
+                                            <div class="col-md-6 col-xs-10">
 
                                                 <label>Código IBGE</label>
                                                 <input required placeholder="Código IBGE..." class="form-control"
@@ -206,19 +209,19 @@
                                 <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Nº da Última NFe</label>
                                             <input required placeholder="Nº Última NFe..." class=form-control
                                                 type="number" name="nfe" id="nfe" />
 
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Nº da Última MDFe</label>
                                             <input required placeholder="Nº Última MDFe..." class=form-control
                                                 type="number" name="mdfe" id="mdfe" />
 
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Série</label>
                                             <input required placeholder="Série..." class=form-control type="number"
                                                 name="serie" id="serie" />
@@ -226,34 +229,29 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col">
-                                            <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input required placeholder="Certificado..." accept=".pfx" type="file"
-                                                name="certificado" id="certificado" class="file-upload-default">
-
-                                        </div>
-                                        <div class="col">
+                                       
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Senha Certificado</label>
                                             <input required placeholder="Senha Certificado..." class=form-control
                                                 type="text" name="senha" id="senha" />
                                         </div>
-                                    </div>
+                                    
 
-                                    <div class="row">
-                                        <div class="col">
+                                   
+                                        <div class="col-md-6 col-xs-10">
                                             <label>CSC</label>
                                             <input required placeholder="Csc..." class="form-control" type="text"
                                                 name="csc" id="csc">
 
 
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Id Token CSC</label>
                                             <input required placeholder="Id Token Csc..." class="form-control"
                                                 type="text" name="idCsc" id="idCsc">
 
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Ambiente</label>
                                             <select required class="form-control" name="ambiente" id="ambiente">
                                                 <option value="">--Selecione um Ambiente--</option>
@@ -261,6 +259,12 @@
                                                 <option value="2">Homologação</option>
                                             </select>
                                         </div>
+                                    </div>
+                                    <div class="col-md-6 col-xs-10">
+                                        <label>Certificado</label><br> <!-- inserir arquivo pfx -->
+                                        <input required placeholder="Certificado..." accept=".pfx" type="file"
+                                            name="certificado" id="certificado" class="file-upload-default">
+
                                     </div>
 
                                 </div>
@@ -309,7 +313,7 @@
                                 </div>
                                 <br>
                                 <div>
-                                    <div class="col">
+                                    <div class="col-md-6 col-xs-10">
                                         <button type="submit" class="btn btn-success form-control">Salvar
                                             Empresa</button>
                                     </div>

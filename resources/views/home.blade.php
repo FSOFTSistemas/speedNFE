@@ -17,88 +17,86 @@
 </head>
 <body>
 
-    <div class="card-container"> 
-        <div class="card card-red" onclick="toggleExtraInfo('red')">
-            <div class="card-content">
-                <div class="column-left">
-                    <div class="card-icon">
-                        <i class="fas fa-boxes" aria-hidden="true"></i>
-                    </div>
+<div class="card-container"> 
+    <div class="card card-red" onclick="toggleExtraInfo('red')">
+        <div class="card-content">
+            <div class="column-left">
+                <div class="card-icon">
+                    <i class="fas fa-boxes" aria-hidden="true"></i>
                 </div>
-                <div class="column-right">
+            </div>
+            <div class="column-right">
+                <div class="small-info">
+                    <div class="small-info-1" >Clientes Cadastrados</div>
+                </div>
+                <div class="extra-info" id="extra-info-red" style="display: none;">
                     <div class="large-info">{{ $quantidadeCliente }}</div>
-          
-                    <div class="extra-info" id="extra-info-red" style="display: none;">
-                        <div class="small-info">
-                        <div class="small-info-1" >Clientes Cadastrados</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card card-blue" onclick="toggleExtraInfo('blue')">
-            <div class="card-content">
-                <div class="column-left">
-                    <div class="card-icon">
-                        <i class="fas fa-user" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="column-right">
-                    <div class="large-info">{{ $quantidadeProduto }}</div>
-                    <div class="extra-info" id="extra-info-blue" style="display: none;">
-                        <div class="small-info">
-                        <div class="small-info-2">Produtos Cadastrados</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card card-green" onclick="toggleExtraInfo('green')">
-            <div class="card-content">
-                <div class="column-left">
-                    <div class="card-icon">
-                        <i class="fas fa-sticky-note" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="column-right">
-                    <div class="large-info">{{ $quantidadePedidosPorMes }}</div>
-                    <div class="extra-info" id="extra-info-green" style="display: none;">
-                        <div class="small-info"  style="margin-left: 60px">
-                        <div class="small-info-3">Notas Emitidas</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card card-yellow" onclick="toggleExtraInfo('yellow')">
-            <div class="card-content">
-                <div class="column-left">
-                    <div class="card-icon">
-                        <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="column-right">
-                    <div class="large-info" style="font-size: 18px;">R$ {{ $quantidadeValorPedido }}</div>
-                    
-                    <div class="extra-info" id="extra-info-yellow" style="display: none;">
-                        <div class="small-info">
-                        <div class="small-info-4">Valor Total da Notas</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function toggleExtraInfo(color) {
-            var extraInfo = document.getElementById('extra-info-' + color);
-            extraInfo.style.display = extraInfo.style.display === 'none' ? 'block' : 'none';
-        }
-    </script>
+    <div class="card card-blue" onclick="toggleExtraInfo('blue')">
+        <div class="card-content">
+            <div class="column-left">
+                <div class="card-icon">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="column-right">
+                <div class="small-info">
+                    <div class="small-info-2">Produtos Cadastrados</div>
+                </div>
+                <div class="extra-info" id="extra-info-blue" style="display: none;">
+                    <div class="large-info">{{ $quantidadeProduto }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-green" onclick="toggleExtraInfo('green')">
+        <div class="card-content">
+            <div class="column-left">
+                <div class="card-icon">
+                    <i class="fas fa-sticky-note" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="column-right">
+                <div class="small-info"  style="margin-left: 60px">
+                    <div class="small-info-3">Notas Emitidas</div>
+                </div>
+                <div class="extra-info" id="extra-info-green" style="display: none;">
+                    <div class="large-info">{{ $quantidadePedidosPorMes }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-yellow" onclick="toggleExtraInfo('yellow')">
+        <div class="card-content">
+            <div class="column-left">
+                <div class="card-icon">
+                    <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class="column-right">
+                <div class="small-info">
+                    <div class="small-info-4">Valor Total da Notas</div>
+                </div>
+                <div class="extra-info" id="extra-info-yellow" style="display: none;">
+                    <div class="large-info" style="font-size: 18px;">R$ {{ $quantidadeValorPedido }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleExtraInfo(color) {
+        var extraInfo = document.getElementById('extra-info-' + color);
+        extraInfo.style.display = extraInfo.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
 
 </body>
 </html>
