@@ -1,539 +1,143 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&family=Poppins&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&family=Poppins&family=Roboto+Slab:wght@100&display=swap');
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #E3E3E3;
-  animation: both;
+/* Adicione estas regras CSS para estilizar as formas geométricas com cores de fundo */
+.shapes-section {
+  background-color: #f9f9f9; /* Cor de fundo da seção */
+  padding: 50px 0; /* Espaçamento interno da seção */
 }
 
+.shape-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px; /* Espaçamento inferior entre as formas geométricas */
+}
 
-header {
-  background-color: #E3E3E3;
-  padding: 30px;
-  text-align: right;
+.shape {
   position: relative;
-
-}
-
-header a {
-  color: #ffffff;
-  text-decoration: none;
-  margin: 0 15px;
-  font-weight: bold;
-  position: relative;
-  z-index: 2;
-}
-
-.logo img {
-  float: left;
-}
-
-.background::after {
-  content: '';
-  background: #54BCE1;
-  background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
-  background: -webkit-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
-  background: linear-gradient(to bottom, #4394f4 0%, #54BCE1 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#60a9ff', endColorstr='#4394f4', GradientType=0);
-  height: 350px;
-  left: 0;
-  position: absolute;
-  top: 15%;
   width: 100%;
-  z-index: 1;
-  transform: skewX(-25deg);
-  transform: skewY(-15deg);
-
-
+  overflow: hidden;
 }
 
-.container-2 {
-  position: relative;
-  z-index: 2;
+.shape::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #3498db; /* Cor de fundo da forma geométrica */
+  z-index: -1;
+  transform: skewX(-10deg); /* Inclinação para criar a forma geométrica */
+}
+
+.shape::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #3498db; /* Cor de fundo da forma geométrica */
+  z-index: -1;
+  transform: skewX(10deg); /* Inclinação para criar a forma geométrica */
+}
+
+.shape-img {
+  width: 150px; /* Largura da imagem */
+  height: auto; /* Altura automática */
+  margin-right: 20px; /* Espaçamento à direita da imagem */
+}
+
+.shape-text h3 {
+  margin-bottom: 10px; /* Espaçamento inferior para o título */
+}
+
+.shape-text p {
+  margin-bottom: 0; /* Remover espaço extra abaixo do subtítulo */
+}
+
+/* Adicione estas regras CSS para estilizar a seção de planos de serviço */
+.hero {
+  background-color: #f1f1f1; /* Cor de fundo da seção de planos de serviço */
+  padding: 50px 0; /* Espaçamento interno da seção */
+  text-align: center;
+}
+
+.card {
+  background-color: #fff; /* Cor de fundo dos cards */
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px;
+  display: inline-block;
+  width: calc(33.333% - 40px);
+}
+
+/* Adicione estas regras CSS para estilizar o rodapé */
+footer {
+  background-color: #3498db; /* Cor de fundo do rodapé */
+  color: #fff; /* Cor do texto do rodapé */
+  padding: 20px 0; /* Espaçamento interno do rodapé */
+  text-align: center; /* Alinhamento do texto do rodapé */
+}
+
+footer .container {
   display: flex;
   justify-content: space-between;
-  align-items: start;
-  margin-top: 20px;
+  align-items: center;
 }
 
+.footer-links {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 
-#text-home {
+.footer-links li {
+  display: inline;
+  margin-right: 20px;
+}
+
+.footer-links li a {
   color: #fff;
-  text-align: left;
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  margin-right: 50px;
+  text-decoration: none;
 }
 
-.text-left h1,
-.text-right h1 {
-  margin-right: 45vh;
-  margin-top: 10vh;
+/* Estilo geral */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
 }
 
-.text-right h4 {
-  animation: mover 2s alternate;
-}
-
-@keyframes mover {
-  from {
-    transform: translateX(200px);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-#laptop {
-  margin-left: 30dvh;
-}
-
-button {
-  border-radius: 5px;
-  border-color: #DFA456;
-  background-color: #DFA456;
-  width: 45dvh;
-  height: 6dvh;
-  color: #ffffff;
-  animation: pulse 1.5s infinite;
-  box-shadow: 0px 10px 13px -6px rgba(223, 164, 84, 0.1), 0px 20px 31px 3px rgba(0, 0, 0, 0.5), 0px 8px 20px 7px rgba(0, 0, 0, 0.02);
-  ;
-
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-#card-plano {
+.container {
+  width: 80%;
   margin: 0 auto;
-  padding: 50px 0 0;
-  max-width: 960px;
-  width: 100%;
-
-
 }
 
-.panel {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 15px 25px;
-  position: relative;
-  width: 100%;
-  z-index: 10;
-  margin-bottom: 1dvh;
-}
-
-.pricing-table {
-  box-shadow: 0px 10px 13px -6px rgba(0, 0, 0, 0.1), 0px 20px 31px 3px rgba(0, 0, 0, 0.5), 0px 8px 20px 7px rgba(0, 0, 0, 0.02);
+nav {
+  background-color: #3498db;
+  color: #fff;
+  padding: 20px 0;
   display: flex;
-  flex-direction: column;
-  background: rgba(84, 188, 255, 0.5);
-
+  justify-content: space-between;
+  align-items: center;
 }
 
-@media (min-width: 900px) {
-  .pricing-table {
-    flex-direction: row;
-  }
+nav .logo {
+  width: 100px; /* ajuste conforme necessário */
 }
 
-.pricing-table * {
-  text-align: center;
-  text-transform: uppercase;
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
 }
 
-.pricing-plan {
-  border-bottom: 1px solid #e1f1ff;
-  padding: 25px;
+nav ul li {
+  margin-right: 20px;
 }
 
-.pricing-plan:last-child {
-  border-bottom: none;
-}
-
-@media (min-width: 900px) {
-  .pricing-plan {
-    border-bottom: none;
-    border-right: 1px solid #e1f1ff;
-    flex-basis: 100%;
-    padding: 25px 50px;
-  }
-
-  .pricing-plan:last-child {
-    border-right: none;
-  }
-}
-
-.pricing-img {
-  margin-bottom: 25px;
-  max-width: 100%;
-}
-
-.pricing-header {
-  color: #ffffff;
-  font-weight: 700;
-  letter-spacing: 1px;
-  font-family: sans-serif;
-}
-
-.pricing-features {
-  color: #ffffff;
-  font-weight: 600;
-  letter-spacing: 1px;
-  margin: 50px 10 25px;
-  list-style: none;
-  ;
-}
-
-.pricing-features-item {
-  border-bottom: 1px solid #348EFE;
-  font-size: 15px;
-  line-height: 1.5;
-  padding: 15px 0;
-  font-family: 'Roboto Slab', serif;
-
-}
-
-.pricing-features-item:last-child {
-  border-bottom: 1px solid #348EFE;
-}
-
-
-.pricing-button {
-  border: 1px solid #ffffff;
-  border-radius: 10px;
-  color: #348EFE;
-  display: inline-block;
-  margin: 25px 0;
-  padding: 15px 35px;
-  text-decoration: none;
-  transition: all 150ms ease-in-out;
-}
-
-.pricing-plan img {
-
-  width: 35px;
-
-}
-
-.main_footer {
-
-  background-color: #00b0d9;
+nav ul li a {
   color: #fff;
-  font-size: 0.875em;
-}
-
-.main_footer .content {
-  float: left;
-  width: 90%;
-  margin: 0 5%;
-  padding: 5em 0;
-}
-
-
-.container_3 {
-
-  float: left;
-  width: 100%;
-
-  margin-top: 50px;
-  background: #54BCE1;
-  background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
-  background: -webkit-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
-  background: linear-gradient(to bottom, #4394f4 0%, #54BCE1 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#60a9ff', endColorstr='#4394f4', GradientType=0);
-
-
-}
-
-.colfooter {
-
-  width: 100%;
-  height: auto;
-  float: left;
-  margin-bottom: 2em;
-
-}
-
-.colfooter ul {
-  width: 100%;
-  float: left;
-}
-
-.colfooter ul li {
-  padding: 0.2em 0em;
-}
-
-.colfooter ul li a {
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 1em;
-}
-
-.colfooter ul li a i {
-  font-size: 0.5em;
-}
-
-.colfooter ul li a:hover {
-  text-decoration: underline;
-}
-
-.colfooter .titleFooter {
-
-  font-family: 'open_sansregular';
-  font-size: 1.3em;
-  color: #ffffff;
-  padding-bottom: 0.5em;
-  margin-bottom: 0.5em;
-  border-bottom: 1px #4ec0db solid;
-}
-
-.colfooter p {
-  font-family: 'open_sanslight';
-  color: #ffffff;
-  font-size: 1em;
-  height: 25px;
-}
-
-#envelope{
-
-  margin-right: 10px;
-}
-
-#phone{
-
-margin-right: 10px;
-
-}
-
-#whatsapp{
-
-  margin-right: 10px;
-  
-  }
-
-  #location{
-
-    margin-right: 10px;
-    margin-top: 10px;
-
-  }
-
-
-.botao {
-
-  padding: 10px 12px;
-  color: #fff;
-  font-family: 'open_sansregular';
-  letter-spacing: 2px;
-  text-align: center;
-  position: relative;
-  text-decoration: none;
-  display: inline-block;
-  margin-right: 7px;
-
-}
-
-.botao::before {
-
-  content: '';
-  position: absolute;
-  bottom: 50%;
-  left: 0px;
-  width: 100%;
-  height: 1px;
-  background: #6098FF;
-  display: block;
-  -webkit-transform-origin: left top;
-  -ms-transform-origin: left top;
-  transform-origin: left top;
-  -webkit-transform: scale(0, 1);
-  -ms-transform: scale(0, 1);
-  transform: scale(0, 1);
-  -webkit-transition: transform 0.4s cubic-bezier(1, 0, 0, 1);
-  transition: transform 0.4s cubic-bezier(1, 0, 0, 1)
-}
-
-.botao:hover::before {
-
-  -webkit-transform-origin: right top;
-  -ms-transform-origin: right top;
-  transform-origin: right top;
-  -webkit-transform: scale(1, 1);
-  -ms-transform: scale(1, 1);
-  transform: scale(1, 1)
-}
-
-.botao {
-
-  font-size: 1em;
-  color: #ffffff;
-  text-align: center;
-  font-family: 'open_sansregular';
-  border: 1px solid #ffffff;
-  border-radius: 3px;
-  overflow: hidden !important;
-  -webkit-transition: all .4s ease-in-out;
-  -moz-transition: all .4s ease-in-out;
-  -o-transition: all .4s ease-in-out;
-  transition: all .4s ease-in-out;
-  background: transparent !important;
-  z-index: 10;
-
-}
-
-.botao:hover {
-
-  border: 1px solid #262626;
-  color: #2adee3 !important;
-}
-
-.botao::before {
-  content: '';
-  width: 0%;
-  height: 100%;
-  display: block;
-  background: #262626;
-  position: absolute;
-  -ms-transform: skewX(-15deg);
-  -webkit-transform: skewX(-15deg);
-  transform: skewX(-15deg);
-  left: -10%;
-  opacity: 1;
-  top: 0;
-  z-index: -12;
-  -moz-transition: all .7s cubic-bezier(0.77, 0, 0.175, 1);
-  -o-transition: all .7s cubic-bezier(0.77, 0, 0.175, 1);
-  -webkit-transition: all .7s cubic-bezier(0.77, 0, 0.175, 1);
-  transition: all .7s cubic-bezier(0.77, 0, 0.175, 1);
-  box-shadow: 2px 0px 14px rgba(0, 0, 0, .6);
-}
-
-.botao::after {
-
-  content: '';
-  width: 0%;
-  height: 100%;
-  display: block;
-  background: #2adee3;
-  position: absolute;
-  -ms-transform: skewX(-15deg);
-  -webkit-transform: skewX(-15deg);
-  transform: skewX(-15deg);
-  left: -10%;
-  opacity: 0;
-  top: 0;
-  z-index: -15;
-  -webkit-transition: all .94s cubic-bezier(.2, .95, .57, .99);
-  -moz-transition: all .4s cubic-bezier(.2, .95, .57, .99);
-  -o-transition: all .4s cubic-bezier(.2, .95, .57, .99);
-  transition: all .4s cubic-bezier(.2, .95, .57, .99);
-  box-shadow: 2px 0px 14px rgba(0, 0, 0, .6);
-}
-
-.botao:hover::before,
-.botao:hover::before {
-
-  opacity: 1;
-  width: 120%;
-
-}
-
-.botao:hover::after,
-.botao:hover::after {
-
-  opacity: 1;
-  width: 150%;
-
-}
-
-.main_footer_copy {
-  background: -moz-linear-gradient(top, #52B8E3 0%, #54BCE1 100%);
-  background: -webkit-linear-gradient(top, #54BCE1 0%, #E3E3E3 100%);
-  background: linear-gradient(to bottom, #52B8E3 0%, #E3E3E3 100%);
-  width: 100%;
-  float: left;
-  text-align: center;
-  padding-top: 30px;
-}
-
-.main_footer_copy a {
-  font-family: 'Lora';
-    font-size: 2dvh;
-    color: #37499D;
-    height: 20px;
-    font-weight: 600;
-    padding-bottom: 10px;
-}
-
-.main_footer_copy .m-b-footer {
-  margin-bottom: 0.5em;
-}
-
-.main_footer_copy .by {
-  font-size: 0.96em;
-}
-
-.main_footer_copy .by a {
-  color: black  ;
   text-decoration: none;
 }
-
-.main_footer_copy .by a:hover {
-  text-decoration: underline;
-}
-
-.main_footer_copy .by i {
-  font-size: 0.96em;
-  margin-right: 3px;
-  color: #e82626;
-}
-
-@media (min-width:48em) {
-
-  .colfooter {
-    width: 30%;
-    margin-right: 5%;
-    margin-bottom: 0;
-  }
-
-  .colfooter:nth-of-type(3n+0) {
-    margin-right: 0;
-    border-right: 0;
-  }
-
-}
-
-.mapouter {
-  position: relative;
-  text-align: right;
-  height:250px;
-  width: 250px;
-}
-
-.gmap_canvas {
-  overflow: hidden;
-  background: none!important;
-  height: 250px;
-  width: 380px;
-}
-
-
-
-
-
