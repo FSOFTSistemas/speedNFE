@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-md navbar-dark ">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="{{ asset('css/logo.png') }}" alt="Logo da Empresa" class="logo">
@@ -39,58 +39,54 @@
         </div>
     </nav>
 
-    <!-- Seção de Formas Geométricas com Cores de Fundo -->
-    <section class="shapes-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="shape-container">
-                        <div class="shape shape1">
-                            <img src="caminho/para/imagem1.jpg" alt="Imagem 1" class="shape-img">
-                            <div class="shape-text">
-                                <h3>Título 1</h3>
-                                <p>Subtítulo 1</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="shape-container">
-                        <div class="shape shape2">
-                            <img src="caminho/para/imagem2.jpg" alt="Imagem 2" class="shape-img">
-                            <div class="shape-text">
-                                <h3>Título 2</h3>
-                                <p>Subtítulo 2</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="background">
+    <div class="container-1">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ asset('css/Nota-fiscal-eletronica-Saiba-como-emitir-removebg-preview.png') }}" alt="Imagem de Exemplo" class="img-fluid">
+            </div>
+            <div class="col-md-6" id="titulo">
+                <h2>Emissor de Nota Fiscal Eletrônica e WEB DANFE Online</h2>
+                <p>Conheça os benefícios de ter um Certificado Digital</p>
+                <button class="button">Comece Agora</button>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <section class="hero">
-        <div class="container">
-            <h2>Planos de Serviço</h2>
-            <div class="card-deck">
-                <div class="card">
-                    <h3>Plano Básico</h3>
-                    <p>Descrição do plano básico e suas vantagens.</p>
-                </div>
-                <div class="card">
-                    <h3>Plano Padrão</h3>
-                    <p>Descrição do plano padrão e suas vantagens.</p>
-                </div>
-                <div class="card">
-                    <h3>Plano Premium</h3>
-                    <p>Descrição do plano premium e suas vantagens.</p>
-                </div>
+<section class="hero">
+    <div class="container-2">
+        <h2>Nossas Vantagens</h2>
+        <div class="card-deck">
+            <div class="card">
+                <h3>EMISSÃO DE NOTAS GRATUITAS</h3>
+                <ul class="checklist">
+                    <li><i class="fas fa-check"></i> TESTE DE EMISSÃO GRATUITO</li>
+                    <li><i class="fas fa-check"></i> ATUALIZAÇÕES E MELHORIAS CONSTANTES SEM CUSTO ADICIONAL</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>PLANO PROFISSIONAL</h3>
+                <ul class="checklist">
+                    <li><i class="fas fa-check"></i> ENVIO ILIMITADO DO SEU PLANO PROFISSIONAL</li>
+                    <li><i class="fas fa-check"></i> ENVIO DE E-MAIL COM O ARQUIVO XML E DANFE</li>
+                    <li><i class="fas fa-check"></i> EMISSÃO A PARTIR DE QUALQUER COMPUTADOR, SEM PRECISAR BAIXAR NADA.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>COMPROMETIMENTO E SEGURANÇA</h3>
+                <ul class="checklist">
+                    <li><i class="fas fa-check"></i> ARMAZENAMENTO DOS ARQUIVOS EM SEGURANÇA</li>
+                    <li><i class="fas fa-check"></i> RESPONSABILIDADE COM A LEGISLAÇÃO</li>
+                    <li><i class="fas fa-check"></i> CÓPIAS DE SEGURANÇA AUTOMÁTICAS</li>
+                </ul>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <footer class="bg-primary text-white">
-        <div class="container">
+        <div class="containe-3">
             <div class="row">
                 <div class="col-md-6">
                     <ul class="footer-links">

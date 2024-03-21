@@ -1,88 +1,147 @@
-/* Adicione estas regras CSS para estilizar as formas geométricas com cores de fundo */
-.shapes-section {
-  background-color: #f9f9f9; /* Cor de fundo da seção */
-  padding: 50px 0; /* Espaçamento interno da seção */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+ 
 }
 
-.shape-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px; /* Espaçamento inferior entre as formas geométricas */
+.container-1 {
+  width: 80%;
+  margin: 0 auto;
+  margin-bottom: 100px;
+  margin-top: 50px;
 }
 
-.shape {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+.container-2 {
+  width: 80%;
+  margin: 0 auto;
+  color: #87CDE8;
+
+ 
 }
 
-.shape::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #3498db; /* Cor de fundo da forma geométrica */
-  z-index: -1;
-  transform: skewX(-10deg); /* Inclinação para criar a forma geométrica */
+.container-2 h2{
+
+margin-bottom: 50px;
+font-size: 50px;
+
 }
 
-.shape::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #3498db; /* Cor de fundo da forma geométrica */
-  z-index: -1;
-  transform: skewX(10deg); /* Inclinação para criar a forma geométrica */
+.container-3 {
+  width: 80%;
+  margin: 0 auto;
 }
 
-.shape-img {
-  width: 150px; /* Largura da imagem */
-  height: auto; /* Altura automática */
-  margin-right: 20px; /* Espaçamento à direita da imagem */
+.container h2 {
+  margin-bottom: 40px;
 }
 
-.shape-text h3 {
-  margin-bottom: 10px; /* Espaçamento inferior para o título */
-}
-
-.shape-text p {
-  margin-bottom: 0; /* Remover espaço extra abaixo do subtítulo */
-}
-
-/* Adicione estas regras CSS para estilizar a seção de planos de serviço */
-.hero {
-  background-color: #f1f1f1; /* Cor de fundo da seção de planos de serviço */
-  padding: 50px 0; /* Espaçamento interno da seção */
-  text-align: center;
-}
-
-.card {
-  background-color: #fff; /* Cor de fundo dos cards */
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 20px;
-  display: inline-block;
-  width: calc(33.333% - 40px);
-}
-
-/* Adicione estas regras CSS para estilizar o rodapé */
-footer {
-  background-color: #3498db; /* Cor de fundo do rodapé */
-  color: #fff; /* Cor do texto do rodapé */
-  padding: 20px 0; /* Espaçamento interno do rodapé */
-  text-align: center; /* Alinhamento do texto do rodapé */
-}
-
-footer .container {
+nav {
+  background-color: #E3E3E3;
+  color: #fff;
+  padding: 20px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+nav .logo {
+  width: 200px;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav ul li {
+  margin-right: 20px;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.hero {
+  background-color: #E3E3E3;
+  padding: 50px 0;
+  text-align: center;
+  
+}
+
+#titulo{
+
+  margin-top: 50px;
+  color: #fff;
+
+
+}
+
+@media only screen and (max-width: 768px) {
+  #titulo {
+    margin-left: 45px;
+  }
+
+  .background{
+
+    height: 500px;
+
+  }
+
+  .container-2{
+
+    margin-top: 40px ;
+
+  }
+}
+
+.checklist {
+  list-style-type: none; /* Remove os pontos padrão da lista */
+  padding-left: 0; /* Remove o recuo padrão da lista */
+}
+
+.checklist li {
+  margin-bottom: 10px; /* Adiciona um espaçamento entre os itens */
+}
+
+.card:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  transition: box-shadow 0.3s ease;
+  padding: 40px;
+  background-color: #87CDE8;
+  color: #fff;
+}
+
+
+.card h3 {
+  font-size: 20px;
+    margin-bottom: 30px;
+}
+
+.card p {
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  background-color: #5EB6E4;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
 }
 
 .footer-links {
@@ -101,43 +160,42 @@ footer .container {
   text-decoration: none;
 }
 
-/* Estilo geral */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
-.container {
-  width: 80%;
-  margin: 0 auto;
-}
-
-nav {
-  background-color: #3498db;
+.button {
+  background-color: #EB8A28;
   color: #fff;
-  padding: 20px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 250px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  animation: pulse 2s infinite; 
 }
 
-nav .logo {
-  width: 100px; /* ajuste conforme necessário */
+
+.button:hover {
+  background-color: #FFA94D;
+  animation: none; 
 }
 
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-}
-
-nav ul li {
-  margin-right: 20px;
-}
-
-nav ul li a {
+.background {
+  width: 100%;
+  background-color: #5EB6E4;
   color: #fff;
-  text-decoration: none;
+  position: relative;
+ 
+
 }
+
+
+
+
+
+
+
