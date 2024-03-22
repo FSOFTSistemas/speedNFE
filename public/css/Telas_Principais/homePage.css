@@ -1,43 +1,18 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  overflow-x: hidden;
- 
-}
+@media only screen and(max-width: 600px){
 
-.container-1 {
-  width: 80%;
-  margin: 0 auto;
-  margin-bottom: 100px;
-  margin-top: 50px;
-}
-
-.container-2 {
-  width: 80%;
-  margin: 0 auto;
-  color: #87CDE8;
-
- 
-}
-
-.container-2 h2{
-
-margin-bottom: 50px;
-font-size: 50px;
+  *{
+    display: none;
+    
+     }
 
 }
 
-.container-3 {
-  width: 80%;
-  margin: 0 auto;
-}
 
-.container h2 {
-  margin-bottom: 40px;
-}
 
 nav {
+  position: fixed; 
+  width: 100%; 
+  z-index: 1000;
   background-color: #E3E3E3;
   color: #fff;
   padding: 20px 0;
@@ -46,59 +21,122 @@ nav {
   align-items: center;
 }
 
-nav .logo {
-  width: 200px;
+.navbar-toggler-icon {
+  width: 30px; /* largura desejada */
+  height: 3px; /* altura desejada */
+  background-color: #2491A7; /* cor das linhas */
+  border-radius: 2px; /* bordas arredondadas */
+  display: block;
+  position: relative;
 }
 
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
+/* Adicionando as outras duas linhas */
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+  content: '';
+  background-color: #2491A7; /* cor das linhas */
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  border-radius: 2px; /* bordas arredondadas */
 }
 
-nav ul li {
-  margin-right: 20px;
+/* Posicionamento das outras linhas */
+.navbar-toggler-icon::before {
+  top: -8px; /* posição vertical */
 }
 
-nav ul li a {
+.navbar-toggler-icon::after {
+  bottom: -8px; /* posição vertical */
+}
+
+
+.background {
+  content: '';
+  background: #54BCE1;
+  background: -moz-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
+  background: -webkit-linear-gradient(top, #4394f4 0%, #54BCE1 100%);
+  background: linear-gradient(to bottom, #4394f4 0%, #54BCE1 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#60a9ff', endColorstr='#4394f4', GradientType=0);
+  height: 350px;
+  left: 0;
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  z-index: 1;
+}
+
+#text-home {
   color: #fff;
-  text-decoration: none;
-  font-size: 18px;
+  text-align: left;
+  position: relative;
+  z-index: 2;
+  width: 100%;
 }
+
+
+  /* #titulo{
+
+    font-size: 30px;
+    max-width: 80% ;
+    text-align: right;
+    
+  
+  }
+  
+  #subtitulo{
+  
+    font-size: 15px;
+    text-align: right;
+    max-width: 80%;
+  
+  } */
+
+
+
+
+
+
+
+
+.botão {
+  background-color: #EB8A28;
+  color: #fff;
+  width: 300px;
+  height: 35px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  animation: pulse 2s infinite; 
+  margin-top: 40px;
+
+  
+
+  
+}
+
+.botão:hover {
+  background-color: #FFA94D;
+  animation: none; 
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 
 .hero {
   background-color: #E3E3E3;
   padding: 50px 0;
   text-align: center;
+  margin-top: 45dvh;
   
 }
 
-#titulo{
-
-  margin-top: 50px;
-  color: #fff;
-
-
-}
-
-@media only screen and (max-width: 768px) {
-  #titulo {
-    margin-left: 45px;
-  }
-
-  .background{
-
-    height: 500px;
-
-  }
-
-  .container-2{
-
-    margin-top: 40px ;
-
-  }
-}
 
 .checklist {
   list-style-type: none; /* Remove os pontos padrão da lista */
@@ -134,6 +172,7 @@ nav ul li a {
   margin-bottom: 30px;
 }
 
+
 footer {
   position: relative;
   bottom: 0;
@@ -159,43 +198,4 @@ footer {
   color: #fff;
   text-decoration: none;
 }
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.button {
-  background-color: #EB8A28;
-  color: #fff;
-  width: 250px;
-  height: 30px;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  animation: pulse 2s infinite; 
-}
-
-
-.button:hover {
-  background-color: #FFA94D;
-  animation: none; 
-}
-
-.background {
-  width: 100%;
-  background-color: #5EB6E4;
-  color: #fff;
-  position: relative;
- 
-
-}
-
-
-
-
-
-
 
