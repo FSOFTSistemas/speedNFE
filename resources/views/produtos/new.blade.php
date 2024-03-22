@@ -28,6 +28,10 @@
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
                                     aria-controls="profile" aria-selected="false">Informações Fiscais</a>
                             </li>
+                            <li class="nav-item" style="display: none" id="veicTab">
+                                <a class="nav-link" id="veic-tab" data-toggle="pill" href="#veic" role="tab"
+                                    aria-controls="veic" aria-selected="false">Informações de Veículo</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
@@ -120,6 +124,11 @@
                                                 <option value="m">M</option>
                                                 <option value="cm">CM</option>
                                             </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="veic">Veículo?</label>
+                                            <br>
+                                            <input type="checkbox" name="tpProd" id="tpProd" onclick="checkVeic(this)">
                                         </div>
                                     </div>
                                 </div>
@@ -367,6 +376,198 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
+                                    <div class="form-group row">
+                                        <label for="tpVeic" class="col-sm-2 col-form-label">Tipo de Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="tpVeic" name="tpVeic"
+                                                value="" placeholder="Tipo de Veículo...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="chassiVeic" class="col-sm-2 col-form-label">Chassi</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="chassiVeic" name="chassiVeic"
+                                                value="" placeholder="Chassi...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="cenavanVeic" class="col-sm-2 col-form-label">Renavan</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="renavanVeic"
+                                                name="renavanVeic" value="" placeholder="Renavan...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="anoFabVeic" class="col-sm-2 col-form-label">Ano de Fabricação</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="anoFabVeic" name="anoFabVeic"
+                                                value="" placeholder="Ano de Fabricação...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="anoModVeic" class="col-sm-2 col-form-label">Ano de Modelo</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="anoModVeic" name="anoModVeic"
+                                                value="" placeholder="Ano de Modelo...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="pesoLVeic" class="col-sm-2 col-form-label">Peso Líquido</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="pesoLVeic" name="pesoLVeic"
+                                                value="" placeholder="Peso Líquido...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="pesoBVeic" class="col-sm-2 col-form-label">Peso Bruto</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="pesoBVeic" name="pesoBVeic"
+                                                value="" placeholder="Peso Bruto...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="distVeic" class="col-sm-2 col-form-label">Distância</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="distVeic" name="distVeic"
+                                                value="" placeholder="Distância...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="combVeic" class="col-sm-2 col-form-label">Combustível</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="combVeic" name="combVeic"
+                                                value="" placeholder="Combustível...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="nMotorVeic" class="col-sm-2 col-form-label">Número do Motor</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="nMotorVeic" name="nMotorVeic"
+                                                value="" placeholder="Número do Motor...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="cVVeic" class="col-sm-2 col-form-label">Cavalo-Vapor (CV)</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="cVVeic" name="cVVeic"
+                                                value="" placeholder="Cavalo-Vapor (CV)...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="cm3Veic" class="col-sm-2 col-form-label">Centímetros Cúbicos
+                                            (cm³)</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="cm3Veic" name="cm3Veic"
+                                                value="" placeholder="Centímetros Cúbicos (cm³)...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="serieVeic" class="col-sm-2 col-form-label">Série</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="serieVeic" name="serieVeic"
+                                                value="" placeholder="Série...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="tpPVeic" class="col-sm-2 col-form-label">Tipo de Pintura</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="tpPVeic" name="tpPVeic"
+                                                value="" placeholder="Tipo de Pintura...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="corVeic" class="col-sm-2 col-form-label">Cor</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="corVeic" name="corVeic"
+                                                value="" placeholder="Cor...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="cCorVeic" class="col-sm-2 col-form-label">Código de Cor</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="cCorVeic" name="cCorVeic"
+                                                value="" placeholder="Código de Cor...">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="cCorMontVeic" class="col-sm-2 col-form-label">Código de Cor
+                                            Montagem</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="cCorMontVeic"
+                                                name="cCorMontVeic" value=""
+                                                placeholder="Código de Cor Montagem...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="cMarcaVeic" class="col-sm-2 col-form-label">Código da Marca</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="cMarcaVeic" name="cMarcaVeic"
+                                                value="" placeholder="Código da Marca...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="condVeic" class="col-sm-2 col-form-label">Condição do Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="condVeic" name="condVeic"
+                                                value="" placeholder="Condição do Veículo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="espVeic" class="col-sm-2 col-form-label">Especificação do
+                                            Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="espVeic" name="espVeic"
+                                                value="" placeholder="Especificação do Veículo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="vinVeic" class="col-sm-2 col-form-label">VIN do Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="vinVeic" name="vinVeic"
+                                                value="" placeholder="VIN do Veículo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="lotVeic" class="col-sm-2 col-form-label">Lote do Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="lotVeic" name="lotVeic"
+                                                value="" placeholder="Lote do Veículo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="restriVeic" class="col-sm-2 col-form-label">Restrição do
+                                            Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="restriVeic" name="restriVeic"
+                                                value="" placeholder="Restrição do Veículo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="cargaVeic" class="col-sm-2 col-form-label">Carga do Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="number" class="form-control" id="cargaVeic" name="cargaVeic"
+                                                value="" placeholder="Carga do Veículo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="operVeic" class="col-sm-2 col-form-label">Operação do Veículo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="operVeic" name="operVeic"
+                                                value="" placeholder="Operação do Veículo...">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <br>
                                 <div>
                                     <div class="col">
@@ -388,7 +589,8 @@
     </div>
 
     {{-- MODAL --}}
-    <div class="modal fade bd-ncm-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bd-ncm-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -486,6 +688,14 @@
                 }
             } else {
                 select.value = "";
+            }
+        }
+
+        function checkVeic(checkbox) {
+            if (checkbox.checked) {
+                document.getElementById('veicTab').style.display = 'block'
+            } else {
+                document.getElementById('veicTab').style.display = 'none'
             }
         }
 
