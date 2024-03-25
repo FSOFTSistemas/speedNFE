@@ -99,7 +99,7 @@ class ProdutosController extends Controller
     {
         try {
             $request->validate([
-                'empresa' => '',
+                'empresa' => 'nullable',
                 'categoria' => 'required',
                 'codigo' => '',
                 'produto' => 'required|max:255',
@@ -107,6 +107,7 @@ class ProdutosController extends Controller
                 'precocusto' => 'required',
                 'precovenda' => 'required',
                 'un' => 'required',
+                'tpProd' => 'nullable',
                 'cfopinterno' => 'required',
                 'cfopexterno' => 'required',
                 'cst' => 'required',
@@ -117,6 +118,31 @@ class ProdutosController extends Controller
                 'cst_csosn' => 'required',
                 'pis' => 'required',
                 'ipi' => 'required',
+                'tpVeic' => 'nullable',
+                'chassiVeic' => 'nullable',
+                'renavanVeic' => 'nullable',
+                'anoFabVeic' => 'nullable',
+                'anoModVeic' => 'nullable',
+                'pesoLVeic' => 'nullable',
+                'pesoBVeic' => 'nullable',
+                'distVeic' => 'nullable',
+                'combVeic' => 'nullable',
+                'nMotorVeic' => 'nullable',
+                'cVVeic' => 'nullable',
+                'cm3Veic' => 'nullable',
+                'serieVeic' => 'nullable',
+                'tpPVeic' => 'nullable',
+                'corVeic' => 'nullable',
+                'cCorVeic' => 'nullable',
+                'cCorMontVeic' => 'nullable',
+                'cMarcaVeic' => 'nullable',
+                'condVeic' => 'nullable',
+                'espVeic' => 'nullable',
+                'vinVeic' => 'nullable',
+                'lotVeic' => 'nullable',
+                'restriVeic' => 'nullable',
+                'cargaVeic' => 'nullable',
+                'operVeic' => 'nullable'
             ]);
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             if ($this->produtoServices->contagemProdutos($empresa) < $this->empresaServices->buscarEmpresa($empresa)->limProdutos || $empresa == 1) {

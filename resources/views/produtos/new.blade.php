@@ -84,14 +84,17 @@
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
                                             <div class="row">
-                                                <div class="col-md-6 col-xs-10">
+                                                <div class="col-md-10 col-xs-10">
                                                     <label for="ncm">NCM</label>
                                                     <input class="form-control" type="text" name="ncm" id="ncm"
                                                         required placeholder="Ncm...">
                                                 </div>
-                                                <button title="Buscar Ncm..." class="btn btn-light" type="button"
-                                                    data-toggle="modal" data-target=".bd-ncm-modal-lg"><i
-                                                        class="fa fa-search"></i></button>
+                                                <div class="col-md-2 col-xs-2">
+                                                    <br>
+                                                    <button title="Buscar Ncm" class="btn btn-light" type="button"
+                                                        data-toggle="modal" data-target=".bd-ncm-modal-lg"><i
+                                                            class="fa fa-search"></i></button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-xs-10">
@@ -101,18 +104,14 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-5 col-xs-10">
                                             <label for="precovenda">Preço de Venda</label>
                                             <div class="row">
-                                                <div class="col-md-6 col-xs-10">
-                                                    <input class="form-control" type="number" name="precovenda"
-                                                        step="0.01" id="precovenda" required
-                                                        placeholder="Preço Venda...">
-
-                                                </div>
+                                                <input class="form-control" type="number" name="precovenda"
+                                                    step="0.01" id="precovenda" required placeholder="Preço Venda...">
                                             </div>
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-5 col-xs-10">
                                             <label for="un">Unidade</label>
                                             <select name="un" id="un" class="form-control" required>
                                                 <option value="">-- Escolha uma Unidade --</option>
@@ -125,10 +124,11 @@
                                                 <option value="cm">CM</option>
                                             </select>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-2 col-xs-2">
                                             <label for="veic">Veículo?</label>
                                             <br>
-                                            <input type="checkbox" name="tpProd" id="tpProd" onclick="checkVeic(this)">
+                                            <input type="checkbox" name="tpProd" id="tpProd"
+                                                onclick="checkVeic(this)">
                                         </div>
                                     </div>
                                 </div>
@@ -379,198 +379,231 @@
 
                                 <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
                                     <div class="form-group row">
-                                        <label for="tpVeic" class="col-sm-2 col-form-label">Tipo de Veículo</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="tpVeic" name="tpVeic"
-                                                value="" placeholder="Tipo de Veículo...">
+                                        <div class="col-md-4">
+                                            <label for="tpVeic" class="col-sm-6 col-form-label">Tipo de Veículo</label>
+                                            <select class="form-control" name="tpVeic" id="tpVeic">
+                                                <option value="02">CICLOMOTOR</option>
+                                                <option value="03">MOTONETA</option>
+                                                <option value="04">MOTOCICLO</option>
+                                                <option value="05">TRICICLO</option>
+                                                <option value="06">AUTOMÓVEL</option>
+                                                <option value="07">MICROÔNIBUS</option>
+                                                <option value="08">ÔNIBUS</option>
+                                                <option value="10">REBOQUE</option>
+                                                <option value="11">SEMIREBOQUE</option>
+                                                <option value="13">CAMINHONETA</option>
+                                                <option value="14">CAMINHÃO</option>
+                                                <option value="17">C.TRATOR</option>
+                                                <option value="22">ESP/ÔNIBUS</option>
+                                                <option value="23">MISTO/CAM</option>
+                                                <option value="24">CARGA/CAM</option>
+                                            </select>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="chassiVeic" class="col-sm-2 col-form-label">Chassi</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-8">
+                                            <label for="chassiVeic" class="col-sm-2 col-form-label">Chassi</label>
                                             <input type="text" class="form-control" id="chassiVeic" name="chassiVeic"
-                                                value="" placeholder="Chassi...">
+                                                oninput="this.value = this.value.toUpperCase()" value=""
+                                                placeholder="Chassi...">
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="cenavanVeic" class="col-sm-2 col-form-label">Renavan</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="cenavanVeic" class="col-sm-4 col-form-label">Renavan</label>
                                             <input type="text" class="form-control" id="renavanVeic"
-                                                name="renavanVeic" value="" placeholder="Renavan...">
+                                                name="renavanVeic" value="000000000" placeholder="Renavan...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="anoFabVeic" class="col-sm-2 col-form-label">Ano de Fabricação</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="anoFabVeic" class="col-sm-6 col-form-label">Ano de
+                                                Fabricação</label>
                                             <input type="number" class="form-control" id="anoFabVeic" name="anoFabVeic"
-                                                value="" placeholder="Ano de Fabricação...">
+                                                min="1950" max="{{ date('Y') }}" value="{{ date('Y') }}"
+                                                placeholder="Ano de Fabricação...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="anoModVeic" class="col-sm-2 col-form-label">Ano de Modelo</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="anoModVeic" class="col-sm-6 col-form-label">Ano de Modelo</label>
                                             <input type="number" class="form-control" id="anoModVeic" name="anoModVeic"
-                                                value="" placeholder="Ano de Modelo...">
+                                                min="1950" max="{{ date('Y') + 1 }}" value="{{ date('Y') }}"
+                                                placeholder="Ano de Modelo...">
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="pesoLVeic" class="col-sm-2 col-form-label">Peso Líquido</label>
-                                        <div class="col-sm-10">
-                                            <input type="number" class="form-control" id="pesoLVeic" name="pesoLVeic"
-                                                value="" placeholder="Peso Líquido...">
+                                        <div class="col-md-4">
+                                            <label for="pesoLVeic" class="col-sm-4 col-form-label">Peso Líquido</label>
+                                            <input type="number" class="form-control" step="0.01" id="pesoLVeic"
+                                                name="pesoLVeic" value="" placeholder="Peso Líquido...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="pesoBVeic" class="col-sm-2 col-form-label">Peso Bruto</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="pesoBVeic" class="col-sm-4 col-form-label">Peso Bruto</label>
                                             <input type="number" class="form-control" id="pesoBVeic" name="pesoBVeic"
                                                 value="" placeholder="Peso Bruto...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="distVeic" class="col-sm-2 col-form-label">Distância</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="distVeic" class="col-sm-4 col-form-label">Distância</label>
                                             <input type="text" class="form-control" id="distVeic" name="distVeic"
                                                 value="" placeholder="Distância...">
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="combVeic" class="col-sm-2 col-form-label">Combustível</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="combVeic" name="combVeic"
-                                                value="" placeholder="Combustível...">
+                                        <div class="col-md-5">
+                                            <label for="combVeic" class="col-sm-4 col-form-label">Combustível</label>
+                                            <select class="form-control" name="combVeic" id="combVeic">
+                                                <option value="1">ÁLCOOL</option>
+                                                <option value="2">GASOLINA</option>
+                                                <option value="3">DIESEL</option>
+                                                <option value="16">ÁLCOOL/GASOLINA</option>
+                                                <option value="17">GASOLINA/ÁLCOOL/GNV</option>
+                                                <option value="18">GASOLINA/ELÉTRICO</option>
+                                            </select>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="nMotorVeic" class="col-sm-2 col-form-label">Número do Motor</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-7">
+                                            <label for="nMotorVeic" class="col-sm-4 col-form-label">Número do
+                                                Motor</label>
                                             <input type="text" class="form-control" id="nMotorVeic" name="nMotorVeic"
                                                 value="" placeholder="Número do Motor...">
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="cVVeic" class="col-sm-2 col-form-label">Cavalo-Vapor (CV)</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="cVVeic" name="cVVeic"
-                                                value="" placeholder="Cavalo-Vapor (CV)...">
+                                        <div class="col-md-4">
+                                            <label for="cVVeic" class="col-sm-4 col-form-label">Potência</label>
+                                            <input type="number" step="0.01" class="form-control" id="cVVeic" name="cVVeic"
+                                                value="" placeholder="Potência...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="cm3Veic" class="col-sm-2 col-form-label">Centímetros Cúbicos
-                                            (cm³)</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="cm3Veic" name="cm3Veic"
-                                                value="" placeholder="Centímetros Cúbicos (cm³)...">
+                                        <div class="col-md-4">
+                                            <label for="cm3Veic" class="col-sm-6 col-form-label">Cilindradas</label>
+                                            <input type="number" step="0.01" class="form-control" id="cm3Veic" name="cm3Veic"
+                                                value="" placeholder="Cilindradas...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="serieVeic" class="col-sm-2 col-form-label">Série</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="serieVeic" class="col-sm-4 col-form-label">Série</label>
                                             <input type="text" class="form-control" id="serieVeic" name="serieVeic"
                                                 value="" placeholder="Série...">
                                         </div>
                                     </div>
+
                                     <div class="form-group row">
-                                        <label for="tpPVeic" class="col-sm-2 col-form-label">Tipo de Pintura</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="tpPVeic" class="col-sm-6 col-form-label">Tipo de Pintura</label>
                                             <input type="text" class="form-control" id="tpPVeic" name="tpPVeic"
                                                 value="" placeholder="Tipo de Pintura...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="corVeic" class="col-sm-2 col-form-label">Cor</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="corVeic" class="col-sm-2 col-form-label">Cor</label>
                                             <input type="text" class="form-control" id="corVeic" name="corVeic"
-                                                value="" placeholder="Cor...">
+                                                oninput="this.value = this.value.toUpperCase()" placeholder="Cor...">
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="cCorVeic" class="col-sm-2 col-form-label">Código de Cor</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="cCorVeic" name="cCorVeic"
-                                                value="" placeholder="Código de Cor...">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="cCorMontVeic" class="col-sm-2 col-form-label">Código de Cor
-                                            Montagem</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="cCorMontVeic"
-                                                name="cCorMontVeic" value=""
-                                                placeholder="Código de Cor Montagem...">
+                                        <div class="col-md-4">
+                                            <label for="cCorVeic" class="col-sm-6 col-form-label">Código de Cor</label>
+                                            <select class="form-control" name="cCorVeic" id="cCorVeic">
+                                                <option value="01">AMARELO</option>
+                                                <option value="02">AZUL</option>
+                                                <option value="03">BEGE</option>
+                                                <option value="04">BRANCA</option>
+                                                <option value="05">CINZA</option>
+                                                <option value="06">DOURADA</option>
+                                                <option value="07">GRENAR</option>
+                                                <option value="08">LARANJA</option>
+                                                <option value="09">MARROM</option>
+                                                <option value="10">PRATA</option>
+                                                <option value="11">PRETA</option>
+                                                <option value="12">ROSA</option>
+                                                <option value="13">ROXA</option>
+                                                <option value="14">VERDE</option>
+                                                <option value="15">VERMELHA</option>
+                                                <option value="16">FANTASIA</option>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="cMarcaVeic" class="col-sm-2 col-form-label">Código da Marca</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="cCorMontVeic" class="col-sm-8 col-form-label">Código de Cor
+                                                Montadora</label>
+                                            <input type="text" class="form-control" id="cCorMontVeic"
+                                                name="cCorMontVeic" value=""
+                                                placeholder="Código de Cor Montadora...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="cMarcaVeic" class="col-sm-8 col-form-label">Código da
+                                                Marca</label>
                                             <input type="text" class="form-control" id="cMarcaVeic" name="cMarcaVeic"
                                                 value="" placeholder="Código da Marca...">
                                         </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="condVeic" class="col-sm-2 col-form-label">Condição do Veículo</label>
-                                        <div class="col-sm-10">
-                                            <input type="number" class="form-control" id="condVeic" name="condVeic"
-                                                value="" placeholder="Condição do Veículo...">
+                                        <div class="col-md-4">
+                                            <label for="condVeic" class="col-sm-8 col-form-label">Condição do
+                                                Veículo</label>
+                                            <select class="form-control" name="condVeic" id="condVeic">
+                                                <option value="0" selected>ACABADO</option>
+                                                <option value="1">INACABADO</option>
+                                                <option value="2">SEMIACABO</option>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="espVeic" class="col-sm-2 col-form-label">Especificação do
-                                            Veículo</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="espVeic" name="espVeic"
-                                                value="" placeholder="Especificação do Veículo...">
+                                        <div class="col-md-4">
+                                            <label for="espVeic" class="col-sm-8 col-form-label">Especificação do
+                                                Veículo</label>
+                                            <select class="form-control" name="espVeic" id="espVeic">
+                                                <option value="1">PASSAGEIRO</option>
+                                                <option value="2">CARGA</option>
+                                                <option value="3">MISTO</option>
+                                                <option value="4">CORRIDA</option>
+                                                <option value="5">TRAÇÃO</option>
+                                                <option value="6">ESPECIAL</option>
+                                            </select>
                                         </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="vinVeic" class="col-sm-2 col-form-label">VIN do Veículo</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="vinVeic" name="vinVeic"
-                                                value="" placeholder="VIN do Veículo...">
+                                        <div class="col-md-4">
+                                            <label for="vinVeic" class="col-sm-6 col-form-label">VIN do Veículo</label>
+                                            <select class="form-control" name="vinVeic" id="vinVeic">
+                                                <option value="N" selected>NORMAL</option>
+                                                <option value="R">REMARCADO</option>
+                                            </select>
                                         </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="lotVeic" class="col-sm-2 col-form-label">Lote do Veículo</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-4">
+                                            <label for="lotVeic" class="col-sm-6 col-form-label">Lotação Máxima</label>
                                             <input type="text" class="form-control" id="lotVeic" name="lotVeic"
-                                                value="" placeholder="Lote do Veículo...">
+                                                value="" placeholder="Lotação Máxima...">
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="restriVeic" class="col-sm-2 col-form-label">Restrição do
-                                            Veículo</label>
-                                        <div class="col-sm-10">
-                                            <input type="number" class="form-control" id="restriVeic" name="restriVeic"
-                                                value="" placeholder="Restrição do Veículo...">
+                                        <div class="col-md-5">
+                                            <label for="restriVeic" class="col-sm-6 col-form-label">Restrição do
+                                                Veículo</label>
+                                            <select class="form-control" name="restriVeic" id="restriVeic">
+                                                <option value="0">NÃO HÁ</option>
+                                                <option value="1">ALIENAÇÃO FIDUNCIÁRIA</option>
+                                                <option value="2">ARRENDAMENTO MERCANTIL</option>
+                                                <option value="3">RESERVA DE DOMÍNIO</option>
+                                                <option value="4">PENHOR DE VEÍCULOS</option>
+                                                <option value="9">OUTRAS</option>
+                                            </select>
                                         </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="cargaVeic" class="col-sm-2 col-form-label">Carga do Veículo</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-md-2">
+                                            <label for="cargaVeic" class="col-sm-12 col-form-label">Carga Máxima</label>
                                             <input type="number" class="form-control" id="cargaVeic" name="cargaVeic"
-                                                value="" placeholder="Carga do Veículo...">
+                                                value="" placeholder="Carga Máxima...">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="operVeic" class="col-sm-8 col-form-label">Tipo de Operação</label>
+                                            <select class="form-control" name="operVeic" id="operVeic">
+                                                <option value="1">VENDA CONCERSSIONÁRIA</option>
+                                                <option value="2">FATURAMENTO DIRETO PARA CONSUMIDOR FINAL</option>
+                                                <option value="3">VENDA DIRETO PARA GRANDES CONSUMIDORES</option>
+                                                <option value="0">OUTRAS</option>
+                                            </select>
                                         </div>
                                     </div>
 
-                                    <div class="form-group row">
-                                        <label for="operVeic" class="col-sm-2 col-form-label">Operação do Veículo</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="operVeic" name="operVeic"
-                                                value="" placeholder="Operação do Veículo...">
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <br>
-                                <div>
-                                    <div class="col-md-6 col-xs-10">
+                                <div class="row" style="text-align: center">
+                                    <div class="col">
                                         <button type="submit" class="btn btn-success form-control">Salvar
                                             Produto</button>
                                     </div>

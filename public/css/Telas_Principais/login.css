@@ -1,16 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200&family=Poppins&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&family=Poppins&family=Roboto+Slab:wght@100&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital@1&family=Montserrat:wght@100;200&family=Poppins&family=Roboto+Slab:wght@100&display=swap');
-
-
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    
 }
 
 header {
-    
     padding: 25px;
     text-align: right;
 }
@@ -45,16 +41,14 @@ header a {
     box-sizing: border-box;
     text-align: left;
     position: relative;
-    z-index: 2; 
+    z-index: 2;
     margin-right: 20dvh;
     height: 60dvh;
     width: 50dvh;
 }
 
-.login-card p{
-
-margin-bottom: 0px;
-
+.login-card p {
+    margin-bottom: 0px;
 }
 
 .img-fundo {
@@ -75,20 +69,18 @@ margin-bottom: 0px;
     width: 100%;
     height: 96.7%;
     background-color: rgba(84, 188, 225, 0.4);
-    z-index: 1; 
+    z-index: 1;
 }
-
 
 #email_label {
     font-family: sans-serif;
     font-size: 15px;
     color: #54BCE1;
-    
 }
 
 .form-control {
     border-radius: 10dvh;
-    margin-top: -15; 
+    margin-top: -15;
     width: 100%;
     outline: transparent solid 2px;
     font-weight: 400;
@@ -98,21 +90,16 @@ margin-bottom: 0px;
     font-size: 12px;
 }
 
-
-#remeber{
-
+#remeber {
     text-align: center;
     margin-top: 15px;
 }
 
-p{
-
-margin-top: 30px;
-
+p {
+    margin-top: 30px;
 }
 
-button{
-
+button {
     border-radius: 50px;
     width: 100%;
     color: #3350A1;
@@ -124,53 +111,47 @@ button{
     border-radius: 10px;
     height: 50px;
     font-size: 12px;
-
 }
 
-.logo img{
-
+.logo img {
     float: left;
-    
-
 }
-
 
 .main_footer_copy {
-    
     width: 100%;
     float: left;
     text-align: center;
     padding-top: 10px;
-  }
-  
-  .main_footer_copy a {
+}
+
+.main_footer_copy a {
     font-family: 'Lora';
     font-size: 2dvh;
     color: #37499D;
     height: 20px;
     font-weight: 600;
     padding-bottom: 10px;
-  }
-  
-  .main_footer_copy .m-b-footer {
+}
+
+.main_footer_copy .m-b-footer {
     margin-bottom: 0.5em;
-  }
-  
-  .main_footer_copy .by {
+}
+
+.main_footer_copy .by {
     font-size: 0.96em;
-  }
-  
-  .main_footer_copy .by a {
-    color: black  ;
+}
+
+.main_footer_copy .by a {
+    color: black;
     text-decoration: none;
-  }
-  
-  .main_footer_copy .by a:hover {
+}
+
+.main_footer_copy .by a:hover {
     text-decoration: underline;
-  }
-  
-  .main_footer_copy .by i {
+}
+
+.main_footer_copy .by i {
     font-size: 0.96em;
     margin-right: 3px;
     color: #e82626;
-  }
+}
