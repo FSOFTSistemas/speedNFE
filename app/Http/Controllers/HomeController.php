@@ -40,4 +40,10 @@ class HomeController extends Controller
 
     }
 
+    public function homePage2(){
+
+        return view('homePage2');
+
+    }
+
 }

@@ -1,0 +1,122 @@
+body {
+    background-color: #E9EAF0;
+  }
+  
+  .navbar-nav .nav-item .nav-link {
+    color: #969998; /* Cor do texto do menu */
+    text-align: right;
+  }
+  
+  .navbar-nav .nav-item .nav-link:hover {
+    color: #0B97B4; /* Cor do texto do menu ao passar o mouse */
+  }
+  
+  .text-large {
+    margin-top: 45px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #1595AC;
+  }
+  
+  .text-small {
+    font-size: 22px;
+    color: #155A76;
+  }
+
+  .main-card {
+    width: 100%;
+    margin: 50px auto;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    margin-top: 120px;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .button {
+    margin-top: 45px;
+    width: 200px;
+    height: 45px;
+    background-color: #00B3B5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8); /* Adiciona sombreamento */
+  }
+  
+  .sub-card {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 10px;
+    display: inline-block;
+    width: calc(33.33% - 20px);
+    vertical-align: top;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .benefit-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .benefit-description {
+    font-size: 14px;
+  }
+
+
+
+
+  @media only screen and (max-width: 768px) {
+
+
+#row-1{
+
+    background: linear-gradient(to bottom, #0B97B4, #E9EAF0); 
+
+}
+
+    #container-2 img{
+
+        margin-top: 45px ;
+
+    
+      }
+  
+      .text-large{
+
+        margin-top: 30px;
+        text-align: center;
+
+      }
+
+      .text-small{
+
+        margin-top: 20px;
+        text-align: center;
+
+      }
+
+      .container h3{
+
+        margin-top: 200px;
+
+      }
+
+  }
+
+  #container-2 {
+    background: linear-gradient(to right, #fff, #1595AC, #00B3B5, #fff, #fff, #15C7A8,#15C7A8); 
+    border-radius: 90%; 
+    height: 350px;
+  }
+
+.container{
+
+    text-align: center;
+    margin-top: 40px;
+
+}

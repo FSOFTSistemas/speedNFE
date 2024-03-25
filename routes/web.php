@@ -41,6 +41,8 @@ Route::get('/', function(){
 
 
 Route::get('/homePage', [HomeController::class, 'homePage'])->name('homePage');
+Route::get('/homePage2', [HomeController::class, 'homePage2'])->name('homePage2');
+
 
 //Planos
 Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
