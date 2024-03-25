@@ -114,7 +114,7 @@
                                         <div class="col-md-2 col-xs-2">
                                             <label for="veic">Veículo?</label>
                                             <br>
-                                            <input type="checkbox" readonly name="tpProd" id="tpProd" @if($produto->tpProd) checked @endif>
+                                            <input type="checkbox" disabled name="tpProd" id="tpProd" @if($produto->tpProd) checked @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -309,7 +309,7 @@
                                         <div class="col-md-4">
                                             <label for="cvVeic" class="col-sm-4 col-form-label">Potência</label>
                                             <input type="number" step="0.01" class="form-control" id="cvVeic" required
-                                                name="cvVeic" value="{{ $produto->cVVeic }}" placeholder="Potência...">
+                                                name="cvVeic" value="{{ $produto->cvVeic }}" placeholder="Potência...">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="cm3Veic" class="col-sm-6 col-form-label">Cilindradas</label>
