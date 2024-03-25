@@ -348,7 +348,7 @@
 
                                     <div class="row">
                                         <div class="col-md-5 col-xs-4">
-                                            <i class="fas fa-dollar-sign" style="margin-right: 2%"></i><label
+                                            <i class="fas fa-dollar-sign" style="margin-right: 2%; color:#193D55"></i><label
                                                 for=""><b> Valor total da Carga (R$):</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
@@ -360,7 +360,7 @@
 
                                     <div class="row">
                                         <div class="col-md-4 col-xs-4">
-                                            <i class="fas fa-weight-hanging" style="margin-right: 2%"></i><label
+                                            <i class="fas fa-weight-hanging" style="margin-right: 2%; color:#193D55"></i><label
                                                 for=""><b> Peso total (Kg):</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
@@ -369,21 +369,22 @@
                                         </div>
                                     </div><br>
 
-                                    <div class="row">
-                                        <div class="col-md-5 col-xs-5">
-                                            <i class="fas fa-box-open" style="margin-right: 2%"></i><label
+                                    <div class="row" >
+                                        <div class="col-md-6 col-xs-6">
+                                            <i class="fas fa-box-open" style="margin-right: 2%; color:#193D55"></i><label
                                                 for=""><b> Produto predominante:</b></label>
                                         </div>
                                         <div class="col-md-5 col-xs-5">
                                             <input class="form-control" type="text" name="produtoPredominante"
                                                 wire:model="produtoPredominante" required
                                                 placeholder="Produto predominante...">
+                                                
                                         </div>
                                     </div><br>
 
                                     <div class="row">
                                         <div class="col-md-4 col-xs-4">
-                                            <i class="fas fa-box-open" style="margin-right: 2%"></i><label
+                                            <i class="fas fa-box-open" style="margin-right: 2%; color:#193D55"></i><label
                                                 for=""><b> Tipo de carga:</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">

@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h1 class="m-0 text-dark">Produtos</h1>
+            <h5 class="m-0 text-dark">Produtos</h5>
         </div>
     </div>
 @stop
@@ -42,7 +42,7 @@
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             @if ($user->empresa_id == 1)
                                                 <label>Empresa</label>
                                                 <select onchange="javascript:liberarProdutos({{ $user->empresa_id }})"
@@ -58,7 +58,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Categoria</label>
                                             <select class="form-control" name="categoria" id="categoria" required>
                                                 <option value="">-- Escolha uma categoria --</option>
@@ -70,21 +70,21 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="codigo">Código de Barras</label>
                                             <input class="form-control" type="text" name="codigo" id="codigo"
                                                 placeholder="Código de Barras...">
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="produto">Produto</label>
                                             <input class="form-control" type="text" name="produto" id="produto"
                                                 required placeholder="Produto...">
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <div class="row">
-                                                <div class="col">
+                                                <div class="col-md-6 col-xs-10">
                                                     <label for="ncm">NCM</label>
                                                     <input class="form-control" type="text" name="ncm" id="ncm"
                                                         required placeholder="Ncm...">
@@ -94,17 +94,17 @@
                                                         class="fa fa-search"></i></button>
                                             </div>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="precocusto">Preço de Custo</label>
                                             <input class="form-control" type="number" name="precocusto" id="precocusto"
                                                 step="0.01" required placeholder="Preço Custo...">
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="precovenda">Preço de Venda</label>
                                             <div class="row">
-                                                <div class="col">
+                                                <div class="col-md-6 col-xs-10">
                                                     <input class="form-control" type="number" name="precovenda"
                                                         step="0.01" id="precovenda" required
                                                         placeholder="Preço Venda...">
@@ -112,7 +112,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="un">Unidade</label>
                                             <select name="un" id="un" class="form-control" required>
                                                 <option value="">-- Escolha uma Unidade --</option>
@@ -136,7 +136,7 @@
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cfopinterno">CFOP Interno</label><br>
                                             <select class="form-control" style="width: 100%" name="cfopinterno"
                                                 id="cfopinterno" required>
@@ -147,7 +147,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cfopexterno">CFOP Externo</label><br>
                                             <select class="form-control" style="width: 100%" name="cfopexterno"
                                                 id="cfopexterno" required>
@@ -160,7 +160,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cst">CST</label>
                                             <select class="form-control" name="cst" id="cst" required>
                                                 <option value="">--Selecione o CST--</option>
@@ -185,7 +185,7 @@
                                                 <option value="90">90 - Outras operações</option>
                                             </select>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cst_pis">CST/PIS</label>
                                             <select class="form-control" name="cst_pis" id="cst_pis" required>
                                                 <option value="">--Selecione o CST/PIS--</option>
@@ -253,7 +253,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cst_cofins">CST/COFINS</label>
                                             <select class="form-control" name="cst_cofins" id="cst_cofins" required>
                                                 <option value="">--Selecione o CST/COFINS--</option>
@@ -319,10 +319,10 @@
                                                 <option value="99">99 - Outras Operações</option>
                                             </select>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cofins">COFINS</label>
                                             <div class="row">
-                                                <div class="col">
+                                                <div class="col-md-6 col-xs-10">
                                                     <input class="form-control" type="text" name="cofins"
                                                         id="cofins" value="00" required placeholder="Confins...">
                                                 </div>
@@ -332,12 +332,12 @@
                                     </div>
                                     <div class="row">
 
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="icms">ICMS</label>
                                             <input class="form-control" type="text" name="icms" id="icms"
                                                 value="17" required placeholder="Icms...">
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="cst_csosn">CST/CSOSN</label>
                                             <select class="form-control" name="cst_csosn" id="cst_csosn" required>
                                                 <option value="">--Selecione o CST/CSOSN--</option>
@@ -364,12 +364,12 @@
                                     </div>
                                     <div class="row">
 
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="pis">PIS</label>
                                             <input class="form-control" type="text" name="pis" id="pis"
                                                 value="00" required placeholder="Pis...">
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label for="ipi">IPI</label>
                                             <input type="text" class="form-control" name="ipi" id="ipi"
                                                 value="00" required placeholder="Ipi...">
@@ -570,7 +570,7 @@
 
                                 <br>
                                 <div>
-                                    <div class="col">
+                                    <div class="col-md-6 col-xs-10">
                                         <button type="submit" class="btn btn-success form-control">Salvar
                                             Produto</button>
                                     </div>
@@ -595,7 +595,7 @@
             <div class="modal-content">
                 <div class="modal-header">
 
-                    <div class="col" style="text-align: center">
+                    <div class="col-md-6 col-xs-10" style="text-align: center">
                         <div class="modal-title" style="text: center">
                             <h4>Selecione um NCM abaixo...</h4>
                         </div>

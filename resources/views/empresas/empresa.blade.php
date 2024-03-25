@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h1 class="m-0 text-dark">Empresa</h1>
+            <h1 class="m-0 text-dark">Editar Empresa</h1>
         </div>
     </div>
 @stop
@@ -55,15 +55,26 @@
 
                                     <input type='hidden' name="action" id="action" value="new" />
 
+                                    <div class="col">
+                                        <label for="cpf_cnpj">CPF ou CNPJ</label>
+                                        <div class="input-group">
+                                            <input required placeholder="CPF/CNPJ..." class="form-control" type="text" id="cpf_cnpj" name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" value="{{ $empresa->cpf_cnpj }}" />
+                                            <div class="input-group-append">
+                                                <button id="cnpj_button" type="button" class="btn btn-light"><i class="fa fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Razão Social</label>
                                             <input required placeholder="Razão Social..." class="form-control"
                                                 type="text" id="nome" name="nome"
                                                 value="{{ $empresa->razao }}" />
                                         </div>
 
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Nome Fantasia</label>
                                             <input required placeholder="Nome Fantasia..." class="form-control"
                                                 type="text" id="fantasia" name="fantasia"
@@ -72,30 +83,18 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col">
-                                            <label>CPF ou CNPJ</label>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <input required placeholder="CPF/CNPJ..." class="form-control"
-                                                        type="text" id="cpf_cnpj" name="cpf_cnpj"
-                                                        onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14"
-                                                        value="{{ $empresa->cpf_cnpj }}" />
-                                                </div>
-                                                <button id="cnpj_button" type="button" class="btn btn-light"><i
-                                                        class="fa fa-search"></i></button>
-                                            </div>
-                                        </div>
+                                       
 
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>RG ou IE</label>
                                             <input required placeholder="RG/IE..." class="form-control" type="text"
                                                 id="rg_ie" name="rg_ie" value="{{ $empresa->rg_ie }}" />
                                         </div>
-                                    </div>
+                                   
 
 
-                                    <div class="row">
-                                        <div class="col">
+                            
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Celular</label>
                                             <input required placeholder="Celular..." class="form-control" type="text"
                                                 id="telefone" name="telefone" maxlength="15"
@@ -106,6 +105,18 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+                                    <div class="col">
+                                        <label for="cep">CEP</label>
+                                        <div class="input-group">
+                                            <input required placeholder="Cep..." class="form-control" type="text" id="cep" name="cep" value="{{ $empresa->cep }}" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-light" type="button" id="cep_button"><i class="fa fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+
                                     <div class="col">
                                         <div class="row">
                                             <div class="col-9">
@@ -119,31 +130,16 @@
                                                     id="numero" name="numero" value="{{ $empresa->numero }}" />
                                             </div>
                                         </div>
+                                    </div>
 
                                         <div class="row">
-                                            <div class="col-8">
+                                            <div class="col-md-6 col-xs-10">
                                                 <label>Bairro</label>
                                                 <input required placeholder="Bairro..." class="form-control"
                                                     type="text" id="bairro" name="bairro"
                                                     value="{{ $empresa->bairro }}" />
                                             </div>
-                                            <div class="col">
-                                                <label>CEP</label>
-                                                <div class="row">
-                                                    <div class="col">
-
-                                                        <input required placeholder="Cep..." class="form-control"
-                                                            type="text" id="cep" name="cep"
-                                                            value="{{ $empresa->cep }}" />
-                                                    </div>
-                                                    <button class="btn btn-light" type="button" id="cep_button"><i
-                                                            class="fa fa-search"></i></button>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row">
+                                            
                                             <div class="col">
                                                 <label>Cidade</label>
                                                 <select class="form-control" name="cidade" id="cidade" required>
@@ -153,11 +149,9 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                                {{-- <input required placeholder="Cidade..." class="form-control"
-                                                    type="text" id="cidade" name="cidade"
-                                                    value="{{ $empresa->cidade }}" /> --}}
+                                               
                                             </div>
-                                            <div class="col">
+                                            <div class="col-md-6 col-xs-10">
                                                 <label>UF</label>
                                                 <select class="form-control" id="uf" name="uf" required
                                                     onchange="updateCities(this.value)">
@@ -192,6 +186,15 @@
                                                 </select>
 
                                             </div>
+
+                                            <div class="col-md-6 col-xs-10">
+
+                                                <label>Código IBGE</label>
+                                                <input required placeholder="Código IBGE..." class="form-control"
+                                                    type="number" id="ibge" name="ibge"
+                                                    value="{{ $empresa->codigoIBGE }}" />
+                                            </div>
+
                                         </div>
 
 
@@ -203,52 +206,60 @@
                                                     value="{{ $empresa->complemento }}" />
 
                                             </div>
-                                            <div class="col">
-
-                                                <label>Código IBGE</label>
-                                                <input required placeholder="Código IBGE..." class="form-control"
-                                                    type="number" id="ibge" name="ibge"
-                                                    value="{{ $empresa->codigoIBGE }}" />
-                                            </div>
+                                           
                                         </div>
-                                    </div>
                                 </div>
+                                
 
                                 <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Nº da Última NFe</label>
                                             <input required placeholder="Nº Última NFe..." class=form-control
                                                 type="number" name="nfe" id="nfe"
                                                 value="{{ $empresa->ultimaNFe }}" />
                                         </div>
-                                        <div class="col">
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Nº da Última MDFe</label>
                                             <input required placeholder="Nº Última MDFe..." class=form-control
                                                 type="number" name="mdfe" id="mdfe"
                                                 value="{{ $empresa->ultimaMDFe }}" />
                                         </div>
-                                        <div class="col">
+
+                                        
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Serie</label>
                                             <input required placeholder="Série..." class=form-control type="number"
                                                 name="serie" id="serie" value="{{ $empresa->serie }}" />
                                         </div>
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>Ambiente</label>
+                                            <select required class="form-control" name="ambiente" id="ambiente">
+                                                <option value="{{ $empresa->ambiente }}">
+                                                    {{ $empresa->ambiente == 1 ? 'Produção' : 'Homologação' }}</option>
+                                                <option value="1">Produção</option>
+                                                <option value="2">Homologação</option>
+                                            </select>
+                                        </div>
+
                                     </div>
 
                                     <div class="row">
-                                        <div class="col">
-                                            <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                            <input placeholder="Certificado..." accept=".pfx" type="file"
-                                                name="certificado" id="certificado" class="file-upload-default"
-                                                value="{{ $empresa->certificado }}">
-
-                                        </div>
-                                        <div class="col">
+                                       
+                                        <div class="col-md-6 col-xs-10">
                                             <label>Senha Certificado</label>
                                             <input placeholder="Senha Certificado..." class=form-control type="text"
                                                 name="senha" id="senha" />
                                         </div>
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>Id Token CSC</label>
+                                            <input required placeholder="Id Token Csc..." class="form-control"
+                                                type="text" name="idCsc" id="idCsc"
+                                                value="{{ $empresa->idCsc }}">
+
+                                        </div>
+
                                     </div>
 
                                     <div class="row">
@@ -259,21 +270,15 @@
 
 
                                         </div>
-                                        <div class="col">
-                                            <label>Id Token CSC</label>
-                                            <input required placeholder="Id Token Csc..." class="form-control"
-                                                type="text" name="idCsc" id="idCsc"
-                                                value="{{ $empresa->idCsc }}">
-
-                                        </div>
-                                        <div class="col">
-                                            <label>Ambiente</label>
-                                            <select required class="form-control" name="ambiente" id="ambiente">
-                                                <option value="{{ $empresa->ambiente }}">
-                                                    {{ $empresa->ambiente == 1 ? 'Produção' : 'Homologação' }}</option>
-                                                <option value="1">Produção</option>
-                                                <option value="2">Homologação</option>
-                                            </select>
+                                        
+                                       
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-md-6 col-xs-10">
+                                        <label>Certificado</label><br> <!-- inserir arquivo pfx -->
+                                        <input placeholder="Certificado..." accept=".pfx" type="file"
+                                            name="certificado" id="certificado" class="file-upload-default"
+                                            value="{{ $empresa->certificado }}">
                                         </div>
                                     </div>
 

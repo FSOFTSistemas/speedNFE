@@ -26,35 +26,60 @@
         <div class="container" id="card-plano">
           <div class="panel pricing-table">
             
-            <div class="pricing-plan">
-              <h2 class="pricing-header">Classic</h2>
-              <ul class="pricing-features">
-                <li class="pricing-features-item"> Descrição</li>
-                <li class="pricing-features-item"> Vantagens</li>
+            <div class="pricing-plan" style="background: linear-gradient(to top, #D98719, #fff)">
+              <h2 class="pricing-header" id="Classic" >Classic</h2>
+              <ul class="pricing-features" id="p-classic">
+                <p class="pricing-features-item"> Número de Usuários: Até 1 usuários.</p>
+                <p class="pricing-features-item"> Até 5 notas mensais.</p>
+                <p class="pricing-features-item"> Controle Básico: Produtos, Clientes.</p>
+                <p class="pricing-features-item">Suporte: E-mail, 48 horas.</p>
+                <p class="pricing-features-item">Armazenamento: Até 500MB documentos.</p>
+                <p class="pricing-features-item">Atualizações: Segurança, Correções.</p>
+                <p class="pricing-features-item">Relatórios Básicos: Vendas, Emissões, Cadastros.</p>
               </ul>
-              <span class="pricing-price">R$ 100,00</span>
+              <span class="pricing-price">R$ 29,99  </span>
               <a href="#/" class="pricing-button">Assinar</a>
             </div>
             
-            <div class="pricing-plan">
-              <h2 class="pricing-header">Advanced</h2>
-              <ul class="pricing-features">
-                <li class="pricing-features-item"> </li>
-                <li class="pricing-features-item">Vantagens</li>
+
+            <div class="pricing-plan" style="background: linear-gradient(to top, #FFD700, #fff)">
+              <h2 class="pricing-header" id="Premium">Premium</h2>
+              <ul class="pricing-features" id="p-premium">
+                <p class="pricing-features-item">Usuários: Ilimitados.</p>
+                <p class="pricing-features-item">Notas: Emissões ilimitadas.</p>
+                <p class="pricing-features-item">Controle Total: Produtos, Clientes, Veículos, Motoristas.</p>
+                <p class="pricing-features-item">Suporte Prioritário: 24/7, Telefone, E-mail.</p>
+                <p class="pricing-features-item">Armazenamento: Ilimitado, Documentos.</p>
+                <p class="pricing-features-item">Atualizações: Acesso imediato, Novas funcionalidades.</p>
+                <p class="pricing-features-item">Relatórios Avançados: Dashboards Interativos.</p>
+                <p class="pricing-features-item">Integrações: ERP, Gestão Empresarial.</p>
               </ul>
-              <span class="pricing-price">R$ 100,00</span>
-              <a href="#/" class="pricing-button is-featured">Assinar</a>
-            </div>
-            
-            <div class="pricing-plan">
-              <h2 class="pricing-header">Premium</h2>
-              <ul class="pricing-features">
-                <li class="pricing-features-item">Descrição</li>
-                <li class="pricing-features-item">Vantagens</li>
-              </ul>
-              <span class="pricing-price">R$ 100,00</span>
+              <span class="pricing-price">R$ 89,99</span>
               <a href="#/" class="pricing-button">Assinar</a>
             </div>
+
+
+            <div class="pricing-plan" style="background: linear-gradient(to top, #c0c0c0, #fff)">
+              <h2 class="pricing-header" id="Advanced">Advanced</h2>
+              <ul class="pricing-features" id="p-advanced">
+                <p class="pricing-features-item">Número de Usuários: Até 2 usuários simultâneos.</p>
+                <p class="pricing-features-item">Notas: Até 30 mensais.</p>
+                <p class="pricing-features-item">Controle Avançado: Produtos, Clientes, Veículos.</p>
+                <p class="pricing-features-item">Suporte: E-mail, 24 horas.</p>
+                <p class="pricing-features-item">Armazenamento: Até 2GB documentos.</p>
+                <p class="pricing-features-item">Atualizações: Segurança, Correções, Funcionalidades.</p>
+                <p class="pricing-features-item">Relatórios Personalizáveis: Avançados, Dashboards.</p>
+                <p class="pricing-features-item">Integrações: ERP, Sistemas Empresariais.
+
+
+
+                </p>
+              </ul>
+              <span class="pricing-price" style="margin-left: 30px">R$ 59,99</span>
+              <a href="#/" class="pricing-button is-featured" style="margin-left: 30px">Assinar</a>
+            </div>
+            
+           
             
           </div>
         </div>
