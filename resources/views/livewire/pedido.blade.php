@@ -26,13 +26,12 @@
                         <option value="" disabled selected>--Escolha um cliente--</option>
                         @if ($empresaL != 1)
                             @foreach (json_decode($clientes) as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }}
+                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj  }}
                                 </option>
                             @endforeach
                         @else
                             @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }}
-                                </option>
+                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }} | {{ $cliente->id }}</option>
                             @endforeach
                         @endif
                     </select>

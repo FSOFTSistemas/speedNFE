@@ -57,7 +57,7 @@ class Pedido extends Component
             // $this->empresa = $user->empresa_id;
 
             //preenchendo arrays com os valores da empresa selecionada, caso a empresa não seja a fsoft
-            if ($user->empresa_id != 1) {
+            if ($user->empresa_id == 1) {
                 $this->empresa = $user->empresa_id;
                 $this->empresas = $sEmpresas->todos($user->empresa_id);
                 $this->clientes = $sClientes->todos($user->empresa_id);
@@ -81,12 +81,14 @@ class Pedido extends Component
         try {
             $this->bcfop = DB::table('cfop')->where('id', $this->cfop)->get()->cfop;
         } catch (Exception $e) {
+            dd("oi");
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }
 
     public function buscaCfop()
     {
+
         try {
             $prod = DB::table('cfop')
                 ->select('*')
@@ -160,6 +162,7 @@ class Pedido extends Component
     public function atualizarProds()
     {
         try {
+
             $prod = Produto::findOrFail($this->produto);
             $this->barras = $prod->codigo;
             $this->preco = $prod->precovenda;
