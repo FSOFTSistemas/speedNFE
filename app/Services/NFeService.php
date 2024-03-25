@@ -216,6 +216,38 @@ class NFeService
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = $this->format($i->unitario);
             $stdProd->indTot = 1;
+            if ($i->produto->tpProd = 1){
+                $stdVeicProd = new \stdClass();
+
+                // Campos do veículo (adicionados)
+                $stdtpVeic = $i->produtos->tpVeic;
+                $stdChassi = $i->produtos->chassiVeic;
+                $stdRenavan = $i->produtos->renavanVeic;
+                $stdanoFab = $i->produtos->anoFabVeic;
+                $stdanoMod = $i->produtos->anoModVeic;
+                $stdcilin = $i->produtos->cm3Veic;
+                $stdpesoL = $i->produtos->pesoLVeic;
+                $stdpesoB = $i->produtos->pesoBVeic;
+                $stdnSerie = $i->produtos->serieVeic;
+                $stdcondVeic = $i->produtos->condVeic;
+                $stdtpComb = $i->produtos->combVeic;
+                $stdDist = $i->produtos->distVeic;
+                $stdtpRest = $i->produtos->restriVeic;
+                $stdnMotor = $i->produtos->nMotorVeic;
+                $stdpot = $i->produtos->cvVeic;
+                $stdtpPint = $i->produtos->tpPVeic;
+                $stdxCor = $i->produtos->corVeic;
+                $stdcCor = $i->produtos->cCorVeic;
+                $stdcCorDENATRAN = $i->produtos->cCorMontVeic;
+                $stdespVeic = $i->produtos->espVeic;
+                $stdVIN = $i->produtos->vinVeic;
+                $stdlota = $i->produtos->lotVeic;
+                $stdCMT = $i->produtos->espVcargaVeiceic;
+                $stdtpOp = $i->produtos->operVeic;
+                $stdcMod = $i->produtos->cMarcaVeic;
+
+                $nfe->tagveicProd($stdVeicProd);
+            }
             $prod = $nfe->tagprod($stdProd);
 
             $stdImposto = new \stdClass();
