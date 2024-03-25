@@ -321,13 +321,8 @@
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cofins">COFINS</label>
-                                            <div class="row">
-                                                <div class="col-md-6 col-xs-10">
-                                                    <input class="form-control" type="text" name="cofins"
-                                                        id="cofins" value="00" required placeholder="Confins...">
-                                                </div>
-
-                                            </div>
+                                            <input class="form-control" type="text" name="cofins" id="cofins"
+                                                value="00" required placeholder="Confins...">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -409,7 +404,7 @@
 
                                     <div class="form-group row">
                                         <div class="col-md-4">
-                                            <label for="cenavanVeic" class="col-sm-4 col-form-label">Renavan</label>
+                                            <label for="renavanVeic" class="col-sm-4 col-form-label">Renavan</label>
                                             <input type="text" class="form-control" id="renavanVeic"
                                                 name="renavanVeic" value="000000000" placeholder="Renavan...">
                                         </div>
@@ -468,14 +463,14 @@
 
                                     <div class="form-group row">
                                         <div class="col-md-4">
-                                            <label for="cVVeic" class="col-sm-4 col-form-label">Potência</label>
-                                            <input type="number" step="0.01" class="form-control" id="cVVeic" name="cVVeic"
-                                                value="" placeholder="Potência...">
+                                            <label for="cvVeic" class="col-sm-4 col-form-label">Potência</label>
+                                            <input type="number" step="0.01" class="form-control" id="cvVeic"
+                                                name="cvVeic" value="" placeholder="Potência...">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="cm3Veic" class="col-sm-6 col-form-label">Cilindradas</label>
-                                            <input type="number" step="0.01" class="form-control" id="cm3Veic" name="cm3Veic"
-                                                value="" placeholder="Cilindradas...">
+                                            <input type="number" step="0.01" class="form-control" id="cm3Veic"
+                                                name="cm3Veic" value="" placeholder="Cilindradas...">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="serieVeic" class="col-sm-4 col-form-label">Série</label>
@@ -725,9 +720,16 @@
         }
 
         function checkVeic(checkbox) {
+            var campos = document.querySelectorAll('.form-control')
             if (checkbox.checked) {
+                campos.forEach(function(campo) {
+                    campo.required = true
+                });
                 document.getElementById('veicTab').style.display = 'block'
             } else {
+                campos.forEach(function(campo) {
+                    campo.required = false
+                });
                 document.getElementById('veicTab').style.display = 'none'
             }
         }
