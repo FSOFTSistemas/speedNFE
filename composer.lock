@@ -3161,16 +3161,16 @@
         },
         {
             "name": "nfephp-org/sped-nfe",
-            "version": "v5.1.19",
+            "version": "v5.1.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nfephp-org/sped-nfe.git",
-                "reference": "a423a321e3fa84842b693d6c2f4e88404ce49cbd"
+                "reference": "ab03aef87b561d523aeefc6972fbebfea435ddce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nfephp-org/sped-nfe/zipball/a423a321e3fa84842b693d6c2f4e88404ce49cbd",
-                "reference": "a423a321e3fa84842b693d6c2f4e88404ce49cbd",
+                "url": "https://api.github.com/repos/nfephp-org/sped-nfe/zipball/ab03aef87b561d523aeefc6972fbebfea435ddce",
+                "reference": "ab03aef87b561d523aeefc6972fbebfea435ddce",
                 "shasum": ""
             },
             "require": {
@@ -3237,9 +3237,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nfephp-org/sped-nfe/issues",
-                "source": "https://github.com/nfephp-org/sped-nfe/tree/v5.1.19"
+                "source": "https://github.com/nfephp-org/sped-nfe/tree/v5.1.22"
             },
-            "time": "2023-12-19T20:23:23+00:00"
+            "time": "2024-03-08T11:55:09+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -9886,5 +9886,5 @@
         "php": "^8.0.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

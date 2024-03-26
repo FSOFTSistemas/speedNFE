@@ -156,9 +156,12 @@
                                     <tbody style="text-align: center">
                                         @foreach ($vendaItens as $item)
                                             <tr>
-                                                @foreach ($item as $i)
-                                                    <td>{{ $i }}</td>
-                                                @endforeach
+                                                <td>#{{ $item['produto_id'] }}</td>
+                                                <td>{{ $item['descricao'] }}</td>
+                                                <td>{{ $item['quantidade'] }}</td>
+                                                <td>R$ {{ number_format($item['unitario'], 2) }}</td>
+                                                <td>R$ {{ number_format($item['desconto'], 2) }}</td>
+                                                <td>R$ {{ number_format($item['total'], 2) }}</td>
                                                 <td><a wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
                                                         title="Remover Item" class="text-danger"><i
                                                             class="fa fa-trash"></i></a></td>
@@ -172,7 +175,7 @@
                                     Soma produtos:
                                 </div>
                                 <div class="col-md-7 col-xs-6">
-                                    <b><input disabled wire:model="subtotal" type="number" class="form-control"></b>
+                                    <b>R$ {{ number_format($subtotal, 2) }}</b>
                                 </div>
                             </div>
                         </div>
@@ -212,6 +215,13 @@
         </select>
 
         <hr color="black"> --}}
+
+        <div class="row" style="margin-bottom: 2%;">
+            <div class="col">
+                <label for="">Informações Complementares</label>
+                <textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" wire:model="info_complementares" cols="30" rows="9" placeholder="Opicional..."></textarea>
+            </div>
+        </div>
 
         <div class="row" style="margin-bottom: 2%; text-align: center;">
             <div class="col">

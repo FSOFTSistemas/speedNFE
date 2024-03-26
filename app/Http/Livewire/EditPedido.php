@@ -22,6 +22,7 @@ class EditPedido extends Component
     public $empresa = '';
     public $produto = '';
     public $cliente = '';
+    public $info_complementares = '';
     public $pag = '';
     public $cfop = '';
     public $bcfop = '';
@@ -60,6 +61,7 @@ class EditPedido extends Component
             $this->bcfop = $sPedidos->findCfop($pedido->cfop)->cfop;
             $this->empresa = $pedido->empresa_id;
             $this->cliente = $pedido->cliente_id;
+            $this->info_complementares = $pedido->info_complementares;
             $this->pag = $pedido->forma_pag_id;
             $this->empresas = $sEmpresas->todos($user->empresa_id);
             $this->clientes = Cliente::all()->where('empresa_id', '=', $this->empresa);

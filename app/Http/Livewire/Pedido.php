@@ -24,7 +24,7 @@ class Pedido extends Component
     public $produto = '';
     public $cfop = '';
     public $bcfop = '';
-    public $forma = "";
+    public $forma = '';
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -57,7 +57,7 @@ class Pedido extends Component
             // $this->empresa = $user->empresa_id;
 
             //preenchendo arrays com os valores da empresa selecionada, caso a empresa não seja a fsoft
-            if ($user->empresa_id == 1) {
+            if ($user->empresa_id != 1) {
                 $this->empresa = $user->empresa_id;
                 $this->empresas = $sEmpresas->todos($user->empresa_id);
                 $this->clientes = $sClientes->todos($user->empresa_id);
@@ -66,6 +66,9 @@ class Pedido extends Component
                 $this->cfops = $sPedidos->cfopAll();
             } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
                 $this->empresas = $sEmpresas->todas();
+                $this->clientes = $sClientes->todosClientes();
+                $this->produtos = $sProdutos->todosProdutos();
+                $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             }
             $this->cfop = '';
@@ -81,7 +84,6 @@ class Pedido extends Component
         try {
             $this->bcfop = DB::table('cfop')->where('id', $this->cfop)->get()->cfop;
         } catch (Exception $e) {
-            dd("oi");
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
     }

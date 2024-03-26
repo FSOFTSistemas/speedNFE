@@ -25,13 +25,13 @@
                     <select class="form-control" name="cliente" id="cliente" required>
                         <option value="" disabled selected>--Escolha um cliente--</option>
                         @if ($empresaL != 1)
-                            @foreach (json_decode($clientes) as $cliente)
+                            @foreach ($clientes as $cliente)
                                 <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj  }}
                                 </option>
                             @endforeach
                         @else
-                            @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }} | {{ $cliente->id }}</option>
+                            @foreach ($clientes as $cli)
+                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }} | {{ $cli->id }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -82,7 +82,7 @@
                                     <select wire:change="atualizarProds()" class="form-control" wire:model="produto">
                                         <option value="" disabled selected>--Escolha um produto--</option>
                                         @if ($empresaL != 1)
-                                            @foreach (json_decode($produtos) as $produto)
+                                            @foreach ($produtos as $produto)
                                                 <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
                                             @endforeach
                                         @else
@@ -148,9 +148,12 @@
                                     <tbody style="text-align: center">
                                         @foreach ($vendaItens as $item)
                                             <tr>
-                                                @foreach ($item as $i)
-                                                    <td>{{ $i }}</td>
-                                                @endforeach
+                                                <td>#{{ $item['produto_id'] }}</td>
+                                                <td>{{ $item['descricao'] }}</td>
+                                                <td>{{ $item['quantidade'] }}</td>
+                                                <td>R$ {{ number_format($item['unitario'], 2) }}</td>
+                                                <td>R$ {{ number_format($item['desconto'], 2) }}</td>
+                                                <td>R$ {{ number_format($item['total'], 2) }}</td>
                                                 <td><a wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
                                                         title="Remover Item" class="text-danger"><i
                                                             class="fa fa-trash"></i></a></td>
@@ -164,7 +167,7 @@
                                     Soma produtos:
                                 </div>
                                 <div class="col-md-7 col-xs-6">
-                                    <b><input disabled wire:model="subtotal" type="number" class="form-control"></b>
+                                    <b>R$ {{ number_format($subtotal, 2) }}</b>
                                 </div>
                             </div>
                         </div>

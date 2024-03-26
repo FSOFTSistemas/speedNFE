@@ -30,7 +30,7 @@ class PedidosService
         ]);
     }
 
-    public function update($id, $cliente, $subtotal, $desconto, $cfop)
+    public function update($id, $cliente, $subtotal, $desconto, $cfop, $info_complementares)
     {
         $pedido = Pedido::find($id);
         return $pedido->update([
@@ -41,6 +41,7 @@ class PedidosService
             'desconto' => $desconto,
             'total' => $subtotal,
             'cfop' => $cfop,
+            'info_complementares' => $info_complementares,
         ]);
     }
 

@@ -276,6 +276,7 @@ class PedidosController extends Controller
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
+                'info_complementares' => 'nullable'
             ]);
             $venda = $this->pedidoServices->buscarPedido($id);
             if (!$venda->chave) {
@@ -309,7 +310,8 @@ class PedidosController extends Controller
                     $request->cliente,
                     $subtotal,
                     $desconto,
-                    $request->cfop
+                    $request->cfop,
+                    $request->info_complementares
                 );
                 return redirect()->route('vendas.editar', [$venda->id])->with('success', 'Nota atualizada com sucesso.');
             } else {
