@@ -75,7 +75,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-8 col-xs-12">
+                                <div class="col-md-6 col-xs-6">
                                     {{-- <label>Produto</label>
                                 <input type="text" wire:model="produto" class="form-control"> --}}
                                     <label>Produto</label>
@@ -93,25 +93,25 @@
                                     </select>
                                 </div>
 
-                                <div class="col-md-1 col-xs-3">
+                                <div class="col-md-1 col-xs-1">
                                     <label>Qtd.</label>
                                     <input class="form-control" type="number" min="1" wire:change="atualizarTot()"
                                         wire:model="quantidade">
                                 </div>
 
-                                <div class="col-md-1 col-xs-3">
+                                <div class="col-md-2 col-xs-2">
                                     <label>Valor</label>
                                     <input class="form-control" type="number" step="0.01"
                                         wire:change="atualizarTot()" wire:model="preco">
                                 </div>
 
-                                <div class="col-md-1 col-xs-3">
+                                <div class="col-md-1 col-xs-1">
                                     <label>Dsct. (%)</label>
                                     <input class="form-control" type="number" step="0.1"
                                         wire:change="atualizarTot()" wire:model="desconto">
                                 </div>
 
-                                <div class="col-md-1 col-xs-3">
+                                <div class="col-md-2 col-xs-2">
                                     <label>Total</label>
                                     <input class="form-control" type="number" step="0.01" wire:model="total">
                                 </div>

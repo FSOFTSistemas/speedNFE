@@ -496,7 +496,7 @@ class MDFeService
         return number_format((float) $number, $dec, ".", "");
     }
 
-    public function retiraPontuacoes($texto)
+    public static function retiraPontuacoes($texto)
     {
         $texto = str_replace(".", "", $texto);
         $texto = str_replace("/", "", $texto);

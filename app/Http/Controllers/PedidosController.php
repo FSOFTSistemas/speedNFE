@@ -90,7 +90,7 @@ class PedidosController extends Controller
             } else {
                 return redirect('/inutilizar')->with('success', $result['data']);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -130,7 +130,7 @@ class PedidosController extends Controller
                 return redirect('/venda')->with('error', $result['data']);
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -169,7 +169,7 @@ class PedidosController extends Controller
             } else {
                 return redirect('/venda')->with('error', $nfe['data']);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -186,7 +186,7 @@ class PedidosController extends Controller
             $pdf = $daevento->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             session()->flash("erro", $e->getMessage());
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -202,7 +202,7 @@ class PedidosController extends Controller
             $pdf = $danfe->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             session()->flash("erro", $e->getMessage());
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -253,7 +253,6 @@ class PedidosController extends Controller
             } else {
                 return redirect('/vendas')->with("error", 404);
             }
-            return redirect('/vendas')->with('success', $venda);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }

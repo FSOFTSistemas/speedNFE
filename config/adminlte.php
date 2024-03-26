@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Força de Vendas',
+    'title' => 'Speed',
     'title_prefix' => 'FSOFT',
     'title_postfix' => '',
 
@@ -31,7 +31,7 @@ return [
     */
 
     'use_ico_only' => false,
-    'use_full_favicon' => false,
+    'use_full_favicon' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>FSOFT</b>Integra',
+    'logo' => '<b>Speed</b>NFe',
     'logo_img' => '/site/img/logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -168,7 +168,6 @@ return [
     */
 
     'classes_auth_card' => 'card-outline card-primary',
-    'classes_auth_card' => '',
     'classes_auth_header' => 'bg-gradient-info',
     'classes_auth_body' => '',
     'classes_auth_footer' => 'text-center',
@@ -291,18 +290,6 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
-        // [
-        //     'type'         => 'navbar-search',
-        //     'text'         => 'search',
-        //     'topnav_right' => true,
-        // ],
-
-        // Sidebar items:
-        // [
-        //     'type' => 'sidebar-menu-search',
-        //     'text' => 'search',
-        // ],
         [
             'text' => 'blog',
             'url'  => 'admin/blog',
@@ -323,29 +310,9 @@ return [
             'url'         => '/produto',
             'icon'        => 'fas fa-box-open',
         ],
-        // [
-        //     'text'        => 'Categorias',
-        //     'url'         => '/categoria',
-        //     'icon'        => 'fas fa-list',
-        // ],
-        // [
-        //     'text'        => 'Formas de Pagamento',
-        //     'url'         => '/forma',
-        //     'icon'        => 'fas fa-money-bill-wave',
-        // ],
-        // [
-        //     'text'        => 'Estoque',
-        //     'url'         => '/estoque',
-        //     'icon'        => 'far fa-fw fa-file',
-        // ],
-        // [
-        //     'text'        => 'Contas a Receber',
-        //     'url'         => '/receber',
-        //     'icon'        => 'far fa-fw fa-file',
-        // ],
         [
             'text'        => 'NFe',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'far fa-file-alt',
             'submenu' => [
                 [
                     'text'        => 'Emitir NFe',
@@ -355,7 +322,7 @@ return [
                 [
                     'text'        => 'Notas Emitidas (NFe)',
                     'url'         => '/vendas',
-                    'icon'        => 'far fa-fw fa-file',
+                    'icon'        => 'fas fa-list-ul',
                 ],
                 [
                     'text'        => 'Baixar XML (NFe)',
@@ -371,7 +338,7 @@ return [
         ],
         [
             'text'        => 'MDFe',
-            'icon'        => 'far fa-fw fa-file',
+            'icon'        => 'fas fa-truck',
             'submenu' => [
                 [
                     'text'        => 'Emitir MDFe',
@@ -381,7 +348,7 @@ return [
                 [
                     'text'        => 'Notas Emitidas (MDFe)',
                     'url'         => 'mdfes',
-                    'icon'        => 'far fa-fw fa-file',
+                    'icon'        => 'fas fa-list-ul',
                 ],
                 [
                     'text'        => 'Relatórios (MDFe)',
@@ -404,77 +371,7 @@ return [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
-        ],
-        // ['header' => 'account_settings'],
-        // [
-        //     'text' => 'Usuários',
-        //     'url'  => '/usuarios',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'profile',
-        //     'url'  => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-user',
-        // ],
-        // [
-        //     'text' => 'change_password',
-        //     'url'  => 'admin/settings',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
-        // [
-        //     'text'    => 'multilevel',
-        //     'icon'    => 'fas fa-fw fa-share',
-        //     'submenu' => [
-        //         [
-        //             'text' => 'level_one',
-        //             'url'  => '#',
-        //         ],
-        //         [
-        //             'text'    => 'level_one',
-        //             'url'     => '#',
-        //             'submenu' => [
-        //                 [
-        //                     'text' => 'level_two',
-        //                     'url'  => '#',
-        //                 ],
-        //                 [
-        //                     'text'    => 'level_two',
-        //                     'url'     => '#',
-        //                     'submenu' => [
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url'  => '#',
-        //                         ],
-        //                         [
-        //                             'text' => 'level_three',
-        //                             'url'  => '#',
-        //                         ],
-        //                     ],
-        //                 ],
-        //             ],
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url'  => '#',
-        //         ],
-        //     ],
-        // ],
-        // ['header' => 'labels'],
-        // [
-        //     'text'       => 'important',
-        //     'icon_color' => 'red',
-        //     'url'        => '#',
-        // ],
-        // [
-        //     'text'       => 'warning',
-        //     'icon_color' => 'yellow',
-        //     'url'        => '#',
-        // ],
-        // [
-        //     'text'       => 'information',
-        //     'icon_color' => 'cyan',
-        //     'url'        => '#',
-        // ],
+        ]
     ],
 
     /*
