@@ -76,7 +76,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-dismiss="modal">Fechar</button>
-                                                    <button type="submit" class="btn btn-warning">Deletar</button>
+                                                    <button type="submit" onclick="loadPage()" class="btn btn-warning">Deletar</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -84,14 +84,14 @@
                                 </div>
                                 {{-- EMITIR --}}
                                 <div class="col-md-3 col-xs-2">
-                                    <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" title="Enviar NFe"
+                                    <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" onclick="loadPage()" title="Enviar NFe"
                                         class="text-success"><i class="fas fa-upload"></i></a>
                                 </div>
                             @elseif($pedido->estado == 'Autorizado')
                                 @if ($pedido->sequencia_evento == 0)
                                     <div class="col-md-3 col-xs-2">
-                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Visualizar"
-                                            class="text-primary"><i class="fa fa-eye"></i></a>
+                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}"
+                                            title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a>
                                     </div>
                                     <div class="col-md-3 col-xs-2">
                                         <a title="Carta de Correção" href="#">
@@ -123,7 +123,7 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-dismiss="modal">Fechar</button>
-                                                        <button type="submit" class="btn btn-primary">Enviar CCe</button>
+                                                        <button type="submit" onclick="loadPage()" class="btn btn-primary">Enviar CCe</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -168,7 +168,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-dismiss="modal">Fechar</button>
-                                                    <button type="submit" class="btn btn-primary">Enviar
+                                                    <button type="submit" onclick="loadPage()" class="btn btn-primary">Enviar
                                                         Cancelamento</button>
                                                 </div>
                                             </form>
@@ -191,6 +191,15 @@
 
 @endsection
 
+@section('css')
+    <style>
+        .bloqueado {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+@endsection
+
 @section('js')
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -208,6 +217,18 @@
 
         function setaDadosExcluir($id) {
             document.getElementById('pedido_id').value = $id;
+        }
+
+        function loadPage() {
+            var botoes = document.getElementsByTagName("a");
+            for (var i = 0; i < botoes.length; i++) {
+                bloquearBotao(botoes[i]);
+            }
+        }
+
+        function bloquearBotao(botao) {
+            botao.disabled = true;
+            botao.classList.add("bloqueado");
         }
     </script>
 @stop
