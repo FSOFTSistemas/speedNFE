@@ -86,9 +86,15 @@
 						<div class="col-6 col-12-narrower">
 
 							<section class="box special">
-								<span class="image featured"><img src="{{ asset('css/images/pic02.jpg') }} " alt="" /></span>
+								<span class="image featured"><img src="{{ asset('css/images/basic.jpg') }} " alt="" style="height: 400px;"/></span>
 								<h3>Plano Básico</h3>
-								<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+								<p>Emissao de 1 nota teste grátis<br>
+                                    Cadastro de até 10 clientes<br>
+                                    Emissão de até 10 notas p/mês<br>
+                                    Cadastro de até 10 produtos<br>
+                                    Emissão de NFe<br>
+                                    Suporte via email
+                                    </p>
 								<ul class="actions special">
 									<li><a href="#" class="button alt">Saiba mais</a></li>
 								</ul>
@@ -98,9 +104,15 @@
 						<div class="col-6 col-12-narrower">
 
 							<section class="box special">
-								<span class="image featured"><img src="{{ asset('css/images/pic03.jpg') }}" alt="" /></span>
+								<span class="image featured"><img src="{{ asset('css/images/medium.jpg') }}" alt="" style="height: 400px;"/></span>
 								<h3>Plano Intermediário</h3>
-								<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+								<p>Emissao de 1 nota teste grátis<br>
+                                    Cadastro de até 20 clientes<br>
+                                    Emissão de até 20 notas p/mês<br>
+                                    Cadastro de até 20 produtos<br>
+                                    Emissão de NFe<br>
+                                    Suporte via whatsApp<br>
+                                    </p>
 								<ul class="actions special">
 									<li><a href="#" class="button alt">Saiba mais</a></li>
 								</ul>
@@ -110,9 +122,15 @@
                         <div class="col-6 col-12-narrower">
 
 							<section class="box special">
-								<span class="image featured"><img src="{{ asset('css/images/pic03.jpg') }}" alt="" /></span>
+								<span class="image featured"><img src="{{ asset('css/images/premium.jpg') }}" alt="" style="height: 400px;" /></span>
 								<h3>Plano Premium</h3>
-								<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+								<p>Emissao de 1 nota teste grátis<br>
+                                    Cadastro ilimitado de clientes<br>
+                                    Emissão de até 40 notas p/mês<br>
+                                    Cadastro ilimitado de produtos<br>
+                                    Emissao de NFe e MDFe<br>
+                                    Suporte via whatsApp<br>
+                                    </p>
 								<ul class="actions special">
 									<li><a href="#" class="button alt">Saiba mais</a></li>
 								</ul>
