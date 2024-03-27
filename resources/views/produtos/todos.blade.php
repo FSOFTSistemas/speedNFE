@@ -24,18 +24,15 @@
         <table class="table table-hover" id="produtos">
             <thead class="table-primary">
                 <tr>
-                    <th>CODIGO</th>
+                    <th>CÓDIGO</th>
                     <th>PRODUTO</th>
-                    <th>PRECO CUSTO</th>
-                    <th>PRECO VENDA</th>
+                    <th>PREÇO CUSTO</th>
+                    <th>PREÇO VENDA</th>
                     <th>CATEGORIA</th>
                     @if ($empresa == 1)
                         <th>EMPRESA</th>
                     @endif
-                    
-                        <th>Ações</th>
-                
-                  
+                    <th></th>
                 </tr>
             </thead>
 
@@ -50,14 +47,25 @@
                         @if ($empresa == 1)
                             <td>{{ $produto->fantasia }}</td>
                         @endif
-                        {{-- <td>estoque</td> --}}
-                        <td><a class="text-warning" title="Editar" href="{{ route('editar_produto', ['id' => $produto->id]) }}"><i
-                                    class="fa fa-edit"></i></a>
-                        
-                        <a class="text-danger" title="Excluir" onclick="setaDadosModal({{ $produto->id }})"><i data-toggle="modal"
-                                    data-target=".bd-delete-modal-lg" class="fa fa-trash"></i></a>
-                        <a class="text-primary" title="Visualizar" href="{{ route('ver_produto', [$produto->id]) }}"><i
-                                    class="fa fa-eye"></i></a>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                    <a class="text-warning" title="Editar"
+                                        href="{{ route('editar_produto', ['id' => $produto->id]) }}"><i
+                                            class="fa fa-edit"></i></a>
+                                </div>
+
+                                <div class="col">
+                                    <a class="text-danger" title="Excluir" onclick="setaDadosModal({{ $produto->id }})"><i
+                                            data-toggle="modal" data-target=".bd-delete-modal-lg"
+                                            class="fa fa-trash"></i></a>
+                                </div>
+
+                                <div class="col">
+                                    <a class="text-primary" title="Visualizar"
+                                        href="{{ route('ver_produto', [$produto->id]) }}"><i class="fa fa-eye"></i></a>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 @endforeach
@@ -115,24 +123,24 @@
 @endsection
 
 @section('css')
-<link rel="stylesheet" href="/css/admin_custom.css">
-<link
-    href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.css"
-    rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/admin_custom.css">
+    <link
+        href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 @stop
 
 @section('js')
 
-<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
-crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+        crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script
-src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.js">
-</script>
-<script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script
+        src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.js">
+    </script>
+    <script>
         function setaDadosModal(idProduto) {
             document.getElementById('idProduto').value = idProduto;
         }
@@ -142,24 +150,24 @@ src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.
                 responsive: true,
 
                 columnDefs: [{
-                            responsivePriority: 1,
-                            targets: 0
-                        },
-                        {
-                            responsivePriority: 2,
-                            targets: -1
-                        },
-                        // {
-                        //     responsivePriority: 3,
-                        //     targets: 2
-                        // },
+                        responsivePriority: 1,
+                        targets: 0
+                    },
+                    {
+                        responsivePriority: 2,
+                        targets: -1
+                    },
+                    // {
+                    //     responsivePriority: 3,
+                    //     targets: 2
+                    // },
 
-                        // {
-                        //     responsivePriority: 4,
-                        //     targets: 6
-                        // },
-                    
-                    ],
+                    // {
+                    //     responsivePriority: 4,
+                    //     targets: 6
+                    // },
+
+                ],
 
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json',
