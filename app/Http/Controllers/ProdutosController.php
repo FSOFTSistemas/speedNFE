@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categoria;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
 use App\Services\PedidosService;
@@ -284,11 +285,12 @@ class ProdutosController extends Controller
         try {
             $user = Auth::user();
             $empresas = $this->empresaServices->todas();
-            $categorias = $this->categoriaServices->todas($user->empresa_id);
+            $categorias = Categoria::all();
             $cfops = $this->pedidoServices->cfopAll();
             $ncms = $this->pedidoServices->ncmAll();
             return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias, 'cfops' => $cfops, 'ncms' => $ncms]);
         } catch (Exception $e) {
+            dd($e);
             return back();
         }
     }
