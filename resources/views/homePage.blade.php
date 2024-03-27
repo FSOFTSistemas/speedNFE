@@ -151,76 +151,50 @@
 
             <section class="box special">
                 <header class="major">
-                    <h2>Sobre a SpeedNFe</h2>
-                    <h4>Sua solução completa para emissão e gestão de NFe e NFC-e:</h4>
-
-                    <h5>
+					<h2>Sobre Nós</h2>
+                    <h4>Emita Notas Fiscais Facilmente</h4>
+                    <p>
                         A SpeedNFe é uma plataforma inovadora que oferece uma solução completa para emissão e gestão de
-                        NFe e NFC-e. Somos uma empresa especializada em soluções fiscais, com mais de 10 anos de
-                        experiência no mercado, e estamos comprometidos em oferecer aos nossos clientes a melhor
-                        experiência possível.
-					</h5>
-
-					<h5>
-                        Nossos diferenciais:
-					</h5>
-					<ul>
-						<li>
-							Fácil de usar: Nossa plataforma é intuitiva e fácil de usar, mesmo para usuários iniciantes.
-						</li>
-						<li>
-							Completa: Oferecemos todos os recursos que você precisa para emitir e gerenciar suas NFe e
-							NFC-e, desde a criação da nota até a entrega ao cliente.
-						</li>
-						<li>
-							Confiança: Somos uma empresa certificada pela SEFAZ e garantimos a segurança e confiabilidade de
-                        seus dados fiscais.
-						</li>
-						<li>
-							Suporte especializado: Contamos com uma equipe de especialistas em NFe e NFC-e que está sempre
-                        disponível para te ajudar.
-						</li>
-					</ul>
-
-					<h5>
-                        Com a SpeedNFe, você pode:
-					</h5>
-
-					<ul>
-						<li>
-							Emitir NFe e NFC-e de forma rápida e fácil;
-						</li>
-						<li>
-							Gerenciar suas notas fiscais em um único lugar;
-						</li>
-						<li>
-							Consultar o status de suas notas fiscais;
-						</li>
-						<li>
-							Transmitir suas notas fiscais para a SEFAZ;
-						</li>
-						<li>
-							Receber suas notas fiscais por e-mail;
-						</li>
-						<li>
-							Imprimir suas notas fiscais;
-						</li>
-						<li>
-							E muito mais!
-						</li>
-					</ul>
-
+                        NFe
+                        e NFC-e. Somos uma empresa especializada em soluções fiscais, com mais de 10 anos de experiência
+                        no
+                        mercado, e estamos comprometidos em oferecer aos nossos clientes a melhor experiência possível.
+                    </p>
+                    <h3>Nossos Diferenciais</h3>
+                    <ul>
+                        <li>Fácil de usar: Plataforma intuitiva e amigável, ideal para usuários de todos os níveis.</li>
+                        <li>Completa: Oferecemos todos os recursos que você precisa para gerenciar suas notas fiscais,
+                            desde
+                            a criação até a entrega.</li>
+                        <li>Confiável: Somos uma empresa certificada pela SEFAZ, garantindo a segurança e confiabilidade
+                            de
+                            seus dados fiscais.</li>
+                        <li>Suporte especializado: Contamos com uma equipe de especialistas em NFe e NFC-e à disposição
+                            para
+                            te ajudar.</li>
+                    </ul>
+                    <h3>Com a SpeedNFe, você pode:</h3>
+                    <ul>
+                        <li>Emitir NFe e NFC-e de forma rápida e fácil;</li>
+                        <li>Gerenciar suas notas fiscais em um único lugar;</li>
+                        <li>Consultar o status de suas notas fiscais;</li>
+                        <li>Transmitir suas notas fiscais para a SEFAZ;</li>
+                        <li>Receber suas notas fiscais por e-mail;</li>
+                        <li>Imprimir suas notas fiscais;</li>
+                        <li>E muito mais!</li>
+                    </ul>
+                    <p>
                         A SpeedNFe é a solução ideal para empresas de todos os portes que desejam:
-
-                        Agilizar a emissão de suas notas fiscais;
-                        Reduzir custos;
-                        Aumentar a produtividade;
-                        Ter mais segurança e confiabilidade em seus processos fiscais.
-                        Experimente a SpeedNFe agora mesmo e veja como podemos te ajudar a melhorar a gestão de suas
-                        notas fiscais!
+                    </p>
+                    <ul>
+                        <li>Agilizar a emissão de notas fiscais;</li>
+                        <li>Reduzir custos;</li>
+                        <li>Aumentar a produtividade;</li>
+                        <li>Ter mais segurança e confiabilidade em seus processos fiscais.</li>
+                    </ul>
                 </header>
-            </section>
 
+            </section>
         </section>
 
 
