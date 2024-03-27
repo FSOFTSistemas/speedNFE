@@ -316,7 +316,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
@@ -358,7 +358,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
@@ -396,7 +396,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
@@ -461,7 +461,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);

@@ -10,6 +10,7 @@ use App\Services\ProdutosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class ProdutosController extends Controller
 {
@@ -31,12 +32,13 @@ class ProdutosController extends Controller
         try {
             $request->validate([
                 'categoria' => 'required',
-                'codigo' => '',
+                'codigo' => 'nullable',
                 'produto' => 'required|max:255',
                 'ncm' => 'required',
                 'precocusto' => 'required',
                 'precovenda' => 'required',
                 'un' => 'required',
+                'tpProd' => 'nullable',
                 'cfopinterno' => 'required',
                 'cfopexterno' => 'required',
                 'cst' => 'required',
@@ -47,6 +49,31 @@ class ProdutosController extends Controller
                 'cst_csosn' => 'required',
                 'pis' => 'required',
                 'ipi' => 'required',
+                'tpVeic' => 'nullable|numeric',
+                'chassiVeic' => 'nullable',
+                'renavanVeic' => 'nullable',
+                'anoFabVeic' => 'nullable|numeric',
+                'anoModVeic' => 'nullable|numeric',
+                'pesoLVeic' => 'nullable|numeric',
+                'pesoBVeic' => 'nullable|numeric',
+                'distVeic' => 'nullable|numeric',
+                'combVeic' => 'nullable|numeric',
+                'nMotorVeic' => 'nullable',
+                'cvVeic' => 'nullable',
+                'cm3Veic' => 'nullable',
+                'serieVeic' => 'nullable',
+                'tpPVeic' => 'nullable',
+                'corVeic' => 'nullable',
+                'cCorVeic' => 'nullable|numeric',
+                'cCorMontVeic' => 'nullable',
+                'cMarcaVeic' => 'nullable',
+                'condVeic' => 'nullable|numeric',
+                'espVeic' => 'nullable|numeric',
+                'vinVeic' => 'nullable',
+                'lotVeic' => 'nullable',
+                'restriVeic' => 'nullable|numeric',
+                'cargaVeic' => 'nullable',
+                'operVeic' => 'nullable|numeric'
             ]);
             $produto = $this->produtoServices->salvar(
                 $id,
@@ -60,6 +87,31 @@ class ProdutosController extends Controller
                 $request->cst_csosn,
                 $request->cst_pis,
                 $request->cst_cofins,
+                $request->tpProd ? $request->tpVeic : null,
+                $request->tpProd ? $request->chassiVeic : null,
+                $request->tpProd ? $request->renavanVeic : null,
+                $request->tpProd ? $request->anoFabVeic : null,
+                $request->tpProd ? $request->anoModVeic : null,
+                $request->tpProd ? $request->pesoLVeic : null,
+                $request->tpProd ? $request->pesoBVeic : null,
+                $request->tpProd ? $request->distVeic : null,
+                $request->tpProd ? $request->combVeic : null,
+                $request->tpProd ? $request->nMotorVeic : null,
+                $request->tpProd ? $request->cvVeic : null,
+                $request->tpProd ? $request->cm3Veic : null,
+                $request->tpProd ? $request->serieVeic : null,
+                $request->tpProd ? $request->tpPVeic : null,
+                $request->tpProd ? $request->corVeic : null,
+                $request->tpProd ? $request->cCorVeic : null,
+                $request->tpProd ? $request->cCorMontVeic : null,
+                $request->tpProd ? $request->cMarcaVeic : null,
+                $request->tpProd ? $request->condVeic : null,
+                $request->tpProd ? $request->espVeic : null,
+                $request->tpProd ? $request->vinVeic : null,
+                $request->tpProd ? $request->lotVeic : null,
+                $request->tpProd ? $request->restriVeic : null,
+                $request->tpProd ? $request->cargaVeic : null,
+                $request->tpProd ? $request->operVeic : null,
                 $request->cst,
                 $request->icms,
                 $request->pis,
@@ -99,14 +151,15 @@ class ProdutosController extends Controller
     {
         try {
             $request->validate([
-                'empresa' => '',
+                'empresa' => 'nullable',
                 'categoria' => 'required',
-                'codigo' => '',
+                'codigo' => 'nullable',
                 'produto' => 'required|max:255',
                 'ncm' => 'required',
                 'precocusto' => 'required',
                 'precovenda' => 'required',
                 'un' => 'required',
+                'tpProd' => 'nullable',
                 'cfopinterno' => 'required',
                 'cfopexterno' => 'required',
                 'cst' => 'required',
@@ -117,6 +170,31 @@ class ProdutosController extends Controller
                 'cst_csosn' => 'required',
                 'pis' => 'required',
                 'ipi' => 'required',
+                'tpVeic' => 'nullable|numeric',
+                'chassiVeic' => 'nullable',
+                'renavanVeic' => 'nullable',
+                'anoFabVeic' => 'nullable|numeric',
+                'anoModVeic' => 'nullable|numeric',
+                'pesoLVeic' => 'nullable|numeric',
+                'pesoBVeic' => 'nullable|numeric',
+                'distVeic' => 'nullable|numeric',
+                'combVeic' => 'nullable|numeric',
+                'nMotorVeic' => 'nullable',
+                'cvVeic' => 'nullable',
+                'cm3Veic' => 'nullable',
+                'serieVeic' => 'nullable',
+                'tpPVeic' => 'nullable',
+                'corVeic' => 'nullable',
+                'cCorVeic' => 'nullable|numeric',
+                'cCorMontVeic' => 'nullable',
+                'cMarcaVeic' => 'nullable',
+                'condVeic' => 'nullable|numeric',
+                'espVeic' => 'nullable|numeric',
+                'vinVeic' => 'nullable',
+                'lotVeic' => 'nullable',
+                'restriVeic' => 'nullable|numeric',
+                'cargaVeic' => 'nullable',
+                'operVeic' => 'nullable|numeric'
             ]);
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             if ($this->produtoServices->contagemProdutos($empresa) < $this->empresaServices->buscarEmpresa($empresa)->limProdutos || $empresa == 1) {
@@ -138,10 +216,38 @@ class ProdutosController extends Controller
                     $request->cofins,
                     $request->ipi,
                     $request->cfopexterno,
-                    $request->un
+                    $request->un,
+                    $request->tpProd ? 1 : 0,
+                    $request->tpProd ? $request->tpVeic : null,
+                    $request->tpProd ? $request->chassiVeic : null,
+                    $request->tpProd ? $request->renavanVeic : null,
+                    $request->tpProd ? $request->anoFabVeic : null,
+                    $request->tpProd ? $request->anoModVeic : null,
+                    $request->tpProd ? $request->pesoLVeic : null,
+                    $request->tpProd ? $request->pesoBVeic : null,
+                    $request->tpProd ? $request->distVeic : null,
+                    $request->tpProd ? $request->combVeic : null,
+                    $request->tpProd ? $request->nMotorVeic : null,
+                    $request->tpProd ? $request->cvVeic : null,
+                    $request->tpProd ? $request->cm3Veic : null,
+                    $request->tpProd ? $request->serieVeic : null,
+                    $request->tpProd ? $request->tpPVeic : null,
+                    $request->tpProd ? $request->corVeic : null,
+                    $request->tpProd ? $request->cCorVeic : null,
+                    $request->tpProd ? $request->cCorMontVeic : null,
+                    $request->tpProd ? $request->cMarcaVeic : null,
+                    $request->tpProd ? $request->condVeic : null,
+                    $request->tpProd ? $request->espVeic : null,
+                    $request->tpProd ? $request->vinVeic : null,
+                    $request->tpProd ? $request->lotVeic : null,
+                    $request->tpProd ? $request->restriVeic : null,
+                    $request->tpProd ? $request->cargaVeic : null,
+                    $request->tpProd ? $request->operVeic : null
                 );
             }
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');
+        } catch (ValidationException $e) {
+            return back()->with('warning', $e->errors());
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

@@ -216,11 +216,43 @@ class NFeService
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = $this->format($i->unitario);
             $stdProd->indTot = 1;
-            $prod = $nfe->tagprod($stdProd);
+            if ($i->produto->tpProd = 1) {
+                $stdVeicProd = new \stdClass();
+
+                // Campos do veículo (adicionados)
+                $stdVeicProd->item = $key + 1;
+                $stdVeicProd->tpOp = $i->produto->operVeic;
+                $stdVeicProd->chassi = $i->produto->chassiVeic;
+                $stdVeicProd->cCor = $i->produto->cCorVeic;
+                $stdVeicProd->xCor = $i->produto->corVeic;
+                $stdVeicProd->pot = $i->produto->cvVeic;
+                $stdVeicProd->cilin = $i->produto->cm3Veic;
+                $stdVeicProd->pesoL = $i->produto->pesoLVeic;
+                $stdVeicProd->pesoB = $i->produto->pesoBVeic;
+                $stdVeicProd->nSerie = $i->produto->serieVeic;
+                $stdVeicProd->tpComb = $i->produto->combVeic;
+                $stdVeicProd->nMotor = $i->produto->nMotorVeic;
+                $stdVeicProd->CMT = $i->produto->cargaVeic;
+                $stdVeicProd->dist = $i->produto->distVeic;
+                $stdVeicProd->anoMod = $i->produto->anoModVeic;
+                $stdVeicProd->anoFab = $i->produto->anoFabVeic;
+                $stdVeicProd->tpPint = $i->produto->tpPVeic;
+                $stdVeicProd->tpVeic = $i->produto->tpVeic;
+                $stdVeicProd->espVeic = $i->produto->espVeic;
+                $stdVeicProd->VIN = $i->produto->vinVeic;
+                $stdVeicProd->condVeic = $i->produto->condVeic;
+                $stdVeicProd->cMod = $i->produto->cMarcaVeic;
+                $stdVeicProd->cCorDENATRAN = $i->produto->cCorMontVeic;
+                $stdVeicProd->lota = $i->produto->lotVeic;
+                $stdVeicProd->tpRest = $i->produto->restriVeic;
+
+                $nfe->tagveicProd($stdVeicProd);
+            }
+            $nfe->tagprod($stdProd);
 
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
-            $imposto = $nfe->tagimposto($stdImposto);
+            $nfe->tagimposto($stdImposto);
 
             //ICMS
             $stdICMS = new \stdClass();
@@ -379,6 +411,7 @@ class NFeService
         $std->email = getenv('RESP_EMAIL'); //E-mail da pessoa jurídica a ser contatada
         $std->fone = getenv('RESP_FONE');
         $nfe->taginfRespTec($std);
+
         try {
             $nfe->montaNFe();
             $arr = [

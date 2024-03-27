@@ -13,7 +13,10 @@ class ProdutosService
 
     }
 
-    public function salvar($id, $categoria, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins, $cst, $icms, $pis, $cofins, $ipi, $cfopexterno, $un)
+    public function salvar($id, $categoria, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,
+    $tpVeic, $chassiVeic, $renavanVeic, $anoFabVeic, $anoModVeic, $pesoLVeic, $pesoBVeic, $distVeic, $combVeic, $nMotorVeic, $cvVeic, $cm3Veic, $serieVeic,
+    $tpPVeic, $corVeic, $cCorVeic, $cCorMontVeic, $cMarcaVeic, $condVeic, $espVeic, $vinVeic, $lotVeic, $restriVeic, $cargaVeic, $operVeic, $cst, $icms, $pis,
+    $cofins, $ipi, $cfopexterno, $un)
     {
         $prod = Produto::find($id);
         $prod->update([
@@ -33,7 +36,32 @@ class ProdutosService
             'ipi' => $ipi,
             'cfop_externo' => $cfopexterno,
             'un' => $un,
-            'categoria_id' => $categoria
+            'categoria_id' => $categoria,
+            'tpVeic' => $tpVeic,
+            'chassiVeic' => $chassiVeic,
+            'renavanVeic' => $renavanVeic,
+            'anoFabVeic' => $anoFabVeic,
+            'anoModVeic' => $anoModVeic,
+            'pesoLVeic' => $pesoLVeic,
+            'pesoBVeic' => $pesoBVeic,
+            'distVeic' => $distVeic,
+            'combVeic' => $combVeic,
+            'nMotorVeic' => $nMotorVeic,
+            'cvVeic' => $cvVeic,
+            'cm3Veic' => $cm3Veic,
+            'serieVeic' => $serieVeic,
+            'tpPVeic' => $tpPVeic,
+            'corVeic' => $corVeic,
+            'cCorVeic' => $cCorVeic,
+            'cCorMontVeic' => $cCorMontVeic,
+            'cMarcaVeic' => $cMarcaVeic,
+            'condVeic' => $condVeic,
+            'espVeic' => $espVeic,
+            'vinVeic' => $vinVeic,
+            'lotVeic' => $lotVeic,
+            'restriVeic' => $restriVeic,
+            'cargaVeic' => $cargaVeic,
+            'operVeic' => $operVeic
         ]);
         return $prod;
     }
@@ -53,7 +81,10 @@ class ProdutosService
         return $produto->delete();
     }
 
-    public function store($categoria, $empresa, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins, $cst, $icms, $pis, $cofins, $ipi, $cfopexterno, $un)
+    public function store($categoria, $empresa, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,
+    $cst, $icms, $pis, $cofins, $ipi, $cfopexterno, $un, $tpProd, $tpVeic, $chassiVeic, $renavanVeic, $anoFabVeic, $anoModVeic, $pesoLVeic, $pesoBVeic,
+    $distVeic, $combVeic, $nMotorVeic, $cvVeic, $cm3Veic, $serieVeic, $tpPVeic, $corVeic, $cCorVeic, $cCorMontVeic, $cMarcaVeic, $condVeic, $espVeic,
+    $vinVeic, $lotVeic, $restriVeic, $cargaVeic, $operVeic)
     {
             return Produto::create([
                 'categoria_id' => $categoria,
@@ -74,6 +105,32 @@ class ProdutosService
                 'ipi' => $ipi,
                 'cfop_externo' => $cfopexterno,
                 'un' => $un,
+                'tpProd' => $tpProd,
+                'tpVeic' => $tpVeic,
+                'chassiVeic' => $chassiVeic,
+                'renavanVeic' => $renavanVeic,
+                'anoFabVeic' => $anoFabVeic,
+                'anoModVeic' => $anoModVeic,
+                'pesoLVeic' => $pesoLVeic,
+                'pesoBVeic' => $pesoBVeic,
+                'distVeic' => $distVeic,
+                'combVeic' => $combVeic,
+                'nMotorVeic' => $nMotorVeic,
+                'cvVeic' => $cvVeic,
+                'cm3Veic' => $cm3Veic,
+                'serieVeic' => $serieVeic,
+                'tpPVeic' => $tpPVeic,
+                'corVeic' => $corVeic,
+                'cCorVeic' => $cCorVeic,
+                'cCorMontVeic' => $cCorMontVeic,
+                'cMarcaVeic' => $cMarcaVeic,
+                'condVeic' => $condVeic,
+                'espVeic' => $espVeic,
+                'vinVeic' => $vinVeic,
+                'lotVeic' => $lotVeic,
+                'restriVeic' => $restriVeic,
+                'cargaVeic' => $cargaVeic,
+                'operVeic' => $operVeic
             ]);
     }
 

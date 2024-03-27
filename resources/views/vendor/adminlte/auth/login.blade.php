@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset("css/Telas_Principais/login.css") }}">
+    
     <title>NFE Online - Login</title>
     <style>
         body, html {
@@ -133,6 +134,7 @@
                         <input type="password" name="password"
                             class="form-control @error('password') is-invalid @enderror"
                             placeholder="senha">
+                            
                         <div class="input-group-append">
                             <span class="fas fa-lock"></span>
                         </div>
@@ -155,6 +157,7 @@
             </div>
         </div>
     </div>
+
 </body>
 
 </html>

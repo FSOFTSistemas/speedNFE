@@ -24,7 +24,7 @@ class Pedido extends Component
     public $produto = '';
     public $cfop = '';
     public $bcfop = '';
-    public $forma = "";
+    public $forma = '';
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -66,6 +66,9 @@ class Pedido extends Component
                 $this->cfops = $sPedidos->cfopAll();
             } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
                 $this->empresas = $sEmpresas->todas();
+                $this->clientes = $sClientes->todosClientes();
+                $this->produtos = $sProdutos->todosProdutos();
+                $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             }
             $this->cfop = '';
@@ -87,6 +90,7 @@ class Pedido extends Component
 
     public function buscaCfop()
     {
+
         try {
             $prod = DB::table('cfop')
                 ->select('*')
@@ -160,6 +164,7 @@ class Pedido extends Component
     public function atualizarProds()
     {
         try {
+
             $prod = Produto::findOrFail($this->produto);
             $this->barras = $prod->codigo;
             $this->preco = $prod->precovenda;

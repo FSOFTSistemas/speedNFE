@@ -28,6 +28,10 @@
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
                                     aria-controls="profile" aria-selected="false">Informações Fiscais</a>
                             </li>
+                            <li class="nav-item" style="display: none" id="veicTab">
+                                <a class="nav-link" id="veic-tab" data-toggle="pill" href="#veic" role="tab"
+                                    aria-controls="veic" aria-selected="false">Informações de Veículo</a>
+                            </li>
                         </ul>
                     </div>
                     <div class="card-body">
@@ -80,14 +84,17 @@
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
                                             <div class="row">
-                                                <div class="col-md-6 col-xs-10">
+                                                <div class="col-md-10 col-xs-10">
                                                     <label for="ncm">NCM</label>
                                                     <input class="form-control" type="text" name="ncm" id="ncm"
                                                         required placeholder="Ncm...">
                                                 </div>
-                                                <button title="Buscar Ncm..." class="btn btn-light" type="button"
-                                                    data-toggle="modal" data-target=".bd-ncm-modal-lg"><i
-                                                        class="fa fa-search"></i></button>
+                                                <div class="col-md-2 col-xs-2">
+                                                    <br>
+                                                    <button title="Buscar Ncm" class="btn btn-light" type="button"
+                                                        data-toggle="modal" data-target=".bd-ncm-modal-lg"><i
+                                                            class="fa fa-search"></i></button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-xs-10">
@@ -97,18 +104,14 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-5 col-xs-10">
                                             <label for="precovenda">Preço de Venda</label>
                                             <div class="row">
-                                                <div class="col-md-6 col-xs-10">
-                                                    <input class="form-control" type="number" name="precovenda"
-                                                        step="0.01" id="precovenda" required
-                                                        placeholder="Preço Venda...">
-
-                                                </div>
+                                                <input class="form-control" type="number" name="precovenda"
+                                                    step="0.01" id="precovenda" required placeholder="Preço Venda...">
                                             </div>
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-5 col-xs-10">
                                             <label for="un">Unidade</label>
                                             <select name="un" id="un" class="form-control" required>
                                                 <option value="">-- Escolha uma Unidade --</option>
@@ -120,6 +123,12 @@
                                                 <option value="m">M</option>
                                                 <option value="cm">CM</option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-2 col-xs-2">
+                                            <label for="veic">Veículo?</label>
+                                            <br>
+                                            <input type="checkbox" name="tpProd" id="tpProd"
+                                                onclick="checkVeic(this)">
                                         </div>
                                     </div>
                                 </div>
@@ -312,13 +321,8 @@
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cofins">COFINS</label>
-                                            <div class="row">
-                                                <div class="col-md-6 col-xs-10">
-                                                    <input class="form-control" type="text" name="cofins"
-                                                        id="cofins" value="00" required placeholder="Confins...">
-                                                </div>
-
-                                            </div>
+                                            <input class="form-control" type="text" name="cofins" id="cofins"
+                                                value="00" required placeholder="Confins...">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -367,9 +371,234 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="tpVeic" class="col-sm-6 col-form-label">Tipo de Veículo</label>
+                                            <select class="form-control" name="tpVeic" id="tpVeic">
+                                                <option value="02">CICLOMOTOR</option>
+                                                <option value="03">MOTONETA</option>
+                                                <option value="04">MOTOCICLO</option>
+                                                <option value="05">TRICICLO</option>
+                                                <option value="06">AUTOMÓVEL</option>
+                                                <option value="07">MICROÔNIBUS</option>
+                                                <option value="08">ÔNIBUS</option>
+                                                <option value="10">REBOQUE</option>
+                                                <option value="11">SEMIREBOQUE</option>
+                                                <option value="13">CAMINHONETA</option>
+                                                <option value="14">CAMINHÃO</option>
+                                                <option value="17">C.TRATOR</option>
+                                                <option value="22">ESP/ÔNIBUS</option>
+                                                <option value="23">MISTO/CAM</option>
+                                                <option value="24">CARGA/CAM</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label for="chassiVeic" class="col-sm-2 col-form-label">Chassi</label>
+                                            <input type="text" class="form-control" id="chassiVeic" name="chassiVeic"
+                                                oninput="this.value = this.value.toUpperCase()" value=""
+                                                placeholder="Chassi...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="renavanVeic" class="col-sm-4 col-form-label">Renavan</label>
+                                            <input type="text" class="form-control" id="renavanVeic"
+                                                name="renavanVeic" value="000000000" placeholder="Renavan...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="anoFabVeic" class="col-sm-6 col-form-label">Ano de
+                                                Fabricação</label>
+                                            <input type="number" class="form-control" id="anoFabVeic" name="anoFabVeic"
+                                                min="1950" max="{{ date('Y') }}" value="{{ date('Y') }}"
+                                                placeholder="Ano de Fabricação...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="anoModVeic" class="col-sm-6 col-form-label">Ano de Modelo</label>
+                                            <input type="number" class="form-control" id="anoModVeic" name="anoModVeic"
+                                                min="1950" max="{{ date('Y') + 1 }}" value="{{ date('Y') }}"
+                                                placeholder="Ano de Modelo...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="pesoLVeic" class="col-sm-4 col-form-label">Peso Líquido</label>
+                                            <input type="number" class="form-control" step="0.01" id="pesoLVeic"
+                                                name="pesoLVeic" value="" placeholder="Peso Líquido...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="pesoBVeic" class="col-sm-4 col-form-label">Peso Bruto</label>
+                                            <input type="number" class="form-control" id="pesoBVeic" name="pesoBVeic"
+                                                value="" placeholder="Peso Bruto...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="distVeic" class="col-sm-4 col-form-label">Distância</label>
+                                            <input type="text" class="form-control" id="distVeic" name="distVeic"
+                                                value="" placeholder="Distância...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-5">
+                                            <label for="combVeic" class="col-sm-4 col-form-label">Combustível</label>
+                                            <select class="form-control" name="combVeic" id="combVeic">
+                                                <option value="1">ÁLCOOL</option>
+                                                <option value="2">GASOLINA</option>
+                                                <option value="3">DIESEL</option>
+                                                <option value="16">ÁLCOOL/GASOLINA</option>
+                                                <option value="17">GASOLINA/ÁLCOOL/GNV</option>
+                                                <option value="18">GASOLINA/ELÉTRICO</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <label for="nMotorVeic" class="col-sm-4 col-form-label">Número do
+                                                Motor</label>
+                                            <input type="text" class="form-control" id="nMotorVeic" name="nMotorVeic"
+                                                value="" placeholder="Número do Motor...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="cvVeic" class="col-sm-4 col-form-label">Potência</label>
+                                            <input type="number" step="0.01" class="form-control" id="cvVeic"
+                                                name="cvVeic" value="" placeholder="Potência...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="cm3Veic" class="col-sm-6 col-form-label">Cilindradas</label>
+                                            <input type="number" step="0.01" class="form-control" id="cm3Veic"
+                                                name="cm3Veic" value="" placeholder="Cilindradas...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="serieVeic" class="col-sm-4 col-form-label">Série</label>
+                                            <input type="text" class="form-control" id="serieVeic" name="serieVeic"
+                                                value="" placeholder="Série...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="tpPVeic" class="col-sm-6 col-form-label">Tipo de Pintura</label>
+                                            <input type="text" class="form-control" id="tpPVeic" name="tpPVeic"
+                                                value="" placeholder="Tipo de Pintura...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="corVeic" class="col-sm-2 col-form-label">Cor</label>
+                                            <input type="text" class="form-control" id="corVeic" name="corVeic"
+                                                oninput="this.value = this.value.toUpperCase()" placeholder="Cor...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="cCorVeic" class="col-sm-6 col-form-label">Código de Cor</label>
+                                            <select class="form-control" name="cCorVeic" id="cCorVeic">
+                                                <option value="01">AMARELO</option>
+                                                <option value="02">AZUL</option>
+                                                <option value="03">BEGE</option>
+                                                <option value="04">BRANCA</option>
+                                                <option value="05">CINZA</option>
+                                                <option value="06">DOURADA</option>
+                                                <option value="07">GRENAR</option>
+                                                <option value="08">LARANJA</option>
+                                                <option value="09">MARROM</option>
+                                                <option value="10">PRATA</option>
+                                                <option value="11">PRETA</option>
+                                                <option value="12">ROSA</option>
+                                                <option value="13">ROXA</option>
+                                                <option value="14">VERDE</option>
+                                                <option value="15">VERMELHA</option>
+                                                <option value="16">FANTASIA</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="cCorMontVeic" class="col-sm-8 col-form-label">Código de Cor
+                                                Montadora</label>
+                                            <input type="text" class="form-control" id="cCorMontVeic"
+                                                name="cCorMontVeic" value=""
+                                                placeholder="Código de Cor Montadora...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="cMarcaVeic" class="col-sm-8 col-form-label">Código da
+                                                Marca</label>
+                                            <input type="text" class="form-control" id="cMarcaVeic" name="cMarcaVeic"
+                                                value="" placeholder="Código da Marca...">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="condVeic" class="col-sm-8 col-form-label">Condição do
+                                                Veículo</label>
+                                            <select class="form-control" name="condVeic" id="condVeic">
+                                                <option value="0" selected>ACABADO</option>
+                                                <option value="1">INACABADO</option>
+                                                <option value="2">SEMIACABO</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <label for="espVeic" class="col-sm-8 col-form-label">Especificação do
+                                                Veículo</label>
+                                            <select class="form-control" name="espVeic" id="espVeic">
+                                                <option value="1">PASSAGEIRO</option>
+                                                <option value="2">CARGA</option>
+                                                <option value="3">MISTO</option>
+                                                <option value="4">CORRIDA</option>
+                                                <option value="5">TRAÇÃO</option>
+                                                <option value="6">ESPECIAL</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="vinVeic" class="col-sm-6 col-form-label">VIN do Veículo</label>
+                                            <select class="form-control" name="vinVeic" id="vinVeic">
+                                                <option value="N" selected>NORMAL</option>
+                                                <option value="R">REMARCADO</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="lotVeic" class="col-sm-6 col-form-label">Lotação Máxima</label>
+                                            <input type="text" class="form-control" id="lotVeic" name="lotVeic"
+                                                value="" placeholder="Lotação Máxima...">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-md-5">
+                                            <label for="restriVeic" class="col-sm-6 col-form-label">Restrição do
+                                                Veículo</label>
+                                            <select class="form-control" name="restriVeic" id="restriVeic">
+                                                <option value="0">NÃO HÁ</option>
+                                                <option value="1">ALIENAÇÃO FIDUNCIÁRIA</option>
+                                                <option value="2">ARRENDAMENTO MERCANTIL</option>
+                                                <option value="3">RESERVA DE DOMÍNIO</option>
+                                                <option value="4">PENHOR DE VEÍCULOS</option>
+                                                <option value="9">OUTRAS</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="cargaVeic" class="col-sm-12 col-form-label">Carga Máxima</label>
+                                            <input type="number" class="form-control" id="cargaVeic" name="cargaVeic"
+                                                value="" placeholder="Carga Máxima...">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="operVeic" class="col-sm-8 col-form-label">Tipo de Operação</label>
+                                            <select class="form-control" name="operVeic" id="operVeic">
+                                                <option value="1">VENDA CONCERSSIONÁRIA</option>
+                                                <option value="2">FATURAMENTO DIRETO PARA CONSUMIDOR FINAL</option>
+                                                <option value="3">VENDA DIRETO PARA GRANDES CONSUMIDORES</option>
+                                                <option value="0">OUTRAS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
                                 <br>
-                                <div>
-                                    <div class="col-md-6 col-xs-10">
+                                <div class="row" style="text-align: center">
+                                    <div class="col">
                                         <button type="submit" class="btn btn-success form-control">Salvar
                                             Produto</button>
                                     </div>
@@ -388,7 +617,8 @@
     </div>
 
     {{-- MODAL --}}
-    <div class="modal fade bd-ncm-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bd-ncm-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -486,6 +716,21 @@
                 }
             } else {
                 select.value = "";
+            }
+        }
+
+        function checkVeic(checkbox) {
+            var campos = document.querySelectorAll('.form-control')
+            if (checkbox.checked) {
+                campos.forEach(function(campo) {
+                    campo.required = true
+                });
+                document.getElementById('veicTab').style.display = 'block'
+            } else {
+                campos.forEach(function(campo) {
+                    campo.required = false
+                });
+                document.getElementById('veicTab').style.display = 'none'
             }
         }
 
