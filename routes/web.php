@@ -106,7 +106,7 @@ Route::prefix('usuarios')->group(function () {
 //PRODUTOS
 Route::prefix('produto')->group(function () {
     Route::get('', [ProdutosController::class, 'show'])->name('produto.index')->middleware('auth');
-    Route::get('/cadastro', [ProdutosController::class, 'new'])->middleware('auth');
+    Route::get('/cadastro', [ProdutosController::class, 'new'])->name('produto.new')->middleware('auth');
     Route::post('/cadastro', [ProdutosController::class, 'store'])->name('salvar_produto')->middleware('auth');
     Route::get('/ver/{id}', [ProdutosController::class, 'view'])->name('ver_produto')->middleware('auth');
     Route::delete('/del', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware('auth');

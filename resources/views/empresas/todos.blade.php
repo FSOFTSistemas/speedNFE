@@ -13,6 +13,8 @@
 @section('content')
 
         <a class="btn btn-info" style="margin-bottom: 2%" href="/empresa/cadastro">&nbsp; + Empresa &nbsp;</a>
+        <a class="btn btn-info" style="margin-bottom: 2%" href="/usuarios">&nbsp; Usuários &nbsp;</a>
+
         <table class="table table-hover" id="empresas">
             <thead class="table-primary">
                 <th>ID</th>

@@ -1,7 +1,7 @@
 <div>
     <form method="POST">
         @csrf
-        <div class="container">
+
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Cabeçalho</h5>
@@ -16,8 +16,8 @@
                     <option value="{{ $emp->id }}">{{ $emp->fantasia }} | {{ $emp->cpf_cnpj }}</option>
                 @endforeach
             </select>
-        </div>
-    </div>
+            </div>
+            </div>
 
             <div class="row">
                 <div class="col-md-8 col-xs-12">
@@ -61,9 +61,8 @@
             </div>
             <br>
             <hr color="black">
-        </div>
 
-        <div class="container">
+
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Itens</h5>
@@ -188,7 +187,7 @@
 
                 </div>
             </div>
-        </div>
+
 
         {{-- <div class="row">
             <div class="col-9">
