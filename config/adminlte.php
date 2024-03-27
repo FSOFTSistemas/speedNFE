@@ -291,11 +291,6 @@ return [
 
     'menu' => [
         [
-            'text' => 'blog',
-            'url'  => 'admin/blog',
-            'can'  => 'manage-blog',
-        ],
-        [
             'text'        => 'Inicio',
             'url'         => '/home',
             'icon'        => 'fas fa-home',
@@ -339,6 +334,7 @@ return [
         [
             'text'        => 'MDFe',
             'icon'        => 'fas fa-truck',
+            'can'         => 'admin',
             'submenu' => [
                 [
                     'text'        => 'Emitir MDFe',

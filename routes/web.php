@@ -172,7 +172,7 @@ Route::prefix('relatorios')->group(function () {
 
 //MDFe
 Route::prefix('mdfes')->group(function () {
-    Route::get('', [MDFEController::class, 'index'])->name('mdfe.index')->middleware('auth');
+    Route::get('', [MDFEController::class, 'index'])->name('mdfe.index')->middleware(['auth', 'admin']);
     Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware('auth');
     Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware('auth');
     Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware('auth');
