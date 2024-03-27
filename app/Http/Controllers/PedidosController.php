@@ -11,6 +11,7 @@ use App\Services\ItemService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
+use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +78,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $emitente->ambiente,
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => $cnpj,
+                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -115,7 +116,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $emitente->ambiente,
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => $cnpj,
+                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -152,7 +153,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $emitente->ambiente,
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => $cnpj,
+                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -218,7 +219,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $empresa->ambiente,
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -411,7 +412,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $empresa->ambiente,
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
