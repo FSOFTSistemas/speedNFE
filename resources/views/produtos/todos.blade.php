@@ -12,7 +12,6 @@
 
 @section('content')
 
-    <div class="container">
         <div class="row">
             <div class="col">
                 <a class="btn btn-info" style="margin-bottom: 2%"
@@ -71,7 +70,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
+
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">

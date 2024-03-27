@@ -13,7 +13,6 @@
 
 @section('content')
 
-    <div class="container">
         <a class="btn btn-info" style="margin-bottom: 2%" href='/cliente/cadastro'>&nbsp; + Cliente &nbsp;</a>
         <table class="table table-hover" id="clientes" style="width: 100%">
             <thead class="table-primary">
@@ -60,7 +59,6 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">

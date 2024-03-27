@@ -11,7 +11,7 @@
 @stop
 
 @section('content')
-    <div class="container">
+
         <div class="row" style="padding-top: 1%">
             <div class="col">
                 <a class="btn btn-info" style="margin-bottom: 1%" href="{{ route('motorista.create') }}">&nbsp;+ Novo motorista&nbsp;</a>
@@ -51,7 +51,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
+
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">

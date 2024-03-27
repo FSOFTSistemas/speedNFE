@@ -17,7 +17,6 @@
         </div>
     </div>
 
-    <div class="container">
         <table class="table table-hover" id="mdfes">
             <thead class="table-primary">
                 <tr>
@@ -108,7 +107,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
+
 
     {{-- MODAL PARA EXCLUIR --}}
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -214,6 +213,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center;">Aguarde...</h3>
+            </div>
+            <div class="modal-content" style="min-height: 200px;">
+            <div class="banter-loader">
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 @stop
 
 @section('css')
@@ -250,11 +275,18 @@
         });
 
         function loadPage() {
-            var botoes = document.getElementsByTagName("a");
-            for (var i = 0; i < botoes.length; i++) {
-                bloquearBotao(botoes[i]);
-            }
+        var botoes = document.getElementsByTagName("a");
+        for (var i = 0; i < botoes.length; i++) {
+            bloquearBotao(botoes[i]);
         }
+
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+            keyboard: false,
+            backdrop: 'static'
+
+        });
+        myModal.show();
+    }
 
         function bloquearBotao(botao) {
             botao.disabled = true;

@@ -12,7 +12,6 @@
 
 @section('content')
 
-    <div class="container">
         <a class="btn btn-info" style="margin-bottom: 2%" href="/empresa/cadastro">&nbsp; + Empresa &nbsp;</a>
         <table class="table table-hover" id="empresas">
             <thead class="table-primary">
@@ -48,7 +47,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
+
 @endsection
 
 @section('js')

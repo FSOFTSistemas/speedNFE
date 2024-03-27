@@ -205,7 +205,7 @@ class NFeService
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
             $stdProd->indTot = 1;
-            if ($i->produto->tpProd = 1) {
+            if ($i->produto->tpProd == 1) {
                 $stdVeicProd = new \stdClass();
 
                 // Campos do veículo (adicionados)
