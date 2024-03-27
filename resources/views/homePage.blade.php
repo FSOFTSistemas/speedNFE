@@ -35,24 +35,15 @@
             <p>Simplifique a emissão de notas fiscais</p>
             <p>Emita notas fiscais de qualquer lugar, sem a necessidade de um computador</p>
             <ul class="actions special">
-                <li><a href="{{ route('home') }}" class="button primary">Inscrever-se</a></li>
                 <li><a href="#" class="button">Saiba mais</a></li>
             </ul>
         </section>
 
         <!-- Main -->
         <section id="main" class="container">
-            <section class="box special">
-                <header class="major">
-                    <h2>Emita Notas Fiscais Facilmente</h2>
-                    <p>O SpeedNFE é um sistema online que permite que você emita notas fiscais de qualquer lugar, a
-                        qualquer hora, utilizando apenas um smartphone ou tablet. O sistema é fácil de usar e acessível,
-                        ideal para empresas de todos os portes.</p>
-                </header>
-                <span class="image featured"><img src="{{ asset('css/images/tela.png') }}" alt="" /></span>
-            </section>
 
-            <section class="box special features">
+
+			<section class="box special features">
                 <h3 style="text-align: center;"> Serviços</h3>
                 <div class="features-row">
                     <section>
@@ -89,15 +80,30 @@
                 </div>
             </section>
 
+
+
+			
+            <section class="box special">
+                <header class="major">
+                    <h2>Emita Notas Fiscais Facilmente</h2>
+                    <p>O SpeedNFE é um sistema online que permite que você emita notas fiscais de qualquer lugar, a
+                        qualquer hora, utilizando apenas um smartphone ou tablet. O sistema é fácil de usar e acessível,
+                        ideal para empresas de todos os portes.</p>
+                </header>
+                <span class="image featured"><img src="{{ asset('css/images/tela.png') }}" alt="" /></span>
+            </section>
+
+		</section>
+
             <div class="row">
-                <div class="col-6 col-12-narrower">
+                <div class="col-4 col-12-narrower">
 
                     <section class="box special">
-                        <span class="image featured"><img src="{{ asset('css/images/basic.jpg') }} " alt=""
+                        <span class="image featured"><img src="{{ asset('css/images/banner.jpg') }} " alt=""
                                 style="height: 400px;" /></span>
                         <h3>Plano Básico</h3>
                         <p>Emissao de 1 nota teste grátis<br>
-                            Cadastro de até 10 clientes<br>
+                            Cadastro de até 12 clientes<br>
                             Emissão de até 10 notas p/mês<br>
                             Cadastro de até 10 produtos<br>
                             Emissão de NFe<br>
@@ -109,12 +115,12 @@
                     </section>
 
                 </div>
-                <div class="col-6 col-12-narrower">
+                <div class="col-4 col-12-narrower">
 
                     <section class="box special">
-                        <span class="image featured"><img src="{{ asset('css/images/medium.jpg') }}" alt=""
+                        <span class="image featured"><img src="{{ asset('css/images/conceito-de-relatorio-de-graficos-visuais-de-grafico-de-negocios.jpg') }}" alt=""
                                 style="height: 400px;" /></span>
-                        <h3>Plano Intermediário</h3>
+                        <h3>Plano Advanced</h3>
                         <p>Emissao de 1 nota teste grátis<br>
                             Cadastro de até 20 clientes<br>
                             Emissão de até 20 notas p/mês<br>
@@ -128,10 +134,10 @@
                     </section>
 
                 </div>
-                <div class="col-6 col-12-narrower">
+                <div class="col-4 col-12-narrower">
 
                     <section class="box special">
-                        <span class="image featured"><img src="{{ asset('css/images/premium.jpg') }}" alt=""
+                        <span class="image featured"><img src="{{ asset('css/images/trabalhadores-de-escritorio-usando-graficos-de-financas.jpg') }}" alt=""
                                 style="height: 400px;" /></span>
                         <h3>Plano Premium</h3>
                         <p>Emissao de 1 nota teste grátis<br>
@@ -149,53 +155,51 @@
                 </div>
             </div>
 
+			
+			<section id="main" class="container" style="margin-top: 10px">
             <section class="box special">
                 <header class="major">
 					<h2>Sobre Nós</h2>
                     <h4>Emita Notas Fiscais Facilmente</h4>
-                    <p>
+                    <p style="font-size: 18px">
                         A SpeedNFe é uma plataforma inovadora que oferece uma solução completa para emissão e gestão de
                         NFe
                         e NFC-e. Somos uma empresa especializada em soluções fiscais, com mais de 10 anos de experiência
                         no
                         mercado, e estamos comprometidos em oferecer aos nossos clientes a melhor experiência possível.
                     </p>
-                    <h3>Nossos Diferenciais</h3>
-                    <ul>
-                        <li>Fácil de usar: Plataforma intuitiva e amigável, ideal para usuários de todos os níveis.</li>
-                        <li>Completa: Oferecemos todos os recursos que você precisa para gerenciar suas notas fiscais,
+
+					
+                    <h3 style="margin-top: 25px">Nossos Diferenciais</h3>
+				
+                    <ul style="border-top: 2px solid rgba(0, 0, 0, 0.2); padding-top: 30px" >
+                        <li><strong> Fácil de usar: </strong> Plataforma intuitiva e amigável, ideal para usuários de todos os níveis.</li>
+                        <li><strong> Completa: </strong> Oferecemos todos os recursos que você precisa para gerenciar suas notas fiscais,
                             desde
                             a criação até a entrega.</li>
-                        <li>Confiável: Somos uma empresa certificada pela SEFAZ, garantindo a segurança e confiabilidade
+                        <li><strong> Confiável:</strong> Somos uma empresa certificada pela SEFAZ, garantindo a segurança e confiabilidade
                             de
                             seus dados fiscais.</li>
-                        <li>Suporte especializado: Contamos com uma equipe de especialistas em NFe e NFC-e à disposição
+                        <li><strong> Suporte especializado:</strong> Contamos com uma equipe de especialistas em NFe e NFC-e à disposição
                             para
                             te ajudar.</li>
                     </ul>
-                    <h3>Com a SpeedNFe, você pode:</h3>
-                    <ul>
-                        <li>Emitir NFe e NFC-e de forma rápida e fácil;</li>
-                        <li>Gerenciar suas notas fiscais em um único lugar;</li>
-                        <li>Consultar o status de suas notas fiscais;</li>
-                        <li>Transmitir suas notas fiscais para a SEFAZ;</li>
-                        <li>Receber suas notas fiscais por e-mail;</li>
-                        <li>Imprimir suas notas fiscais;</li>
-                        <li>E muito mais!</li>
-                    </ul>
-                    <p>
+			
+                   <strong> <p>
                         A SpeedNFe é a solução ideal para empresas de todos os portes que desejam:
-                    </p>
-                    <ul>
+                    </p></strong>
+					
+                    <ul >
                         <li>Agilizar a emissão de notas fiscais;</li>
                         <li>Reduzir custos;</li>
                         <li>Aumentar a produtividade;</li>
                         <li>Ter mais segurança e confiabilidade em seus processos fiscais.</li>
                     </ul>
+				</strong>
                 </header>
-
+			</section>
             </section>
-        </section>
+       
 
 
         <!-- CTA -->

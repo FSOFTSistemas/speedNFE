@@ -1,226 +1,24 @@
-body {
-  background-color: #E9EAF0;
+.container {
+  width: 500px; /* largura desejada para o container */
+  margin: 0 auto; /* centraliza o container na página */
 }
 
-.navbar-nav .nav-item .nav-link {
-  color: #fff; 
-  text-align: right;
-  font-size: 20px;
-  margin-left: 20px; 
+.box {
+  position: relative; /* para que o texto fique posicionado em relação ao box */
 }
 
-.navbar-nav .nav-item .nav-link:hover {
-  color: #0B97B4; 
+.box img {
+  width: 100%; /* para que a imagem ocupe toda a largura do box */
+  display: block; /* para remover espaços em branco abaixo da imagem */
 }
 
-.fullscreen-image {
-  width: 100%;
-  height: 30%; /* Ajuste a altura conforme desejado, por exemplo, 30% */
-  overflow: hidden;
-  position: relative; 
+.texto {
+  position: absolute; /* posiciona o texto sobre a imagem */
+  top: 50%; /* centraliza verticalmente */
+  left: 50%; /* centraliza horizontalmente */
+  transform: translate(-50%, -50%); /* centraliza completamente */
+  color: #fff; /* cor do texto */
+  font-size: 24px; /* tamanho da fonte */
+  text-align: center; /* centraliza o texto horizontalmente */
+  padding: 20px; /* espaço interno do texto */
 }
-
-.fullscreen-image img {
-  width: 100%;
-  height: 30%;
-  object-fit: cover;
-  filter: blur(3px);
-}
-
-
-.text-overlay-left {
-  position: absolute;
-  top: 25%; 
-  transform: translateY(-50%); 
-  left: 60px; 
-  color: white; 
-}
-
-.text-overlay-left h2 {
-  margin-top: 255px;
-  font-size: 50px; /* Tamanho da fonte maior para desktop */
-}
-
-.text-overlay-left h5 {
-  font-size: 18px; /* Tamanho da fonte menor para desktop */
-}
-
-
-.text-overlay-right {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 20px;
-  color: white;
-  text-align: right;
-  margin-top: 110dvh;
-  margin-right: 80px;
-}
-
-.text-overlay-right h3{
-
-  max-width: 75%;
-  font-size: 50px;
-  margin-left: 500px;
-
-
-}
-
-.text-overlay-right h5{
-
-  font-size: 20px;
-
-}
-
-.btn-square {
-  width: 120px; /* Define a largura do botão */
-  height: 50px; /* Define a altura do botão */
-  margin-top: 25px;
-  background-color: #1E8FAC; /* Define a cor azul com transparência */
-  border: none; /* Remove a borda */
-  border-radius: 0; /* Remove o arredondamento */
-  color: white; /* Define a cor do texto */
-  font-size: 16px; /* Define o tamanho da fonte */
-}
-
-.btn-square:hover {
-  background-color: rgba(0, 0, 255, 0.7); /* Altera a cor do botão ao passar o mouse */
-}
-
-.container-2 {
-  width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #091220;
-}
-
-.servicos {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.card {
-  width: calc(33.33% - 10px); /* Para 3 cards por linha */
-  margin-bottom: 20px;
-  position: relative;
-  margin-left: 60px;
-  border-radius: 0;
-}
-
-.grande {
-  width: 400px;
-  height: 800px; /* Altura dos cards grandes */
-}
-
-.card img {
-  width: 100%;
-  height: 100%;
-}
-
-.overlay {
-  position: absolute;
-  top: 55%;
-  left: 0;
-  width: 100%;
-  height: 45%;
-  background-color: rgba(0, 0, 0, 0.5); /* Cor preta semitransparente */
-  z-index: 0; /* Ajusta a ordem de empilhamento para estar abaixo dos textos */
-}
-
-.card-text p {
-  position: absolute;
-  top: 80%; /* Ajuste a posição vertical conforme desejado */
-  left: 46%;
-  transform: translate(-50%, -50%);
-  color: white;
-  text-align: center;
-  padding: 20px;
-  z-index: 1; /* Ajusta a ordem de empilhamento para estar acima da sobreposição preta */
-  max-width: 100%;
-  text-align: left;
-}
-
-.card-text h2{
-
-  position: absolute;
-  top: 82%; /* Ajuste a posição vertical conforme desejado */
-  left: 35%;
-  transform: translate(-50%, -50%);
-  color: white;
-  text-align: center;
-  padding: 20px;
-  z-index: 1; /* Ajusta a ordem de empilhamento para estar acima da sobreposição preta */
-  text-align: left;
-  margin-top: -100px;
-
-}
-
-.text-left{
-
-  color: #fff;
-  text-align: left;
-  margin-top: 15px;
-  margin-bottom: 40px;
-  margin-left: 60px;
-  font-size: 45px;
-
-}
-
-@media only screen and (max-width: 768px) {
-.text-overlay-left{
-
-  left: 30px;
-
-}
-
-  .text-overlay-left h2 {
-    font-size: 20px; 
-  }
-
-  .text-overlay-left h5 {
-    font-size: 16px; 
-  }
-
-  .btn-square{
-
-    margin-top: 3px;
-
-  }
-
-  .card {
-    width: 100%; 
-    
-  }
-
-  .card-text h2{
-
-   
-
-  }
-
-  .overlay{
-
-    max-width:100%;
-
-  }
-
-  .grande{
-
-    max-width: 80%;
-    max-height: 450px;
-    right: 12px;
-
-
-  }
-
-  .text-left{
-
-    font-size: 30px;
-
-  }
-
-}
-
-
-
