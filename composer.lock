@@ -3083,12 +3083,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nfephp-org/sped-mdfe.git",
-                "reference": "5a327294bb7e5c529baa6ac13296ef36791d8955"
+                "reference": "ebd6aefc30125d32b87af6ec89f63144d98a5615"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nfephp-org/sped-mdfe/zipball/5a327294bb7e5c529baa6ac13296ef36791d8955",
-                "reference": "5a327294bb7e5c529baa6ac13296ef36791d8955",
+                "url": "https://api.github.com/repos/nfephp-org/sped-mdfe/zipball/ebd6aefc30125d32b87af6ec89f63144d98a5615",
+                "reference": "ebd6aefc30125d32b87af6ec89f63144d98a5615",
                 "shasum": ""
             },
             "require": {
@@ -3157,7 +3157,7 @@
                 "issues": "https://github.com/nfephp-org/sped-mdfe/issues",
                 "source": "https://github.com/nfephp-org/sped-mdfe/tree/master"
             },
-            "time": "2023-09-30T19:47:54+00:00"
+            "time": "2024-03-08T15:49:15+00:00"
         },
         {
             "name": "nfephp-org/sped-nfe",
@@ -9886,5 +9886,5 @@
         "php": "^8.0.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
