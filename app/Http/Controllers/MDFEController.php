@@ -60,7 +60,6 @@ class MDFEController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
@@ -184,7 +183,6 @@ class MDFEController extends Controller
 
     public function update(Request $request, $mdfeId)
     {
-        // dd($request->all());
         try {
             $request->validate([
                 'notas' => 'required',
