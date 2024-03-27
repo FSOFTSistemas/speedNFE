@@ -121,15 +121,17 @@ class Pedido extends Component
     {
         try {
             if ($this->produto) {
-                $prod = Produto::find($this->produto);
-                $total = $this->quantidade * $this->preco;
-                $desconto = $total * $this->desconto / 100;
-                $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
-                $subtotal = 0;
-                foreach ($this->vendaItens as $item) {
-                    $subtotal = $subtotal + $item['total'];
+                if ($this->containsProd($this->vendaItens, $this->produto) == -1) {
+                    $prod = Produto::find($this->produto);
+                    $total = $this->quantidade * $this->preco;
+                    $desconto = $total * $this->desconto / 100;
+                    $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                    $subtotal = 0;
+                    foreach ($this->vendaItens as $item) {
+                        $subtotal = $subtotal + $item['total'];
+                    }
+                    $this->subtotal = $subtotal;
                 }
-                $this->subtotal = $subtotal;
                 $this->limparProdutos();
             }
         } catch (Exception $e) {
@@ -239,6 +241,16 @@ class Pedido extends Component
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
+    }
+
+    public function containsProd($array, $value)
+    {
+        foreach ($array as $index => $arr) {
+            if (in_array($value, $arr)) {
+                return $index;
+            }
+        }
+        return -1;
     }
 
     public function render()

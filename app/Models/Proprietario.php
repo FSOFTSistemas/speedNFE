@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Enum\TipoProprietarioEnum;
-use App\Enum\TipoTransportadorEnum;
-use App\Enum\UfEnum;
+use App\Enums\TipoProprietarioEnum;
+use App\Enums\TipoTransportadorEnum;
+use App\Enums\UfEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Enum\EstadoEnum;
-use App\Enum\TipoCargaEnum;
-use App\Enum\TipoDocumentoEnum;
+use App\Enums\EstadoEnum;
+use App\Enums\TipoCargaEnum;
+use App\Enums\TipoDocumentoEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

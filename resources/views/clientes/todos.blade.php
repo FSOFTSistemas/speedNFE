@@ -2,7 +2,7 @@
 
 @section('title', 'AdminLTE')
 
-    
+
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
@@ -20,13 +20,10 @@
                 <tr>
                     <th>NOME</th>
                     <th>CNPJ</th>
-                    {{-- <th>CELULAR</th>
-                <th>TIPO</th>
-                <th>LIMITE</th> --}}
                     @if ($empresa == 1)
                         <th>EMPRESA</th>
                     @endif
-                    <th>Ações</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -39,13 +36,25 @@
                             @if ($empresa == 1)
                                 <td>{{ $cliente->fantasia }}</td>
                             @endif
-                            <td><a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
-                                    class='text-warning'><i class="fa fa-edit"></i></a>
-                            <a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})" class='text-danger'><i
-                                        class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
-                            
-                            <a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
-                                    class='text-primary'><i class="fa fa-eye"></i></a></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col">
+                                        <a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
+                                            class='text-warning'><i class="fa fa-edit"></i></a>
+                                    </div>
+
+                                    <div class="col">
+                                        <a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})"
+                                            class='text-danger'><i class="fa fa-trash" data-toggle="modal"
+                                                data-target=".bd-delete-modal-lg"></i></a>
+                                    </div>
+
+                                    <div class="col">
+                                        <a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
+                                            class='text-primary'><i class="fa fa-eye"></i></a>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     @endif
                 @endforeach
@@ -106,25 +115,25 @@
 
 
 @section('css')
-<link rel="stylesheet" href="/css/admin_custom.css">
-<link
-    href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.css"
-    rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/admin_custom.css">
+    <link
+        href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 @stop
 
 @section('js')
 
-<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
-crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+        crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script
-src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.js">
-</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script
+        src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.js">
+    </script>
 
-    
+
     <script>
         function setaDadosModal(idCliente) {
             document.getElementById('idCliente').value = idCliente;
@@ -134,22 +143,22 @@ src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.
             $('#clientes').DataTable({
                 responsive: true,
                 columnDefs: [{
-                            responsivePriority: 1,
-                            targets: 0
-                        },
-                        {
-                            responsivePriority: 2,
-                            targets: -1
-                        },
-                        {
-                            responsivePriority: 3,
-                            targets: 1
-                        },
-                        {
-                            responsivePriority: 4,
-                            targets: 2
-                        },
-                    ],
+                        responsivePriority: 1,
+                        targets: 0
+                    },
+                    {
+                        responsivePriority: 2,
+                        targets: -1
+                    },
+                    {
+                        responsivePriority: 3,
+                        targets: 1
+                    },
+                    {
+                        responsivePriority: 4,
+                        targets: 2
+                    },
+                ],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json',
                 },

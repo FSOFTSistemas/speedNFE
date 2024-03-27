@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\TipoDocumentoEnum;
-use App\Enum\UfEnum;
+use App\Enums\TipoDocumentoEnum;
+use App\Enums\UfEnum;
 use App\Services\MDFeMotoristaService;
 use App\Services\EmpresasService;
 use App\Services\MDFeReboqueService;
 use App\Services\MDFeService;
 use App\Services\NotasService;
 use App\Services\ProdPredService;
+use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -316,7 +317,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
@@ -358,7 +359,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
@@ -396,7 +397,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
@@ -461,7 +462,7 @@ class MDFEController extends Controller
                 "tpAmb" => (int) $mdfe->empresa->ambiente,
                 "razaosocial" => $mdfe->empresa->razao,
                 "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => MDFeService::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
                 "schemes" => "PL_MDFe_300a",
                 "versao" => "3.00",
             ], $mdfe->empresa);
