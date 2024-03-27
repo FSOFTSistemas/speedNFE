@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enum\TipoDocumentoEnum;
+use App\Enums\TipoDocumentoEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

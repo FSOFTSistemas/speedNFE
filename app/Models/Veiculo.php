@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Enum\TipoCarriceria;
-use App\Enum\TipoCarroceriaEnum;
-use App\Enum\TipoPropriedadeEnum;
-use App\Enum\TipoRodadoEnum;
-use App\Enum\TipoVeiculoEnum;
-use App\Enum\UfEnum;
+use App\Enums\TipoCarroceriaEnum;
+use App\Enums\TipoPropriedadeEnum;
+use App\Enums\TipoRodadoEnum;
+use App\Enums\TipoVeiculoEnum;
+use App\Enums\UfEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

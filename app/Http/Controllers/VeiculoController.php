@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Enum\TipoCarroceriaEnum;
-use App\Enum\TipoPropriedadeEnum;
-use App\Enum\TipoProprietarioEnum;
-use App\Enum\TipoRodadoEnum;
-use App\Enum\TipoTransportadorEnum;
-use App\Enum\TipoVeiculoEnum;
-use App\Enum\UfEnum;
+use App\Enums\TipoCarroceriaEnum;
+use App\Enums\TipoPropriedadeEnum;
+use App\Enums\TipoProprietarioEnum;
+use App\Enums\TipoRodadoEnum;
+use App\Enums\TipoTransportadorEnum;
+use App\Enums\TipoVeiculoEnum;
+use App\Enums\UfEnum;
 use App\Services\EmpresasService;
 use App\Services\VeiculosService;
 use Exception;

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Enum;
+namespace App\Enums;
 
-enum EstadoEnum:string
-{
+enum EstadoEnum:string {
     case PENDENTE = 'Pendente';
     case AUTORIZADO = 'Autorizado';
     case CANCELADO = 'Cancelado';

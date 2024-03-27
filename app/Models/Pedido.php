@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enum\EstadoEnum;
+use App\Enums\EstadoEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

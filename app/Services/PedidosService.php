@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enum\EstadoEnum;
+use App\Enums\EstadoEnum;
 use App\Models\Ncm;
 use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
