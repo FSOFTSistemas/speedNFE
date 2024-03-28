@@ -11,6 +11,7 @@ use App\Services\ItemService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
+use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +78,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $emitente->ambiente,
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => $cnpj,
+                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -90,7 +91,7 @@ class PedidosController extends Controller
             } else {
                 return redirect('/inutilizar')->with('success', $result['data']);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -115,7 +116,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $emitente->ambiente,
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => $cnpj,
+                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -130,7 +131,7 @@ class PedidosController extends Controller
                 return redirect('/venda')->with('error', $result['data']);
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -152,7 +153,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $emitente->ambiente,
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => $cnpj,
+                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -169,7 +170,7 @@ class PedidosController extends Controller
             } else {
                 return redirect('/venda')->with('error', $nfe['data']);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -186,7 +187,7 @@ class PedidosController extends Controller
             $pdf = $daevento->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             session()->flash("erro", $e->getMessage());
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -202,7 +203,7 @@ class PedidosController extends Controller
             $pdf = $danfe->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             session()->flash("erro", $e->getMessage());
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -218,7 +219,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $empresa->ambiente,
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
@@ -253,7 +254,6 @@ class PedidosController extends Controller
             } else {
                 return redirect('/vendas')->with("error", 404);
             }
-            return redirect('/vendas')->with('success', $venda);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -276,6 +276,7 @@ class PedidosController extends Controller
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
+                'info_complementares' => 'nullable'
             ]);
             $venda = $this->pedidoServices->buscarPedido($id);
             if (!$venda->chave) {
@@ -309,7 +310,8 @@ class PedidosController extends Controller
                     $request->cliente,
                     $subtotal,
                     $desconto,
-                    $request->cfop
+                    $request->cfop,
+                    $request->info_complementares
                 );
                 return redirect()->route('vendas.editar', [$venda->id])->with('success', 'Nota atualizada com sucesso.');
             } else {
@@ -410,7 +412,7 @@ class PedidosController extends Controller
                 "tpAmb" => (int) $empresa->ambiente,
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => '42879649000174',
+                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
                 "schemes" => "PL_009_V4",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",

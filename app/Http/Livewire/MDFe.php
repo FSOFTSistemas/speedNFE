@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire;
 
-use App\Enum\TipoCargaEnum;
-use App\Enum\TipoDocumentoEnum;
-use App\Enum\UfEnum;
+use App\Enums\TipoCargaEnum;
+use App\Enums\TipoDocumentoEnum;
+use App\Enums\UfEnum;
 use App\Services\CidadeService;
 use App\Services\EmpresasService;
 use App\Services\MotoristaService;

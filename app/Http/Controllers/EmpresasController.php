@@ -205,7 +205,7 @@ class EmpresasController extends Controller
             $this->userServices->store(
                 $request->email,
                 $request->password,
-                'cliente',
+                $request->cargo,
                 $empresa->id,
                 $request->name
             );

@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Utils\FormatationUtil;
+use App\Utils\ValidationEAN13Util;
 use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
@@ -20,23 +22,10 @@ class NFeService
     {
         $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
-        // $this->tools->model(55);
     }
 
     public function gerarXml($venda, $emitente)
     {
-        // $array = [];
-        // $array['venda'] = $venda;
-        // $array['venda_cliente'] = $venda->cliente;
-        // $array['venda_endereco_cliente'] = $venda->endereco_cliente;
-        // $array['venda_itens'] = $venda->itens;
-        // $array['venda_itens_produtos'] = $venda->produtos;
-        // $array['venda_fatura'] = $venda->fatura;
-        // $array['venda_fatura_forma'] = $array['venda_fatura'][0]->forma_pag;
-        // $array['emitente'] = $emitente;
-        // $array['emitente_endereco'] = $emitente->endereco;
-
-        // return $array;
         $nfe = new Make();
         $stdInNFe = new \stdClass();
         $stdInNFe->versao = '4.00';
@@ -95,13 +84,13 @@ class NFeService
         $emit = $nfe->tagemit($stdEmit);
         // ENDERECO EMITENTE
         $stdEnderEmit = new \stdClass();
-        $stdEnderEmit->xLgr = $this->retiraAcentos($emitente->endereco->rua);
+        $stdEnderEmit->xLgr = FormatationUtil::retiraAcentos($emitente->endereco->rua);
         $stdEnderEmit->nro = $emitente->endereco->numero;
-        $stdEnderEmit->xCpl = $this->retiraAcentos($emitente->endereco->complemento);
+        $stdEnderEmit->xCpl = FormatationUtil::retiraAcentos($emitente->endereco->complemento);
 
-        $stdEnderEmit->xBairro = $this->retiraAcentos($emitente->endereco->bairro);
+        $stdEnderEmit->xBairro = FormatationUtil::retiraAcentos($emitente->endereco->bairro);
         $stdEnderEmit->cMun = $emitente->endereco->codigoIBGE;
-        $stdEnderEmit->xMun = $this->retiraAcentos($emitente->endereco->cidade);
+        $stdEnderEmit->xMun = FormatationUtil::retiraAcentos($emitente->endereco->cidade);
         $stdEnderEmit->UF = $emitente->endereco->uf;
 
         $telefone = $emitente->celular;
@@ -122,7 +111,7 @@ class NFeService
         // DESTINATARIO
         $stdDest = new \stdClass();
         $pFisica = false;
-        $stdDest->xNome = $this->retiraAcentos($venda->cliente->nome);
+        $stdDest->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
 
         // return $venda->cliente;
 
@@ -164,10 +153,10 @@ class NFeService
         //ENDEREÇO DESTINATÁRIO
 
         $stdEnderDest = new \stdClass();
-        $stdEnderDest->xLgr = $this->retiraAcentos($venda->endereco_cliente->rua);
-        $stdEnderDest->nro = $this->retiraAcentos($venda->endereco_cliente->numero);
-        $stdEnderDest->xCpl = $this->retiraAcentos($venda->endereco_cliente->complemento);
-        $stdEnderDest->xBairro = $this->retiraAcentos($venda->endereco_cliente->bairro);
+        $stdEnderDest->xLgr = FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
+        $stdEnderDest->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
+        $stdEnderDest->xCpl = FormatationUtil::retiraAcentos($venda->endereco_cliente->complemento);
+        $stdEnderDest->xBairro = FormatationUtil::retiraAcentos($venda->endereco_cliente->bairro);
 
         $telefone = $venda->cliente->celular;
         $telefone = str_replace("(", "", $telefone);
@@ -177,7 +166,7 @@ class NFeService
         $stdEnderDest->fone = $telefone;
         // $stdEnderDest->cMun = $venda->endereco_cliente->codigoIBGE;
         $stdEnderDest->cMun = "2615102";
-        $stdEnderDest->xMun = $this->retiraAcentos($venda->endereco_cliente->cidade);
+        $stdEnderDest->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
         $stdEnderDest->UF = $venda->endereco_cliente->uf;
 
         $cep = str_replace("-", "", $venda->endereco_cliente->cep);
@@ -195,12 +184,12 @@ class NFeService
             $stdProd = new \stdClass();
             $stdProd->item = $key + 1;
 
-            $cod = $this->validate_EAN13Barcode($i->produto->codigo);
+            $cod = ValidationEAN13Util::validate_EAN13Barcode($i->produto->codigo);
 
             $stdProd->cEAN = $cod ? $i->produto->codigo : 'SEM GTIN';
             $stdProd->cEANTrib = $cod ? $i->produto->codigo : 'SEM GTIN';
             $stdProd->cProd = $i->produto->id;
-            $stdProd->xProd = $this->retiraAcentos($i->produto->produto);
+            $stdProd->xProd = FormatationUtil::retiraAcentos($i->produto->produto);
 
             $ncm = $i->produto->ncm;
             $ncm = str_replace(".", "", $ncm);
@@ -210,17 +199,49 @@ class NFeService
 
             $stdProd->uCom = $i->produto->un;
             $stdProd->qCom = $i->qtde;
-            $stdProd->vUnCom = $this->format($i->unitario);
-            $stdProd->vProd = $this->format(($i->qtde * $i->unitario));
+            $stdProd->vUnCom = FormatationUtil::format($i->unitario);
+            $stdProd->vProd = FormatationUtil::format(($i->qtde * $i->unitario));
             $stdProd->uTrib = $i->produto->un;
             $stdProd->qTrib = $i->qtde;
-            $stdProd->vUnTrib = $this->format($i->unitario);
+            $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
             $stdProd->indTot = 1;
-            $prod = $nfe->tagprod($stdProd);
+            if ($i->produto->tpProd == 1) {
+                $stdVeicProd = new \stdClass();
+
+                // Campos do veículo (adicionados)
+                $stdVeicProd->item = $key + 1;
+                $stdVeicProd->tpOp = $i->produto->operVeic;
+                $stdVeicProd->chassi = $i->produto->chassiVeic;
+                $stdVeicProd->cCor = $i->produto->cCorVeic;
+                $stdVeicProd->xCor = $i->produto->corVeic;
+                $stdVeicProd->pot = $i->produto->cvVeic;
+                $stdVeicProd->cilin = $i->produto->cm3Veic;
+                $stdVeicProd->pesoL = $i->produto->pesoLVeic;
+                $stdVeicProd->pesoB = $i->produto->pesoBVeic;
+                $stdVeicProd->nSerie = $i->produto->serieVeic;
+                $stdVeicProd->tpComb = $i->produto->combVeic;
+                $stdVeicProd->nMotor = $i->produto->nMotorVeic;
+                $stdVeicProd->CMT = $i->produto->cargaVeic;
+                $stdVeicProd->dist = $i->produto->distVeic;
+                $stdVeicProd->anoMod = $i->produto->anoModVeic;
+                $stdVeicProd->anoFab = $i->produto->anoFabVeic;
+                $stdVeicProd->tpPint = $i->produto->tpPVeic;
+                $stdVeicProd->tpVeic = $i->produto->tpVeic;
+                $stdVeicProd->espVeic = $i->produto->espVeic;
+                $stdVeicProd->VIN = $i->produto->vinVeic;
+                $stdVeicProd->condVeic = $i->produto->condVeic;
+                $stdVeicProd->cMod = $i->produto->cMarcaVeic;
+                $stdVeicProd->cCorDENATRAN = $i->produto->cCorMontVeic;
+                $stdVeicProd->lota = $i->produto->lotVeic;
+                $stdVeicProd->tpRest = $i->produto->restriVeic;
+
+                $nfe->tagveicProd($stdVeicProd);
+            }
+            $nfe->tagprod($stdProd);
 
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
-            $imposto = $nfe->tagimposto($stdImposto);
+            $nfe->tagimposto($stdImposto);
 
             //ICMS
             $stdICMS = new \stdClass();
@@ -229,19 +250,19 @@ class NFeService
             $stdICMS->CSOSN = $i->produto->cst_csosn;
             $stdICMS->modBC = 0;
             $stdICMS->vBC = $stdProd->vProd;
-            $stdICMS->pICMS = $this->format($i->produto->icms);
+            $stdICMS->pICMS = FormatationUtil::format($i->produto->icms);
             $stdICMS->vICMS = $stdICMS->vBC * ($stdICMS->pICMS / 100);
-            $stdICMS->pCredSN = $this->format($i->produto->icms);
-            $stdICMS->vCredICMSSN = $this->format($i->produto->icms);
+            $stdICMS->pCredSN = FormatationUtil::format($i->produto->icms);
+            $stdICMS->vCredICMSSN = FormatationUtil::format($i->produto->icms);
             $ICMS = $nfe->tagICMSSN($stdICMS);
 
             //PIS
             $stdPIS = new \stdClass();
             $stdPIS->item = $key + 1;
             $stdPIS->CST = $i->produto->cst_pis;
-            $stdPIS->vBC = $this->format($i->produto->pis) > 0 ? $stdProd->vProd : 0.00;
-            $stdPIS->pPIS = $this->format($i->produto->pis);
-            $stdPIS->vPIS = $this->format(($stdProd->vProd) * ($i->produto->pis / 100));
+            $stdPIS->vBC = FormatationUtil::format($i->produto->pis) > 0 ? $stdProd->vProd : 0.00;
+            $stdPIS->pPIS = FormatationUtil::format($i->produto->pis);
+            $stdPIS->vPIS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->pis / 100));
             $PIS = $nfe->tagPIS($stdPIS);
 
             //COFINS
@@ -249,9 +270,9 @@ class NFeService
             $stdCOFINS->item = $key + 1;
             $stdCOFINS->CST = $i->produto->cst_cofins;
             // $stdCOFINS->CST = '60';
-            $stdCOFINS->vBC = $this->format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
-            $stdCOFINS->pCOFINS = $this->format($i->produto->cofins);
-            $stdCOFINS->vCOFINS = $this->format(($stdProd->vProd) *
+            $stdCOFINS->vBC = FormatationUtil::format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
+            $stdCOFINS->pCOFINS = FormatationUtil::format($i->produto->cofins);
+            $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) *
                 ($i->produto->cofins / 100));
             $COFINS = $nfe->tagCOFINS($stdCOFINS);
 
@@ -261,9 +282,9 @@ class NFeService
             $std->cEnq = '999';
             $std->CST = $i->produto->ipi;
             // $std->CST = '60';
-            $std->vBC = $this->format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
-            $std->pIPI = $this->format($i->produto->ipi);
-            $std->vIPI = $stdProd->vProd * $this->format(($i->produto->ipi / 100));
+            $std->vBC = FormatationUtil::format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
+            $std->pIPI = FormatationUtil::format($i->produto->ipi);
+            $std->vIPI = $stdProd->vProd * FormatationUtil::format(($i->produto->ipi / 100));
             $nfe->tagIPI($std);
 
         }
@@ -284,21 +305,21 @@ class NFeService
         $stdICMSTot->vST = 0.00;
         $stdICMSTot->vFrete = 0.00;
         $stdICMSTot->vSeg = 0.00;
-        $stdICMSTot->vDesc = $this->format($venda->desconto);
+        $stdICMSTot->vDesc = FormatationUtil::format($venda->desconto);
         $stdICMSTot->vII = 0.00;
         $stdICMSTot->vIPI = 0.00;
         $stdICMSTot->vPIS = 0.00;
         $stdICMSTot->vCOFINS = 0.00;
         $stdICMSTot->vOutro = 0.00;
         $stdICMSTot->vTotTrib = 0.00;
-        $stdICMSTot->vNF = $this->format($venda->total);
+        $stdICMSTot->vNF = FormatationUtil::format($venda->total);
 
         //DUPLICATAS
         $stdFat = new \stdClass();
         $stdFat->nFat = (int) $numeroNFe;
-        $stdFat->vOrig = $this->format($venda->subtotal);
-        $stdFat->vDesc = $this->format($venda->desconto);
-        $stdFat->vLiq = $this->format($venda->total);
+        $stdFat->vOrig = FormatationUtil::format($venda->subtotal);
+        $stdFat->vDesc = FormatationUtil::format($venda->desconto);
+        $stdFat->vLiq = FormatationUtil::format($venda->total);
         if ($venda->tipo_pagamento != '90') {
             $fatura = $nfe->tagfat($stdFat);
         }
@@ -308,7 +329,7 @@ class NFeService
             // $stdDup->nDup = '00' . ($key + 1);
             // $stdDup->dVenc = $fat->vencimento;
             // $stdDup->dVenc = date('Y-m-d');
-            // $stdDup->vDup = $this->format($fat->valor);
+            // $stdDup->vDup = FormatationUtil::format($fat->valor);
 
             // $nfe->tagdup($stdDup);
 
@@ -347,7 +368,7 @@ class NFeService
             } else if ($fat->forma_pag->descricao == 'Outros') {
                 $stdDetPag->tPag = '99';
             }
-            $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem pagamento' ? $this->format($fat->valor) : 0.00;
+            $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem pagamento' ? FormatationUtil::format($fat->valor) : 0.00;
             $stdDetPag->indPag = 1;
             $stdDetPag->vTroco = 0;
             if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
@@ -379,6 +400,7 @@ class NFeService
         $std->email = getenv('RESP_EMAIL'); //E-mail da pessoa jurídica a ser contatada
         $std->fone = getenv('RESP_FONE');
         $nfe->taginfRespTec($std);
+
         try {
             $nfe->montaNFe();
             $arr = [
@@ -392,50 +414,6 @@ class NFeService
                 'erros_xml' => $nfe->getErrors(),
             ];
         }
-    }
-
-    private function validate_EAN13Barcode($ean)
-    {
-
-        $sumEvenIndexes = 0;
-        $sumOddIndexes = 0;
-
-        $eanAsArray = array_map('intval', str_split($ean));
-
-        if (!$this->has13Numbers($eanAsArray)) {
-            return false;
-        };
-
-        for ($i = 0; $i < count($eanAsArray) - 1; $i++) {
-            if ($i % 2 === 0) {
-                $sumOddIndexes += $eanAsArray[$i];
-            } else {
-                $sumEvenIndexes += $eanAsArray[$i];
-            }
-        }
-
-        $rest = ($sumOddIndexes + (3 * $sumEvenIndexes)) % 10;
-
-        if ($rest !== 0) {
-            $rest = 10 - $rest;
-        }
-
-        return $rest === $eanAsArray[12];
-    }
-
-    private function has13Numbers(array $ean)
-    {
-        return count($ean) === 13;
-    }
-
-    private function retiraAcentos($texto)
-    {
-        return preg_replace(array("/(á|à|ã|â|ä)/", "/(Á|À|Ã|Â|Ä)/", "/(é|è|ê|ë)/", "/(É|È|Ê|Ë)/", "/(í|ì|î|ï)/", "/(Í|Ì|Î|Ï)/", "/(ó|ò|õ|ô|ö)/", "/(Ó|Ò|Õ|Ô|Ö)/", "/(ú|ù|û|ü)/", "/(Ú|Ù|Û|Ü)/", "/(ñ)/", "/(Ñ)/", "/(ç)/"), explode(" ", "a A e E i I o O u U n N c"), $texto);
-    }
-
-    public function format($number, $dec = 2)
-    {
-        return number_format((float) $number, $dec, ".", "");
     }
 
     public function sign($xml)

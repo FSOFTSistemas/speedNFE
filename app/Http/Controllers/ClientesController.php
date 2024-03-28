@@ -198,7 +198,7 @@ class ClientesController extends Controller
                 $request->cep,
                 $request->complemento
             );
-            return redirect()->route('editar_cliente', [$cliente->id])->with('success', 'Cliente atualizado com sucesso');
+            return redirect()->route('index')->with('success', 'Cliente atualizado com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

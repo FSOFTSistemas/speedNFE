@@ -2,7 +2,7 @@
 
 @section('title', 'AdminLTE')
 
-    
+
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
@@ -13,22 +13,16 @@
 
 @section('content')
 
-    <div class="container">
         <a class="btn btn-info" style="margin-bottom: 2%" href='/cliente/cadastro'>&nbsp; + Cliente &nbsp;</a>
-        <table class="table table-hover" id="clientes">
+        <table class="table table-hover" id="clientes" style="width: 100%">
             <thead class="table-primary">
                 <tr>
                     <th>NOME</th>
-                    <th>CPF OU CNPJ</th>
-                    {{-- <th>CELULAR</th>
-                <th>TIPO</th>
-                <th>LIMITE</th> --}}
+                    <th>CNPJ</th>
                     @if ($empresa == 1)
                         <th>EMPRESA</th>
                     @endif
-                    <th width="5%"></th>
-                    <th width="5%"></th>
-                    <th width="5%"></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -38,29 +32,33 @@
                         <tr>
                             <td>{{ $cliente->nome }}</td>
                             <td>{{ $cliente->cpf_cnpj }}</td>
-                            {{-- <td>{{$cliente->celular}}</td>
-                            @if ($cliente->tipo = 1)
-                                <td>Pessoa Física</td>
-                            @else
-                                <td>Pessoa Jurídica</td>
-                            @endif
-                            <td>{{$cliente->limite}}</td> --}}
                             @if ($empresa == 1)
                                 <td>{{ $cliente->fantasia }}</td>
                             @endif
-                            <td><a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
-                                    class='text-warning'><i class="fa fa-edit"></i></a></td>
-                            <td><a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})" class='text-danger'><i
-                                        class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
+                            <td>
+                                <div class="row">
+                                    <div class="col">
+                                        <a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
+                                            class='text-warning'><i class="fa fa-edit"></i></a>
+                                    </div>
+
+                                    <div class="col">
+                                        <a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})"
+                                            class='text-danger'><i class="fa fa-trash" data-toggle="modal"
+                                                data-target=".bd-delete-modal-lg"></i></a>
+                                    </div>
+
+                                    <div class="col">
+                                        <a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
+                                            class='text-primary'><i class="fa fa-eye"></i></a>
+                                    </div>
+                                </div>
                             </td>
-                            <td><a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
-                                    class='text-primary'><i class="fa fa-eye"></i></a></td>
                         </tr>
                     @endif
                 @endforeach
             </tbody>
         </table>
-    </div>
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
@@ -112,11 +110,28 @@
 @endsection
 
 
+
+
+@section('css')
+    <link rel="stylesheet" href="/css/admin_custom.css">
+    <link
+        href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.css"
+        rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+@stop
+
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script
+        src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.js">
+    </script>
+
+
     <script>
         function setaDadosModal(idCliente) {
             document.getElementById('idCliente').value = idCliente;
@@ -125,6 +140,23 @@
         $(document).ready(function() {
             $('#clientes').DataTable({
                 responsive: true,
+                columnDefs: [{
+                        responsivePriority: 1,
+                        targets: 0
+                    },
+                    {
+                        responsivePriority: 2,
+                        targets: -1
+                    },
+                    {
+                        responsivePriority: 3,
+                        targets: 1
+                    },
+                    {
+                        responsivePriority: 4,
+                        targets: 2
+                    },
+                ],
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json',
                 },

@@ -22,6 +22,7 @@ class EditPedido extends Component
     public $empresa = '';
     public $produto = '';
     public $cliente = '';
+    public $info_complementares = '';
     public $pag = '';
     public $cfop = '';
     public $bcfop = '';
@@ -60,6 +61,7 @@ class EditPedido extends Component
             $this->bcfop = $sPedidos->findCfop($pedido->cfop)->cfop;
             $this->empresa = $pedido->empresa_id;
             $this->cliente = $pedido->cliente_id;
+            $this->info_complementares = $pedido->info_complementares;
             $this->pag = $pedido->forma_pag_id;
             $this->empresas = $sEmpresas->todos($user->empresa_id);
             $this->clientes = Cliente::all()->where('empresa_id', '=', $this->empresa);
@@ -128,15 +130,17 @@ class EditPedido extends Component
     {
         try {
             if ($this->produto) {
-                $prod = Produto::find($this->produto);
-                $total = $this->quantidade * $this->preco;
-                $desconto = $total * $this->desconto / 100;
-                $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
-                $subtotal = 0;
-                foreach ($this->vendaItens as $item) {
-                    $subtotal = $subtotal + $item['total'];
+                if ($this->containsProd($this->vendaItens, $this->produto) == -1) {
+                    $prod = Produto::find($this->produto);
+                    $total = $this->quantidade * $this->preco;
+                    $desconto = $total * $this->desconto / 100;
+                    $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                    $subtotal = 0;
+                    foreach ($this->vendaItens as $item) {
+                        $subtotal = $subtotal + $item['total'];
+                    }
+                    $this->subtotal = $subtotal;
                 }
-                $this->subtotal = $subtotal;
                 $this->limparProdutos();
             }
         } catch (Exception $e) {
@@ -211,6 +215,16 @@ class EditPedido extends Component
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
+    }
+
+    public function containsProd($array, $value)
+    {
+        foreach ($array as $index => $arr) {
+            if (in_array($value, $arr)) {
+                return $index;
+            }
+        }
+        return -1;
     }
 
     public function render()

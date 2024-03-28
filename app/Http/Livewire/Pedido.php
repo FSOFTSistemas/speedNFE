@@ -24,7 +24,7 @@ class Pedido extends Component
     public $produto = '';
     public $cfop = '';
     public $bcfop = '';
-    public $forma = "";
+    public $forma = '';
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -66,6 +66,9 @@ class Pedido extends Component
                 $this->cfops = $sPedidos->cfopAll();
             } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
                 $this->empresas = $sEmpresas->todas();
+                $this->clientes = $sClientes->todosClientes();
+                $this->produtos = $sProdutos->todosProdutos();
+                $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             }
             $this->cfop = '';
@@ -87,6 +90,7 @@ class Pedido extends Component
 
     public function buscaCfop()
     {
+
         try {
             $prod = DB::table('cfop')
                 ->select('*')
@@ -117,15 +121,17 @@ class Pedido extends Component
     {
         try {
             if ($this->produto) {
-                $prod = Produto::find($this->produto);
-                $total = $this->quantidade * $this->preco;
-                $desconto = $total * $this->desconto / 100;
-                $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
-                $subtotal = 0;
-                foreach ($this->vendaItens as $item) {
-                    $subtotal = $subtotal + $item['total'];
+                if ($this->containsProd($this->vendaItens, $this->produto) == -1) {
+                    $prod = Produto::find($this->produto);
+                    $total = $this->quantidade * $this->preco;
+                    $desconto = $total * $this->desconto / 100;
+                    $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                    $subtotal = 0;
+                    foreach ($this->vendaItens as $item) {
+                        $subtotal = $subtotal + $item['total'];
+                    }
+                    $this->subtotal = $subtotal;
                 }
-                $this->subtotal = $subtotal;
                 $this->limparProdutos();
             }
         } catch (Exception $e) {
@@ -160,6 +166,7 @@ class Pedido extends Component
     public function atualizarProds()
     {
         try {
+
             $prod = Produto::findOrFail($this->produto);
             $this->barras = $prod->codigo;
             $this->preco = $prod->precovenda;
@@ -234,6 +241,16 @@ class Pedido extends Component
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
+    }
+
+    public function containsProd($array, $value)
+    {
+        foreach ($array as $index => $arr) {
+            if (in_array($value, $arr)) {
+                return $index;
+            }
+        }
+        return -1;
     }
 
     public function render()

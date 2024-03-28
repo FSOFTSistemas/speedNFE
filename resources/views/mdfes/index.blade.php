@@ -11,14 +11,12 @@
 @stop
 
 @section('content')
-
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
             <a class="btn btn-info" href="{{ route('mdfe.create') }}">+ Emitir MDFe</a>
         </div>
     </div>
 
-    <div class="container">
         <table class="table table-hover" id="mdfes">
             <thead class="table-primary">
                 <tr>
@@ -60,40 +58,47 @@
                                                 data-target=".bd-delete-modal-lg"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Enviar MDFe" href="{{ route('mdfe.enviar', [$mdfe->id]) }}"
+                                        <a title="Enviar MDFe" onclick="loadPage()" href="{{ route('mdfe.enviar', [$mdfe->id]) }}"
                                             class='text-success'><i class="fa fa-upload"></i></a>
                                     </div>
                                 @elseif ($mdfe->situacao->value === 'Autorizado')
                                     <div class="col">
-                                        <a title="Cancelar" onclick="setaDadosModalCancelar({{ $mdfe->id }})" class='text-danger'><i class="fa fa-ban" data-toggle="modal"
+                                        <a title="Cancelar" onclick="setaDadosModalCancelar({{ $mdfe->id }})"
+                                            class='text-danger'><i class="fa fa-ban" data-toggle="modal"
                                                 data-target=".bd-cancel-modal-lg"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Encerrar" href='{{ route('mdfe.close', [$mdfe->id]) }}'
+                                        <a title="Encerrar" onclick="loadPage()" href='{{ route('mdfe.close', [$mdfe->id]) }}'
                                             class='text-info'><i class="fas fa-truck-loading"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Imprimir" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 0]) }}'
-                                            class='text-dark'><i class="fa fa-print"></i></a>
+                                        <a title="Imprimir" target="_blank"
+                                            href='{{ route('mdfe.print', [$mdfe->id, 0]) }}' class='text-dark'><i
+                                                class="fa fa-print"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}" class="text-primary"><i class="fas fa-download"></i></a>
+                                        <a title="Baixar" onclick="loadPage()" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}"
+                                            class="text-primary"><i class="fas fa-download"></i></a>
                                     </div>
                                 @elseif ($mdfe->situacao->value === 'Encerrado')
                                     <div class="col">
-                                        <a title="Imprimir Encerramento" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 1]) }}'
-                                            class='text-dark'><i class="fa fa-print"></i></a>
+                                        <a title="Imprimir Encerramento" target="_blank"
+                                            href='{{ route('mdfe.print', [$mdfe->id, 1]) }}' class='text-dark'><i
+                                                class="fa fa-print"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}" class="text-primary"><i class="fas fa-download"></i></a>
+                                        <a title="Baixar" onclick="loadPage()" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}"
+                                            class="text-primary"><i class="fas fa-download"></i></a>
                                     </div>
                                 @else
                                     <div class="col">
-                                        <a title="Imprimir Cancelamento" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 2]) }}'
-                                            class='text-dark'><i class="fa fa-print"></i></a>
+                                        <a title="Imprimir Cancelamento" target="_blank"
+                                            href='{{ route('mdfe.print', [$mdfe->id, 2]) }}' class='text-dark'><i
+                                                class="fa fa-print"></i></a>
                                     </div>
                                     <div class="col">
-                                        <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}" class="text-primary"><i class="fas fa-download"></i></a>
+                                        <a title="Baixar" onclick="loadPage()" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}"
+                                            class="text-primary"><i class="fas fa-download"></i></a>
                                     </div>
                                 @endif
                             </div>
@@ -102,7 +107,7 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
+
 
     {{-- MODAL PARA EXCLUIR --}}
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -182,7 +187,8 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="">Justificativa *</label>
-                                    <textarea class="form-control" required name="justificativa" id="justificativa" placeholder="Justificativa..." maxlength="255" cols="10" rows="8"></textarea>
+                                    <textarea class="form-control" required name="justificativa" id="justificativa" placeholder="Justificativa..."
+                                        maxlength="255" cols="10" rows="8"></textarea>
                                 </div>
                             </div>
 
@@ -192,7 +198,7 @@
                             </div>
 
                             <div class="text-center">
-                                <button type="submit" style="width: 50%;" class="btn btn-warning">CONFIRMAR</button>
+                                <button type="submit" style="width: 50%;" onclick="loadPage()" class="btn btn-warning">CONFIRMAR</button>
                             </div>
                             <br>
                         </form>
@@ -207,10 +213,42 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center;">Aguarde...</h3>
+            </div>
+            <div class="modal-content" style="min-height: 200px;">
+            <div class="banter-loader">
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+                <div class="banter-loader__box"></div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 @stop
 
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">
+    <style>
+        .bloqueado {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
 @stop
 
 @section('js')
@@ -235,5 +273,24 @@
                 },
             });
         });
+
+        function loadPage() {
+        var botoes = document.getElementsByTagName("a");
+        for (var i = 0; i < botoes.length; i++) {
+            bloquearBotao(botoes[i]);
+        }
+
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+            keyboard: false,
+            backdrop: 'static'
+
+        });
+        myModal.show();
+    }
+
+        function bloquearBotao(botao) {
+            botao.disabled = true;
+            botao.classList.add("bloqueado");
+        }
     </script>
 @stop
