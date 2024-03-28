@@ -58,13 +58,13 @@
                                     <div class="col">
                                         <label for="cpf_cnpj">CPF ou CNPJ</label>
                                         <div class="input-group">
-                                            <input required placeholder="CPF/CNPJ..." class="form-control" type="text" id="cpf_cnpj" name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" value="{{ $empresa->cpf_cnpj }}" />
+                                            <input required placeholder="CPF/CNPJ..." class="form-control" type="text" id="cpf_cnpj" name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" value="{{ $empresa->cpf_cnpj }}" disabled/>
                                             <div class="input-group-append">
                                                 <button id="cnpj_button" type="button" class="btn btn-light"><i class="fa fa-search"></i></button>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
 
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
@@ -83,17 +83,17 @@
                                     </div>
 
                                     <div class="row">
-                                       
+
 
                                         <div class="col-md-6 col-xs-10">
                                             <label>RG ou IE</label>
                                             <input required placeholder="RG/IE..." class="form-control" type="text"
                                                 id="rg_ie" name="rg_ie" value="{{ $empresa->rg_ie }}" />
                                         </div>
-                                   
 
 
-                            
+
+
                                         <div class="col-md-6 col-xs-10">
                                             <label>Celular</label>
                                             <input required placeholder="Celular..." class="form-control" type="text"
@@ -115,7 +115,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
 
                                     <div class="col">
                                         <div class="row">
@@ -139,7 +139,7 @@
                                                     type="text" id="bairro" name="bairro"
                                                     value="{{ $empresa->bairro }}" />
                                             </div>
-                                            
+
                                             <div class="col">
                                                 <label>Cidade</label>
                                                 <select class="form-control" name="cidade" id="cidade" required>
@@ -149,7 +149,7 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
-                                               
+
                                             </div>
                                             <div class="col-md-6 col-xs-10">
                                                 <label>UF</label>
@@ -206,10 +206,10 @@
                                                     value="{{ $empresa->complemento }}" />
 
                                             </div>
-                                           
+
                                         </div>
                                 </div>
-                                
+
 
                                 <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
@@ -227,7 +227,7 @@
                                                 value="{{ $empresa->ultimaMDFe }}" />
                                         </div>
 
-                                        
+
                                         <div class="col-md-6 col-xs-10">
                                             <label>Serie</label>
                                             <input required placeholder="Série..." class=form-control type="number"
@@ -246,11 +246,11 @@
                                     </div>
 
                                     <div class="row">
-                                       
+
                                         <div class="col-md-6 col-xs-10">
                                             <label>Senha Certificado</label>
                                             <input placeholder="Senha Certificado..." class=form-control type="text"
-                                                name="senha" id="senha" />
+                                                name="senha" id="senha" value="{{ $empresa->senhaCertificado }}"/>
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label>Id Token CSC</label>
@@ -270,8 +270,8 @@
 
 
                                         </div>
-                                        
-                                       
+
+
                                     </div>
                                     <div class="row">
                                     <div class="col-md-6 col-xs-10">

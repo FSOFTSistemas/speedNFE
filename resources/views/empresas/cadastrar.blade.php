@@ -64,7 +64,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
 
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
@@ -86,10 +86,10 @@
                                             <input required placeholder="Razão RG/IE..." class="form-control"
                                                 type="text" id="rg_ie" name="rg_ie" />
                                         </div>
-                                    
 
 
-                                   
+
+
                                         <div class="col-md-6 col-xs-10">
                                             <label>Celular</label>
                                             <input required placeholder="Celular..." class="form-control" type="text"
@@ -115,7 +115,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
 
                                         <div class="row">
                                             <div class="col-9">
@@ -136,7 +136,7 @@
                                                 <input required placeholder="Bairro..." class="form-control"
                                                     type="text" id="bairro" name="bairro" />
                                             </div>
-                                            
+
 
                                         </div>
 
@@ -229,15 +229,15 @@
                                     </div>
 
                                     <div class="row">
-                                       
+
                                         <div class="col-md-6 col-xs-10">
                                             <label>Senha Certificado</label>
                                             <input required placeholder="Senha Certificado..." class=form-control
                                                 type="text" name="senha" id="senha" />
                                         </div>
-                                    
 
-                                   
+
+
                                         <div class="col-md-6 col-xs-10">
                                             <label>CSC</label>
                                             <input required placeholder="Csc..." class="form-control" type="text"
@@ -310,6 +310,17 @@
                                     <label>Confirmação de Senha</label>
                                     <input required placeholder="Confirmação Senha..." class=form-control type="text"
                                         name="confirm_password" id="confirm_password" />
+
+                                    <label>Permissões</label>
+                                    <select required class="form-control" name="cargo" id="cargo">
+                                        <option value="">--Selecione uma permissão--</option>
+                                        <option value="master">master</option>
+                                        <option value="admin">admin</option>
+                                        <option value="client-NFe">Apenas NFe</option>
+                                        <option value="client-MDFe">Apenas MDFe</option>
+                                        <option value="cliente-advanced">NFe e MDFe</option>
+                                    </select>
+
                                 </div>
                                 <br>
                                 <div>
