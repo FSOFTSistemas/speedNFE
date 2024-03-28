@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset("css/Telas_Principais/login.css") }}">
-    
+
     <title>NFE Online - Login</title>
     <style>
         body, html {
@@ -14,6 +14,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif; /* Define a fonte padrão */
+            overflow-y: hidden;
         }
 
         .background-image {
@@ -21,6 +22,7 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
+            filter: blur(3px);
         }
 
         .background-image img {
@@ -96,7 +98,6 @@
             </div>
             <nav>
                 <a href="{{ route('homePage') }}">Home</a>
-                <a href="{{ route('login') }}">Login</a>
             </nav>
         </div>
     </header>
@@ -134,7 +135,7 @@
                         <input type="password" name="password"
                             class="form-control @error('password') is-invalid @enderror"
                             placeholder="senha">
-                            
+
                         <div class="input-group-append">
                             <span class="fas fa-lock"></span>
                         </div>
