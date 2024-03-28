@@ -294,20 +294,24 @@ return [
             'text'        => 'Inicio',
             'url'         => '/home',
             'icon'        => 'fas fa-home',
+            'can'         => ['admin', 'cliente']
         ],
         [
             'text'        => 'Cliente',
             'url'         => '/cliente',
             'icon'        => 'fas fa-solid fa-user',
+            'can'         => ['admin', 'cliente']
         ],
         [
             'text'        => 'Produtos',
             'url'         => '/produto',
             'icon'        => 'fas fa-box-open',
+            'can'         => ['admin', 'cliente']
         ],
         [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
+            'can'         => ['admin', 'cliente'],
             'submenu' => [
                 [
                     'text'        => 'Emitir NFe',
@@ -367,6 +371,7 @@ return [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
+            'can'         => ['admin', 'cliente']
         ]
     ],
 

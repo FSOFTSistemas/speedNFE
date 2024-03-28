@@ -120,11 +120,9 @@ return new class extends Migration
 
             DB::table('permissions')->insert([
                 ['name' => 'admin', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
-                ['name' => 'cliente', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
-            ]);
-
-            DB::table('model_has_permissions')->insert([
-                ['permission_id' => 2, 'model_type' => 'App\Models\User', 'model_id' => 1],
+                ['name' => 'client-NFe', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'client-MDFe', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'master', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')]
             ]);
 
     }
