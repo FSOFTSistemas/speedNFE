@@ -2513,7 +2513,7 @@ input[type="button"],
     white-space: nowrap;
 
 
-	
+
 }
 
 
@@ -3631,4 +3631,56 @@ body.landing #main {
 	border-top: 2px solid rgba(0, 0, 0, 0.2);
 
 }
+
+#planos{
+
+    background-image: url('../css/images/Madeira.jpg');
+    background-size: cover;
+
+
+}
+
+ #planos h2{
+
+    color: #fff;
+    margin-left: 38%;
+    margin-bottom: 50px;
+    margin-top: 15px;
+
+ }
+
+
+
+ @media only screen and (max-width: 768px) {
+    #planos {
+        background-image: none;
+    }
+
+
+    #planos h2{
+        margin-left: 20%;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        color: #fff;
+
+    }
+
+        #planos-card{
+
+            margin: 0;
+
+        }
+
+
+
+}
+
+#button-login a{
+
+    color:#666
+
+}
+
+
+
 
