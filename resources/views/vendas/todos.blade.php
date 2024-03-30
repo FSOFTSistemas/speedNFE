@@ -9,6 +9,7 @@
     </div>
 </div>
 
+
 @stop
 
 @section('content')
@@ -203,7 +204,7 @@
         pointer-events: none;
     }
 </style>
-<link rel="stylesheet" href="{{ asset('css/loaging.css') }}">
+<link rel="stylesheet" href="{{ asset('css/loading.css') }}">
 @endsection
 
 @section('js')
