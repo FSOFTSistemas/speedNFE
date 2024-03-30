@@ -23,14 +23,7 @@
             <label>Senha</label>
             <input type="password" autocomplete="off" class="form-control" name="senha" id="senha" />
 
-            <label>Cargo</label>
-            <select class="form-control" name="cargo" id="cargo">
-                <option>--selecione um cargo--</option>
-                <option value="admin">Administrador</option>
-                <option value="vendedor">Vendedor</option>
-            </select>
-
-            @if($empresa == 0)
+            @if($empresa == 1)
             <label>Empresa</label>
             <select class="form-control" name="empresa" id="empresa">
                 <option>--escolha uma empresa--</option>
@@ -38,9 +31,23 @@
                 <option value="{{$emp->id}}">{{$emp->fantasia}}</option>
                 @endforeach
             </select>
+
+            <label>Permissões</label>
+            <select required class="form-control" name="cargo" id="cargo">
+                <option value="">--Selecione uma permissão--</option>
+                <option value="master">master</option>
+                <option value="admin">admin</option>
+                <option value="client-NFe">Apenas NFe</option>
+                <option value="client-MDFe">Apenas MDFe</option>
+                <option value="cliente-advanced">NFe e MDFe</option>
+            </select>
+
             @else
             <input hidden name="empresa" id="empresa" value="{{$empresa}}" />
+            <input hidden name="empresa" id="cargo" value="{{$empresa->cargo}}" />
             @endif
+
+
 
             <div style="padding-top:2%" class="text-center">
                 <button type="submit" class="btn btn-success">Salvar</button>

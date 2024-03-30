@@ -64,8 +64,8 @@ class UsersService{
                 'cargo' => $cargo,
                 'empresa_id' => $empresa
             ]);
-            return 1;
         } catch (Exception $e){
+            dd($e->getMessage());
             return $e;
         }
     }
