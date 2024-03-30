@@ -170,7 +170,7 @@
 
 <!-- Modal -->
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+<div class="modal fade" id="load" tabindex="-1" aria-labelledby="loadLabel" aria-hidden="true" >
     <div class="modal-dialog  modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -215,6 +215,7 @@
     $(document).ready(function() {
         $('#notas').DataTable({
             responsive: true,
+            "ordering": false,
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json',
             },
@@ -231,7 +232,7 @@
             bloquearBotao(botoes[i]);
         }
 
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+        var myModal = new bootstrap.Modal(document.getElementById('load'), {
             keyboard: false,
             backdrop: 'static'
 

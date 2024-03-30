@@ -23,7 +23,6 @@ class EmpresasService
                 $empresa->update([
                     'razao' => $request->nome,
                     'fantasia' => $request->fantasia,
-                    'cpf_cnpj' => $request->cpf_cnpj,
                     'rg_ie' => $request->rg_ie,
                     'celular' => $request->telefone,
                     'ultimaNFe' => $request->nfe,
@@ -43,7 +42,6 @@ class EmpresasService
                 $empresa->update([
                     'razao' => $request->nome,
                     'fantasia' => $request->fantasia,
-                    'cpf_cnpj' => $request->cpf_cnpj,
                     'rg_ie' => $request->rg_ie,
                     'celular' => $request->telefone,
                     'ultimaNFe' => $request->nfe,
@@ -65,7 +63,6 @@ class EmpresasService
             $empresa->update([
                 'razao' => $request->nome,
                 'fantasia' => $request->fantasia,
-                'cpf_cnpj' => $request->cpf_cnpj,
                 'rg_ie' => $request->rg_ie,
                 'celular' => $request->telefone,
                 'ultimaNFe' => $request->nfe,
@@ -84,7 +81,6 @@ class EmpresasService
             $empresa->update([
                 'razao' => $request->nome,
                 'fantasia' => $request->fantasia,
-                'cpf_cnpj' => $request->cpf_cnpj,
                 'rg_ie' => $request->rg_ie,
                 'celular' => $request->telefone,
                 'ultimaNFe' => $request->nfe,
