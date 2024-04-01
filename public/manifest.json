@@ -1,0 +1,17 @@
+{
+    "name": "SpeedNFE",
+    "short_name": "SpeedNFE",
+    "start_url": "/",
+    "background_color": "#6777ef",
+    "description": "Emissão de NFE",
+    "display": "fullscreen",
+    "theme_color": "#6777ef",
+    "icons": [
+        {
+            "src": "logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

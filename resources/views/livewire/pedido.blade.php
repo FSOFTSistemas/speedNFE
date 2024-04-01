@@ -25,13 +25,13 @@
                     <select class="form-control" name="cliente" id="cliente" required>
                         <option value="" disabled selected>--Escolha um cliente--</option>
                         @if ($empresaL != 1)
-                            @foreach ($clientes as $cliente)
+                            @foreach (json_decode($clientes) as $cliente)
                                 <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj  }}
                                 </option>
                             @endforeach
                         @else
                             @foreach ($clientes as $cli)
-                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }} | {{ $cli->id }}</option>
+                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -81,7 +81,7 @@
                                     <select wire:change="atualizarProds()" class="form-control" wire:model="produto">
                                         <option value="" disabled selected>--Escolha um produto--</option>
                                         @if ($empresaL != 1)
-                                            @foreach ($produtos as $produto)
+                                            @foreach (json_decode($produtos) as $produto)
                                                 <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
                                             @endforeach
                                         @else

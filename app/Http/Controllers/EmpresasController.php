@@ -92,7 +92,6 @@ class EmpresasController extends Controller
             $request->validate([
                 'nome' => 'required|max:255',
                 'fantasia' => 'required|max:255',
-                'cpf_cnpj' => 'required',
                 'rg_ie' => 'required',
                 'telefone' => 'required',
                 'rua' => 'required|max:255',
@@ -115,6 +114,7 @@ class EmpresasController extends Controller
                 'nfes' => 'required|numeric',
                 'mdfes' => 'required|numeric'
             ]);
+
             $empresa = $this->empresaServices->atualizar($id, $request);
             $this->enderecoServices->editar(
                 $empresa->endereco_id,
@@ -129,7 +129,7 @@ class EmpresasController extends Controller
             );
             return redirect()->route('editar_empresa', [$empresa->id])->with('success', 'Empresa foi atualizada com sucesso!');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e);
         }
     }
 

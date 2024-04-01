@@ -15,7 +15,7 @@ class AdminAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->cargo != 'admin') {
+        if (auth()->user()->cargo != 'admin' && auth()->user()->cargo != 'master') {
             return back();
         }
         return $next($request);

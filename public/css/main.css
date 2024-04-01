@@ -2511,7 +2511,14 @@ input[type="button"],
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
+
+
+
 }
+
+
+
+
 
 input[type="submit"]:hover,
 input[type="reset"]:hover,
@@ -2928,6 +2935,10 @@ body.landing #page-wrapper {
     text-align: center;
 }
 
+
+
+
+
 #banner :last-child {
     margin-bottom: 0;
 }
@@ -2960,7 +2971,22 @@ body.landing #page-wrapper {
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
     color: #fff;
     min-width: 12em;
+	animation: pulse 2s infinite;
 }
+
+@keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+
 
 #banner input[type="submit"]:hover,
 #banner input[type="reset"]:hover,
@@ -3586,3 +3612,75 @@ body.landing #main {
         padding: 2.5em 1em 3em 1em;
     }
 }
+
+
+.box.special li {
+
+	list-style: none;
+
+}
+
+.box.special h2,h3,h4 {
+
+	font-family: 'Segoe UI';
+
+}
+
+.box.special p{
+
+	border-top: 2px solid rgba(0, 0, 0, 0.2);
+
+}
+
+#planos{
+
+    background-image: url('../css/images/Madeira.jpg');
+    background-size: cover;
+
+
+}
+
+ #planos h2{
+
+    color: #fff;
+    margin-left: 38%;
+    margin-bottom: 50px;
+    margin-top: 15px;
+
+ }
+
+
+
+ @media only screen and (max-width: 768px) {
+    #planos {
+        background-image: none;
+    }
+
+
+    #planos h2{
+        margin-left: 20%;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        color: #fff;
+
+    }
+
+        #planos-card{
+
+            margin: 0;
+
+        }
+
+
+
+}
+
+#button-login a{
+
+    color:#666
+
+}
+
+
+
+
