@@ -73,7 +73,7 @@ class VeiculoController extends Controller
             $request->validate([
                 'placa' => 'required',
                 'capacidade' => 'nullable|numeric',
-                'renavan' => 'required|max:9|min:9',
+                'renavan' => 'required',
                 'tara' => 'required|numeric',
                 'capacidade_m3' => 'required',
                 'tipo_carroceria' => 'required',
@@ -158,7 +158,7 @@ class VeiculoController extends Controller
             $request->validate([
                 'placa' => 'required',
                 'capacidade' => 'nullable|numeric',
-                'renavan' => 'required|max:9|min:9',
+                'renavan' => 'required',
                 'tara' => 'required|numeric',
                 'capacidade_m3' => 'required',
                 'tipo_carroceria' => 'required',

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PlanoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PedidosController;
@@ -14,7 +13,6 @@ use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\MDFEController;
-use App\Http\Controllers\MDFeNotaController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\RelatoriosController;
@@ -31,25 +29,19 @@ use App\Http\Controllers\VeiculoController;
 |
 */
 
-
-
 //Home
 Route::get('/', function(){
 
     return view('homePage');
 });
 
-
 Route::get('/homePage', [HomeController::class, 'homePage'])->name('homePage');
 Route::get('/homePage2', [HomeController::class, 'homePage2'])->name('homePage2');
-
 
 //Planos
 Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
 
-
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
-
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -205,7 +197,5 @@ Route::prefix('veiculos')->group(function () {
     Route::put('/atualizar/{id}', [VeiculoController::class, 'update'])->name('veiculos.update')->middleware('auth');
     Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware('auth');
 });
-
-
 
 require __DIR__ . '/auth.php';

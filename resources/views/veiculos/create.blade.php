@@ -42,7 +42,7 @@
                             <div class="form-group">
                                 <label for="renavan">Renavan *</label>
                                 <input type="number" class="form-control" required placeholder="Renavan..." name="renavan"
-                                    id="renavan" maxlength="9">
+                                    id="renavan">
                             </div>
                         </div>
                     </div>
