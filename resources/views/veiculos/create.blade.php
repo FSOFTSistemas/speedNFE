@@ -28,21 +28,21 @@
                             <div class="form-group">
                                 <label for="placa">Placa *</label>
                                 <input type="text" class="form-control" required placeholder="Placa..." name="placa"
-                                    id="placa" onkeyup="validarPlaca(this, event)" maxlength="8">
+                                    id="placa" onkeyup="validarPlaca(this, event)" maxlength="8" value="{{ old('placa') }}">
                             </div>
                         </div>
                         <div class="col-md-4 col-xs-4">
                             <div class="form-group">
                                 <label for="capacidade">Capacidade (Kg) *</label>
                                 <input type="number" class="form-control" step="0.1" required min="0"
-                                    placeholder="Capacidade (Kg)..." name="capacidade" id="capacidade">
+                                    placeholder="Capacidade (Kg)..." name="capacidade" id="capacidade" value="{{ old('capacidade') }}">
                             </div>
                         </div>
                         <div class="col-md-4 col-xs-4">
                             <div class="form-group">
                                 <label for="renavan">Renavan *</label>
                                 <input type="number" class="form-control" required placeholder="Renavan..." name="renavan"
-                                    id="renavan">
+                                    id="renavan" value="{{ old('renavan') }}">
                             </div>
                         </div>
                     </div>
@@ -52,14 +52,14 @@
                             <div class="form-group">
                                 <label for="float">Tara (kg) *</label>
                                 <input type="number" class="form-control" step="0.1" required placeholder="Tara..."
-                                    min="0" name="tara" id="tara">
+                                    min="0" name="tara" id="tara" value="{{ old('tara') }}">
                             </div>
                         </div>
                         <div class="col-md-3 col-xs-3">
                             <div class="form-group">
                                 <label for="capacidade_m3">Capacidade (M³) *</label>
                                 <input type="text" class="form-control" required placeholder="Capacidade (M³)..."
-                                    name="capacidade_m3" id="capacidade_m3" min="0">
+                                    name="capacidade_m3" id="capacidade_m3" min="0" value="{{ old('capacidade_m3') }}">
                             </div>
                         </div>
                         <div class="col-md-3 col-xs-3">
@@ -68,7 +68,7 @@
                                 <select class="form-control" required name="tipo_carroceria" id="tipo_carroceria">
                                     <option value="">-- Selecione um tipo de carroceria --</option>
                                     @foreach ($tiposCarrocerias as $tipoCarroceria)
-                                        <option value="{{ $tipoCarroceria }}">{{ $tipoCarroceria->value }}</option>
+                                        <option value="{{ $tipoCarroceria }}" @if(old('tipo_carroceria') == $tipoCarroceria->value) selected @endif>{{ $tipoCarroceria->value }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -79,7 +79,7 @@
                                 <select class="form-control" required name="tipo_veiculo" id="tipo_veiculo">
                                     <option value="">-- Selecione um tipo de veículo --</option>
                                     @foreach ($tiposVeiculos as $tipoVeiculo)
-                                        <option value="{{ $tipoVeiculo }}">{{ $tipoVeiculo->value }}</option>
+                                        <option value="{{ $tipoVeiculo }}" @if(old('tipo_veiculo') == $tipoVeiculo->value) selected @endif>{{ $tipoVeiculo->value }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -93,7 +93,7 @@
                                 <select class="form-control" required name="tipo_rodado" id="tipo_rodado">
                                     <option value="">-- Selecione um tipo rodado --</option>
                                     @foreach ($tiposRodados as $tipo_rodado)
-                                        <option value="{{ $tipo_rodado }}">{{ $tipo_rodado->value }}</option>
+                                        <option value="{{ $tipo_rodado }}" @if(old('tipo_rodado') == $tipo_rodado->value) selected @endif>{{ $tipo_rodado->value }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -104,7 +104,7 @@
                                 <select class="form-control" required name="uf_veiculo" id="uf_veiculo">
                                     <option value="">-- Selecione o UF do Veículo --</option>
                                     @foreach ($ufs as $uf)
-                                        <option value="{{ $uf }}">{{ $uf->value }}</option>
+                                        <option value="{{ $uf }}" @if(old('uf_veiculo') == $uf->value) selected @endif>{{ $uf->value }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -116,7 +116,7 @@
                                     onchange="tipoProp(this.value)">
                                     <option value="">-- Selecione um tipo de propriedade --</option>
                                     @foreach ($tiposPropriedades as $tipoPropriedade)
-                                        <option value="{{ $tipoPropriedade }}">{{ $tipoPropriedade->value }}</option>
+                                        <option value="{{ $tipoPropriedade }}" @if(old('tipo_propriedade') == $tipoPropriedade->value) selected @endif>{{ $tipoPropriedade->value }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -128,7 +128,7 @@
                                     <select class="form-control" name="empresaId" id="empresaId" required>
                                         <option value="">-- Selecione uma Empresa --</option>
                                         @foreach ($empresas as $empresa)
-                                            <option value="{{ $empresa->id }}">{{ $empresa->fantasia }}</option>
+                                            <option value="{{ $empresa->id }}" @if(old('empresaId') == $empresa->id) selected @endif>{{ $empresa->fantasia }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -139,25 +139,25 @@
                         @endif
                     </div>
 
-                    <div class="row" id="proprietario" style="display: none">
+                    <div class="row" id="proprietario" style="display: {{ old('tipo_propriedade') == 'Terceiro' ? 'block' : 'none' }}">
                         <div class="col">
                             <div class="row">
                                 <div class="col">
                                     <label for="">CPF/CNPJ</label>
                                     <input class="form-control" type="text" name="cpf_cnpj" id="cpf_cnpj"
-                                        onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14"
+                                        onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" value="{{ old('cpf_cnpj') }}"
                                         placeholder="CPF/CNPJ...">
                                 </div>
                                 <div class="col">
                                     <label for="">Inscrição Estadual</label>
                                     <input class="form-control" type="text" name="ie" id="ie"
-                                        placeholder="Inscrição estadual...">
+                                        placeholder="Inscrição estadual..." value="{{ old('ie') }}">
                                 </div>
                                 <div class="col">
                                     <label for="">Isento</label>
                                     <div class="row">
                                         <div class="col">
-                                            <input type="checkbox" name="isento" id="isento">
+                                            <input type="checkbox" name="isento" id="isento" @if(old('isento')) checked @endif>
                                         </div>
                                     </div>
                                 </div>
@@ -166,28 +166,28 @@
                                 <div class="col">
                                     <label for="">Nome Proprietário</label>
                                     <input class="form-control" type="text" name="nome" id="nome"
-                                        placeholder="Nome do proprietário...">
+                                        placeholder="Nome do proprietário..." value="{{ old('nome') }}">
                                 </div>
                                 <div class="col">
                                     <label for="">UF proprietário</label>
                                     <select class="form-control" name="uf_prop" id="uf_prop">
                                         <option value="">Selecionar</option>
                                         @foreach ($ufs as $uf)
-                                            <option value="{{ $uf }}">{{ $uf }}</option>
+                                            <option value="{{ $uf }}" @if(old('uf_prop') == $uf->value) selected @endif>{{ $uf }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="col">
                                     <label for="">RNTRC</label>
                                     <input class="form-control" type="number" name="rntrc" id="rntrc"
-                                        placeholder="RNTRC...">
+                                        placeholder="RNTRC..." value="{{ old('rntrc') }}">
                                 </div>
                                 <div class="col">
                                     <label for="">Tipo propritário</label>
                                     <select class="form-control" name="tipo_proprietario" id="tipo_proprietario">
                                         <option value="">Selecionar</option>
                                         @foreach ($tipoProprietarios as $tpProp)
-                                            <option value="{{ $tpProp }}">{{ $tpProp }}</option>
+                                            <option value="{{ $tpProp }}" @if(old('tipo_proprietario') == $tpProp->value) selected @endif>{{ $tpProp }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -196,7 +196,7 @@
                                     <select class="form-control" name="tipo_transportador" id="tipo_transportador">
                                         <option value="">Selecionar</option>
                                         @foreach ($tipoTransportadores as $tpTransp)
-                                            <option value="{{ $tpTransp }}">{{ $tpTransp }}</option>
+                                            <option value="{{ $tpTransp }}" @if(old('tipo_transportador') == $tpTransp->value) selected @endif>{{ $tpTransp }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -209,7 +209,7 @@
                             <div class="form-group">
                                 <label for="">Descrição</label>
                                 <textarea class="form-control" maxlength="512" placeholder="Descrição..." name="descricao" id="descricao"
-                                    cols="30" rows="5"></textarea>
+                                    cols="30" rows="5">{{ old('descricao') }}</textarea>
                             </div>
                         </div>
                     </div>
