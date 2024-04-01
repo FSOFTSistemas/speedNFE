@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Cidade;
+use App\Models\LatLon;
 
 class CidadeService {
 
@@ -19,5 +20,9 @@ class CidadeService {
     public function buscarCidade($cidade)
     {
         return Cidade::where('cidade', $cidade)->first();
+    }
+
+    public function buscarLatLon($municipio) {
+        return LatLon::where('municipio', $municipio)->first();
     }
 }

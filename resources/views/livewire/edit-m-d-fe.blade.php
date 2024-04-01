@@ -583,7 +583,7 @@
     </form>
 
     <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
-        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -724,7 +724,7 @@
 
     @if (count($notas) >= 1)
         <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
-            aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+            aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">

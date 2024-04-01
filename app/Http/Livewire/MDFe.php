@@ -269,6 +269,15 @@ class MDFe extends Component
         $carregamento = json_decode($this->carregamento);
         $this->municipio = $carregamento->cidade;
         $this->codMunCarregamento = $carregamento->municipio;
+        $cidadeService = new CidadeService();
+        $latLon = $cidadeService->buscarLatLon($this->municipio);
+        $this->latCarregamento = $latLon->lat;
+        $this->lonCarregamento = $latLon->lon;
+    }
+
+    public function descarregamento($municipio)
+    {
+        dd($municipio);
     }
 
     public function editNote($nota, $index)
