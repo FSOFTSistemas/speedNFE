@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class EmpresasController extends Controller
 {
@@ -162,10 +163,15 @@ class EmpresasController extends Controller
                 'nfes' => 'required|numeric',
                 'mdfes' => 'required|numeric',
                 'name' => 'required|max:255',
-                'email' => 'required',
+                'email' => 'required|email',
                 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ter um valor numérico!',
+                'max' => 'O campo :attribute deve conter no máximo :max',
+                'email' => 'Email inválido!'
             ]);
             DB::beginTransaction();
             $endereco = $this->enderecoServices->salvar(
@@ -211,6 +217,12 @@ class EmpresasController extends Controller
             );
             DB::commit();
             return redirect()->route('empresa.index')->with('success', 'Empresa foi criada com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
