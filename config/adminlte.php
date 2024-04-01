@@ -311,7 +311,7 @@ return [
         [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
-            'can'         => ['admin', 'client-NFe','cliente-advanced','master'],
+            'can'         => ['admin', 'client-NFe', 'cliente-advanced', 'master'],
             'submenu' => [
                 [
                     'text'        => 'Emitir NFe',
@@ -338,7 +338,7 @@ return [
         [
             'text'        => 'MDFe',
             'icon'        => 'fas fa-truck',
-            'can'         => ['admin','client-MDFe','cliente-advanced','master'],
+            'can'         => ['admin', 'client-MDFe', 'cliente-advanced', 'master'],
             'submenu' => [
                 [
                     'text'        => 'Emitir MDFe',

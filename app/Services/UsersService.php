@@ -65,7 +65,6 @@ class UsersService{
                 'empresa_id' => $empresa
             ]);
         } catch (Exception $e){
-            dd($e->getMessage());
             return $e;
         }
     }

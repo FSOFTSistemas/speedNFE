@@ -378,7 +378,7 @@
                                             <input class="form-control" type="text" name="produtoPredominante"
                                                 wire:model="produtoPredominante" required
                                                 placeholder="Produto predominante...">
-                                                
+
                                         </div>
                                     </div><br>
 
@@ -754,7 +754,7 @@
                                     <div class="form-group">
                                         <label for="">Cidade *</label>
                                         <select class="form-control" wire:model="cidade" required>
-                                            @foreach (json_decode($cidadesCarregamento) as $city)
+                                            @foreach (json_decode($cidadesDescarregamento) as $city)
                                                 <option value="{{ $city->cidade . '@' . $city->municipio }}">
                                                     {{ $city->cidade }}</option>
                                             @endforeach
