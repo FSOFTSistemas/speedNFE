@@ -522,7 +522,7 @@
                                                         <div class="col">
                                                             <label for="">Latitude local de
                                                                 Carregamento</label>
-                                                            <input class="form-control" type="number" min="0"
+                                                            <input class="form-control" type="number"
                                                                 name="lat_carregamento" required wire:model="latCarregamento"
                                                                 placeholder="Latitude do local de Carregamento...">
                                                         </div>
@@ -530,7 +530,7 @@
                                                         <div class="col">
                                                             <label for="">Longitude local de
                                                                 Carregamento</label>
-                                                            <input class="form-control" type="number" min="0"
+                                                            <input class="form-control" type="number"
                                                                 name="lon_carregamento" required wire:model="lonCarregamento"
                                                                 placeholder="Longitude do local de Carregamento...">
                                                         </div>
