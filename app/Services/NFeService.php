@@ -160,8 +160,7 @@ class NFeService
         $telefone = str_replace("-", "", $telefone);
         $telefone = str_replace(" ", "", $telefone);
         $stdEnderDest->fone = $telefone;
-        // $stdEnderDest->cMun = $venda->endereco_cliente->codigoIBGE;
-        $stdEnderDest->cMun = "2615102";
+        $stdEnderDest->cMun = FormatationUtil::retiraPontuacoes($venda->endereco_cliente->codigoIBGE);
         $stdEnderDest->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
         $stdEnderDest->UF = $venda->endereco_cliente->uf;
 

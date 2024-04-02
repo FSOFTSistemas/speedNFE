@@ -22,7 +22,12 @@ class CidadeService {
         return Cidade::where('cidade', $cidade)->first();
     }
 
-    public function buscarLatLon($municipio) {
+    public function buscarLatLonByUf($uf) {
+        return LatLon::where('uf', $uf)->get();
+    }
+
+    public function buscarLatLonByMunicipio($municipio) {
         return LatLon::where('municipio', $municipio)->first();
     }
+
 }

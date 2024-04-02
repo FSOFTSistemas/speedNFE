@@ -416,7 +416,7 @@
             </div>
         </main>
 
-        @if($cidadesDescarregamento)
+        @if($cidadesDescarregamentoLatLon)
         @component('components.modal', [
             'modalId' => 'modalMoreOptions',
             'modalTitle' => 'Mais Opções',
@@ -539,10 +539,10 @@
                                                     <div class="row">
                                                         <div class="col">
                                                             <label for="">Latitude e Longitude de Descarregamento</label>
-                                                            <select class="form-control">
-                                                                @foreach ($cidadesDescarregamento as $city)
-                                                                <option wire:click="descarregamento('{{ $city->cidade }}')">
-                                                                    {{ $city->cidade }}</option>
+                                                            <select class="form-control" wire:model="selectedLatLon" wire:change="descarregamento" required>
+                                                                <option value="">Selecione um item</option>
+                                                                @foreach ($cidadesDescarregamentoLatLon as $city)
+                                                                    <option value="{{ $city->lat . '@' . $city->lon }}">{{ $city->municipio }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
