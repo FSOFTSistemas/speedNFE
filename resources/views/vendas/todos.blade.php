@@ -68,16 +68,16 @@
                         @elseif($pedido->estado == 'Autorizado')
                         <div class="row">
                             @if ($pedido->sequencia_evento == 0)
-                                <div class="col">
+                                <div class="col-md-3 col-xs-6">
                                     <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Visualizar" class="text-primary">
                                         <button class="btn btn-primary form-control d-block d-sm-none" style="margin-bottom: 1%">Visualizar</button>
                                         <i class="fa fa-eye d-none d-sm-block"></i>
                                     </a>
                                 </div>
-                                <div class="col">
+                                <div class="col-md-3 col-xs-6">
                                     <a title="Carta de Correção" href="#">
                                         <button class="btn btn-warning form-control d-block d-sm-none" style="margin-bottom: 1%">CCe</button>
-                                        <i class="text-warning d-none d-sm-block" data-toggle="modal" data-target="#cceModal"><b>CCe</b></i>
+                                        <i class="text-danger d-none d-sm-block" data-toggle="modal" data-target="#cceModal"><b>CCe</b></i>
                                     </a>
                                 </div>
 
@@ -112,7 +112,7 @@
                                     </div>
                                 </div>
                             @else
-                            <div class="col">
+                            <div class="col-md-3 col-xs-6">
                                 <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}" class="text-dark">
                                     <button class="btn btn-dark form-control d-block d-sm-none" style="margin-bottom: 1%">Imprimir CCe</button>
                                     <i class="fa fa-print d-none d-sm-block"></i>
@@ -120,7 +120,7 @@
                             </div>
                             @endif
 
-                            <div class="col">
+                            <div class="col-md-3 col-xs-6">
                                 <a title="Cancelar" href="#">
                                     <button class="btn btn-danger form-control d-block d-sm-none">Cancelar</button>
                                     <i data-toggle="modal" data-target="#exampleModal"
@@ -164,7 +164,7 @@
                         </div>
                         @else
                         <div class="row">
-                            <div class="col">
+                            <div class="col-md-3 col-xs-6">
                                 <a target='_blank' title="Imprimir Cancelamento"
                                 href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="text-dark">
                                 <button class="btn btn-dark form-control d-block d-sm-none">Imprimir Cancelamento</button>

@@ -37,7 +37,7 @@ class NFeService
         $stdIde = new \stdClass();
         $stdIde->cUF = \App\Models\Empresa::getCUF($emitente->endereco->uf);
         $stdIde->cNF = rand(11111, 99999);
-        $stdIde->natOp = $venda->cfop->natureza;
+        $stdIde->natOp = $venda->cfopNota->natureza;
 
         $stdIde->mod = 55;
         $stdIde->serie = $emitente->serie;
