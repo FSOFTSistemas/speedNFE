@@ -26,7 +26,7 @@
             <th width="25%">AÇÕES</th>
         </thead>
         <tbody>
-            @foreach ($pedidos as $pedido)
+            @foreach ($pedidos as $index => $pedido)
                 <tr>
                     <td>{{ $pedido->numero_nfe }}</td>
                     <td style="font-size: 80%">{{ $pedido->nome }}</td>
@@ -36,44 +36,50 @@
                     <td style="font-size: 80%">{{ $pedido->fantasia }}</td>
                     <td>
                         @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
-                        {{-- <div class="row">
-                            <div class="col col-xs-3">
-                                <a href="" style="margin-top: 1%" class="btn btn-primary">Visualizar <i class="fa fa-eye"></i></a>
+                            <div class="row">
+                                <div class="col-md-3 col-xs-6">
+                                    <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}"
+                                        title="Visualizar" class="text-primary">
+                                        <button class="btn btn-primary form-control d-block d-sm-none" style="margin-bottom: 1%">Visualizar</button>
+                                        <i class="fa fa-eye d-none d-sm-block"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-xs-6">
+                                    <a href="{{ route('vendas.editar', [$pedido->id]) }}"
+                                        title="Editar" class="text-info">
+                                        <button class="btn btn-info form-control d-block d-sm-none" style="margin-bottom: 1%">Editar</button>
+                                        <i class="fa fa-edit d-none d-sm-block"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-xs-6">
+                                    <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger">
+                                        <button class="btn btn-danger form-control d-block d-sm-none" data-toggle="modal" data-target="#excluir" style="margin-bottom: 1%">Excluir</button>
+                                        <i class="fa fa-trash d-none d-sm-block" data-toggle="modal" data-target="#excluir"></i>
+                                        </a>
+                                </div>
+                                <div class="col-md-3 col-xs-6">
+                                    <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" onclick="loadPage()"
+                                        title="Enviar NFe" class="text-success">
+                                        <button class="btn btn-success form-control d-block d-sm-none">Enviar NFe</button>
+                                        <i class="fas fa-upload d-none d-sm-block"></i>
+                                    </a>
+                                </div>
                             </div>
-
-                            <div class="col col-xs-3">
-                                <a href="" style="margin-top: 1%" class="btn btn-info">Editar <i class="fa fa-edit"></i></a>
-                            </div>
-
-                            <div class="col col-xs-3">
-                                <a href="" style="margin-top: 1%" class="btn btn-danger">Excluir <i class="fa fa-trash"></i></a>
-                            </div>
-
-                            <div class="col col-xs-3">
-                                <a href="" style="margin-top: 1%" class="btn btn-success">Enviar <i class="fa fa-upload"></i></a>
-                            </div>
-                        </div> --}}
-                            <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}" style="margin-right: 10%"
-                                title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a>
-
-                            <a href="{{ route('vendas.editar', [$pedido->id]) }}" style="margin-right: 10%" title="Editar"
-                                class="text-info"><i class="fa fa-edit"></i></a>
-
-                            <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" style="margin-right: 10%"
-                                class="text-danger"><i class="fa fa-trash" data-toggle="modal"
-                                    data-target="#excluir"></i></a>
-
-                            <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" onclick="loadPage()"
-                                title="Enviar NFe" class="text-success"><i class="fas fa-upload"></i></a>
                         @elseif($pedido->estado == 'Autorizado')
+                        <div class="row">
                             @if ($pedido->sequencia_evento == 0)
-                                <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}"
-                                    style="margin-right: 10%" title="Visualizar" class="text-primary"><i
-                                        class="fa fa-eye"></i></a>
-
-                                <a title="Carta de Correção" href="#">
-                                    <i class="fa fa-envelope text-warning" data-toggle="modal" data-target="#cceModal"></i>
-                                </a>
+                                <div class="col">
+                                    <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Visualizar" class="text-primary">
+                                        <button class="btn btn-primary form-control d-block d-sm-none" style="margin-bottom: 1%">Visualizar</button>
+                                        <i class="fa fa-eye d-none d-sm-block"></i>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a title="Carta de Correção" href="#">
+                                        <button class="btn btn-warning form-control d-block d-sm-none" style="margin-bottom: 1%">CCe</button>
+                                        <i class="text-warning d-none d-sm-block" data-toggle="modal" data-target="#cceModal"><b>CCe</b></i>
+                                    </a>
+                                </div>
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="cceModal" tabindex="-1" role="dialog"
@@ -106,14 +112,21 @@
                                     </div>
                                 </div>
                             @else
-                                <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}"
-                                    class="text-dark"><i class="fa fa-print"></i></a>
+                            <div class="col">
+                                <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}" class="text-dark">
+                                    <button class="btn btn-dark form-control d-block d-sm-none" style="margin-bottom: 1%">Imprimir CCe</button>
+                                    <i class="fa fa-print d-none d-sm-block"></i>
+                                </a>
+                            </div>
                             @endif
 
-                            <a title="Cancelar" href="#">
-                                <i data-toggle="modal" data-target="#exampleModal" style="margin-right: 10%"
-                                    class="fa fa-ban text-danger"></i>
-                            </a>
+                            <div class="col">
+                                <a title="Cancelar" href="#">
+                                    <button class="btn btn-danger form-control d-block d-sm-none">Cancelar</button>
+                                    <i data-toggle="modal" data-target="#exampleModal"
+                                        class="fa fa-ban text-danger d-none d-sm-block"></i>
+                                </a>
+                            </div>
 
                             <!-- Modal -->
                             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
@@ -148,11 +161,17 @@
                                     </div>
                                 </div>
                             </div>
-                            </div>
+                        </div>
                         @else
-                            <a target='_blank' title="Imprimir Cancelamento"
-                                href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="text-dark"><i
-                                    class="fa fa-print"></i></a>
+                        <div class="row">
+                            <div class="col">
+                                <a target='_blank' title="Imprimir Cancelamento"
+                                href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="text-dark">
+                                <button class="btn btn-dark form-control d-block d-sm-none">Imprimir Cancelamento</button>
+                                <i class="fa fa-print d-none d-sm-block"></i>
+                            </a>
+                            </div>
+                        </div>
                         @endif
                     </td>
                 </tr>
