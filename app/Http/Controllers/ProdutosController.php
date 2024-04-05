@@ -32,7 +32,6 @@ class ProdutosController extends Controller
     public function update($id, Request $request)
     {
         try {
-            dd($request->all());
             $request->validate([
                 'categoria' => 'required',
                 'codigo' => 'nullable',
@@ -77,6 +76,10 @@ class ProdutosController extends Controller
                 'restriVeic' => 'nullable|numeric',
                 'cargaVeic' => 'nullable',
                 'operVeic' => 'nullable|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
+                'max' => 'O campo :attribute deve ter no máximo :max caracteres!'
             ]);
             DB::beginTransaction();
             $produto = $this->produtoServices->salvar(
