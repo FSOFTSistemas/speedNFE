@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use NFePHP\Common\Exception\CertificateException;
 
 class EmpresasController extends Controller
 {
@@ -223,6 +224,9 @@ class EmpresasController extends Controller
             }
             DB::rollBack();
             return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+        } catch (CertificateException $e) {
+            DB::rollBack();
+            return back()->with('warning', $e->getMessage() . ' - Senha incorreta, informe uma senha válida')->withInput();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);

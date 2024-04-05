@@ -34,16 +34,10 @@ class ClientesController extends Controller
     {
         try {
             $user = $this->userServices->getEmpresa(Auth::id());
-            if ($user->empresa_id == 1) {
-                $clientes = $this->clienteServices->todosClientes();
-                $empresas = $this->empresaServices->todas();
-            } else {
-                $clientes = $this->clienteServices->todos($user->empresa_id);
-                $empresas = $this->empresaServices->buscarEmpresa($user->empresa_id);
-            }
-            return view('clientes.todos', ['clientes' => $clientes, 'empresa' => $user->empresa_id, 'empresas' => $empresas]);
+            $clientes = $this->clienteServices->todos($user->empresa_id);
+            return view('clientes.todos', ['clientes' => $clientes, 'empresa' => $user->empresa_id]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Erro interno, ocorreu um problema inesperado, tente novamento em outro momento!');
         }
     }
 
