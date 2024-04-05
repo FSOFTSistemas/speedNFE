@@ -188,7 +188,7 @@ class NFeService
             $ncm = str_replace(".", "", $ncm);
             $stdProd->NCM = $ncm;
 
-            $stdProd->CFOP = '5102';
+            $stdProd->CFOP = $venda->cfopNota->cfop;
 
             $stdProd->uCom = $i->produto->un;
             $stdProd->qCom = $i->qtde;
