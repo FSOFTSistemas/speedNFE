@@ -11,6 +11,7 @@ use App\Services\ProdutosService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ProdutosController extends Controller
@@ -196,7 +197,12 @@ class ProdutosController extends Controller
                 'restriVeic' => 'nullable|numeric',
                 'cargaVeic' => 'nullable',
                 'operVeic' => 'nullable|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
+                'max' => 'O campo :attribute deve ter no máximo :max caracteres!'
             ]);
+            DB::beginTransaction();
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             if ($this->produtoServices->contagemProdutos($empresa) < $this->empresaServices->buscarEmpresa($empresa)->limProdutos || $empresa == 1) {
                 $this->produtoServices->store(
@@ -246,10 +252,16 @@ class ProdutosController extends Controller
                     $request->tpProd ? $request->operVeic : null
                 );
             }
+            DB::commit();
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');
         } catch (ValidationException $e) {
-            return back()->with('warning', $e->errors());
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
