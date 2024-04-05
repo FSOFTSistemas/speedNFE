@@ -32,6 +32,7 @@ class ProdutosController extends Controller
     public function update($id, Request $request)
     {
         try {
+            dd($request->all());
             $request->validate([
                 'categoria' => 'required',
                 'codigo' => 'nullable',
@@ -77,6 +78,7 @@ class ProdutosController extends Controller
                 'cargaVeic' => 'nullable',
                 'operVeic' => 'nullable|numeric'
             ]);
+            DB::beginTransaction();
             $produto = $this->produtoServices->salvar(
                 $id,
                 $request->categoria,
@@ -122,8 +124,16 @@ class ProdutosController extends Controller
                 $request->cfopexterno,
                 $request->un,
             );
+            DB::commit();
             return redirect()->route('editar_produto', [$produto->id])->with('success', 'Produto editado com sucesso');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
@@ -133,7 +143,9 @@ class ProdutosController extends Controller
         try {
             $produto = $this->produtoServices->um($id);
             $categorias = $this->categoriaServices->todas($produto->empresa_id);
-            return view('produtos.editar', ['produto' => $produto, 'categorias' => $categorias]);
+            $cfops = $this->pedidoServices->cfopAll();
+            $ncms = $this->pedidoServices->ncmAll();
+            return view('produtos.editar', ['produto' => $produto, 'categorias' => $categorias, 'cfops' => $cfops, 'ncms' => $ncms]);
         } catch (Exception $e) {
             return back();
         }
@@ -302,7 +314,6 @@ class ProdutosController extends Controller
             $ncms = $this->pedidoServices->ncmAll();
             return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias, 'cfops' => $cfops, 'ncms' => $ncms]);
         } catch (Exception $e) {
-            dd($e);
             return back();
         }
     }
