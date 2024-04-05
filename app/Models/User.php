@@ -64,7 +64,7 @@ class User extends Authenticatable
                 "admin" => ['admin'],
                 "client-NFe" => ['client-NFe'],
                 "client-MDFe" => ['client-MDFe'],
-                "cliente-advanced" => ['client-NFe', 'client-MDFe']
+                "client-advanced" => ['client-NFe', 'client-MDFe']
             ];
             $user->givePermissionTo($permissao[$user->cargo]);
         });

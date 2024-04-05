@@ -160,36 +160,33 @@
                                             <select class="form-control" id="uf" name="uf" required
                                                 onchange="updateCities(this.value)">
                                                 <option value="">-- Escolha uma Unidade Federativa --</option>
-                                                @if (old('uf'))
-                                                    <option value="{{ old('uf') }}">{{ old('uf') }}</option>
-                                                @endif
-                                                <option value='RO'>RO</option>
-                                                <option value='AC'>AC</option>
-                                                <option value='AM'>AM</option>
-                                                <option value='RR'>RR</option>
-                                                <option value='PA'>PA</option>
-                                                <option value='AP'>AP</option>
-                                                <option value='TO'>TO</option>
-                                                <option value='MA'>MA</option>
-                                                <option value='PI'>PI</option>
-                                                <option value='CE'>CE</option>
-                                                <option value='RN'>RN</option>
-                                                <option value='PB'>PB</option>
-                                                <option value='PE'>PE</option>
-                                                <option value='AL'>AL</option>
-                                                <option value='SE'>SE</option>
-                                                <option value='BA'>BA</option>
-                                                <option value='MG'>MG</option>
-                                                <option value='ES'>ES</option>
-                                                <option value='RJ'>RJ</option>
-                                                <option value='SP'>SP</option>
-                                                <option value='PR'>PR</option>
-                                                <option value='SC'>SC</option>
-                                                <option value='RS'>RS</option>
-                                                <option value='MS'>MS</option>
-                                                <option value='MT'>MT</option>
-                                                <option value='GO'>GO</option>
-                                                <option value='DF'>DF</option>
+                                                <option value='RO' @if (old('uf') == 'RO') selected @endif>RO</option>
+                                                <option value='AC' @if (old('uf') == 'AC') selected @endif>AC</option>
+                                                <option value='AM' @if (old('uf') == 'AM') selected @endif>AM</option>
+                                                <option value='RR' @if (old('uf') == 'RR') selected @endif>RR</option>
+                                                <option value='PA' @if (old('uf') == 'PA') selected @endif>PA</option>
+                                                <option value='AP' @if (old('uf') == 'AP') selected @endif>AP</option>
+                                                <option value='TO' @if (old('uf') == 'TO') selected @endif>TO</option>
+                                                <option value='MA' @if (old('uf') == 'MA') selected @endif>MA</option>
+                                                <option value='PI' @if (old('uf') == 'PI') selected @endif>PI</option>
+                                                <option value='CE' @if (old('uf') == 'CE') selected @endif>CE</option>
+                                                <option value='RN' @if (old('uf') == 'RN') selected @endif>RN</option>
+                                                <option value='PB' @if (old('uf') == 'PB') selected @endif>PB</option>
+                                                <option value='PE' @if (old('uf') == 'PE') selected @endif>PE</option>
+                                                <option value='AL' @if (old('uf') == 'AL') selected @endif>AL</option>
+                                                <option value='SE' @if (old('uf') == 'SE') selected @endif>SE</option>
+                                                <option value='BA' @if (old('uf') == 'BA') selected @endif>BA</option>
+                                                <option value='MG' @if (old('uf') == 'MG') selected @endif>MG</option>
+                                                <option value='ES' @if (old('uf') == 'ES') selected @endif>ES</option>
+                                                <option value='RJ' @if (old('uf') == 'RJ') selected @endif>RJ</option>
+                                                <option value='SP' @if (old('uf') == 'SP') selected @endif>SP</option>
+                                                <option value='PR' @if (old('uf') == 'PR') selected @endif>PR</option>
+                                                <option value='SC' @if (old('uf') == 'SC') selected @endif>SC</option>
+                                                <option value='RS' @if (old('uf') == 'RS') selected @endif>RS</option>
+                                                <option value='MS' @if (old('uf') == 'MS') selected @endif>MS</option>
+                                                <option value='MT' @if (old('uf') == 'MT') selected @endif>MT</option>
+                                                <option value='GO' @if (old('uf') == 'GO') selected @endif>GO</option>
+                                                <option value='DF' @if (old('uf') == 'DF') selected @endif>DF</option>
                                             </select>
 
                                         </div>
@@ -266,11 +263,8 @@
                                             <label>Ambiente</label>
                                             <select required class="form-control" name="ambiente" id="ambiente">
                                                 <option value="">--Selecione um Ambiente--</option>
-                                                @if (old('ambiente'))
-                                                    <option value="{{ old('ambiente') }}">{{ old('ambiente') }}</option>
-                                                @endif
-                                                <option value="1">Produção</option>
-                                                <option value="2">Homologação</option>
+                                                <option value="1" @if (old('ambientes') == '1') selected @endif>Produção</option>
+                                                <option value="2" @if (old('ambientes') == '2') selected @endif>Homologação</option>
                                             </select>
                                         </div>
                                     </div>
@@ -330,14 +324,11 @@
                                     <label>Permissões</label>
                                     <select required class="form-control" name="cargo" id="cargo">
                                         <option value="">--Selecione uma permissão--</option>
-                                        @if (old('cargo'))
-                                            <option value="{{ old('cargo') }}">{{ old('cargo') }}</option>
-                                        @endif
-                                        <option value="master">master</option>
-                                        <option value="admin">admin</option>
-                                        <option value="client-NFe">Apenas NFe</option>
-                                        <option value="client-MDFe">Apenas MDFe</option>
-                                        <option value="cliente-advanced">NFe e MDFe</option>
+                                        <option value="master" @if (old('cargo') == 'master') selected @endif>master</option>
+                                        <option value="admin" @if (old('cargo') == 'admin') selected @endif>admin</option>
+                                        <option value="client-NFe" @if (old('cargo') == 'client-NFe') selected @endif>Apenas NFe</option>
+                                        <option value="client-MDFe" @if (old('cargo') == 'client-MDFe') selected @endif>Apenas MDFe</option>
+                                        <option value="client-advanced" @if (old('cargo') == 'client-advanced') selected @endif>NFe e MDFe</option>
                                     </select>
 
                                 </div>
