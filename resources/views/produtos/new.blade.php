@@ -22,15 +22,15 @@
                         <ul class="nav nav-tabs" id="tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                                    aria-controls="home" aria-selected="true">Informações do Produto</a>
+                                    aria-controls="home" aria-selected="true"><b>Informações do Produto</b></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false">Informações Fiscais</a>
+                                    aria-controls="profile" aria-selected="false"><b>Informações Fiscais</b></a>
                             </li>
                             <li class="nav-item" style="display: none" id="veicTab">
                                 <a class="nav-link" id="veic-tab" data-toggle="pill" href="#veic" role="tab"
-                                    aria-controls="veic" aria-selected="false">Informações de Veículo</a>
+                                    aria-controls="veic" aria-selected="false"><b>Informações de Veículo</b></a>
                             </li>
                         </ul>
                     </div>
