@@ -429,7 +429,7 @@ class PedidosController extends Controller
         }
     }
 
-    public function new ()
+    public function new()
     {
         try {
             return view('vendas.create');
@@ -438,4 +438,17 @@ class PedidosController extends Controller
         }
     }
 
+
+    public static function totalMes($idEmpresa)
+    {
+
+        try {
+            return PedidosService::totalMes($idEmpresa);
+
+
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        }
+
+    }
 }

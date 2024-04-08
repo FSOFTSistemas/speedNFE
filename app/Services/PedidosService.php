@@ -105,4 +105,23 @@ class PedidosService
         return DB::table('cfops')->where('id', $id)->first();
     }
 
+
+
+    public static function TotalMes($empresa){
+
+        $resultados = DB::table('pedidos')
+        ->select(DB::raw('MONTH(data) as mes'), DB::raw('SUM(total) as total_vendas'))
+        // ->where('empresa_id', $empresa )
+        ->where('estado', 'Autorizado')
+        ->groupBy('mes')
+        ->get();
+
+        return $resultados;
+        
+
+    }
+
+
 }
+
+

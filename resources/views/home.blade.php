@@ -92,6 +92,37 @@
                 </div>
             </div>
         </div>
+        
+
+        <div id="section-graph">
+
+            <canvas id="totalVendasMes"></canvas>
+
+        </div>
+        <script>
+            const ctx = document.getElementById('totalVendasMes');
+        
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ Js::from($totalMes[0]) }},
+                    datasets: [{
+                        label: 'Total de Vendas por Mês',
+                        data:{{ Js::from($totalMes[1]) }},
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+            }
+        }
+    });
+        </script>
 
         <script>
             function toggleExtraInfo(color) {
