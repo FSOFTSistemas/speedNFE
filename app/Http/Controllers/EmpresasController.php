@@ -12,6 +12,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use NFePHP\Common\Exception\CertificateException;
 
 class EmpresasController extends Controller
 {
@@ -92,7 +94,6 @@ class EmpresasController extends Controller
             $request->validate([
                 'nome' => 'required|max:255',
                 'fantasia' => 'required|max:255',
-                'cpf_cnpj' => 'required',
                 'rg_ie' => 'required',
                 'telefone' => 'required',
                 'rua' => 'required|max:255',
@@ -115,6 +116,7 @@ class EmpresasController extends Controller
                 'nfes' => 'required|numeric',
                 'mdfes' => 'required|numeric'
             ]);
+
             $empresa = $this->empresaServices->atualizar($id, $request);
             $this->enderecoServices->editar(
                 $empresa->endereco_id,
@@ -129,7 +131,7 @@ class EmpresasController extends Controller
             );
             return redirect()->route('editar_empresa', [$empresa->id])->with('success', 'Empresa foi atualizada com sucesso!');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e);
         }
     }
 
@@ -162,10 +164,15 @@ class EmpresasController extends Controller
                 'nfes' => 'required|numeric',
                 'mdfes' => 'required|numeric',
                 'name' => 'required|max:255',
-                'email' => 'required',
+                'email' => 'required|email',
                 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ter um valor numérico!',
+                'max' => 'O campo :attribute deve conter no máximo :max',
+                'email' => 'Email inválido!'
             ]);
             DB::beginTransaction();
             $endereco = $this->enderecoServices->salvar(
@@ -205,12 +212,21 @@ class EmpresasController extends Controller
             $this->userServices->store(
                 $request->email,
                 $request->password,
-                'cliente',
+                $request->cargo,
                 $empresa->id,
                 $request->name
             );
             DB::commit();
             return redirect()->route('empresa.index')->with('success', 'Empresa foi criada com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+        } catch (CertificateException $e) {
+            DB::rollBack();
+            return back()->with('warning', $e->getMessage() . ' - Senha incorreta, informe uma senha válida')->withInput();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);

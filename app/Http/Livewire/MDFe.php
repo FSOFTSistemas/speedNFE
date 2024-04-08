@@ -54,7 +54,7 @@ class MDFe extends Component
     public $lonCarregamento = null;
     public $latDescarregamento = null;
     public $lonDescarregamento = null;
-
+    public $selectedLatLon = null;
     //Dados da NFe
     public $serieNota = null;
     public $numeroNota = null;
@@ -68,6 +68,7 @@ class MDFe extends Component
     public $numeroNotas = [];
     public $tiposDocumentos = [];
     public $cidadesDescarregamento = [];
+    public $cidadesDescarregamentoLatLon = [];
     public $cidadesCarregamento = [];
     public $tiposCarga = [];
     public $ufs = [];
@@ -106,6 +107,7 @@ class MDFe extends Component
         $cidadeService = new CidadeService();
         if ($cargaDescarga) {
             $this->cidadesDescarregamento = $cidadeService->buscarCidadesPorUf($this->localDescarregamento);
+            $this->cidadesDescarregamentoLatLon = $cidadeService->buscarLatLonByUf($this->localDescarregamento);
             return $this->emit('cidades', $this->cidadesDescarregamento);
         } else {
             $this->cidadesCarregamento = $cidadeService->buscarCidadesPorUf($this->localCarregamento);
@@ -269,6 +271,17 @@ class MDFe extends Component
         $carregamento = json_decode($this->carregamento);
         $this->municipio = $carregamento->cidade;
         $this->codMunCarregamento = $carregamento->municipio;
+        $cidadeService = new CidadeService();
+        $latLon = $cidadeService->buscarLatLonByMunicipio($this->municipio);
+        $this->latCarregamento = $latLon->lat;
+        $this->lonCarregamento = $latLon->lon;
+    }
+
+    public function descarregamento()
+    {
+        $latLon = explode('@', $this->selectedLatLon);
+        $this->latDescarregamento = $latLon[0];
+        $this->lonDescarregamento = $latLon[1];
     }
 
     public function editNote($nota, $index)

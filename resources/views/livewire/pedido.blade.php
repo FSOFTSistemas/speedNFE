@@ -1,7 +1,7 @@
 <div>
     <form method="POST">
         @csrf
-        <div class="container">
+
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Cabeçalho</h5>
@@ -16,8 +16,8 @@
                     <option value="{{ $emp->id }}">{{ $emp->fantasia }} | {{ $emp->cpf_cnpj }}</option>
                 @endforeach
             </select>
-        </div>
-    </div>
+            </div>
+            </div>
 
             <div class="row">
                 <div class="col-md-8 col-xs-12">
@@ -25,13 +25,13 @@
                     <select class="form-control" name="cliente" id="cliente" required>
                         <option value="" disabled selected>--Escolha um cliente--</option>
                         @if ($empresaL != 1)
-                            @foreach ($clientes as $cliente)
+                            @foreach (json_decode($clientes) as $cliente)
                                 <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj  }}
                                 </option>
                             @endforeach
                         @else
                             @foreach ($clientes as $cli)
-                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }} | {{ $cli->id }}</option>
+                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -61,9 +61,8 @@
             </div>
             <br>
             <hr color="black">
-        </div>
 
-        <div class="container">
+
             <div class="row" style="text-align: center">
                 <div class="col">
                     <h5>Itens</h5>
@@ -82,7 +81,7 @@
                                     <select wire:change="atualizarProds()" class="form-control" wire:model="produto">
                                         <option value="" disabled selected>--Escolha um produto--</option>
                                         @if ($empresaL != 1)
-                                            @foreach ($produtos as $produto)
+                                            @foreach (json_decode($produtos) as $produto)
                                                 <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
                                             @endforeach
                                         @else
@@ -188,7 +187,7 @@
 
                 </div>
             </div>
-        </div>
+
 
         {{-- <div class="row">
             <div class="col-9">

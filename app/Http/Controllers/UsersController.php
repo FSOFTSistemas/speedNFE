@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Services\EmpresasService;
 use App\Services\UsersService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class UsersController extends Controller
 {
@@ -63,10 +65,15 @@ class UsersController extends Controller
     }
 
     public function store(Request $request){
+        try{
         $sUsers = new UsersService();
-        $resp = $sUsers->store($request->email, $request->senha, $request->cargo, $request->empresa, $request->name);
+        $sUsers->store($request->email, $request->senha, $request->cargo, $request->empresa, $request->name);
 
-        return $resp;
+        return Redirect()->route('usuarios')->with('Success, Usuário inserido com sucesso !');
+    }catch(Exception $e)
+    {
+        return redirect()->back()->with('erro: '.$e->getMessage());
+    }
     }
 
 }

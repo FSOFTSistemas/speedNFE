@@ -55,7 +55,7 @@
                             <div class="form-group">
                                 <label for="renavan">Renavan *</label>
                                 <input type="number" class="form-control" required placeholder="Renavan..." name="renavan"
-                                    id="renavan" maxlength="9" value="{{ $veiculo->renavan }}">
+                                    id="renavan" value="{{ $veiculo->renavan }}">
                             </div>
                         </div>
                     </div>

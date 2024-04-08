@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedBigInteger('cfop');
-            $table->foreign('cfop')->references('id')->on('cfop');
+            $table->foreign('cfop')->references('id')->on('cfops');
             $table->timestamps();
         });
     }

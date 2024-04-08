@@ -7,6 +7,8 @@ use App\Services\MotoristaService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class MotoristaController extends Controller
 {
@@ -47,14 +49,27 @@ class MotoristaController extends Controller
                 'nome' => 'required|max:255',
                 'cpf' => 'required',
                 'empresaId' => 'nullable|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attribute deve conter no máximo :max caracteres!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!'
             ]);
+            DB::beginTransaction();
             $this->motoristaService->create(
                 $request->nome,
                 $request->cpf,
                 $request->empresaId ? $request->empresaId : Auth::user()->empresa_id
             );
+            DB::commit();
             return redirect()->route('motorista.index')->with('success', 'Motorista cadastrado com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }

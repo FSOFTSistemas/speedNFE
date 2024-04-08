@@ -30,7 +30,7 @@ return new class extends Migration
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => '$2a$12$FS4envSsGRtKKzBXytQjEelhhlTpLC1.ymOu.Syg3D/QP1EfC2sEK',
-            'cargo' => 'admin',
+            'cargo' => 'master',
             'empresa_id' => 1
         ]);
     }

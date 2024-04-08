@@ -97,12 +97,12 @@ class PedidosService
 
     public function cfopAll()
     {
-        return DB::table('cfop')->get();
+        return DB::table('cfops')->get();
     }
 
     public function findCfop($id)
     {
-        return DB::table('cfop')->where('id', $id)->first();
+        return DB::table('cfops')->where('id', $id)->first();
     }
 
 }

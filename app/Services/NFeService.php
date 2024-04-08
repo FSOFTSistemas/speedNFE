@@ -37,7 +37,7 @@ class NFeService
         $stdIde = new \stdClass();
         $stdIde->cUF = \App\Models\Empresa::getCUF($emitente->endereco->uf);
         $stdIde->cNF = rand(11111, 99999);
-        $stdIde->natOp = $venda->cfop;
+        $stdIde->natOp = $venda->cfopNota->natureza;
 
         $stdIde->mod = 55;
         $stdIde->serie = $emitente->serie;
@@ -55,7 +55,6 @@ class NFeService
         $stdIde->finNFe = 1;
         $stdIde->indFinal = 1;
         $stdIde->indPres = 1;
-//         $stdIde->indIntermed = 0;
         $stdIde->procEmi = '0';
         $stdIde->verProc = '3.10.31';
         $tagide = $nfe->tagide($stdIde);
@@ -113,8 +112,6 @@ class NFeService
         $pFisica = false;
         $stdDest->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
 
-        // return $venda->cliente;
-
         if ($venda->cliente->contribuinte) {
             if ($venda->cliente->rg_ie == 'ISENTO') {
                 $stdDest->indIEDest = "2";
@@ -137,7 +134,6 @@ class NFeService
             $ie = str_replace("-", "", $ie);
             $stdDest->IE = $ie;
         } else {
-            // $stdDest->CPF = $cnpj_cpf;
             $stdDest->CPF = $cnpj_cpf;
             $ie = str_replace(".", "", $venda->cliente->rg_ie);
             $ie = str_replace("/", "", $ie);
@@ -164,8 +160,7 @@ class NFeService
         $telefone = str_replace("-", "", $telefone);
         $telefone = str_replace(" ", "", $telefone);
         $stdEnderDest->fone = $telefone;
-        // $stdEnderDest->cMun = $venda->endereco_cliente->codigoIBGE;
-        $stdEnderDest->cMun = "2615102";
+        $stdEnderDest->cMun = FormatationUtil::retiraPontuacoes($venda->endereco_cliente->codigoIBGE);
         $stdEnderDest->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
         $stdEnderDest->UF = $venda->endereco_cliente->uf;
 
@@ -175,8 +170,6 @@ class NFeService
         $stdEnderDest->cPais = "1058";
         $stdEnderDest->xPais = "BRASIL";
         $enderDest = $nfe->tagenderDest($stdEnderDest);
-
-        // return $venda->itens;
 
         //ITENS DA NFE
         foreach ($venda->itens as $key => $i) {
@@ -195,7 +188,7 @@ class NFeService
             $ncm = str_replace(".", "", $ncm);
             $stdProd->NCM = $ncm;
 
-            $stdProd->CFOP = '5102';
+            $stdProd->CFOP = $venda->cfopNota->cfop;
 
             $stdProd->uCom = $i->produto->un;
             $stdProd->qCom = $i->qtde;
@@ -205,7 +198,7 @@ class NFeService
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
             $stdProd->indTot = 1;
-            if ($i->produto->tpProd = 1) {
+            if ($i->produto->tpProd == 1) {
                 $stdVeicProd = new \stdClass();
 
                 // Campos do veículo (adicionados)
@@ -269,7 +262,6 @@ class NFeService
             $stdCOFINS = new \stdClass();
             $stdCOFINS->item = $key + 1;
             $stdCOFINS->CST = $i->produto->cst_cofins;
-            // $stdCOFINS->CST = '60';
             $stdCOFINS->vBC = FormatationUtil::format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
             $stdCOFINS->pCOFINS = FormatationUtil::format($i->produto->cofins);
             $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) *
@@ -281,7 +273,6 @@ class NFeService
             $std->item = $key + 1;
             $std->cEnq = '999';
             $std->CST = $i->produto->ipi;
-            // $std->CST = '60';
             $std->vBC = FormatationUtil::format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
             $std->pIPI = FormatationUtil::format($i->produto->ipi);
             $std->vIPI = $stdProd->vProd * FormatationUtil::format(($i->produto->ipi / 100));
@@ -295,7 +286,6 @@ class NFeService
         $transp = $nfe->tagtransp($stdTransp);
 
         //TOTALIZADOR NFE
-
         $stdICMSTot = new \stdClass();
         $stdICMSTot->vProd = 0.00;
         $stdICMSTot->vBC = 0.00;
