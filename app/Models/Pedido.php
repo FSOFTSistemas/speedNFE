@@ -24,8 +24,8 @@ class Pedido extends Model
         return $this->hasManyThrough(Produto::class, ItemPedido::class, 'pedido_id', 'id', 'id', 'produto_id');
     }
 
-    public function cfop(){
-        return $this->hasOne(cfop::class, 'id', 'cfop');
+    public function cfopNota(){
+        return $this->belongsTo(cfop::class, 'cfop', 'id');
     }
 
     public function endereco_cliente(){

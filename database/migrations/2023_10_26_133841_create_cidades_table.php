@@ -33,10 +33,10 @@ return new class extends Migration
                 Cidade::create([
                     'cidade' => $cidade[1],
                     'uf' => $cidade[2],
-                    'cep' => $cidade[3],
-                    'ibge' => $cidade[4],
+                    'cep' => $cidade[4],
+                    'ibge' => $cidade[6],
                     'estado' => $cidade[5],
-                    'municipio' => $cidade[6],
+                    'municipio' => $cidade[4],
                 ]);
             }
         }

@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cfop', function (Blueprint $table) {
+        Schema::create('cfops', function (Blueprint $table) {
             $table->id();
             $table->string('cfop');
             $table->string('natureza');
@@ -26,7 +26,7 @@ return new class extends Migration
         foreach ($cfops as $line) {
             if ($line) {
                 $cfop = (explode("  ", $line));
-                DB::table('cfop')->insert([
+                DB::table('cfops')->insert([
                     ['cfop' => $cfop[0], 'natureza' => $cfop[1], 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
                 ]);
             }
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cfop');
+        Schema::dropIfExists('cfops');
     }
 };

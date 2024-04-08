@@ -442,6 +442,11 @@
                                         <div class="card-header p-0 pt-1 border-bottom-0">
                                             <ul class="nav nav-tabs" id="tab" role="tablist">
                                                 <li class="nav-item">
+                                                    <a class="nav-link" id="prod-tab" data-toggle="pill" href="#prod"
+                                                        role="tab" aria-controls="prod" aria-selected="false">Produto
+                                                        Predominante</a>
+                                                </li>
+                                                <li class="nav-item">
                                                     <a class="nav-link active" id="home-tab" data-toggle="pill"
                                                         href="#home" role="tab" aria-controls="home"
                                                         aria-selected="true">Observações</a>
@@ -450,11 +455,6 @@
                                                     <a class="nav-link" id="lacres-tab" data-toggle="pill"
                                                         href="#lacres" role="tab" aria-controls="lacres"
                                                         aria-selected="false">Lacres</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" id="prod-tab" data-toggle="pill" href="#prod"
-                                                        role="tab" aria-controls="prod" aria-selected="false">Produto
-                                                        Predominante</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -529,7 +529,7 @@
                                                         <div class="col">
                                                             <label for="">Latitude local de
                                                                 Carregamento</label>
-                                                            <input class="form-control" type="number" min="0"
+                                                            <input class="form-control" type="number"
                                                                 name="lat_carregamento" required
                                                                 wire:model="latCarregamento"
                                                                 placeholder="Latitude do local de Carregamento...">
@@ -538,7 +538,7 @@
                                                         <div class="col">
                                                             <label for="">Longitude local de
                                                                 Carregamento</label>
-                                                            <input class="form-control" type="number" min="0"
+                                                            <input class="form-control" type="number"
                                                                 name="lon_carregamento" required
                                                                 wire:model="lonCarregamento"
                                                                 placeholder="Longitude do local de Carregamento...">
@@ -547,23 +547,17 @@
 
                                                     <div class="row">
                                                         <div class="col">
-                                                            <label for="">Latitude local de
-                                                                Descarregamento</label>
-                                                            <input class="form-control" type="number" min="0"
-                                                                name="lat_descarregamento" required
-                                                                wire:model="latDescarregamento"
-                                                                placeholder="Latitude do local de Descarregamento...">
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Longitude local de
-                                                                Descarregamento</label>
-                                                            <input class="form-control" type="number" min="0"
-                                                                name="lon_descarregamento" required
-                                                                wire:model="lonDescarregamento"
-                                                                placeholder="Longitude do local de Descarregamento...">
+                                                            <label for="">Latitude e Longitude de Descarregamento</label>
+                                                            <select class="form-control" wire:model="selectedLatLon" wire:change="descarregamento" required>
+                                                                @foreach ($cidadesDescarregamentoLatLon as $city)
+                                                                    <option value="{{ $city->lat . '@' . $city->lon }}" @if($city->lat == $latDescarregamento && $city->lon == $lonDescarregamento) selected @endif>{{ $city->municipio }}</option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
                                                     </div>
+
+                                                    <input type="hidden" name="lat_descarregamento" wire:model="latDescarregamento" required>
+                                                    <input type="hidden" name="lon_descarregamento" wire:model="lonDescarregamento" required>
 
                                                 </div>
                                             </div>
@@ -579,11 +573,10 @@
                 </div>
             </div>
         @endcomponent
-
     </form>
 
     <div class="modal fade bd-add-modal-lg" tabindex="-1" role="dialog" id="meuModal" wire:ignore="true"
-        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+        aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -724,7 +717,7 @@
 
     @if (count($notas) >= 1)
         <div class="modal fade bd-edit-modal-lg" tabindex="-1" role="dialog" id="meuModalEdit" wire:ignore="true"
-            aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+            aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">

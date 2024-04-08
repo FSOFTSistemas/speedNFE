@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class VeiculoController extends Controller
@@ -73,24 +74,24 @@ class VeiculoController extends Controller
             $request->validate([
                 'placa' => 'required',
                 'capacidade' => 'nullable|numeric',
-                'renavan' => 'required|max:9|min:9',
+                'renavan' => 'required',
                 'tara' => 'required|numeric',
                 'capacidade_m3' => 'required',
-                'tipo_carroceria' => 'required',
-                'tipo_veiculo' => 'required',
-                'tipo_rodado' => 'required',
-                'uf_veiculo' => 'required',
-                'tipo_propriedade' => 'required',
+                'tipo_carroceria' => ['required', Rule::enum(TipoCarroceriaEnum::class)],
+                'tipo_veiculo' => ['required', Rule::enum(TipoVeiculoEnum::class)],
+                'tipo_rodado' => ['required', Rule::enum(TipoRodadoEnum::class)],
+                'uf_veiculo' => ['required', Rule::enum(UfEnum::class)],
+                'tipo_propriedade' => ['required', Rule::enum(TipoPropriedadeEnum::class)],
                 'descricao' => 'nullable|max:255',
                 'empresaId' => 'required',
                 'cpf_cnpj' => 'nullable',
                 'ie' => 'nullable',
                 'isento' => 'nullable',
                 'nome' => 'nullable|max:255',
-                'uf_prop' => 'nullable',
+                'uf_prop' => ['nullable', Rule::enum(UfEnum::class)],
                 'rntrc' => 'nullable|min:8|max:8',
-                'tipo_proprietario' => 'nullable',
-                'tipo_transportador' => 'nullable',
+                'tipo_proprietario' => ['nullable', Rule::enum(TipoProprietarioEnum::class)],
+                'tipo_transportador' => ['nullable', Rule::enum(TipoTransportadorEnum::class)],
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',
@@ -117,7 +118,7 @@ class VeiculoController extends Controller
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors));
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -158,24 +159,24 @@ class VeiculoController extends Controller
             $request->validate([
                 'placa' => 'required',
                 'capacidade' => 'nullable|numeric',
-                'renavan' => 'required|max:9|min:9',
+                'renavan' => 'required',
                 'tara' => 'required|numeric',
                 'capacidade_m3' => 'required',
-                'tipo_carroceria' => 'required',
-                'tipo_veiculo' => 'required',
-                'tipo_rodado' => 'required',
-                'uf_veiculo' => 'required',
-                'tipo_propriedade' => 'required',
+                'tipo_carroceria' => ['required', Rule::enum(TipoCarroceriaEnum::class)],
+                'tipo_veiculo' => ['required', Rule::enum(TipoVeiculoEnum::class)],
+                'tipo_rodado' => ['required', Rule::enum(TipoRodadoEnum::class)],
+                'uf_veiculo' => ['required', Rule::enum(UfEnum::class)],
+                'tipo_propriedade' => ['required', Rule::enum(TipoPropriedadeEnum::class)],
                 'descricao' => 'nullable|max:255',
                 'empresaId' => 'required',
                 'cpf_cnpj' => 'nullable',
                 'ie' => 'nullable',
                 'isento' => 'nullable',
                 'nome' => 'nullable|max:255',
-                'uf_prop' => 'nullable',
+                'uf_prop' => ['nullable', Rule::enum(UfEnum::class)],
                 'rntrc' => 'nullable|min:8|max:8',
-                'tipo_proprietario' => 'nullable',
-                'tipo_transportador' => 'nullable',
+                'tipo_proprietario' => ['nullable', Rule::enum(TipoProprietarioEnum::class)],
+                'tipo_transportador' => ['nullable', Rule::enum(TipoTransportadorEnum::class)],
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',

@@ -82,7 +82,7 @@ class Pedido extends Component
     public function atualizarBCfop()
     {
         try {
-            $this->bcfop = DB::table('cfop')->where('id', $this->cfop)->get()->cfop;
+            $this->bcfop = DB::table('cfops')->where('id', $this->cfop)->get()->cfop;
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
@@ -92,7 +92,7 @@ class Pedido extends Component
     {
 
         try {
-            $prod = DB::table('cfop')
+            $prod = DB::table('cfops')
                 ->select('*')
                 ->where('cfop', $this->bcfop)
                 ->first();
