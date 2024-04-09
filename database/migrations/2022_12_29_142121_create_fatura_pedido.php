@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('fatura_pedidos', function (Blueprint $table) {
             $table->id();
-            $table->float('valor');
+            $table->double('valor');
             $table->date('vencimento');
             $table->unsignedBigInteger('venda_id');
             $table->foreign('venda_id')->references('id')->on('pedidos')->onDelete('cascade');

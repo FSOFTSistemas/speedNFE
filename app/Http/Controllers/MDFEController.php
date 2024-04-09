@@ -164,7 +164,7 @@ class MDFEController extends Controller
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors));
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
