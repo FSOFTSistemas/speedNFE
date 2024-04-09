@@ -70,18 +70,14 @@ class UsersService{
     }
 
     public function todos($id){
-        if ($id == 0 ){
-            return DB::table('users')
-            ->select('users.*', 'empresas.fantasia')
-            ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
-            ->get();
-        } else {
-            return DB::table('users')
-            ->select('users.*', 'empresas.fantasia')
-            ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
-            ->where('users.empresa_id', '=', $id)
-            ->get();
+        if ($id == 1) {
+            $id = '%';
         }
+        return DB::table('users')
+            ->select('users.*', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
+            ->where('users.empresa_id', 'like', $id)
+            ->get();
     }
 
     public function logged($id){
