@@ -107,19 +107,22 @@ class PedidosService
 
 
 
-    public static function TotalMes($empresa){
-
-        $resultados = DB::table('pedidos')
-        ->select(DB::raw('MONTH(data) as mes'), DB::raw('SUM(total) as total_vendas'))
-        // ->where('empresa_id', $empresa )
-        ->where('estado', 'Autorizado')
-        ->groupBy('mes')
-        ->get();
-
-        return $resultados;
-        
-
+    public function totalMes($empresa)
+    {
+        try {
+            $resultados = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+                ->where('empresa_id', $empresa)
+                ->where('estado', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
+    
+            return $resultados;
+        } catch (Exception $e) {
+            // Trate o erro aqui se necessário
+            return [];
+        }
     }
+    
 
 
 }

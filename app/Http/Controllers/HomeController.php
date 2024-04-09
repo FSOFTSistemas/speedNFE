@@ -29,9 +29,7 @@ class HomeController extends Controller
         $quantidadeProduto = Produto::where('empresa_id', Auth::user()->empresa_id)->count();
         $quantidadeCliente = Cliente::where('empresa_id', Auth::user()->empresa_id)->count();
         $quantidadeValorPedido = Pedido::where(DB::raw('MONTH(data)'), date('m'))->where('empresa_id', Auth::user()->empresa_id)->sum('total');
-        $vendasMes = PedidosController::totalMes( Auth::user()->empresa_id);
-    //  dd($vendasMes);
-        return view('home', ['quantidadePedidosPorMes' => $quantidadePedidosPorMes, 'quantidadeProduto' => $quantidadeProduto, 'quantidadeCliente' => $quantidadeCliente, 'quantidadeValorPedido' => $quantidadeValorPedido, 'totalMes' => $vendasMes]);
+        return view('home', ['quantidadePedidosPorMes' => $quantidadePedidosPorMes, 'quantidadeProduto' => $quantidadeProduto, 'quantidadeCliente' => $quantidadeCliente, 'quantidadeValorPedido' => $quantidadeValorPedido]);
     }
 
     public function homePage(){
