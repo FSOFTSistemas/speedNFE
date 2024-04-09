@@ -438,7 +438,7 @@ class PedidosController extends Controller
         }
     }
 
-    public function new ()
+    public function new()
     {
         try {
             return view('vendas.create');
@@ -447,4 +447,14 @@ class PedidosController extends Controller
         }
     }
 
+
+    public function totalMes()
+    {
+        $vendasPorMes = Pedido::selectRaw('MONTH(created_at) as mes, SUM(total) as total')
+            ->groupBy('mes')
+            ->get();
+
+        return response()->json($vendasPorMes);
+    }
+    
 }

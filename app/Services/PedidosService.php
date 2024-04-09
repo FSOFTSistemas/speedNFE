@@ -108,4 +108,26 @@ class PedidosService
         return DB::table('cfops')->where('id', $id)->first();
     }
 
+
+
+    public function totalMes($empresa)
+    {
+        try {
+            $resultados = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+                ->where('empresa_id', $empresa)
+                ->where('estado', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
+    
+            return $resultados;
+        } catch (Exception $e) {
+            // Trate o erro aqui se necessário
+            return [];
+        }
+    }
+    
+
+
 }
+
+

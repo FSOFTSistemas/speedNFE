@@ -92,6 +92,47 @@
                 </div>
             </div>
         </div>
+        
+
+        <div id="section-graph">
+            <canvas id="myChart"></canvas>
+        </div>
+        
+        <script>
+            var meses = [ 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+    document.addEventListener('DOMContentLoaded', function () {
+    fetch('/total-mes')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            var indicesSelecionados = data.map(item => item.mes);
+            var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: mesesSelecionados,
+                    datasets: [{
+                        label: 'Total de Vendas por Mês',
+                        data: data.map(item => item.total),
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Erro:', error));
+});
+
+        </script>
 
         <script>
             function toggleExtraInfo(color) {
