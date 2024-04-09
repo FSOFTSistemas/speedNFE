@@ -41,7 +41,7 @@ Route::get('/homePage2', [HomeController::class, 'homePage2'])->name('homePage2'
 //Planos
 Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
 
-Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'access.permission:master|admin']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -49,32 +49,32 @@ Route::get('/dashboard', function () {
 
 //CATEGORIA
 Route::prefix('categoria')->group(function () {
-    Route::get('', [CategoriasController::class, 'show'])->name('categoria.index')->middleware('auth');
-    Route::get('/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware('auth');
-    Route::post('/cadastro', [CategoriasController::class, 'store'])->name('salvar_categoria')->middleware('auth');
-    Route::get('/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware('auth');
+    Route::get('', [CategoriasController::class, 'show'])->name('categoria.index')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+    Route::get('/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+    Route::post('/cadastro', [CategoriasController::class, 'store'])->name('salvar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+    Route::get('/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
 });
 
 //EMPRESA
 Route::prefix('empresa')->group(function () {
-    Route::get('', [EmpresasController::class, 'show'])->name('empresa.index')->middleware('auth');
-    Route::get('/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware('auth');
-    Route::get('/status/{id}', [EmpresasController::class, 'desativarReativar'])->name('desativarReativar_empresa')->middleware('auth');
-    Route::get('/cadastro', [EmpresasController::class, 'cadastrar'])->middleware('auth');
-    Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware('auth');
-    Route::post('/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware('auth');
-    Route::post('', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware('auth');
-    Route::get('/{uf}/atualizar-cidades', [EmpresasController::class, 'updateCities'])->name('updateCities')->middleware('auth');
+    Route::get('', [EmpresasController::class, 'show'])->name('empresa.index')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe|client-MDFe']);
+    Route::get('/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware(['auth', 'access.permission:master|admin']);
+    Route::get('/status/{id}', [EmpresasController::class, 'desativarReativar'])->name('desativarReativar_empresa')->middleware(['auth', 'access.permission:master']);
+    Route::get('/cadastro', [EmpresasController::class, 'cadastrar'])->middleware(['auth', 'access.permission:master']);
+    Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware(['auth', 'access.permission:master|admin']);
+    Route::post('/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware(['auth', 'access.permission:master|admin']);
+    Route::post('', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware(['auth', 'access.permission:master|admin']);
+    Route::get('/{uf}/atualizar-cidades', [EmpresasController::class, 'updateCities'])->name('updateCities')->middleware(['auth']);
 });
 
 //CLIENTE
-Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware('auth');
-Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware('auth');
-Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware('auth');
-Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware('auth');
-Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware('auth');
-Route::put('/cliente/salvar/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware('auth');
-Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware('auth');
+Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::put('/cliente/salvar/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
 Route::post('/clientes/cnpj/', [ClientesController::class, 'BuscarCnpj'])->name('cnpj.clientes');
 
 //FORMA DE PAGAMENTO
@@ -88,7 +88,7 @@ Route::prefix('forma')->group(function () {
 //USUARIO
 Route::prefix('usuarios')->group(function () {
     Route::get('', [UsersController::class, 'show'])->middleware('auth');
-    Route::get('/cadastro', [UsersController::class, 'new'])->name('cadastrar_usuario')->middleware('auth');
+    Route::get('/cadastro', [UsersController::class, 'new'])->name('cadastrar_usuario')->middleware(['auth', 'access.permission:master|admin']);
     Route::post('/cadastro', [UsersController::class, 'store'])->name('salvar_usuario')->middleware('auth');
     Route::get('/del/{id}', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware('auth');
     Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware('auth');

@@ -294,24 +294,24 @@ return [
             'text'        => 'Inicio',
             'url'         => '/home',
             'icon'        => 'fas fa-home',
-            'can'         => ['admin', 'client-NFe', 'cliente-advanced', 'client-MDFe', 'master']
+            'can'         => ['admin', 'client-NFe', 'client-advanced', 'client-MDFe', 'master']
         ],
         [
             'text'        => 'Cliente',
             'url'         => '/cliente',
             'icon'        => 'fas fa-solid fa-user',
-            'can'         => ['admin', 'client-NFe', 'cliente-advanced', 'client-MDFe', 'master']
+            'can'         => ['admin', 'client-NFe', 'client-advanced', 'client-MDFe', 'master']
         ],
         [
             'text'        => 'Produtos',
             'url'         => '/produto',
             'icon'        => 'fas fa-box-open',
-            'can'         => ['admin', 'client-NFe','cliente-advanced', 'client-MDFe', 'master']
+            'can'         => ['admin', 'client-NFe','client-advanced', 'client-MDFe', 'master']
         ],
         [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
-            'can'         => ['admin', 'client-NFe', 'cliente-advanced', 'master'],
+            'can'         => ['admin', 'client-NFe', 'client-advanced', 'master'],
             'submenu' => [
                 [
                     'text'        => 'Emitir NFe',
@@ -338,7 +338,7 @@ return [
         [
             'text'        => 'MDFe',
             'icon'        => 'fas fa-truck',
-            'can'         => ['admin', 'client-MDFe', 'cliente-advanced', 'master'],
+            'can'         => ['admin', 'client-MDFe', 'client-advanced', 'master'],
             'submenu' => [
                 [
                     'text'        => 'Emitir MDFe',
@@ -371,7 +371,7 @@ return [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
-            'can'         => ['admin', 'master', 'client-MDFe', 'client-NFe', 'cliente-advanced']
+            'can'         => ['admin', 'master', 'client-MDFe', 'client-NFe', 'client-advanced']
         ]
     ],
 
