@@ -32,8 +32,9 @@ class VeiculoController extends Controller
     public function index()
     {
         try {
-            $veiculos = $this->veiculosServices->buscarVeiculos();
-            return view('veiculos.index', ['veiculos' => $veiculos]);
+            $empresa = Auth::user()->empresa_id;
+            $veiculos = $this->veiculosServices->buscarVeiculos($empresa);
+            return view('veiculos.index', ['veiculos' => $veiculos, 'empresa' => $empresa]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -96,7 +97,7 @@ class VeiculoController extends Controller
                 'required' => 'O campo :attribute é obrigatório!',
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max',
-                'min' => 'O campo :attribute deve conter no mínimo :min'
+                'min' => 'O campo :attribute deve conter no mínimo :min',
             ]);
             DB::beginTransaction();
             $veiculo = $this->veiculosServices->salvar($request->all());
@@ -181,7 +182,7 @@ class VeiculoController extends Controller
                 'required' => 'O campo :attribute é obrigatório!',
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max',
-                'min' => 'O campo :attribute deve conter no mínimo :min'
+                'min' => 'O campo :attribute deve conter no mínimo :min',
             ]);
             DB::beginTransaction();
             $proprietario = $this->veiculosServices->update($request->all(), $veiculoID);

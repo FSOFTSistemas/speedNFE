@@ -21,7 +21,7 @@ class MotoristaService
         $motorista = Motorista::find($motoristaId);
         return $motorista->update([
             'nome' => $nome,
-            'cpf' => $cpf
+            'cpf' => $cpf,
         ]);
     }
 
@@ -41,9 +41,12 @@ class MotoristaService
 
     public function buscarMotoristas($empresaId)
     {
+        if ($empresaId == 1) {
+            $empresaId = '%';
+        }
         return Motorista::select('motoristas.*', 'empresas.fantasia')
             ->join('empresas', 'empresas.id', 'motoristas.empresaId')
-            ->where('motoristas.empresaId', $empresaId)
+            ->where('motoristas.empresaId', 'like', $empresaId)
             ->get();
     }
 

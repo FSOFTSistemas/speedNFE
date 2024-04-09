@@ -22,7 +22,9 @@
             <th width="10%">VALOR</th>
             <th width="10%">DATA</th>
             <th width="5%">ESTADO</th>
+            @if($empresa == 1)
             <th width="25%">EMPRESA</th>
+            @endif
             <th width="25%">AÇÕES</th>
         </thead>
         <tbody>
@@ -33,10 +35,12 @@
                     <td style="font-size: 80%">R${{ number_format($pedido->total, 2, ',', '.') }}</td>
                     <td style="font-size: 80%">{{ date('d/m/Y', strtotime($pedido->data)) }}</td>
                     <td style="font-size: 80%; position: relative;">
-                        <span class="<?php echo $pedido->estado == 'Pendente' ? 'pendente' : ($pedido->estado == 'Autorizado' ? 'autorizado' : 'cancelado'); ?>">{{ $pedido->estado }}
+                        <span class="<?php echo $pedido->estado == 'Pendente' ? 'pendente' : ($pedido->estado == 'Autorizado' ? 'autorizado' : 'cancelado'); ?>" id="estado">{{ $pedido->estado }}
                         </span>
                     </td>
+                    @if($empresa == 1)
                     <td style="font-size: 80%">{{ $pedido->fantasia }}</td>
+                    @endif
                     <td>
                         @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
                             <div class="row">
@@ -268,15 +272,15 @@
             background-color: red;
         }
 
-        td span {
+        #estado {
             position: relative;
             padding: 2px 8px;
             border-radius: 50px;
-            color: #fff;
+            color: #ffffff;
             /* Espaçamento interno para manter a borda longe do texto */
         }
 
-        td span:before {
+        #estado:before {
             position: absolute;
             top: 0;
             left: 0;

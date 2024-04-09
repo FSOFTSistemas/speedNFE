@@ -287,7 +287,7 @@ class ProdutosController extends Controller
             $produto = $this->produtoServices->um($id);
             return view('produtos.view', ['produto' => $produto]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 
@@ -295,15 +295,10 @@ class ProdutosController extends Controller
     {
         try {
             $user = Auth::user();
-            $produtos = null;
-            if ($user->empresa_id != 1) {
-                $produtos = $this->produtoServices->todos($user->empresa_id);
-            } else {
-                $produtos = $this->produtoServices->todosProdutos();
-            }
+            $produtos = $this->produtoServices->todos($user->empresa_id);
             return view('produtos.todos', ['produtos' => $produtos, 'empresa' => $user->empresa_id]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
 

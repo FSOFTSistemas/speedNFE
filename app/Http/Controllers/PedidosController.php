@@ -325,7 +325,6 @@ class PedidosController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         try {
             $request->validate([
                 'empresa' => 'required|numeric',
@@ -406,7 +405,7 @@ class PedidosController extends Controller
     {
         try {
             $pedidos = $this->pedidoServices->formatedVenda(Auth::user()->empresa_id);
-            return view('vendas.todos', ['pedidos' => $pedidos]);
+            return view('vendas.todos', ['pedidos' => $pedidos, 'empresa' => Auth::user()->empresa_id]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }

@@ -25,8 +25,9 @@ class MotoristaController extends Controller
     public function index()
     {
         try {
-            $motoristas = $this->motoristaService->buscarMotoristas(Auth::user()->empresa_id);
-            return view('motoristas.index', ['motoristas' => $motoristas]);
+            $empresa = Auth::user()->empresa_id;
+            $motoristas = $this->motoristaService->buscarMotoristas($empresa);
+            return view('motoristas.index', ['motoristas' => $motoristas, 'empresa' => $empresa]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }

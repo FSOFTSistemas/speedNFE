@@ -12,54 +12,58 @@
 
 @section('content')
 
-        <div class="row" style="padding-top: 1%;">
-            <div class="col">
-                <a class="btn btn-info" style="margin-bottom: 1%;" href="{{ route('veiculos.create') }}">&nbsp;+ Novo
-                    veículo&nbsp;</a>
-            </div>
+    <div class="row" style="padding-top: 1%;">
+        <div class="col">
+            <a class="btn btn-info" style="margin-bottom: 1%;" href="{{ route('veiculos.create') }}">&nbsp;+ Novo
+                veículo&nbsp;</a>
         </div>
+    </div>
 
-        <table class="table table-hover" id="veiculos" style="width: 100%">
-            <thead class="table-primary" style="width: 100%">
+    <table class="table table-hover" id="veiculos" style="width: 100%">
+        <thead class="table-primary" style="width: 100%">
+            <tr>
+                <th style="width: 5%">Id</th>
+                <th style="width: 10%">Placa</th>
+                <th style="width: 10%">CPF/CNPJ</th>
+                @if ($empresa == 1)
+                    <th style="width: 20%">Empresa</th>
+                @endif
+                <th style="width: 10%">Tp. de propriedade</th>
+                <th style="width: 10%">Tara(Kg)</th>
+                <th style="width: 10%">Capacidade(M³)</th>
+                <th style="width: 15%">Tp. de veículo</th>
+                <th style="width: 10%"></th>
+            </tr>
+        </thead>
+        <tbody style="width: 100%">
+            @foreach ($veiculos as $veiculo)
                 <tr>
-                    <th style="width: 5%">Id</th>
-                    <th style="width: 10%">Placa</th>
-                    <th style="width: 10%">CPF/CNPJ</th>
-                    <th style="width: 20%">Nome</th>
-                    <th style="width: 10%">Tipo de propriedade</th>
-                    <th style="width: 10%">Tara (Kg)</th>
-                    <th style="width: 10%">Capacidade (M³)</th>
-                    <th style="width: 15%">Tipo de veículo</th>
-                    <th style="width: 10%"></th>
-                </tr>
-            </thead>
-            <tbody style="width: 100%">
-                @foreach ($veiculos as $veiculo)
-                    <tr>
-                        <td>#{{ $veiculo->id }}</td>
-                        <td>{{ $veiculo->placa }}</td>
-                        <td>{{ $veiculo->cpf_cnpj }}</td>
+                    <td>#{{ $veiculo->id }}</td>
+                    <td>{{ $veiculo->placa }}</td>
+                    <td>{{ $veiculo->cpf_cnpj }}</td>
+                    @if ($empresa == 1)
                         <td>{{ $veiculo->fantasia }}</td>
-                        <td>{{ $veiculo->tipo_propriedade}}</td>
-                        <td>{{ number_format($veiculo->tara, 1) }}</td>
-                        <td>{{ number_format($veiculo->capacidade_m3, 1) }}</td>
-                        <td>{{ $veiculo->tipo_veiculo }}</td>
-                        <td>
-                            <div class="row">
-                                <div class="col">
-                                    <a title="Editar" href='{{ route('veiculos.edit', [$veiculo->id]) }}'
-                                        class='text-warning'><i class="fa fa-edit"></i></a>
-                                </div>
-                                <div class="col">
-                                    <a title="Excluir" onclick="setaDadosModal({{ $veiculo->id }})" class='text-danger'><i
-                                            class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
-                                </div>
+                    @endif
+                    <td>{{ $veiculo->tipo_propriedade }}</td>
+                    <td>{{ number_format($veiculo->tara, 1) }}</td>
+                    <td>{{ number_format($veiculo->capacidade_m3, 1) }}</td>
+                    <td>{{ $veiculo->tipo_veiculo }}</td>
+                    <td>
+                        <div class="row">
+                            <div class="col">
+                                <a title="Editar" href='{{ route('veiculos.edit', [$veiculo->id]) }}'
+                                    class='text-warning'><i class="fa fa-edit"></i></a>
                             </div>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                            <div class="col">
+                                <a title="Excluir" onclick="setaDadosModal({{ $veiculo->id }})" class='text-danger'><i
+                                        class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
@@ -88,8 +92,8 @@
                             @csrf
                             @method('DELETE')
                             <div class="form-group">
-                                <input type="hidden" step="0.01" class="form-control" id="veiculoID"
-                                    name="veiculoID" value="">
+                                <input type="hidden" step="0.01" class="form-control" id="veiculoID" name="veiculoID"
+                                    value="">
                             </div>
 
                             <div class="text-center">
