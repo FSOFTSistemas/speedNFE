@@ -42,7 +42,7 @@
                             <label for="fim">Data Fim:</label>
                             <input type="date" class="form-control" id="fim" name="fim">
                         </div>
-                        <button type="submit" class="btn btn-primary">Gerar Relatório</button>
+                        <button type="submit" class="btn btn-primary" style="width: 100%">Gerar Relatório</button>
                     </form>
 
                 </div>
@@ -50,9 +50,10 @@
             <table class="table table-hover" id="produtos">
                 <thead class="table-primary">
                     <tr>
-                        <th>ID Pedido</th>
-                        <th>Estado</th>
+                        <th>Nº Nota</th>
                         <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Situação</th>
                         <th>Valor Total</th>
                     </tr>
                 </thead>
