@@ -300,13 +300,13 @@ return [
             'text'        => 'Cliente',
             'url'         => '/cliente',
             'icon'        => 'fas fa-solid fa-user',
-            'can'         => ['admin', 'client-NFe', 'client-advanced', 'client-MDFe', 'master']
+            'can'         => ['admin', 'client-NFe', 'client-advanced', 'master']
         ],
         [
             'text'        => 'Produtos',
             'url'         => '/produto',
             'icon'        => 'fas fa-box-open',
-            'can'         => ['admin', 'client-NFe','client-advanced', 'client-MDFe', 'master']
+            'can'         => ['admin', 'client-NFe','client-advanced', 'master']
         ],
         [
             'text'        => 'NFe',

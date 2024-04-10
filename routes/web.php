@@ -41,7 +41,7 @@ Route::get('/homePage2', [HomeController::class, 'homePage2'])->name('homePage2'
 //Planos
 Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
 
-Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth', 'access.permission:master|admin']);
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -57,13 +57,13 @@ Route::prefix('categoria')->group(function () {
 
 //EMPRESA
 Route::prefix('empresa')->group(function () {
-    Route::get('', [EmpresasController::class, 'show'])->name('empresa.index')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe|client-MDFe']);
-    Route::get('/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware(['auth', 'access.permission:master|admin']);
+    Route::get('', [EmpresasController::class, 'show'])->name('empresa.index')->middleware(['auth']);
+    Route::get('/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware(['auth', 'access.permission:master']);
     Route::get('/status/{id}', [EmpresasController::class, 'desativarReativar'])->name('desativarReativar_empresa')->middleware(['auth', 'access.permission:master']);
     Route::get('/cadastro', [EmpresasController::class, 'cadastrar'])->middleware(['auth', 'access.permission:master']);
-    Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware(['auth', 'access.permission:master|admin']);
-    Route::post('/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware(['auth', 'access.permission:master|admin']);
-    Route::post('', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware(['auth', 'access.permission:master|admin']);
+    Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware(['auth']);
+    Route::post('/editar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware(['auth']);
+    Route::post('', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware(['auth', 'access.permission:master']);
     Route::get('/{uf}/atualizar-cidades', [EmpresasController::class, 'updateCities'])->name('updateCities')->middleware(['auth']);
 });
 
