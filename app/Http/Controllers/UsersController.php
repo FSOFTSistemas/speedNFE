@@ -14,7 +14,7 @@ class UsersController extends Controller
     public function update($id, Request $request)
     {
         $sUsers = new UsersService();
-        $resp = $sUsers->editar($id, $request->name, $request->email, $request->senha, $request->cargo, $request->empresa);
+        $resp = $sUsers->editar($id, $request->name, $request->cargo);
 
         if ($resp == 1) {
             return redirect('/usuarios')->with('success', 'Usuário atualizado com sucesso');

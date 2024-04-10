@@ -7,47 +7,38 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UsersService{
+class UsersService
+{
     public function __construct()
     {
 
     }
 
-    public function buscaId($id){
-        try{
+    public function buscaId($id)
+    {
+        try {
             return User::findOrFail($id);
         } catch (Exception $e) {
             return $e;
         }
     }
 
-    public function editar($id, $name, $email, $senha, $cargo, $empresa){
-        try{
-            $user = User::findOrFail($id);
-            if($senha){
-                $user->update([
-                    'name' => $name,
-                    'email' => $email,
-                    'password' => $senha,
-                    'cargo' => $cargo,
-                    'empresa_id' => $empresa
-                ]);
-            } else {
-                $user->update([
-                    'name' => $name,
-                    'email' => $email,
-                    'cargo' => $cargo,
-                    'empresa_id' => $empresa
-                ]);
-            }
-            return 1;
+    public function editar($id, $name, $cargo)
+    {
+        try {
+            $user = User::find($id);
+            return $user->update([
+                'name' => $name,
+                'cargo' => $cargo,
+            ]);
         } catch (Exception $e) {
             return 0;
         }
     }
 
-    public function destroy($id){
-        try{
+    public function destroy($id)
+    {
+        try {
             $user = User::findOrFail($id);
             return $user->delete();
         } catch (Exception $e) {
@@ -55,21 +46,23 @@ class UsersService{
         }
     }
 
-    public function store($email, $senha, $cargo, $empresa, $name){
-        try{
+    public function store($email, $senha, $cargo, $empresa, $name)
+    {
+        try {
             User::create([
                 'name' => $name,
                 'email' => $email,
                 'password' => Hash::make($senha),
                 'cargo' => $cargo,
-                'empresa_id' => $empresa
+                'empresa_id' => $empresa,
             ]);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return $e;
         }
     }
 
-    public function todos($id){
+    public function todos($id)
+    {
         if ($id == 1) {
             $id = '%';
         }
@@ -80,14 +73,16 @@ class UsersService{
             ->get();
     }
 
-    public function logged($id){
+    public function logged($id)
+    {
         return User::findOrFail($id);
     }
 
-    public function getEmpresa($id){
+    public function getEmpresa($id)
+    {
         return DB::table('users')
-        ->select('empresa_id')
-        ->where('id', '=', $id)
-        ->first();
+            ->select('empresa_id')
+            ->where('id', '=', $id)
+            ->first();
     }
 }

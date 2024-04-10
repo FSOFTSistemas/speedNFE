@@ -9,7 +9,7 @@
 @section('content')
     <div class="row">
         <div class="col">
-            <a class="btn btn-secondary" href="{{ route('index_usuario') }}" style="margin-bottom: 2%">Voltar</a>
+            <a class="btn btn-secondary" href="{{ route('index_usuario') }}" style="margin-bottom: 2%">Cancelar</a>
         </div>
     </div>
 
@@ -50,7 +50,7 @@
                 @endif
 
                 <div style="padding-top:2%" class="text-center">
-                    <button type="submit" class="btn btn-success">Salvar</button>
+                    <button type="submit" class="form-control btn btn-success">Salvar</button>
                 </div>
 
             </form>
