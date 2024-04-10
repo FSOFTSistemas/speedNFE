@@ -441,11 +441,16 @@ class PedidosController extends Controller
 
     public function totalMes()
     {
+        $empresa = Auth::user()->empresa_id;
+        if ($empresa == 1) {
+            $empresa = '%';
+        }
         $vendasPorMes = Pedido::selectRaw('MONTH(created_at) as mes, SUM(total) as total')
+            ->where('empresa_id','like',$empresa)
             ->groupBy('mes')
             ->get();
 
         return response()->json($vendasPorMes);
     }
-    
+
 }

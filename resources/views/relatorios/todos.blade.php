@@ -58,7 +58,7 @@
                     </tr>
                 </thead>
                 <tbody id="tbody-pedidos">
-                    <!-- Aqui serão inseridos os dados do relatório -->
+     
                 </tbody>
             </table>
         </div>
@@ -70,46 +70,6 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#relatorioForm').submit(function(event) {
-            event.preventDefault(); // Evita o envio do formulário padrão
-            var tipoRelatorio = $('#tipo_relatorio').val();
-            var status = $('#status').val();
-            var inicio = $('#inicio').val();
-            var fim = $('#fim').val();
-            var empresa = $('#empresa').val();
-
-            // Enviar solicitação AJAX para o endpoint do relatório
-            $.ajax({
-                url: '{{ route("relatorio") }}',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    tipoR: tipoRelatorio,
-                    status: status,
-                    inicio: inicio,
-                    fim: fim,
-                    empresa: empresa
-                },
-                success: function(response) {
-                    // Limpar os dados da tabela
-                    $('#tbody-pedidos').empty();
-                    // Atualizar a tabela com os dados do relatório
-                    response.forEach(function(pedido) {
-                        $('#tbody-pedidos').append('<tr>' +
-                            '<td>' + pedido.id + '</td>' +
-                            '<td>' + pedido.estado + '</td>' +
-                            '<td>' + pedido.data + '</td>' +
-                            '<td>' + pedido.valor_total + '</td>' +
-                            '</tr>');
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                    // Tratar erro, exibir mensagem de erro, etc.
-                }
-            });
-        });
-    });
+   
 </script>
 @endpush

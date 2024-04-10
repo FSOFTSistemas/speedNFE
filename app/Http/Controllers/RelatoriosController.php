@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empresa;
+use App\Models\Pedido;
 use App\Services\UsersService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -64,6 +65,22 @@ class RelatoriosController extends Controller
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
+    }
+
+    public function allPedidos($idEmpresa){
+
+
+
+        try{
+            $pedidos = Pedido::all();
+            return view('relatorios.todos', ['Pedidos' => $pedidos]);
+
+
+        } catch (Exception $e) {
+            return back();
+
+        }
+
     }
 
 }

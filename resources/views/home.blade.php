@@ -92,14 +92,14 @@
                 </div>
             </div>
         </div>
-        
+
 
         <div id="section-graph">
             <canvas id="myChart"></canvas>
         </div>
         
         <script>
-            var meses = [ 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+            var meses = [ '', 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
     document.addEventListener('DOMContentLoaded', function () {
     fetch('/total-mes')
