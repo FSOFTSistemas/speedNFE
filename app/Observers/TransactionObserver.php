@@ -19,19 +19,18 @@ class TransactionObserver
 
     public function deleted($model)
     {
-        $this->logTransacao('deletar', $model, null);
+        $this->logTransacao('deletar', $model, $model);
     }
 
     private function logTransacao($acao, $dadosAnteriores, $dadosAtuais)
     {
         $usuarioId = Auth::id();
         $tabelaAfetada = class_basename($dadosAtuais);
-
         TransactionLog::create([
             'tabela_afetada' => $tabelaAfetada,
             'acao' => $acao,
             'dados_anteriores' => json_encode($dadosAnteriores),
-            'dados_atuais' => json_encode($dadosAtuais),
+            'dados_atuais' => $acao == 'deletar' ? null : json_encode($dadosAtuais),
             'usuario_id' => $usuarioId,
         ]);
     }

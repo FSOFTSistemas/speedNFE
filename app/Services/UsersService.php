@@ -42,7 +42,7 @@ class UsersService{
             }
             return 1;
         } catch (Exception $e) {
-            return $e;
+            return 0;
         }
     }
 
@@ -51,7 +51,7 @@ class UsersService{
             $user = User::findOrFail($id);
             return $user->delete();
         } catch (Exception $e) {
-            return $e;
+            return 0;
         }
     }
 
