@@ -17,15 +17,9 @@
                 <a class="btn btn-info" style="margin-bottom: 2%"
                     href="{{ route('categoria.index') }}">&nbsp;Categorias&nbsp;</a>
                 <a class="btn btn-info" style="margin-bottom: 2%" href="/produto/cadastro">&nbsp;+ Produto&nbsp;</a>
+                <a class="btn btn-info" style="margin-bottom: 2%" href="/importar-produtos">&nbsp;Importar NFE&nbsp;</a>
             </div>
         </div>
-
-
-        <form action="{{ route('importar_produtos') }}" method="post">
-            @csrf
-            <input class="form-control" type="text" name="chaveNota" id="chaveNota">
-            <button type="submit">Importar</button>
-        </form>
 
         <table class="table table-hover" id="produtos">
             <thead class="table-primary">

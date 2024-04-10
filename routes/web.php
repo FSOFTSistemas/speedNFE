@@ -107,6 +107,12 @@ Route::prefix('produto')->group(function () {
     Route::post('/importar-produtos', [ProdutosController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
 });
 
+//ENTRADAS
+Route::prefix('entrada')->group(function () {
+    Route1
+});
+
+
 //ESTOQUE
 Route::prefix('estoque')->group(function () {
     Route::get('', [EstoqueController::class, 'show'])->middleware('auth');
