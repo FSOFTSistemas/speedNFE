@@ -162,6 +162,8 @@ Route::prefix('relatorios')->group(function () {
     Route::get('', [RelatoriosController::class, 'show'])->middleware('auth');
     Route::post('', [RelatoriosController::class, 'relatorio'])->name('relatorio')->middleware('auth');
     Route::get('/mdfe', [RelatoriosController::class, 'indexMDFe'])->name('relatorio.indexMDFe')->middleware('auth');
+    Route::post('/relatorio-pdf', [RelatoriosController::class, 'gerarPdf'])->name('relatorio-pdf')->middleware('auth');
+
 });
 
 //MDFe

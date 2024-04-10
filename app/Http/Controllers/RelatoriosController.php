@@ -6,6 +6,8 @@ use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Services\UsersService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Dompdf\Dompdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,11 +17,28 @@ class RelatoriosController extends Controller
 {
     public function show()
     {
-        $sUser = new UsersService();
-        $empresa = $sUser->getEmpresa(Auth::id());
-        $empresas = Empresa::all();
+        try{
+            $empresas = Empresa::all();
+            $empresa = Auth::user()->empresa_id;
 
-        return view('relatorios.todos', ['empresa' => $empresa->empresa_id, 'empresas' => $empresas]);
+            if ($empresa == 1) {
+                $empresa = "%";
+            }
+
+            $pedidos = DB::table('pedidos')
+            ->select('pedidos.*','clientes.nome as cliente') 
+            ->join('clientes', 'clientes.id', 'pedidos.cliente_id')
+            ->where("pedidos.empresa_id", "like", $empresa)
+            ->get();
+
+            return view('relatorios.todos', ['pedidos' => $pedidos, 'empresa' => $empresa, 'empresas' => $empresas]);
+
+
+        } catch (Exception $e) {
+            dd($e);
+            return back();
+
+        }
     }
 
     public function relatorio(Request $request)
@@ -66,21 +85,35 @@ class RelatoriosController extends Controller
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
-
-    public function allPedidos($idEmpresa){
-
+    
 
 
-        try{
-            $pedidos = Pedido::all();
-            return view('relatorios.todos', ['Pedidos' => $pedidos]);
-
-
-        } catch (Exception $e) {
-            return back();
-
-        }
-
+    public function gerarPdf(Request $request) { 
+        // dd($request -> inicio);
+        $vendas = DB::table('pedidos')
+        ->where('data', '<=', $request -> fim)
+        ->where('data','>=', $request -> inicio)
+        ->get();
+        $dompdf = new Dompdf();
+    
+        $html = view('relatorios.vendasSinteticas', [
+            'vendas' => $request -> vendas,
+            'dataInicio' => $request -> inicio,
+            'dataFim' => $request -> fim,
+            'estado' => $request -> estado
+        ])->render();
+    
+        $dompdf->loadHtml($html);
+    
+        $dompdf->setPaper('A4');
+    
+        $dompdf->render();
+    
+        return $dompdf->stream('vendas_' . date('Y-m-d') . '.pdf');
     }
+    
+    
 
 }
+
+
