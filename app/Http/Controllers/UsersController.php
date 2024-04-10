@@ -67,7 +67,7 @@ class UsersController extends Controller
         try {
             $sUsers = new UsersService();
             $sUsers->store($request->email, $request->senha, $request->cargo, $request->empresa, $request->name);
-            return Redirect()->route('usuarios')->with('Success, Usuário inserido com sucesso !');
+            return redirect()->route('index_usuario')->with('Success, Usuário inserido com sucesso !');
         } catch (Exception $e) {
             return redirect()->back()->with('erro: ' . $e->getMessage());
         }

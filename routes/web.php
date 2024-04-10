@@ -87,7 +87,7 @@ Route::prefix('forma')->group(function () {
 
 //USUARIO
 Route::prefix('usuarios')->group(function () {
-    Route::get('', [UsersController::class, 'show'])->middleware('auth');
+    Route::get('', [UsersController::class, 'show'])->name('index_usuario')->middleware('auth');
     Route::get('/cadastro', [UsersController::class, 'new'])->name('cadastrar_usuario')->middleware(['auth', 'access.permission:master']);
     Route::post('/cadastro', [UsersController::class, 'store'])->name('salvar_usuario')->middleware(['auth', 'access.permission:master']);
     Route::get('/del/{id}', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth', 'access.permission:master']);

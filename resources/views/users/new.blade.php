@@ -7,6 +7,11 @@
 @stop
 
 @section('content')
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-secondary" href="{{ route('index_usuario') }}" style="margin-bottom: 2%">Voltar</a>
+        </div>
+    </div>
 
     <div class="card">
         <div class="card-body">
