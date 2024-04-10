@@ -20,6 +20,13 @@
             </div>
         </div>
 
+
+        <form action="{{ route('importar_produtos') }}" method="post">
+            @csrf
+            <input class="form-control" type="text" name="chaveNota" id="chaveNota">
+            <button type="submit">Importar</button>
+        </form>
+
         <table class="table table-hover" id="produtos">
             <thead class="table-primary">
                 <tr>

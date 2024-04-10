@@ -104,6 +104,7 @@ Route::prefix('produto')->group(function () {
     Route::delete('/del', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
     Route::get('/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
     Route::put('/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+    Route::post('/importar-produtos', [ProdutosController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
 });
 
 //ESTOQUE
