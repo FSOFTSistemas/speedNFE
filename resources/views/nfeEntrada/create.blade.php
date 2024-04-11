@@ -18,18 +18,14 @@
 @section('content')
     <main>
         <section>
-            <form action="" method="POST" enctype="multipart/form-data">
-                
-            </form>
+
         </section>
     </main>
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+    <link rel="stylesheet" href="/css/admin_custom.css">
 @stop
 
 @section('js')
-    {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script> --}}
 @stop
