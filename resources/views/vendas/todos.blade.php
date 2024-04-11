@@ -89,7 +89,7 @@
                                     <div class="col-md-3 col-xs-6">
                                         <a title="Carta de Correção" href="#">
                                             <button class="btn btn-warning form-control d-block d-sm-none"
-                                                style="margin-bottom: 1%">CCe</button>
+                                                style="margin-bottom: 1%" data-toggle="modal" data-target="#cceModal">CCe</button>
                                             <i class="text-danger d-none d-sm-block" data-toggle="modal"
                                                 data-target="#cceModal"><b>CCe</b></i>
                                         </a>
@@ -138,7 +138,7 @@
 
                                 <div class="col-md-3 col-xs-6">
                                     <a title="Cancelar" href="#">
-                                        <button class="btn btn-danger form-control d-block d-sm-none">Cancelar</button>
+                                        <button class="btn btn-danger form-control d-block d-sm-none" data-toggle="modal" data-target="#exampleModal">Cancelar</button>
                                         <i data-toggle="modal" data-target="#exampleModal"
                                             class="fa fa-ban text-danger d-none d-sm-block"></i>
                                     </a>
