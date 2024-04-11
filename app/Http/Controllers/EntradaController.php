@@ -28,14 +28,13 @@ class EntradaController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        try {
+            return view('nfeEntrada.create');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
+        }
     }
 
     /**

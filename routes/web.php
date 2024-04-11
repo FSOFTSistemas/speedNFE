@@ -110,6 +110,7 @@ Route::prefix('produto')->group(function () {
 //ENTRADAS
 Route::prefix('entrada')->group(function () {
     Route::get('/', [EntradaController::class, 'index'])->name('entradas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+    Route::get('/criar', [EntradaController::class, 'create'])->name('entradas.create')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
     Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
 });
 

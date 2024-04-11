@@ -10,7 +10,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <a href="{{ route('produto.index') }}" class="btn btn-primary">Importar NFe</a>
+            <a href="{{ route('entradas.create') }}" class="btn btn-primary">Importar NFe</a>
         </div>
         <div class="col" style="text-align: end">
             <a href="{{ route('produto.index') }}" class="btn btn-secondary">Voltar</a>
