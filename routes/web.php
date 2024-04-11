@@ -12,6 +12,7 @@ use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NotasFiscaisController;
@@ -104,12 +105,12 @@ Route::prefix('produto')->group(function () {
     Route::delete('/del', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
     Route::get('/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
     Route::put('/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::post('/importar-produtos', [ProdutosController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
 });
 
 //ENTRADAS
 Route::prefix('entrada')->group(function () {
-    // Route::get('', );
+    Route::get('/', [EntradaController::class, 'index'])->name('entradas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+    Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
 });
 
 

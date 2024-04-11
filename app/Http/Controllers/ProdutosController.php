@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
-use App\Services\ImportProductsService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
-use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -318,27 +316,4 @@ class ProdutosController extends Controller
         }
     }
 
-    public function importProducts (Request $request)
-    {
-        try {
-            $emitente = $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id);
-            $importService = new ImportProductsService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $emitente->ambiente,
-                "razaosocial" => $emitente->razao,
-                "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_009_V4",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $emitente->csc,
-                "CSCid" => '00000' . $emitente->idCsc,
-            ], $emitente);
-            $result = $importService->importProducts($request->chaveNota);
-            dd($result);
-            // return redirect()->route('');
-        } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
-        }
-    }
 }
