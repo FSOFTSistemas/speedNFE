@@ -17,7 +17,7 @@
                 <a class="btn btn-info" style="margin-bottom: 2%"
                     href="{{ route('categoria.index') }}">&nbsp;Categorias&nbsp;</a>
                 <a class="btn btn-info" style="margin-bottom: 2%" href="/produto/cadastro">&nbsp;+ Produto&nbsp;</a>
-                <a class="btn btn-info" style="margin-bottom: 2%" href="{{ route('entradas.index') }}">&nbsp;Importar NFE&nbsp;</a>
+                <a class="btn btn-info" style="margin-bottom: 2%" href="{{ route('entradas.index') }}">&nbsp;Importações&nbsp;</a>
             </div>
         </div>
 

@@ -8,6 +8,14 @@
             <h4 class="text-dark">Entradas</h4>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <a href="{{ route('produto.index') }}" class="btn btn-primary">Importar NFe</a>
+        </div>
+        <div class="col" style="text-align: end">
+            <a href="{{ route('produto.index') }}" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
 @stop
 
 @section('content')
@@ -29,8 +37,8 @@
                 <tbody>
                     @foreach ($entradas as $etd)
                         <tr>
-                            <td>{{ $etd->dataEmissao }}</td>
-                            <td>{{ $etd->dataEntrada }}</td>
+                            <td>{{ date('d/m/Y', strtotime($etd->dataEmissao)) }}</td>
+                            <td>{{ date('d/m/Y', strtotime($etd->dataEntrada)) }}</td>
                             <td>{{ $etd->numeroNota }}</td>
                             <td>{{ $etd->fornecedor }}</td>
                             <td>{{ $etd->chave }}</td>
