@@ -21,7 +21,8 @@ class EntradaController extends Controller
     public function index()
     {
         try {
-            return view('nfeEntrada.entradas');
+            $entradas = [];
+            return view('nfeEntrada.entradas', ['entradas' => $entradas]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
         }
