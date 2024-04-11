@@ -109,7 +109,7 @@ Route::prefix('produto')->group(function () {
 
 //ENTRADAS
 Route::prefix('entrada')->group(function () {
-    Route1
+    // Route::get('', );
 });
 
 
