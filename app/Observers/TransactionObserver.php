@@ -9,23 +9,22 @@ class TransactionObserver
 {
     public function created($model)
     {
-        $this->logTransacao('criar', null, $model);
+        $this->logTransacao('criar', null, $model, class_basename($model));
     }
 
     public function updated($model)
     {
-        $this->logTransacao('atualizar', $model->getOriginal(), $model);
+        $this->logTransacao('atualizar', $model->getOriginal(), $model->getOriginal(), class_basename($model));
     }
 
     public function deleted($model)
     {
-        $this->logTransacao('deletar', $model, $model);
+        $this->logTransacao('deletar', $model, $model, class_basename($model));
     }
 
-    private function logTransacao($acao, $dadosAnteriores, $dadosAtuais)
+    private function logTransacao($acao, $dadosAnteriores, $dadosAtuais, $tabelaAfetada)
     {
         $usuarioId = Auth::id();
-        $tabelaAfetada = class_basename($dadosAtuais);
         TransactionLog::create([
             'tabela_afetada' => $tabelaAfetada,
             'acao' => $acao,
