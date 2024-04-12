@@ -690,12 +690,12 @@
                                             <label for="condVeic" class="col-sm-8 col-form-label">Condição do
                                                 Veículo</label>
                                             <select class="form-control" name="condVeic" id="condVeic">
-                                                <option value="0"
-                                                    @if (old('condVeic') == '0') selected @endif>ACABADO</option>
                                                 <option value="1"
-                                                    @if (old('condVeic') == '1') selected @endif>INACABADO</option>
+                                                    @if (old('condVeic') == '1') selected @endif>ACABADO</option>
                                                 <option value="2"
-                                                    @if (old('condVeic') == '2') selected @endif>SEMIACABO</option>
+                                                    @if (old('condVeic') == '2') selected @endif>INACABADO</option>
+                                                <option value="3"
+                                                    @if (old('condVeic') == '3') selected @endif>SEMIACABO</option>
                                             </select>
                                         </div>
                                     </div>
