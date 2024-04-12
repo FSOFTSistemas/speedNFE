@@ -26,20 +26,20 @@
                         <ul class="nav nav-tabs" id="tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                                    aria-controls="home" aria-selected="true">Empresa</a>
+                                    aria-controls="home" aria-selected="true"><b>Empresa</b></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false">Endereço</a>
+                                    aria-controls="profile" aria-selected="false"><b>Endereço</b></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="fiscal-tab" data-toggle="pill" href="#fiscal" role="tab"
-                                    aria-controls="fiscal" aria-selected="false">Fiscal</a>
+                                    aria-controls="fiscal" aria-selected="false"><b>Fiscal</b></a>
                             </li>
                             @if ($user->cargo == 'admin')
                                 <li class="nav-item">
                                     <a class="nav-link" id="limite-tab" data-toggle="pill" href="#limite" role="tab"
-                                        aria-controls="limite" aria-selected="false">Limites</a>
+                                        aria-controls="limite" aria-selected="false"><b>Limites</b></a>
                                 </li>
                             @endif
                         </ul>
@@ -142,19 +142,11 @@
 
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <select class="form-control" name="cidade" id="cidade" required>
-                                                    <option value="{{ $empresa->cidade }}">{{ $empresa->cidade }}</option>
-                                                    @foreach ($cidades as $city)
-                                                        <option value="{{ $city->cidade }}">{{ $city->cidade }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-
+                                                <input class="form-control" type="text" name="cidade" id="cidade" value="{{ old('cidade') }}" placeholder="Cidade..." required>
                                             </div>
                                             <div class="col-md-6 col-xs-10">
                                                 <label>UF</label>
-                                                <select class="form-control" id="uf" name="uf" required
-                                                    onchange="updateCities(this.value)">
+                                                <select class="form-control" id="uf" name="uf" required>
                                                     <option value="{{ $empresa->uf }}">{{ $empresa->uf }}</option>
                                                     <option value='RO'>RO</option>
                                                     <option value='AC'>AC</option>
@@ -329,30 +321,6 @@
 
     @section('js')
         <script>
-            function updateCities(uf) {
-                $.ajax({
-                    type: "GET",
-                    url: '/empresa/' + uf + "/atualizar-cidades",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(resultado) {
-                        console.log(resultado)
-                        if (resultado.length > 0) {
-                            var selectCidades = $("#cidade");
-                            selectCidades.empty();
-                            selectCidades.append('<option value="">Selecionar</option>');
-                            resultado.forEach(function(cidade) {
-                                selectCidades.append('<option value="' + cidade.cidade + '">' + cidade
-                                    .cidade + '</option>');
-                            });
-                        } else {
-                            alert("UF inválido, informe um UF válido!");
-                        }
-                    }
-                });
-            }
-
             function formatarCpfCnpj(valor) {
                 // Remove qualquer caracter que não seja número
                 valor = valor.replace(/\D/g, '');
@@ -390,7 +358,6 @@
                     method: 'GET',
                     dataType: 'json',
                     success: function(data) {
-                        console.log(data);
                         document.getElementById("ibge").value = data.ibge;
                         document.getElementById("rua").value = data.logradouro;
                         document.getElementById("bairro").value = data.bairro;
@@ -416,13 +383,11 @@
                     },
                     success: function(resultado) {
                         if (resultado != 0) {
-                            console.log(resultado);
                             document.getElementById('nome').value = resultado.nome;
                             document.getElementById('fantasia').value = resultado.fantasia;
                             document.getElementById("bairro").value = resultado.bairro;
                             document.getElementById("cidade").value = resultado.municipio;
                             document.getElementById("rua").value = resultado.logradouro;
-                            document.getElementById("ibge").value = resultado.ibge;
                             document.getElementById("uf").value = resultado.uf;
                             document.getElementById("cep").value = resultado.cep;
                             document.getElementById("numero").value = resultado.numero;

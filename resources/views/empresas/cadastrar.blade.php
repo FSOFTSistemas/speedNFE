@@ -145,20 +145,11 @@
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
                                             <label>Cidade</label>
-                                            <select class="form-control" name="cidade" id="cidade" required>
-                                                <option value="">Selecionar</option>
-                                                @foreach ($cidades as $cidade)
-                                                    <option value="{{ $cidade->cidade }}"
-                                                        @if (old('cidade') == $cidade->cidade) selected @endif>
-                                                        {{ $cidade->cidade }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                            <input class="form-control" type="text" name="cidade" id="cidade" value="{{ old('cidade') }}" placeholder="Cidade..." required>
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label>UF</label>
-                                            <select class="form-control" id="uf" name="uf" required
-                                                onchange="updateCities(this.value)">
+                                            <select class="form-control" id="uf" name="uf" required>
                                                 <option value="">-- Escolha uma Unidade Federativa --</option>
                                                 <option value='RO' @if (old('uf') == 'RO') selected @endif>RO</option>
                                                 <option value='AC' @if (old('uf') == 'AC') selected @endif>AC</option>
@@ -358,29 +349,6 @@
 
 @section('js')
     <script>
-        function updateCities(uf) {
-            $.ajax({
-                type: "GET",
-                url: uf + "/atualizar-cidades",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(resultado) {
-                    if (resultado.length > 0) {
-                        var selectCidades = $("#cidade");
-                        selectCidades.empty();
-                        selectCidades.append('<option value="">Selecionar</option>');
-                        resultado.forEach(function(cidade) {
-                            selectCidades.append('<option value="' + cidade.cidade + '">' + cidade
-                                .cidade + '</option>');
-                        });
-                    } else {
-                        alert("UF inválido, informe um UF válido!");
-                    }
-                }
-            });
-        }
-
         function formatarCpfCnpj(valor) {
             valor = valor.replace(/\D/g, '');
             if (valor.length === 11) {
@@ -407,7 +375,6 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    // console.log(data);
                     document.getElementById("ibge").value = data.ibge;
                     document.getElementById("rua").value = data.logradouro;
                     document.getElementById("bairro").value = data.bairro;
@@ -438,7 +405,6 @@
                         document.getElementById("bairro").value = resultado.bairro;
                         document.getElementById("cidade").value = resultado.municipio.toUpperCase();
                         document.getElementById("rua").value = resultado.logradouro;
-                        document.getElementById("ibge").value = resultado.ibge;
                         document.getElementById("uf").value = resultado.uf;
                         document.getElementById("cep").value = resultado.cep;
                         document.getElementById("numero").value = resultado.numero;
