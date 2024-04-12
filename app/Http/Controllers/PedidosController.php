@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use NFePHP\Common\Exception\ValidatorException;
 use NFePHP\DA\NFe\Daevento;
 use NFePHP\DA\NFe\Danfe;
 
@@ -255,6 +256,8 @@ class PedidosController extends Controller
             } else {
                 return redirect('/vendas')->with("error", 404);
             }
+        } catch (ValidatorException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
