@@ -21,25 +21,17 @@ class EmpresasController extends Controller
     private EmpresasService $empresaServices;
     private UsersService $userServices;
     private EnderecosService $enderecoServices;
-    private CidadeService $cidadeServices;
 
-    public function __construct(EmpresasService $empresaServices, UsersService $userServices, EnderecosService $enderecoServices, CidadeService $cidadeServices)
+    public function __construct(EmpresasService $empresaServices, UsersService $userServices, EnderecosService $enderecoServices)
     {
         $this->empresaServices = $empresaServices;
         $this->userServices = $userServices;
         $this->enderecoServices = $enderecoServices;
-        $this->cidadeServices = $cidadeServices;
     }
 
     public function cadastrar()
     {
-        $cidades = $this->cidadeServices->buscarCidades();
-        return view('empresas.cadastrar', ['cidades' => $cidades]);
-    }
-
-    public function updateCities($uf)
-    {
-        return $this->cidadeServices->buscarCidadesPorUf($uf);
+        return view('empresas.cadastrar');
     }
 
     public function desativarReativar($id)
@@ -56,8 +48,7 @@ class EmpresasController extends Controller
     {
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
-            $cidades = $this->cidadeServices->buscarCidadesPorUf($empresa->uf);
-            return view('empresas.empresa', ['empresa' => $empresa, 'user' => Auth::user(), 'cidades' => $cidades]);
+            return view('empresas.empresa', ['empresa' => $empresa, 'user' => Auth::user()]);
         } catch (Exception $e) {
             return back();
         }

@@ -375,6 +375,7 @@
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
+                    document.getElementById("cep").value = data.cep;
                     document.getElementById("ibge").value = data.ibge;
                     document.getElementById("rua").value = data.logradouro;
                     document.getElementById("bairro").value = data.bairro;

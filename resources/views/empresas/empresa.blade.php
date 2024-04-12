@@ -142,7 +142,7 @@
 
                                             <div class="col">
                                                 <label>Cidade</label>
-                                                <input class="form-control" type="text" name="cidade" id="cidade" value="{{ old('cidade') }}" placeholder="Cidade..." required>
+                                                <input class="form-control" type="text" name="cidade" id="cidade" value="{{ $empresa->cidade }}" placeholder="Cidade..." required>
                                             </div>
                                             <div class="col-md-6 col-xs-10">
                                                 <label>UF</label>
@@ -358,6 +358,7 @@
                     method: 'GET',
                     dataType: 'json',
                     success: function(data) {
+                        document.getElementById("cep").value = data.cep;
                         document.getElementById("ibge").value = data.ibge;
                         document.getElementById("rua").value = data.logradouro;
                         document.getElementById("bairro").value = data.bairro;

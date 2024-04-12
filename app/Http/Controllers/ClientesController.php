@@ -50,8 +50,7 @@ class ClientesController extends Controller
             } else {
                 $empresas = $this->empresaServices->minhaEmpresa($user->empresa_id);
             }
-            $cidades = $this->cidadeServices->buscarCidades();
-            return view('clientes.cadastrar', ['empresas' => $empresas, 'cidades' => $cidades]);
+            return view('clientes.cadastrar', ['empresas' => $empresas]);
         } catch (Exception $e) {
             return back();
         }
@@ -143,8 +142,7 @@ class ClientesController extends Controller
         try {
             $cliente = $this->clienteServices->um($id);
             $empresas = $this->empresaServices->todas();
-            $cidades = $this->cidadeServices->buscarCidades();
-            return view('clientes.editar', ['cliente' => $cliente, 'empresas' => $empresas, 'cidades' => $cidades]);
+            return view('clientes.editar', ['cliente' => $cliente, 'empresas' => $empresas]);
         } catch (Exception $e) {
             return back();
         }
