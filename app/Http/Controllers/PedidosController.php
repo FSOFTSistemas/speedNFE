@@ -429,13 +429,28 @@ class PedidosController extends Controller
         }
     }
 
-    public function new ()
+    public function new()
     {
         try {
             return view('vendas.create');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
+    }
+
+
+    public function totalMes()
+    {
+        $empresa = Auth::user()->empresa_id;
+        if ($empresa == 1) {
+            $empresa = '%';
+        }
+        $vendasPorMes = Pedido::selectRaw('MONTH(created_at) as mes, SUM(total) as total')
+            ->where('empresa_id','like',$empresa)
+            ->groupBy('mes')
+            ->get();
+
+        return response()->json($vendasPorMes);
     }
 
 }

@@ -142,6 +142,8 @@ Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'impri
 Route::post('/venda/cce', [PedidosController::class, 'cartaCorrecao'])->name('cartaCorrecao')->middleware('auth');
 Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->middleware('auth');
 Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware('auth');
+Route::get('/total-mes', [PedidosController::class, 'totalMes'])->name('totalMes');
+
 
 //NOTAS FISCAIS
 Route::get('/notas', [NotasFiscaisController::class, 'show'])->name('notas.index')->middleware('auth');
@@ -160,6 +162,8 @@ Route::prefix('relatorios')->group(function () {
     Route::get('', [RelatoriosController::class, 'show'])->middleware('auth');
     Route::post('', [RelatoriosController::class, 'relatorio'])->name('relatorio')->middleware('auth');
     Route::get('/mdfe', [RelatoriosController::class, 'indexMDFe'])->name('relatorio.indexMDFe')->middleware('auth');
+    Route::post('/relatorio-pdf', [RelatoriosController::class, 'gerarPdf'])->name('relatorio-pdf')->middleware('auth');
+
 });
 
 //MDFe
