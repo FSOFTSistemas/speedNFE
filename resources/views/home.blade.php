@@ -6,143 +6,130 @@
 @stop
 
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="{{ asset('css/Telas_Internas/home.css') }}">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ asset('css/Telas_Internas/home.css') }}">
+</head>
 
-    <body>
+<body>
+    <div class="row">
+        <div class="col-lg-3 col-6">
 
-        <div class="card-container">
-            <div class="card card-red" onclick="toggleExtraInfo('red')">
-                <div class="card-content">
-                    <div class="column-left">
-                        <div class="card-icon">
-                            <i class="fas fa-boxes" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="column-right">
-                        <div class="small-info">
-                            <div class="small-info-1">Clientes Cadastrados</div>
-                        </div>
-                        <div class="extra-info" id="extra-info-red" style="display: none;">
-                            <div class="large-info">{{ $quantidadeCliente }}</div>
-                        </div>
-                    </div>
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ $quantidadePedidosPorMes }}</h3>
+                    <p>Notas emitidas este mês</p>
                 </div>
-            </div>
-
-            <div class="card card-blue" onclick="toggleExtraInfo('blue')">
-                <div class="card-content">
-                    <div class="column-left">
-                        <div class="card-icon">
-                            <i class="fas fa-user" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="column-right">
-                        <div class="small-info">
-                            <div class="small-info-2">Produtos Cadastrados</div>
-                        </div>
-                        <div class="extra-info" id="extra-info-blue" style="display: none;">
-                            <div class="large-info">{{ $quantidadeProduto }}</div>
-                        </div>
-                    </div>
+                <div class="icon">
+                    <i class="ion ion-bag"></i>
                 </div>
-            </div>
-
-            <div class="card card-green" onclick="toggleExtraInfo('green')">
-                <div class="card-content">
-                    <div class="column-left">
-                        <div class="card-icon">
-                            <i class="fas fa-sticky-note" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="column-right">
-                        <div class="small-info" style="margin-left: 60px">
-                            <div class="small-info-3">Notas Emitidas</div>
-                        </div>
-                        <div class="extra-info" id="extra-info-green" style="display: none;">
-                            <div class="large-info">{{ $quantidadePedidosPorMes }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card card-yellow" onclick="toggleExtraInfo('yellow')">
-                <div class="card-content">
-                    <div class="column-left">
-                        <div class="card-icon">
-                            <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
-                        </div>
-                    </div>
-                    <div class="column-right">
-                        <div class="small-info">
-                            <div class="small-info-4">Valor Total da Notas</div>
-                        </div>
-                        <div class="extra-info" id="extra-info-yellow" style="display: none;">
-                            <div class="large-info" style="font-size: 18px;">R$ {{ $quantidadeValorPedido }}</div>
-                        </div>
-                    </div>
-                </div>
+                <a href="/vendas/nova" class="small-box-footer">Emitir NFE <i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
 
+        <div class="col-lg-3 col-6">
 
-        <div id="section-graph">
-            <canvas id="myChart"></canvas>
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ $quantidadeProduto }}</h3>
+                    <p>Produtos cadastrados</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="/produto" class="small-box-footer">Mais informações <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
         </div>
-        
-        <script>
-            var meses = [ '', 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
-    document.addEventListener('DOMContentLoaded', function () {
-    fetch('/total-mes')
-        .then(response => response.json())
-        .then(data => {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            var indicesSelecionados = data.map(item => item.mes);
-            var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: mesesSelecionados,
-                    datasets: [{
-                        label: 'Total de Vendas por Mês',
-                        data: data.map(item => item.total),
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
+        <div class="col-lg-3 col-6">
+
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ $quantidadeCliente }}</h3>
+                    <p>Clientes cadastrados</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="/cliente" class="small-box-footer">Mais informações <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>R$ {{ $quantidadeValorPedido }}</h3>
+                    <p>Valor total das notas</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="/relatorios" class="small-box-footer">Mais informaçôes <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <div id="section-graph">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        var meses = ['', 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/total-mes')
+                .then(response => response.json())
+                .then(data => {
+                    const ctx = document.getElementById('myChart').getContext('2d');
+                    var indicesSelecionados = data.map(item => item.mes);
+                    var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: mesesSelecionados,
+                            datasets: [{
+                                label: 'Total de Vendas por Mês',
+                                data: data.map(item => item.total),
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
                         }
-                    }
-                }
-            });
-        })
-        .catch(error => console.error('Erro:', error));
-});
+                    });
+                })
+                .catch(error => console.error('Erro:', error));
+        });
+    </script>
 
-        </script>
+    <script>
+        function toggleExtraInfo(color) {
+            var extraInfo = document.getElementById('extra-info-' + color);
+            extraInfo.style.display = extraInfo.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 
-        <script>
-            function toggleExtraInfo(color) {
-                var extraInfo = document.getElementById('extra-info-' + color);
-                extraInfo.style.display = extraInfo.style.display === 'none' ? 'block' : 'none';
-            }
-        </script>
+</body>
 
-    </body>
-
-    </html>
+</html>
 
 @stop
