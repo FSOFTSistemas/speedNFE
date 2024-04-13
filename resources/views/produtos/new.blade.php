@@ -486,39 +486,39 @@
                                             <label for="tpVeic" class="col-sm-6 col-form-label">Tipo de Veículo</label>
                                             <select class="form-control" name="tpVeic" id="tpVeic">
                                                 <option value="02"
-                                                    @if (old('tpVeic') == '02') selected @endif>CICLOMOTOR</option>
+                                                    @if (old('tpVeic') == '02') selected @endif>02 - CICLOMOTOR</option>
                                                 <option value="03"
-                                                    @if (old('tpVeic') == '03') selected @endif>MOTONETA</option>
+                                                    @if (old('tpVeic') == '03') selected @endif>03 - MOTONETA</option>
                                                 <option value="04"
-                                                    @if (old('tpVeic') == '04') selected @endif>MOTOCICLO</option>
+                                                    @if (old('tpVeic') == '04') selected @endif>04 - MOTOCICLO</option>
                                                 <option value="05"
-                                                    @if (old('tpVeic') == '05') selected @endif>TRICICLO</option>
+                                                    @if (old('tpVeic') == '05') selected @endif>05 - TRICICLO</option>
                                                 <option value="06"
-                                                    @if (old('tpVeic') == '06') selected @endif>AUTOMÓVEL</option>
+                                                    @if (old('tpVeic') == '06') selected @endif>06 - AUTOMÓVEL</option>
                                                 <option value="07"
-                                                    @if (old('tpVeic') == '07') selected @endif>MICROÔNIBUS
+                                                    @if (old('tpVeic') == '07') selected @endif>07 - MICROÔNIBUS
                                                 </option>
                                                 <option value="08"
-                                                    @if (old('tpVeic') == '07') selected @endif>ÔNIBUS</option>
+                                                    @if (old('tpVeic') == '07') selected @endif>07 - ÔNIBUS</option>
                                                 <option value="10"
-                                                    @if (old('tpVeic') == '10') selected @endif>REBOQUE</option>
+                                                    @if (old('tpVeic') == '10') selected @endif>10 - REBOQUE</option>
                                                 <option value="11"
-                                                    @if (old('tpVeic') == '11') selected @endif>SEMIREBOQUE
+                                                    @if (old('tpVeic') == '11') selected @endif>11 - SEMIREBOQUE
                                                 </option>
                                                 <option value="13"
-                                                    @if (old('tpVeic') == '13') selected @endif>CAMINHONETA
+                                                    @if (old('tpVeic') == '13') selected @endif>13 - CAMINHONETA
                                                 </option>
                                                 <option value="14"
-                                                    @if (old('tpVeic') == '14') selected @endif>CAMINHÃO</option>
+                                                    @if (old('tpVeic') == '14') selected @endif>14 - CAMINHÃO</option>
                                                 <option value="17"
-                                                    @if (old('tpVeic') == '17') selected @endif>C.TRATOR</option>
+                                                    @if (old('tpVeic') == '17') selected @endif>17 - C.TRATOR</option>
                                                 <option value="22"
-                                                    @if (old('tpVeic') == '22') selected @endif>ESP/ÔNIBUS
+                                                    @if (old('tpVeic') == '22') selected @endif>22 - ESP/ÔNIBUS
                                                 </option>
                                                 <option value="23"
-                                                    @if (old('tpVeic') == '23') selected @endif>MISTO/CAM</option>
+                                                    @if (old('tpVeic') == '23') selected @endif>23 - MISTO/CAM</option>
                                                 <option value="24"
-                                                    @if (old('tpVeic') == '24') selected @endif>CARGA/CAM</option>
+                                                    @if (old('tpVeic') == '24') selected @endif>24 - CARGA/CAM</option>
                                             </select>
                                         </div>
                                         <div class="col-md-8">
@@ -690,12 +690,12 @@
                                             <label for="condVeic" class="col-sm-8 col-form-label">Condição do
                                                 Veículo</label>
                                             <select class="form-control" name="condVeic" id="condVeic">
-                                                <option value="0"
-                                                    @if (old('condVeic') == '0') selected @endif>ACABADO</option>
                                                 <option value="1"
-                                                    @if (old('condVeic') == '1') selected @endif>INACABADO</option>
+                                                    @if (old('condVeic') == '1') selected @endif>ACABADO</option>
                                                 <option value="2"
-                                                    @if (old('condVeic') == '2') selected @endif>SEMIACABO</option>
+                                                    @if (old('condVeic') == '2') selected @endif>INACABADO</option>
+                                                <option value="3"
+                                                    @if (old('condVeic') == '3') selected @endif>SEMIACABO</option>
                                             </select>
                                         </div>
                                     </div>

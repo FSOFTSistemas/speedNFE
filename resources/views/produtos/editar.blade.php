@@ -703,14 +703,14 @@
                                                 <label for="condVeic" class="col-sm-8 col-form-label">Condição do
                                                     Veículo</label>
                                                 <select class="form-control" name="condVeic" id="condVeic" required>
-                                                    <option value="0"
-                                                        {{ $produto->condVeic == '0' ? 'selected' : '' }}>
-                                                        ACABADO</option>
                                                     <option value="1"
                                                         {{ $produto->condVeic == '1' ? 'selected' : '' }}>
-                                                        INACABADO</option>
+                                                        ACABADO</option>
                                                     <option value="2"
                                                         {{ $produto->condVeic == '2' ? 'selected' : '' }}>
+                                                        INACABADO</option>
+                                                    <option value="3"
+                                                        {{ $produto->condVeic == '3' ? 'selected' : '' }}>
                                                         SEMIACABO</option>
                                                 </select>
                                             </div>

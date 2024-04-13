@@ -70,6 +70,9 @@ class PedidosService
 
     public function buscarPedidos($empresaId)
     {
+        if ($empresaId == 1) {
+            $empresaId = '%';
+        }
         return Pedido::select('pedidos.*', 'empresas.fantasia')
             ->join('empresas', 'empresas.id', 'pedidos.empresa_id')
             ->where('pedidos.empresa_id', 'like', $empresaId)

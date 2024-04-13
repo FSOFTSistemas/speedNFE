@@ -10,8 +10,9 @@
             <div class="row">
                 <div class="col-md-12 col-xs-12">
             <label>Empresa</label>
-            <select wire:change="atualizarArrays()" class="form-control" name="empresa" wire:model="empresa" required>
+            <select wire:change="atualizarArrays()" class="form-control" name="empresa" id="empresa" wire:model="empresa" required>
                 <option value="" disabled selected>--Escolha uma empresa--</option>
+
                 @foreach (json_decode($empresas) as $emp)
                     <option value="{{ $emp->id }}">{{ $emp->fantasia }} | {{ $emp->cpf_cnpj }}</option>
                 @endforeach
@@ -42,7 +43,7 @@
                 </div>
                 <div class="col-md-3 col-xs-6">
                     <label>Descrição CFOP</label>
-                    <select wire:change="atualizarBCfop()" required class="form-control" name="cfop"
+                    <select wire:change="atualizarBCfop()" required class="form-control" name="cfop" id="cfop"
                         wire:model="cfop">
                         <option value='' disabled selected>--Selecione o CFOP da Nota--</option>
                         @if ($empresaL != 1)
@@ -176,78 +177,22 @@
                         <input type="hidden" name="vendaItens[{{ $index }}][produto_id]"
                             wire:model="vendaItens.{{ $index }}.produto_id">
                         <input type="hidden" name="vendaItens[{{ $index }}][quantidade]"
-                            wire:model="vendaItens.{{ $index }}.quantidade" />
+                            wire:model="vendaItens.{{ $index }}.quantidade">
                         <input type="hidden" name="vendaItens[{{ $index }}][unitario]"
-                            wire:model="vendaItens.{{ $index }}.unitario" />
+                            wire:model="vendaItens.{{ $index }}.unitario">
                         <input type="hidden" name="vendaItens[{{ $index }}][desconto]"
-                            wire:model="vendaItens.{{ $index }}.desconto" />
+                            wire:model="vendaItens.{{ $index }}.desconto" >
                         <input type="hidden" name="vendaItens[{{ $index }}][total]"
-                            wire:model="vendaItens.{{ $index }}.total" />
+                            wire:model="vendaItens.{{ $index }}.total">
                     @endforeach
 
                 </div>
             </div>
 
-
-        {{-- <div class="row">
-            <div class="col-9">
-                <label>Forma de Pagamento</label>
-                <select class="form-control" wire:model="forma">
-                    <option>--Escolha uma forma--</option>
-                    @if ($empresaL != 1)
-                        @foreach ($formas as $for)
-                            <option value="{{ $for->id }}">{{ $for->descricao }}</option>
-                        @endforeach
-                    @else
-                        @foreach ($formas as $for)
-                            <option value="{{ $for->id }}">{{ $for->descricao }}</option>
-                        @endforeach
-                    @endif
-                </select>
-            </div>
-            <div class="col-2">
-                <label>Valor</label>
-                <input class="form-control" type="number" step="0.01" wire:model="valPag">
-            </div>
-            <div class="col-1">
-                <label>&nbsp;</label>
-                <a wire:click.prevent="salvarForma()" class="btn btn-success">Adicionar</a>
-            </div>
-        </div>
-
-        <table class="table table-striped">
-            <thead>
-                <th>Forma</th>
-                <th>Descricao</th>
-                <th>Valor</th>
-                <th></th>
-            </thead>
-            <tbody>
-                @foreach ($formasVenda as $formas)
-                    <tr>
-                        @foreach ($formas as $forma)
-                            <td>{{ $forma }}</td>
-                        @endforeach
-                        <td><a wire:click.prevent="removerForma({{ array_search($formas, $formasVenda, true) }})"
-                                class="btn btn-danger">rmv</a></td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        @foreach ($formasVenda as $index => $formaVenda)
-            <input type="hidden" name="formasVenda[{{ $index }}][forma_id]"
-                wire:model="formasVenda.{{ $index }}.forma_id">
-            <input type="hidden" name="formasVenda[{{ $index }}][total]"
-                wire:model="formasVenda.{{ $index }}.total" />
-        @endforeach --}}
-
-        {{-- <hr color="black"> --}}
-
         <div class="row" style="margin-bottom: 2%;">
             <div class="col">
                 <label for="">Informações Complementares</label>
-                <textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" cols="30" rows="9" placeholder="Opicional..."></textarea>
+                <textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" cols="30" rows="9" placeholder="Opicional...">{{ old('info_complementares') }}</textarea>
             </div>
         </div>
 
@@ -256,6 +201,7 @@
                 <button type="submit" style="width: 25%;" class="btn btn-success">Salvar</a>
             </div>
         </div>
+    </form>
 
         <script>
             $(document).ready(function() {
@@ -268,5 +214,4 @@
             });
         </script>
 
-    </form>
 </div>

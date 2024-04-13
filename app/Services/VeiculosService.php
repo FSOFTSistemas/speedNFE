@@ -38,7 +38,7 @@ class VeiculosService
                 'rntrc' => $rntrc,
                 'tipo_proprietario' => $tipo_proprietario,
                 'tipo_transportador' => $tipo_transportador,
-                'veiculo_id' => $veiculo->id
+                'veiculo_id' => $veiculo->id,
             ]);
         }
     }
@@ -68,10 +68,14 @@ class VeiculosService
             ->first();
     }
 
-    public function buscarVeiculos()
+    public function buscarVeiculos($empresaId)
     {
+        if ($empresaId == 1) {
+            $empresaId = '%';
+        }
         return Veiculo::select('veiculos.*', 'empresas.cpf_cnpj', 'empresas.fantasia')
             ->join('empresas', 'empresas.id', 'veiculos.empresaId')
+            ->where('veiculos.empresaId', 'like', $empresaId)
             ->get();
     }
 

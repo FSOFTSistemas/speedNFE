@@ -23,11 +23,11 @@
                         <ul class="nav nav-tabs" id="tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                                    aria-controls="home" aria-selected="true">Informações do Cliente</a>
+                                    aria-controls="home" aria-selected="true"><b>Informações do Cliente</b></a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false">Endereço</a>
+                                    aria-controls="profile" aria-selected="false"><b>Endereço</b></a>
                             </li>
                         </ul>
                     </div>
@@ -124,7 +124,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
 
                                 <div class="row">
                                     <div class="col-md-6 col-xs-10">
@@ -157,9 +157,9 @@
                                             <option value="{{ $cliente->uf }}">{{ $cliente->uf }}</option>
                                         </select>
                                     </div>
-                                 
-                              
-                                
+
+
+
                                     <div class="col-md-6 col-xs-10">
                                         <label for="cod_ibge">Cód. IBGE</label>
                                         <select class="form-control" name="ibge" id="ibge" style="width: 100%">

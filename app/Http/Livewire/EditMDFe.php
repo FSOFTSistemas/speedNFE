@@ -319,7 +319,7 @@ class EditMDFe extends Component
     {
         $carregamento = json_decode($this->carregamento);
         $this->municipio = $carregamento->cidade;
-        $this->codMunCarregamento = $carregamento->municipio;
+        $this->codMunCarregamento = $carregamento->ibge;
         $cidadeService = new CidadeService();
         $latLon = $cidadeService->buscarLatLonByMunicipio($this->municipio);
         $this->latCarregamento = $latLon->lat;

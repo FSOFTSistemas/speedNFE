@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('transaction_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('tabela');
+            $table->string('tabela_afetada');
             $table->string('acao');
-            $table->string('dados_anteriores');
-            $table->string('dados_atuais');
+            $table->string('dados_anteriores', 2500)->nullable();
+            $table->string('dados_atuais', 2500)->nullable();
             $table->unsignedBigInteger('usuario_id');
             $table->foreign('usuario_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

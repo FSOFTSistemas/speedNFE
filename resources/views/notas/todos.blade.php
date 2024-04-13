@@ -42,6 +42,9 @@
                 <th>Chave</th>
                 <th>Valor</th>
                 <th>Estado</th>
+                @if($empresa == 1)
+                <th>Empresa</th>
+                @endif
                 <th></th>
                 <th></th>
             </tr>
@@ -54,6 +57,9 @@
                     <td><a href="/venda/imprimir/{{ $nota->id }}" target="_blank">{{ $nota->chave }}</a></td>
                     <td>R$ {{ number_format($nota->total, 2) }}</td>
                     <td>{{ $nota->estado }}</td>
+                    @if($empresa == 1)
+                    <td>{{ $nota->fantasia }}</td>
+                    @endif
                     <td>
                         <form action="{{ route('baixarXml') }}" method="POST" enctype="multipart/form-data">
                             @csrf

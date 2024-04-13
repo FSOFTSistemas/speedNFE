@@ -27,6 +27,9 @@
                     <th>UF início</th>
                     <th>UF término</th>
                     <th>UF de percurso</th>
+                    @if($empresa == 1)
+                    <th>Empresa</th>
+                    @endif
                     <th></th>
                 </tr>
             </thead>
@@ -41,6 +44,9 @@
                         <td>{{ $mdfe->uf_inicio }}</td>
                         <td>{{ $mdfe->uf_termino }}</td>
                         <td>{{ $mdfe->uf_percurso }}</td>
+                        @if($empresa == 1)
+                        <td>{{ $mdfe->fantasia }}</td>
+                        @endif
                         <td>
                             <div class="row">
                                 @if ($mdfe->situacao->value === 'Pendente' || $mdfe->situacao->value === 'Rejeitado')

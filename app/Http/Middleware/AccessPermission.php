@@ -6,19 +6,21 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminAccess
+class AccessPermission
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, $roles): Response
     {
-        if (auth()->user()->cargo != 'admin' && auth()->user()->cargo != 'master') {
-            return back();
+        foreach (explode('|', $roles) as $role) {;
+            if ($request->user() && $request->user()->cargo === $role) {
+                return $next($request);
+            }
         }
-        return $next($request);
+        return back();
     }
 
 }

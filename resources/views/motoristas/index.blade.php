@@ -3,54 +3,54 @@
 @section('title', 'Motoristas')
 
 @section('content_header')
-    {{-- <div class="row" style="text-align: center">
-        <div class="col">
-            <h3>Motoristas</h3>
-        </div>
-    </div> --}}
+
 @stop
 
 @section('content')
 
-        <div class="row" style="padding-top: 1%">
-            <div class="col">
-                <a class="btn btn-info" style="margin-bottom: 1%" href="{{ route('motorista.create') }}">&nbsp;+ Novo motorista&nbsp;</a>
-            </div>
+    <div class="row" style="padding-top: 1%">
+        <div class="col">
+            <a class="btn btn-info" style="margin-bottom: 1%" href="{{ route('motorista.create') }}">&nbsp;+ Novo
+                motorista&nbsp;</a>
         </div>
+    </div>
 
-        <table class="table table-hover" id="motoristas_table">
-            <thead class="table-primary" style="text-align: center">
-                <tr>
-                    <th>Nome</th>
-                    <th>Cpf</th>
+    <table class="table table-hover" id="motoristas_table">
+        <thead class="table-primary" style="text-align: center">
+            <tr>
+                <th>Nome</th>
+                <th>Cpf</th>
+                @if ($empresa == 1)
                     <th>Empresa</th>
-                    <th></th>
-                </tr>
-            </thead>
+                @endif
+                <th></th>
+            </tr>
+        </thead>
 
-            <tbody style="text-align: center">
-                @foreach ($motoristas as $motorista)
-                    <tr>
-                        <td>{{ $motorista->nome }}</td>
-                        <td>{{ $motorista->cpf }}</td>
+        <tbody style="text-align: center">
+            @foreach ($motoristas as $motorista)
+                <tr>
+                    <td>{{ $motorista->nome }}</td>
+                    <td>{{ $motorista->cpf }}</td>
+                    @if ($empresa == 1)
                         <td>{{ $motorista->fantasia }}</td>
-                        <td>
-                            <div class="row">
-                                <div class="col">
-                                    <a title="Editar" href='{{ route('motorista.edit', [$motorista->id]) }}'
-                                        class='text-warning'><i class="fa fa-edit"></i></a>
-                                </div>
-                                <div class="col">
-                                    <a title="Excluir" onclick="setaDadosModal({{ $motorista->id }})" class='text-danger'><i
-                                            class="fa fa-trash" data-toggle="modal"
-                                            data-target=".bd-delete-modal-lg"></i></a>
-                                </div>
+                    @endif
+                    <td>
+                        <div class="row">
+                            <div class="col">
+                                <a title="Editar" href='{{ route('motorista.edit', [$motorista->id]) }}'
+                                    class='text-warning'><i class="fa fa-edit"></i></a>
                             </div>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                            <div class="col">
+                                <a title="Excluir" onclick="setaDadosModal({{ $motorista->id }})" class='text-danger'><i
+                                        class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -71,7 +71,8 @@
                 </div>
                 <div class="modal-body">
 
-                    <p style="color: red; text-align: center">OBS: Você irá excluir todas as informações sobre este motorista!
+                    <p style="color: red; text-align: center">OBS: Você irá excluir todas as informações sobre este
+                        motorista!
                     </p>
 
                     <div class="" style="text-align: center">

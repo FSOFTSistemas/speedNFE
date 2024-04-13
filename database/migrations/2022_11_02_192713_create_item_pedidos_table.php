@@ -19,11 +19,11 @@ return new class extends Migration
             $table->foreign('pedido_id')->references('id')->on('pedidos')->onDelete('cascade');
             $table->unsignedBigInteger('produto_id');
             $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
-            $table->float('qtde');
-            $table->float('valor');
-            $table->float('subtotal');
-            $table->float('desconto');
-            $table->float('total');
+            $table->double('qtde');
+            $table->double('valor');
+            $table->double('subtotal');
+            $table->double('desconto');
+            $table->double('total');
             $table->integer('status');
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');

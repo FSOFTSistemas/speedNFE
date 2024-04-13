@@ -9,9 +9,9 @@ use App\Models\Motorista;
 use App\Models\Pedido;
 use App\Models\Plano;
 use App\Models\Produto;
-use App\Models\TransactionLog;
 use App\Models\User;
 use App\Models\Veiculo;
+use App\Observers\TransactionObserver;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -37,14 +37,14 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
         Schema::defaultStringLength(191);
-        Cliente::observe(TransactionLog::class);
-        Empresa::observe(TransactionLog::class);
-        Pedido::observe(TransactionLog::class);
-        Plano::observe(TransactionLog::class);
-        Produto::observe(TransactionLog::class);
-        User::observe(TransactionLog::class);
-        Veiculo::observe(TransactionLog::class);
-        Motorista::observe(TransactionLog::class);
-        MDFE::observe(TransactionLog::class);
+        Cliente::observe(TransactionObserver::class);
+        Empresa::observe(TransactionObserver::class);
+        Pedido::observe(TransactionObserver::class);
+        Plano::observe(TransactionObserver::class);
+        Produto::observe(TransactionObserver::class);
+        User::observe(TransactionObserver::class);
+        Veiculo::observe(TransactionObserver::class);
+        Motorista::observe(TransactionObserver::class);
+        MDFE::observe(TransactionObserver::class);
     }
 }

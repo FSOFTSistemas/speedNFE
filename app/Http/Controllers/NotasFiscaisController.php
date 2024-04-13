@@ -33,13 +33,8 @@ class NotasFiscaisController extends Controller
             $empresa = $this->userServices->getEmpresa(Auth::id());
             $fullPath = public_path();
             array_map('unlink', glob("$fullPath/*.zip"));
-            if ($empresa->empresa_id == 1) {
-                $empresa = '%';
-            } else {
-                $empresa = $empresa->empresa_id;
-            }
-            $notas = $this->pedidoServices->buscarPedidos($empresa);
-            return view('notas.todos', ['notas' => $notas]);
+            $notas = $this->pedidoServices->buscarPedidos($empresa->empresa_id);
+            return view('notas.todos', ['notas' => $notas, 'empresa' => Auth::user()->empresa_id]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
