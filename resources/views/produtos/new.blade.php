@@ -420,7 +420,7 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cofins">COFINS</label>
                                             <input class="form-control" type="text" name="cofins" id="cofins"
-                                                value="{{ old('cofins') ?? 00 }}" required placeholder="Confins...">
+                                                value="{{ old('cofins') ?? '00' }}" required placeholder="Confins...">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -428,7 +428,7 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label for="icms">ICMS</label>
                                             <input class="form-control" type="text" name="icms" id="icms"
-                                                value="{{ old('icms') ?? 17 }}" required placeholder="Icms...">
+                                                value="{{ old('icms') ?? 20.5 }}" required placeholder="Icms...">
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cst_csosn">CST/CSOSN</label>
@@ -470,12 +470,12 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label for="pis">PIS</label>
                                             <input class="form-control" type="text" name="pis" id="pis"
-                                                value="{{ old('pis') ?? 00 }}" required placeholder="Pis...">
+                                                value="{{ old('pis') ?? '00' }}" required placeholder="Pis...">
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label for="ipi">IPI</label>
                                             <input type="text" class="form-control" name="ipi" id="ipi"
-                                                value="{{ old('ipi') ?? 00 }}" required placeholder="Ipi...">
+                                                value="{{ old('ipi') ?? '00' }}" required placeholder="Ipi...">
                                         </div>
                                     </div>
                                 </div>
@@ -533,7 +533,7 @@
                                         <div class="col-md-4">
                                             <label for="renavanVeic" class="col-sm-4 col-form-label">Renavan</label>
                                             <input type="text" class="form-control" id="renavanVeic"
-                                                name="renavanVeic" value="{{ old('renavanVeic') }}"
+                                                name="renavanVeic" value="{{ old('renavanVeic') ?? '000000000' }}"
                                                 placeholder="Renavan...">
                                         </div>
                                         <div class="col-md-4">
@@ -637,37 +637,37 @@
                                             <label for="cCorVeic" class="col-sm-6 col-form-label">Código de Cor</label>
                                             <select class="form-control" name="cCorVeic" id="cCorVeic">
                                                 <option value="01"
-                                                    @if (old('cCorVeic') == '01') selected @endif>AMARELO</option>
+                                                    @if (old('cCorVeic') == '01') selected @endif>01 - AMARELO</option>
                                                 <option value="02"
-                                                    @if (old('cCorVeic') == '02') selected @endif>AZUL</option>
+                                                    @if (old('cCorVeic') == '02') selected @endif>02 - AZUL</option>
                                                 <option value="03"
-                                                    @if (old('cCorVeic') == '03') selected @endif>BEGE</option>
+                                                    @if (old('cCorVeic') == '03') selected @endif>03 - BEGE</option>
                                                 <option value="04"
-                                                    @if (old('cCorVeic') == '04') selected @endif>BRANCA</option>
+                                                    @if (old('cCorVeic') == '04') selected @endif>04 - BRANCA</option>
                                                 <option value="05"
-                                                    @if (old('cCorVeic') == '05') selected @endif>CINZA</option>
+                                                    @if (old('cCorVeic') == '05') selected @endif>05 - CINZA</option>
                                                 <option value="06"
-                                                    @if (old('cCorVeic') == '06') selected @endif>DOURADA</option>
+                                                    @if (old('cCorVeic') == '06') selected @endif>06 - DOURADA</option>
                                                 <option value="07"
-                                                    @if (old('cCorVeic') == '07') selected @endif>GRENAR</option>
+                                                    @if (old('cCorVeic') == '07') selected @endif>07 - GRENAR</option>
                                                 <option value="08"
-                                                    @if (old('cCorVeic') == '08') selected @endif>LARANJA</option>
+                                                    @if (old('cCorVeic') == '08') selected @endif>08 - LARANJA</option>
                                                 <option value="09"
-                                                    @if (old('cCorVeic') == '09') selected @endif>MARROM</option>
+                                                    @if (old('cCorVeic') == '09') selected @endif>09 - MARROM</option>
                                                 <option value="10"
-                                                    @if (old('cCorVeic') == '10') selected @endif>PRATA</option>
+                                                    @if (old('cCorVeic') == '10') selected @endif>10 - PRATA</option>
                                                 <option value="11"
-                                                    @if (old('cCorVeic') == '11') selected @endif>PRETA</option>
+                                                    @if (old('cCorVeic') == '11') selected @endif>11 - PRETA</option>
                                                 <option value="12"
-                                                    @if (old('cCorVeic') == '12') selected @endif>ROSA</option>
+                                                    @if (old('cCorVeic') == '12') selected @endif>12 - ROSA</option>
                                                 <option value="13"
-                                                    @if (old('cCorVeic') == '13') selected @endif>ROXA</option>
+                                                    @if (old('cCorVeic') == '13') selected @endif>13 - ROXA</option>
                                                 <option value="14"
-                                                    @if (old('cCorVeic') == '14') selected @endif>VERDE</option>
+                                                    @if (old('cCorVeic') == '14') selected @endif>14 - VERDE</option>
                                                 <option value="15"
-                                                    @if (old('cCorVeic') == '15') selected @endif>VERMELHA</option>
+                                                    @if (old('cCorVeic') == '15') selected @endif>15 - VERMELHA</option>
                                                 <option value="16"
-                                                    @if (old('cCorVeic') == '16') selected @endif>FANTASIA</option>
+                                                    @if (old('cCorVeic') == '16') selected @endif>16 - FANTASIA</option>
                                             </select>
                                         </div>
                                     </div>

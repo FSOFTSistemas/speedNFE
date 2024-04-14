@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Utils\FormatationUtil;
@@ -118,7 +119,6 @@ class NFeService
             } else {
                 $stdDest->indIEDest = "1";
             }
-
         } else {
             $stdDest->indIEDest = "9";
         }
@@ -141,7 +141,6 @@ class NFeService
             if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) {
                 $stdDest->IE = $ie;
             }
-
         }
 
         $dest = $nfe->tagdest($stdDest);
@@ -170,6 +169,38 @@ class NFeService
         $stdEnderDest->cPais = "1058";
         $stdEnderDest->xPais = "BRASIL";
         $enderDest = $nfe->tagenderDest($stdEnderDest);
+
+        //ENTREGA
+        $stdEntrega = new \stdClass();
+        if (strlen($cnpj_cpf) == 14) {
+            $stdEntrega->CNPJ = $cnpj_cpf;
+            $ie = str_replace(".", "", $venda->cliente->rg_ie);
+            $ie = str_replace("/", "", $ie);
+            $ie = str_replace("-", "", $ie);
+            $stdEntrega->IE = $ie;
+        } else {
+            $stdEntrega->CPF = $cnpj_cpf;
+            $ie = str_replace(".", "", $venda->cliente->rg_ie);
+            $ie = str_replace("/", "", $ie);
+            $ie = str_replace("-", "", $ie);
+            if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) {
+                $stdEntrega->IE = $ie;
+            }
+        }
+        $stdEntrega->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
+        $stdEntrega->xLgr =  FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
+        $stdEntrega->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
+        $stdEntrega->xCpl = FormatationUtil::retiraAcentos($venda->endereco_cliente->complemento);
+        $stdEntrega->xBairro = FormatationUtil::retiraAcentos($venda->endereco_cliente->bairro);
+        $stdEntrega->cMun = FormatationUtil::retiraPontuacoes($venda->endereco_cliente->codigoIBGE);
+        $stdEntrega->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
+        $stdEntrega->UF = $venda->endereco_cliente->uf;
+        $stdEntrega->CEP = $cep;
+        $stdEntrega->cPais = '1058';
+        $stdEntrega->xPais = 'BRASIL';
+        $stdEntrega->fone = $telefone;
+
+        $nfe->tagentrega($stdEntrega);
 
         //ITENS DA NFE
         foreach ($venda->itens as $key => $i) {
@@ -277,7 +308,6 @@ class NFeService
             $std->pIPI = FormatationUtil::format($i->produto->ipi);
             $std->vIPI = $stdProd->vProd * FormatationUtil::format(($i->produto->ipi / 100));
             $nfe->tagIPI($std);
-
         }
 
         $stdTransp = new \stdClass();
@@ -425,7 +455,6 @@ class NFeService
                 return [
                     'erro' => "[$std->cStat] - $std->xMotivo",
                 ];
-
             }
             $recibo = $std->infRec->nRec;
             $protocolo = $this->tools->sefazConsultaRecibo($recibo);
@@ -466,7 +495,6 @@ class NFeService
             } else {
                 ['erro' => true, 'data' => $arr];
             }
-
         } catch (\Exception $e) {
             return ['erro' => true, 'data' => $e->getMessage()];
         }
