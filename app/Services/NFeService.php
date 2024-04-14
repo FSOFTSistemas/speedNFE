@@ -171,36 +171,44 @@ class NFeService
         $enderDest = $nfe->tagenderDest($stdEnderDest);
 
         //ENTREGA
-        $stdEntrega = new \stdClass();
-        if (strlen($cnpj_cpf) == 14) {
-            $stdEntrega->CNPJ = $cnpj_cpf;
-            $ie = str_replace(".", "", $venda->cliente->rg_ie);
-            $ie = str_replace("/", "", $ie);
-            $ie = str_replace("-", "", $ie);
-            $stdEntrega->IE = $ie;
-        } else {
-            $stdEntrega->CPF = $cnpj_cpf;
-            $ie = str_replace(".", "", $venda->cliente->rg_ie);
-            $ie = str_replace("/", "", $ie);
-            $ie = str_replace("-", "", $ie);
-            if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) {
-                $stdEntrega->IE = $ie;
+        $entrega = false;
+        foreach ($venda->itens as $key => $i) {
+            if ($i->produto->operVeic == 2) {
+                $entrega = true;
             }
         }
-        $stdEntrega->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
-        $stdEntrega->xLgr =  FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
-        $stdEntrega->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
-        $stdEntrega->xCpl = FormatationUtil::retiraAcentos($venda->endereco_cliente->complemento);
-        $stdEntrega->xBairro = FormatationUtil::retiraAcentos($venda->endereco_cliente->bairro);
-        $stdEntrega->cMun = FormatationUtil::retiraPontuacoes($venda->endereco_cliente->codigoIBGE);
-        $stdEntrega->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
-        $stdEntrega->UF = $venda->endereco_cliente->uf;
-        $stdEntrega->CEP = $cep;
-        $stdEntrega->cPais = '1058';
-        $stdEntrega->xPais = 'BRASIL';
-        $stdEntrega->fone = $telefone;
+        if ($entrega) {
+            $stdEntrega = new \stdClass();
+            if (strlen($cnpj_cpf) == 14) {
+                $stdEntrega->CNPJ = $cnpj_cpf;
+                $ie = str_replace(".", "", $venda->cliente->rg_ie);
+                $ie = str_replace("/", "", $ie);
+                $ie = str_replace("-", "", $ie);
+                $stdEntrega->IE = $ie;
+            } else {
+                $stdEntrega->CPF = $cnpj_cpf;
+                $ie = str_replace(".", "", $venda->cliente->rg_ie);
+                $ie = str_replace("/", "", $ie);
+                $ie = str_replace("-", "", $ie);
+                if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) {
+                    $stdEntrega->IE = $ie;
+                }
+            }
+            $stdEntrega->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
+            $stdEntrega->xLgr =  FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
+            $stdEntrega->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
+            $stdEntrega->xCpl = FormatationUtil::retiraAcentos($venda->endereco_cliente->complemento);
+            $stdEntrega->xBairro = FormatationUtil::retiraAcentos($venda->endereco_cliente->bairro);
+            $stdEntrega->cMun = FormatationUtil::retiraPontuacoes($venda->endereco_cliente->codigoIBGE);
+            $stdEntrega->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
+            $stdEntrega->UF = $venda->endereco_cliente->uf;
+            $stdEntrega->CEP = $cep;
+            $stdEntrega->cPais = '1058';
+            $stdEntrega->xPais = 'BRASIL';
+            $stdEntrega->fone = $telefone;
 
-        $nfe->tagentrega($stdEntrega);
+            $nfe->tagentrega($stdEntrega);
+        }
 
         //ITENS DA NFE
         foreach ($venda->itens as $key => $i) {
