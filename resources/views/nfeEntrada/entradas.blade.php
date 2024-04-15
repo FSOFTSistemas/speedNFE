@@ -52,7 +52,7 @@
     </main>
 
     @component('components.modal', ['modalId' => 'modalImportarNFe', 'modalTitle' => 'Importar NFe', 'sizeModal' => 'modal-md'])
-        @component('components.custom-form', ['route' => 'entradas.index'])
+        @component('components.custom-form', ['route' => 'importar_produtos'])
             <div class="row mt-4">
                 <div class="col">
                     <div class="form-floating">
@@ -72,7 +72,7 @@
 
             <div class="position-relative">
                 <button type="submit"
-                    class="w-25 btn btn-outline-success btn-lg position-relative top-50 start-50 translate-middle">Importar</button>
+                    class="btn btn-outline-success btn-lg position-relative top-50 start-50 translate-middle">Importar</button>
             </div>
         @endcomponent
     @endcomponent
