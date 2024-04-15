@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use NFePHP\Common\Exception\ValidatorException;
 use NFePHP\DA\MDFe\Daevento;
 use NFePHP\DA\MDFe\Damdfe;
 
@@ -342,6 +343,8 @@ class MDFEController extends Controller
             }
             DB::rollBack();
             return redirect()->route('mdfe.index')->with('warning', $xml['erros_xml']);
+        } catch (ValidatorException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -373,6 +376,8 @@ class MDFEController extends Controller
                 DB::rollBack();
                 return redirect()->route('mdfe.index')->with('warning', $result['erro']);
             }
+        } catch (ValidatorException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -417,6 +422,8 @@ class MDFEController extends Controller
             }
             DB::rollBack();
             return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (ValidatorException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -446,6 +453,8 @@ class MDFEController extends Controller
                 $pdf = $daevento->render();
                 return response($pdf)->header('Content-Type', 'application/pdf');
             }
+        } catch (ValidatorException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -469,6 +478,8 @@ class MDFEController extends Controller
             $pdf = $damdfe->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
+        } catch (ValidatorException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
