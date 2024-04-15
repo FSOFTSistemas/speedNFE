@@ -90,7 +90,7 @@ Route::prefix('usuarios')->group(function () {
     Route::get('', [UsersController::class, 'show'])->name('index_usuario')->middleware('auth');
     Route::get('/cadastro', [UsersController::class, 'new'])->name('cadastrar_usuario')->middleware(['auth', 'access.permission:master']);
     Route::post('/cadastro', [UsersController::class, 'store'])->name('salvar_usuario')->middleware(['auth', 'access.permission:master']);
-    Route::get('/del/{id}', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth', 'access.permission:master']);
+    Route::delete('/deletar', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth', 'access.permission:master']);
     Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware(['auth', 'access.permission:master']);
     Route::post('/editar/{id}', [UsersController::class, 'update'])->name('update_usuario')->middleware(['auth', 'access.permission:master']);
 });

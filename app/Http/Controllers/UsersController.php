@@ -34,10 +34,10 @@ class UsersController extends Controller
         return view('users.editar', ['user' => $user, 'empresas' => $empresas, 'empresa' => $empresa->empresa_id]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         $sUsers = new UsersService();
-        $resp = $sUsers->destroy($id);
+        $resp = $sUsers->destroy($request->userId);
 
         if ($resp == 1) {
             return redirect('/usuarios')->with('success', 'Usuário excluído com sucesso');
