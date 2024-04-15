@@ -132,7 +132,7 @@ class EmpresasController extends Controller
             $request->validate([
                 'nome' => 'required|max:255',
                 'fantasia' => 'required|max:255',
-                'cpf_cnpj' => 'required',
+                'cpf_cnpj' => 'required|unique:empresas,cpf_cnpj',
                 'rg_ie' => 'required',
                 'telefone' => 'required',
                 'rua' => 'required',
@@ -163,7 +163,8 @@ class EmpresasController extends Controller
                 'required' => 'O campo :attribute é obrigatório!',
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max',
-                'email' => 'Email inválido!'
+                'email' => 'Email inválido!',
+                'unique' => 'O CPF/CNPJ já foi utilizado antes!'
             ]);
             DB::beginTransaction();
             $endereco = $this->enderecoServices->salvar(
