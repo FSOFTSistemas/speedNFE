@@ -8,6 +8,8 @@ use App\Services\UsersService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
 {
@@ -65,10 +67,27 @@ class UsersController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->validate([
+                'name' => 'required',
+                'email' => 'email|required',
+                'senha' => 'required'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'email' => 'O email deve ser válido!'
+            ]);
+            DB::beginTransaction();
             $sUsers = new UsersService();
             $sUsers->store($request->email, $request->senha, $request->cargo, $request->empresa, $request->name);
+            DB::commit();
             return redirect()->route('index_usuario')->with('Success, Usuário inserido com sucesso !');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('erro: ' . $e->getMessage());
         }
     }
