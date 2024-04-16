@@ -19,7 +19,27 @@ class ImportProductsService
 
     public function importProducts($chaveNota)
     {
-        $response = $this->tools->sefazDistDFe(0, 0, $chaveNota);
+        $this->manifest($chaveNota, '210200', 1);
+        $this->tools->setEnvironment(1);
+        $response = $this->tools->sefazDownload($chaveNota);
+        $stdCl = new Standardize($response);
+        return $stdCl->toStd();
+    }
+
+    //Codigo para confirmação de operação: 210200
+    //Ciência da emissão: 210210
+    //Código para desconhecimento da operação: 210220
+    //Código para operação não realizada: 210240
+    public function manifest($chaveNota, $evento, $sequenciaEvento, $justificativa = '')
+    {
+        $response = $this->tools->sefazManifesta($chaveNota, $evento, $justificativa, $sequenciaEvento);
+        $std = new Standardize($response);
+        return $std->toStd();
+    }
+
+    public function keyQuery($chaveNota)
+    {
+        $response = $this->tools->sefazConsultaChave($chaveNota);
         $stdCl = new Standardize($response);
         return $stdCl->toStd();
     }
