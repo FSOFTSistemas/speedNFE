@@ -438,8 +438,11 @@ class PedidosController extends Controller
             $result = $nfe_service->gerarXml($pedido, $empresa);
             $danfe = new Danfe($result['xml']);
             $pdf = $danfe->render();
-            return response($pdf)
-                ->header('Content-Type', 'application/pdf');
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf;
+            }, 'nome_do_arquivo.pdf');
+            // return response($pdf)
+            //     ->header('Content-Type', 'application/pdf');
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
