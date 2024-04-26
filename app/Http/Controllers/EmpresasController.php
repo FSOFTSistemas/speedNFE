@@ -220,6 +220,7 @@ class EmpresasController extends Controller
             DB::rollBack();
             return back()->with('warning', $e->getMessage() . ' - Senha incorreta, informe uma senha válida')->withInput();
         } catch (Exception $e) {
+            dd($e);
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
         }

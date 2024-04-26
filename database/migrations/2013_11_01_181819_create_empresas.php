@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('razao');
             $table->string('fantasia');
-            $table->string('cpf_cnpj');
+            $table->string('cpf_cnpj')->unique();
             $table->unsignedBigInteger('endereco_id');
             $table->foreign('endereco_id')->references('id')->on('enderecos')->onDelete('cascade');
             $table->string('rg_ie')->nullable();

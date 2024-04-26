@@ -38,11 +38,9 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
         Schema::defaultStringLength(191);
         Cliente::observe(TransactionObserver::class);
-        Empresa::observe(TransactionObserver::class);
         Pedido::observe(TransactionObserver::class);
         Plano::observe(TransactionObserver::class);
         Produto::observe(TransactionObserver::class);
-        User::observe(TransactionObserver::class);
         Veiculo::observe(TransactionObserver::class);
         Motorista::observe(TransactionObserver::class);
         MDFE::observe(TransactionObserver::class);
