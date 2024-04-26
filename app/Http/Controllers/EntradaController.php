@@ -40,6 +40,11 @@ class EntradaController extends Controller
     public function importProducts (Request $request)
     {
         try {
+
+            if (isset($request->type)) {
+                ImportProductsService::readXML($request->nota);
+            }
+
             $emitente = $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id);
             $importService = new ImportProductsService([
                 "atualizacao" => date('Y-m-d h:i:s'),

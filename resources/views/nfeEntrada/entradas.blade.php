@@ -51,14 +51,24 @@
         </section>
     </main>
 
-    @component('components.modal', ['modalId' => 'modalImportarNFe', 'modalTitle' => 'Importar NFe', 'sizeModal' => 'modal-md'])
+    @component('components.modal', [
+        'modalId' => 'modalImportarNFe',
+        'modalTitle' => 'Importar NFe',
+        'sizeModal' => 'modal-md',
+    ])
         @component('components.custom-form', ['route' => 'importar_produtos'])
             <div class="row mt-4">
                 <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="type" name="type" onchange="importXML(this)">
+                        <label class="form-check-label" for="type">
+                            Importar XML?
+                        </label>
+                    </div>
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="chaveNota" name="chaveNota" placeholder="" minlength="44"
-                            maxlength="44" oninput="this.value = this.value.replace(/[^0-9]/g, '');" required>
-                        <label for="chaveNota">Chave da NFe</label>
+                        <input type="text" class="form-control" id="nota" name="nota" placeholder="" minlength="44"
+                            maxlength="44" oninput="this.value = this.value.replace(/[^0-9]/g, '');" accept=".xml" required>
+                        <label for="nota">Nota de entrada NFe</label>
                         <div id="passwordHelpBlock" class="form-text">
                             A chave deve ter 44 caracteres, contém apenas números e não deve conter espaços, caracteres especiais ou
                             emoji.
@@ -83,6 +93,11 @@
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
-@section('js')
-    {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script> --}}
-@stop
+    <script>
+        function importXML(input) {
+            if (input.checked) {
+                return document.querySelector('#nota').type = 'file'
+            }
+            return document.querySelector('#nota').type = 'text'
+        }
+    </script>

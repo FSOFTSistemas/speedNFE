@@ -44,4 +44,9 @@ class ImportProductsService
         return $stdCl->toStd();
     }
 
+    public static function readXML($xml)
+    {
+        dd(simplexml_load_file($xml)->NFe->infNFe);
+    }
+
 }
