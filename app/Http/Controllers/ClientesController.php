@@ -12,6 +12,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class ClientesController extends Controller
 {
@@ -67,15 +68,15 @@ class ClientesController extends Controller
                 'cpf_cnpj' => 'required',
                 'rg_ie' => 'required',
                 'tipo' => 'required',
-                'telefone' => 'required|max:15',
+                'telefone' => 'required|max:20',
                 'empresa' => 'required',
                 'rua' => 'max:255',
-                'numero' => '',
+                'numero' => 'nullable',
                 'bairro' => 'max:255',
                 'cidade' => 'max:255',
-                'uf' => '',
-                'cep' => '',
-                'ibge' => '',
+                'uf' => 'nullable',
+                'cep' => 'nullable',
+                'ibge' => 'nullable',
             ]);
             $id_empresa = Auth::user()->id_empresa;
             if ($request->has('empresa')) {
@@ -109,6 +110,11 @@ class ClientesController extends Controller
                 return redirect()->route('index')->with('warning', 'Limite de clientes atingido');
             }
             return redirect()->route('index')->with('success', 'Cliente cadastrado com sucesso');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

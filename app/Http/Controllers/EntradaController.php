@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Entrada;
 use App\Services\EmpresasService;
+use App\Services\EntradaService;
 use App\Services\ImportProductsService;
+use App\Services\ProdutosService;
 use App\Utils\FormatationUtil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class EntradaController extends Controller
 {
     private $empresaServices;
+    private $produtoService;
+    private $entradaService;
 
-    public function __construct(EmpresasService $empresaService)
+    public function __construct(EmpresasService $empresaService, ProdutosService $produtoService, EntradaService $entradaService)
     {
         $this->empresaServices = $empresaService;
+        $this->produtoService = $produtoService;
+        $this->entradaService = $entradaService;
     }
 
     public function index()
@@ -40,27 +46,37 @@ class EntradaController extends Controller
     public function importProducts (Request $request)
     {
         try {
-
+            $request->validate([
+                'type' => 'nullable',
+                'nota' => 'required',
+            ]);
+            $companyId = Auth::user()->empresa_id;
             if (isset($request->type)) {
-                ImportProductsService::readXML($request->nota);
+                $response = ImportProductsService::readXML($request->nota);
+            } else {
+                $emitente = $this->empresaServices->buscarEmpresa($companyId);
+                $importProductsServices = new ImportProductsService([
+                    "atualizacao" => date('Y-m-d h:i:s'),
+                    "tpAmb" => (int) $emitente->ambiente,
+                    "razaosocial" => $emitente->razao,
+                    "siglaUF" => $emitente->endereco->uf,
+                    "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
+                    "schemes" => "PL_009_V4",
+                    "versao" => "4.00",
+                    "tokenIBPT" => "AAAAAAA",
+                    "CSC" => $emitente->csc,
+                    "CSCid" => '00000' . $emitente->idCsc,
+                ], $emitente);
+                $response = $importProductsServices->importProducts($request->nota);
             }
-
-            $emitente = $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id);
-            $importService = new ImportProductsService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $emitente->ambiente,
-                "razaosocial" => $emitente->razao,
-                "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_009_V4",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $emitente->csc,
-                "CSCid" => '00000' . $emitente->idCsc,
-            ], $emitente);
-            $result = $importService->importProducts($request->chaveNota);
-            dd($result);
-            // return redirect()->route('');
+            $this->produtoService->insertProductsList($response['prods'], $companyId);
+            $this->entradaService->createEntrada($response['nota'], $companyId);
+            return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (\Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

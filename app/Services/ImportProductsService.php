@@ -46,7 +46,8 @@ class ImportProductsService
 
     public static function readXML($xml)
     {
-        dd(simplexml_load_file($xml)->NFe->infNFe);
+        $note = simplexml_load_file($xml);
+        return ['nota' => ['ide' => $note->NFe->infNFe->ide, 'emit' => $note->NFe->infNFe->emit, 'vNF' => $note->NFe->infNFe->total->ICMSTot->vNF, 'chNFe' => $note->protNFe->infProt->chNFe], 'prods' => $note->NFe->infNFe->det];
     }
 
 }
