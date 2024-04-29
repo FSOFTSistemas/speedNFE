@@ -26,5 +26,10 @@ class ItensEntrada extends Model
         'ALIQUOTA',
         'empresa_id',
     ];
-    
+
+    public function entrada()
+    {
+        return $this->belongsTo(Entrada::class, 'entrada_id');
+    }
+
 }
