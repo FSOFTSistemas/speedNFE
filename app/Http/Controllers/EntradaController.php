@@ -69,9 +69,7 @@ class EntradaController extends Controller
                 ], $emitente);
                 $response = $importProductsServices->importProducts($request->nota);
             }
-            $this->produtoService->insertProductsList($response['prods'], $companyId);
-            $this->entradaService->createEntrada($response['nota'], $companyId);
-            return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
+            return view('nfeEntrada.create', ['data' => $response]);
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
