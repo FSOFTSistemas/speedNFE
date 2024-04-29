@@ -43,6 +43,11 @@ class EntradaController extends Controller
         }
     }
 
+    public function store(Request $request)
+    {
+        dd($request->all());
+    }
+
     public function importProducts (Request $request)
     {
         try {

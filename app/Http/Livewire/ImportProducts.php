@@ -34,7 +34,7 @@ class ImportProducts extends Component
 
     protected function createProductItem($item)
     {
-        $this->itemProd[] = ['xProd' => $item['xProd'], 'cEAN' => $item['cEAN']];
+        $this->itemProd[] = ['cProd' => (string) $item->prod->cProd[0], 'xProd' => (string) $item->prod->xProd[0], 'cEAN' => (string) $item->prod->cEAN[0]];
     }
 
     public function render()
