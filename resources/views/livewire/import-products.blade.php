@@ -51,8 +51,8 @@
                         <div class="col-md-8">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="chNFe" placeholder="Chave NFe" value="{{ $chNFe }}"
-                                        required>
+                                    <input type="text" class="form-control" id="chNFe" placeholder="Chave NFe"
+                                        value="{{ $chNFe }}" required>
                                     <label for="chNFe">Chave NFe</label>
                                     <div class="invalid-feedback">
                                         Informe uma chave válida.
@@ -64,8 +64,8 @@
                             <div class="input-group has-validation">
                                 <span class="input-group-text bg-secondary">R$</span>
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="vNF" placeholder="Valor total" value="{{ number_format($vNF, 2) }}"
-                                        required>
+                                    <input type="text" class="form-control" id="vNF" placeholder="Valor total"
+                                        value="{{ number_format($vNF, 2) }}" required>
                                     <label for="vNF">Valor Total</label>
                                     <div class="invalid-feedback">
                                         Informe um valor válido.
@@ -79,8 +79,8 @@
                         <div class="col-md-7">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="fornecedor"
-                                        placeholder="Fornecedor" value="{{ $emit['xNome'] }}" required>
+                                    <input type="text" class="form-control" id="fornecedor" placeholder="Fornecedor"
+                                        value="{{ $emit['xNome'] }}" required>
                                     <label for="fornecedor">Fornecedor</label>
                                     <div class="invalid-feedback">
                                         Informe um fornecedor válido.
@@ -91,8 +91,8 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="CNPJ" value="{{ $emit['CNPJ'] }}"
-                                        placeholder="CNPJ" required>
+                                    <input type="text" class="form-control" id="CNPJ"
+                                        value="{{ $emit['CNPJ'] }}" placeholder="CNPJ" required>
                                     <label for="CNPJ">CNPJ</label>
                                     <div class="invalid-feedback">
                                         Informe CNPJ válido.
@@ -103,8 +103,8 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="IE" value="{{ $emit['IE'] }}"
-                                        placeholder="Inscrição estadual" required>
+                                    <input type="text" class="form-control" id="IE"
+                                        value="{{ $emit['IE'] }}" placeholder="Inscrição estadual" required>
                                     <label for="IE">IE</label>
                                     <div class="invalid-feedback">
                                         Informe IE válido.
@@ -118,8 +118,8 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="fone" value="{{ (string) $emit['enderEmit']->fone }}"
-                                        placeholder="Fone" required>
+                                    <input type="text" class="form-control" id="fone"
+                                        value="{{ (string) $emit['enderEmit']->fone }}" placeholder="Fone" required>
                                     <label for="fone">Fone</label>
                                     <div class="invalid-feedback">
                                         Informe um fone válido.
@@ -130,8 +130,8 @@
                         <div class="col-md-7">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="rua" value="{{ (string) $emit['enderEmit']->xLgr }}"
-                                        placeholder="Rua" required>
+                                    <input type="text" class="form-control" id="rua"
+                                        value="{{ (string) $emit['enderEmit']->xLgr }}" placeholder="Rua" required>
                                     <label for="rua">Rua</label>
                                     <div class="invalid-feedback">
                                         Informe uma rua válida.
@@ -142,8 +142,8 @@
                         <div class="col-md-2">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="nro" value="{{ (string) $emit['enderEmit']->nro }}"
-                                        placeholder="Nº" required>
+                                    <input type="text" class="form-control" id="nro"
+                                        value="{{ (string) $emit['enderEmit']->nro }}" placeholder="Nº" required>
                                     <label for="nro">Nº</label>
                                     <div class="invalid-feedback">
                                         Informe Nº válido.
@@ -157,8 +157,9 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="bairro" value="{{ (string) $emit['enderEmit']->xBairro }}"
-                                        placeholder="Bairro" required>
+                                    <input type="text" class="form-control" id="bairro"
+                                        value="{{ (string) $emit['enderEmit']->xBairro }}" placeholder="Bairro"
+                                        required>
                                     <label for="bairro">Bairro</label>
                                     <div class="invalid-feedback">
                                         Informe um bairro válido.
@@ -169,8 +170,9 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="mun" value="{{ (string) $emit['enderEmit']->xMun }}"
-                                        placeholder="Município" required>
+                                    <input type="text" class="form-control" id="mun"
+                                        value="{{ (string) $emit['enderEmit']->xMun }}" placeholder="Município"
+                                        required>
                                     <label for="mun">Município</label>
                                     <div class="invalid-feedback">
                                         Informe um município válido.
@@ -181,8 +183,8 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="uf" value="{{ (string) $emit['enderEmit']->UF }}"
-                                        placeholder="UF" required>
+                                    <input type="text" class="form-control" id="uf"
+                                        value="{{ (string) $emit['enderEmit']->UF }}" placeholder="UF" required>
                                     <label for="uf">UF</label>
                                     <div class="invalid-feedback">
                                         Informe UF válido.
@@ -193,8 +195,8 @@
                         <div class="col-md">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="CEP" value="{{ (string) $emit['enderEmit']->CEP }}"
-                                        placeholder="CEP" required>
+                                    <input type="text" class="form-control" id="CEP"
+                                        value="{{ (string) $emit['enderEmit']->CEP }}" placeholder="CEP" required>
                                     <label for="CEP">CEP</label>
                                     <div class="invalid-feedback">
                                         Informe um CEP válido.
@@ -212,25 +214,197 @@
                         <h4>Produtos</h4>
                     </div>
                     <div class="accordion" id="accordion">
-                        @foreach ($prods as $item)
+                        @foreach ($prods as $index => $item)
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse{{ $item[0]['cProd'] }}" aria-expanded="true"
-                                        aria-controls="collapse{{ $item[0]['cProd'] }}">
+                                        data-bs-target="#collapse{{ $item[0]['cProd'] . $index }}"
+                                        aria-expanded="true"
+                                        aria-controls="collapse{{ $item[0]['cProd'] . $index }}">
                                         {{ $item[0]['xProd'] }}
                                     </button>
                                 </h2>
-                                <div id="collapse{{ $item[0]['cProd'] }}" class="accordion-collapse collapse"
-                                    data-bs-parent="#accordion">
+                                <div id="collapse{{ $item[0]['cProd'] . $index }}"
+                                    class="accordion-collapse collapse" data-bs-parent="#accordion">
                                     <div class="accordion-body">
-                                        <strong>This is the first item's accordion body.</strong> It is shown by
-                                        default, until the collapse plugin adds the appropriate classes that we use to
-                                        style each element. These classes control the overall appearance, as well as the
-                                        showing and hiding via CSS transitions. You can modify any of this with custom
-                                        CSS or overriding our default variables. It's also worth noting that just about
-                                        any HTML can go within the <code>.accordion-body</code>, though the transition
-                                        does limit overflow.
+                                        <fieldset class="border border-secondary p-2 rounded">
+                                            <legend>Produto</legend>
+                                            <div class="row g-2 p-2">
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="xProd"
+                                                                value="{{ $item[0]['xProd'] }}" placeholder="Produto"
+                                                                required>
+                                                            <label for="xProd">Produto</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um produto válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-2 p-2">
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="cEAN"
+                                                                value="{{ $item[0]['cEAN'] }}" placeholder="EAN"
+                                                                required>
+                                                            <label for="cEAN">EAN</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um EAN válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="uCom"
+                                                                value="{{ $item[0]['uCom'] }}" placeholder="Unidade"
+                                                                required>
+                                                            <label for="uCom">Unidade</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe uma unidade válida.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="NCM"
+                                                                value="{{ $item[0]['NCM'] }}" placeholder="NCM"
+                                                                required>
+                                                            <label for="NCM">NCM</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um NCM válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-2 p-2">
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <span class="input-group-text bg-secondary">R$</span>
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="vUnCom"
+                                                                value="{{ $item[0]['vUnCom'] }}"
+                                                                placeholder="Valor unitário" required>
+                                                            <label for="vUnCom">Valor Unitário</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um valor unitário válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="qCom"
+                                                                value="{{ $item[0]['qCom'] }}"
+                                                                placeholder="Quantidade" required>
+                                                            <label for="qCom">Quantidade</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe uma quantidade válida.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <span class="input-group-text bg-secondary">R$</span>
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="vProd"
+                                                                value="{{ $item[0]['vProd'] }}"
+                                                                placeholder="Valor total" required>
+                                                            <label for="vProd">Valor Total</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um valor total válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="CFOP"
+                                                                value="{{ $item[0]['CFOP'] }}" placeholder="CFOP"
+                                                                required>
+                                                            <label for="CFOP">CFOP</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um CFOP válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <fieldset class="border border-secondary mt-3 p-2 rounded">
+                                            <legend>Tributos</legend>
+
+                                            <div class="row g-2 p-2">
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <span class="input-group-text bg-secondary">R$</span>
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="vUnCom"
+                                                                value="{{ $item[0]['vUnCom'] }}"
+                                                                placeholder="Valor unitário" required>
+                                                            <label for="vUnCom">Valor Unitário</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um valor unitário válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="qCom"
+                                                                value="{{ $item[0]['qCom'] }}"
+                                                                placeholder="Quantidade" required>
+                                                            <label for="qCom">Quantidade</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe uma quantidade válida.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <span class="input-group-text bg-secondary">R$</span>
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="vProd"
+                                                                value="{{ $item[0]['vProd'] }}"
+                                                                placeholder="Valor total" required>
+                                                            <label for="vProd">Valor Total</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um valor total válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="CFOP"
+                                                                value="{{ $item[0]['CFOP'] }}" placeholder="CFOP"
+                                                                required>
+                                                            <label for="CFOP">CFOP</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um CFOP válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
                                     </div>
                                 </div>
                             </div>

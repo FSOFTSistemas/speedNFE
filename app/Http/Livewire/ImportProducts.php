@@ -34,7 +34,11 @@ class ImportProducts extends Component
 
     protected function createProductItem($item)
     {
-        $this->itemProd[] = ['cProd' => (string) $item->prod->cProd[0], 'xProd' => (string) $item->prod->xProd[0], 'cEAN' => (string) $item->prod->cEAN[0]];
+        $this->itemProd[] = ['cProd' => (string) $item->prod->cProd[0], 'xProd' => (string) $item->prod->xProd[0],
+            'cEAN' => (string) $item->prod->cEAN[0], 'NCM' => (string) $item->prod->NCM[0], 'CFOP' => (string) $item->prod->CFOP[0],
+            'uCom' => (string) $item->prod->uCom[0], 'qCom' => (string) $item->prod->qCom[0], 'vProd' => (string) $item->prod->vProd[0],
+            'vUnCom' => (string) $item->prod->vUnCom[0]
+        ];
     }
 
     public function render()
