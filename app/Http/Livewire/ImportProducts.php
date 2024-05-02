@@ -37,7 +37,9 @@ class ImportProducts extends Component
         $this->itemProd[] = ['cProd' => (string) $item->prod->cProd[0], 'xProd' => (string) $item->prod->xProd[0],
             'cEAN' => (string) $item->prod->cEAN[0], 'NCM' => (string) $item->prod->NCM[0], 'CFOP' => (string) $item->prod->CFOP[0],
             'uCom' => (string) $item->prod->uCom[0], 'qCom' => (string) $item->prod->qCom[0], 'vProd' => (string) $item->prod->vProd[0],
-            'vUnCom' => (string) $item->prod->vUnCom[0]
+            'vUnCom' => (string) $item->prod->vUnCom[0], 'ICMS' => (string) $item->imposto->ICMS->ICMS10->pICMS,
+            'IPI' => (string) $item->imposto->IPI->IPITrib->pIPI, 'PIS' => (string) $item->imposto->PIS->PISNT->CST,
+            'COFINS' => (string) $item->imposto->COFINS->COFINSNT->CST
         ];
     }
 

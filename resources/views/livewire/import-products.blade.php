@@ -5,7 +5,6 @@
             <div class="card-body">
                 <header>
                     <div class="text-center">
-                        {{-- @dd($ide) --}}
                         <h4>{{ $emit['xFant'] }}</h4>
                     </div>
                     <div class="row g-2 p-2">
@@ -25,7 +24,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="dhEmi"
-                                        placeholder="Data de emissão" value="{{ $ide['dhEmi'] }}" required>
+                                        placeholder="Data de emissão" value="{{ date('d/m/Y H:i:s', strtotime($ide['dhEmi'])) }}" required>
                                     <label for="dhEmi">Data Emissão</label>
                                     <div class="invalid-feedback">
                                         Informe uma data válida.
@@ -37,7 +36,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="dhSaiEnt"
-                                        placeholder="Data de saída/entrada" value="{{ $ide['dhSaiEnt'] }}" required>
+                                        placeholder="Data de saída/entrada" value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'])) }}" required>
                                     <label for="dhSaiEnt">Data Saída/Entrada</label>
                                     <div class="invalid-feedback">
                                         Informe uma data válida.
@@ -351,14 +350,13 @@
                                             <div class="row g-2 p-2">
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
-                                                        <span class="input-group-text bg-secondary">R$</span>
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="vUnCom"
-                                                                value="{{ $item[0]['vUnCom'] }}"
-                                                                placeholder="Valor unitário" required>
-                                                            <label for="vUnCom">Valor Unitário</label>
+                                                            <input type="number" class="form-control" id="icms"
+                                                                value="{{ $item[0]['ICMS'] }}"
+                                                                placeholder="ICMS" required>
+                                                            <label for="icms">ICMS</label>
                                                             <div class="invalid-feedback">
-                                                                Informe um valor unitário válido.
+                                                                Informe um ICMS válido.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -366,26 +364,12 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="qCom"
-                                                                value="{{ $item[0]['qCom'] }}"
-                                                                placeholder="Quantidade" required>
-                                                            <label for="qCom">Quantidade</label>
+                                                            <input type="number" class="form-control" id="ipi"
+                                                                value="{{ $item[0]['IPI'] }}"
+                                                                placeholder="IPI" required>
+                                                            <label for="ipi">IPI</label>
                                                             <div class="invalid-feedback">
-                                                                Informe uma quantidade válida.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md">
-                                                    <div class="input-group has-validation">
-                                                        <span class="input-group-text bg-secondary">R$</span>
-                                                        <div class="form-floating">
-                                                            <input type="number" class="form-control" id="vProd"
-                                                                value="{{ $item[0]['vProd'] }}"
-                                                                placeholder="Valor total" required>
-                                                            <label for="vProd">Valor Total</label>
-                                                            <div class="invalid-feedback">
-                                                                Informe um valor total válido.
+                                                                Informe um IPI válido.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -393,12 +377,25 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control" id="CFOP"
-                                                                value="{{ $item[0]['CFOP'] }}" placeholder="CFOP"
+                                                            <input type="number" class="form-control" id="pis"
+                                                                value="{{ $item[0]['PIS'] }}"
+                                                                placeholder="PIS" required>
+                                                            <label for="pis">PIS</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um PIS válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="cofins"
+                                                                value="{{ $item[0]['COFINS'] }}" placeholder="COFINS"
                                                                 required>
-                                                            <label for="CFOP">CFOP</label>
+                                                            <label for="cofins">COFINS</label>
                                                             <div class="invalid-feedback">
-                                                                Informe um CFOP válido.
+                                                                Informe um COFINS válido.
                                                             </div>
                                                         </div>
                                                     </div>
