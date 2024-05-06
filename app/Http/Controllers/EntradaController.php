@@ -9,6 +9,7 @@ use App\Services\ProdutosService;
 use App\Utils\FormatationUtil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class EntradaController extends Controller
@@ -45,7 +46,44 @@ class EntradaController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        try {
+            $request->validate([
+                'natOp' => 'required',
+                'dhEmi' => 'required',
+                'dhSaiEnt' => 'required',
+                'chNFe' => 'required',
+                'vNF' => 'required',
+                'fornecedor' => 'required',
+                'CNPJ' => 'required',
+                'IE' => 'required',
+                'fone' => 'required',
+                'rua' => 'required',
+                'nro' => 'required',
+                'bairro' => 'required',
+                'mun' => 'required',
+                'uf' => 'required',
+                'CEP' => 'required',
+                'prods' => 'required'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!'
+            ]);
+            DB::beginTransaction();
+            $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
+            $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
+            DB::commit();
+            return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
+        } catch (ValidationException $e) {
+            dd($e);
+            DB::rollBack();
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
+        }
     }
 
     public function importProducts (Request $request)

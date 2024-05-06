@@ -9,10 +9,10 @@ class EntradaService {
     public function createEntrada($request, $empresaId)
     {
         return Entrada::create([
-            'dataEmissao' => $request->ide->dhEmi,
-            'dataEntrada' => $request->ide->dhSaiEnt,
-            'numeroNota' => $request->ide->nNF,
-            'fornecedor' => $request->emit->xNome . ' / ' .$request->emit->CNPJ,
+            'dataEmissao' => $request->dhEmi,
+            'dataEntrada' => $request->dhSaiEnt,
+            'numeroNota' => $request->nNF,
+            'fornecedor' => $request->fornecedor . ' / ' . $request->CNPJ,
             'chave' => $request->chNFe,
             'valor' => $request->vNF,
             'empresa_id' => $empresaId

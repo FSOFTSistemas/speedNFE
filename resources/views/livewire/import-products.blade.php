@@ -7,12 +7,16 @@
                     <div class="text-center">
                         <h4>{{ $emit['xFant'] }}</h4>
                     </div>
+
+                    <input type="hidden" class="form-control" id="nNF" name="nNF"
+                    wire:model="ide.nNF" required>
+
                     <div class="row g-2 p-2">
                         <div class="col-md-7">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="natOp" name="natOp" wire:model="ide.natOp"
-                                        placeholder="Natureza da operação" required>
+                                    <input type="text" class="form-control" id="natOp" name="natOp"
+                                        wire:model="ide.natOp" placeholder="Natureza da operação" readonly required>
                                     <label for="natOp">Natureza Operação</label>
                                     <div class="invalid-feedback">
                                         Informe uma natureza válida.
@@ -24,7 +28,8 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="dhEmi" name="dhEmi"
-                                        placeholder="Data de emissão" value="{{ date('d/m/Y H:i:s', strtotime($ide['dhEmi'])) }}" required>
+                                        placeholder="Data de emissão"
+                                        value="{{ date('d/m/Y H:i:s', strtotime($ide['dhEmi'])) }}" readonly required>
                                     <label for="dhEmi">Data Emissão</label>
                                     <div class="invalid-feedback">
                                         Informe uma data válida.
@@ -36,7 +41,8 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="dhSaiEnt" name="dhSaiEnt"
-                                        placeholder="Data de saída/entrada" value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'])) }}" required>
+                                        placeholder="Data de saída/entrada"
+                                        value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'])) }}" readonly required>
                                     <label for="dhSaiEnt">Data Saída/Entrada</label>
                                     <div class="invalid-feedback">
                                         Informe uma data válida.
@@ -50,8 +56,8 @@
                         <div class="col-md-8">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="chNFe" name="chNFe" placeholder="Chave NFe"
-                                        wire:model="chNFe" required>
+                                    <input type="text" class="form-control" id="chNFe" name="chNFe"
+                                        placeholder="Chave NFe" wire:model="chNFe" readonly required>
                                     <label for="chNFe">Chave NFe</label>
                                     <div class="invalid-feedback">
                                         Informe uma chave válida.
@@ -63,8 +69,8 @@
                             <div class="input-group has-validation">
                                 <span class="input-group-text bg-secondary">R$</span>
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="vNF" name="vNF" placeholder="Valor total"
-                                        wire:model="vNF" required>
+                                    <input type="text" class="form-control" id="vNF" name="vNF"
+                                        placeholder="Valor total" wire:model="vNF" readonly required>
                                     <label for="vNF">Valor Total</label>
                                     <div class="invalid-feedback">
                                         Informe um valor válido.
@@ -78,8 +84,8 @@
                         <div class="col-md-7">
                             <div class="input-group has-validation">
                                 <div class="form-floating">
-                                    <input type="text" class="form-control" id="fornecedor" name="fornecedor" placeholder="Fornecedor"
-                                        wire:model="emit.xNome" required>
+                                    <input type="text" class="form-control" id="fornecedor" name="fornecedor"
+                                        placeholder="Fornecedor" wire:model="emit.xNome" readonly required>
                                     <label for="fornecedor">Fornecedor</label>
                                     <div class="invalid-feedback">
                                         Informe um fornecedor válido.
@@ -91,7 +97,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="CNPJ" name="CNPJ"
-                                        wire:model="emit.CNPJ" placeholder="CNPJ" required>
+                                        wire:model="emit.CNPJ" placeholder="CNPJ" readonly required>
                                     <label for="CNPJ">CNPJ</label>
                                     <div class="invalid-feedback">
                                         Informe CNPJ válido.
@@ -103,7 +109,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="IE" name="IE"
-                                        wire:model="emit.IE" placeholder="Inscrição estadual" required>
+                                        wire:model="emit.IE" placeholder="Inscrição estadual" readonly required>
                                     <label for="IE">IE</label>
                                     <div class="invalid-feedback">
                                         Informe IE válido.
@@ -118,7 +124,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="fone" name="fone"
-                                        wire:model="emit.enderEmit.fone" placeholder="Fone" required>
+                                        wire:model="emit.enderEmit.fone" placeholder="Fone" readonly required>
                                     <label for="fone">Fone</label>
                                     <div class="invalid-feedback">
                                         Informe um fone válido.
@@ -130,7 +136,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="rua" name="rua"
-                                        wire:model="emit.enderEmit.xLgr" placeholder="Rua" required>
+                                        wire:model="emit.enderEmit.xLgr" placeholder="Rua" readonly required>
                                     <label for="rua">Rua</label>
                                     <div class="invalid-feedback">
                                         Informe uma rua válida.
@@ -142,7 +148,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="nro" name="nro"
-                                        wire:model="emit.enderEmit.nro" placeholder="Nº" required>
+                                        wire:model="emit.enderEmit.nro" placeholder="Nº" readonly required>
                                     <label for="nro">Nº</label>
                                     <div class="invalid-feedback">
                                         Informe Nº válido.
@@ -157,8 +163,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="bairro" name="bairro"
-                                        wire:model="emit.enderEmit.xBairro" placeholder="Bairro"
-                                        required>
+                                        wire:model="emit.enderEmit.xBairro" placeholder="Bairro" readonly required>
                                     <label for="bairro">Bairro</label>
                                     <div class="invalid-feedback">
                                         Informe um bairro válido.
@@ -170,8 +175,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="mun" name="mun"
-                                        wire:model="emit.enderEmit.xMun" placeholder="Município"
-                                        required>
+                                        wire:model="emit.enderEmit.xMun" placeholder="Município" readonly required>
                                     <label for="mun">Município</label>
                                     <div class="invalid-feedback">
                                         Informe um município válido.
@@ -183,7 +187,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="uf" name="uf"
-                                        wire:model="emit.enderEmit.UF" placeholder="UF" required>
+                                        wire:model="emit.enderEmit.UF" placeholder="UF" readonly required>
                                     <label for="uf">UF</label>
                                     <div class="invalid-feedback">
                                         Informe UF válido.
@@ -195,7 +199,7 @@
                             <div class="input-group has-validation">
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="CEP" name="CEP"
-                                        wire:model="emit.enderEmit.CEP" placeholder="CEP" required>
+                                        wire:model="emit.enderEmit.CEP" placeholder="CEP" readonly required>
                                     <label for="CEP">CEP</label>
                                     <div class="invalid-feedback">
                                         Informe um CEP válido.
@@ -212,19 +216,18 @@
                     <div class="text-center">
                         <h4>Produtos</h4>
                     </div>
-                    <div class="accordion" id="accordion">
+                    <div class="accordion" id="accordion" wire:ignore>
                         @foreach ($prods as $index => $item)
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapse{{ $item[0]['cProd'] . $index }}"
-                                        aria-expanded="true"
-                                        aria-controls="collapse{{ $item[0]['cProd'] . $index }}">
-                                        {{ $item[0]['xProd'] }}
+                                        aria-expanded="true" aria-controls="collapse{{ $item[0]['cProd'] . $index }}">
+                                        <input class="form-control-plaintext" wire:model="prods.{{ $index }}.0.xProd" readonly>
                                     </button>
                                 </h2>
-                                <div id="collapse{{ $item[0]['cProd'] . $index }}"
-                                    class="accordion-collapse collapse" data-bs-parent="#accordion">
+                                <div id="collapse{{ $item[0]['cProd'] . $index }}" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordion">
                                     <div class="accordion-body">
                                         <fieldset class="border border-secondary p-2 rounded">
                                             <legend>Produto</legend>
@@ -232,8 +235,12 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control" id="xProd" name="xProd" wire:model="prods.{{ $index }}.0.xProd" placeholder="Produto"
-                                                                required>
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][xProd]"
+                                                                name="prods[{{ $index }}][0][xProd]"
+                                                                wire:model="prods.{{ $index }}.0.xProd"
+                                                                oninput="this.value = this.value.toUpperCase()"
+                                                                placeholder="Produto" required>
                                                             <label for="xProd">Produto</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um produto válido.
@@ -247,9 +254,11 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control" id="cEAN" name="cEAN"
-                                                                wire:model="prods.{{ $index }}.0.cEAN" placeholder="EAN"
-                                                                required>
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][cEAN]"
+                                                                name="prods[{{ $index }}][0][cEAN]"
+                                                                wire:model="prods.{{ $index }}.0.cEAN"
+                                                                placeholder="EAN" required>
                                                             <label for="cEAN">EAN</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um EAN válido.
@@ -260,9 +269,11 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control" id="uCom" name="uCom"
-                                                                wire:model="prods.{{ $index }}.0.uCom" placeholder="Unidade"
-                                                                required>
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][uCom]"
+                                                                name="prods[{{ $index }}][0][uCom]"
+                                                                wire:model="prods.{{ $index }}.0.uCom"
+                                                                placeholder="Unidade" required>
                                                             <label for="uCom">Unidade</label>
                                                             <div class="invalid-feedback">
                                                                 Informe uma unidade válida.
@@ -272,10 +283,28 @@
                                                 </div>
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
+                                                        <span class="input-group-text bg-secondary">R$</span>
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control" id="NCM" name="NCM"
-                                                                wire:model="prods.{{ $index }}.0.NCM" placeholder="NCM"
-                                                                required>
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][vVendaProd]"
+                                                                name="prods[{{ $index }}][0][vVendaProd]"
+                                                                wire:model="prods.{{ $index }}.0.vProd"
+                                                                placeholder="Valor de venda" required>
+                                                            <label for="vProd">Valor de Venda</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um valor de venda válido.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][NCM]"
+                                                                name="prods[{{ $index }}][0][NCM]"
+                                                                wire:model="prods.{{ $index }}.0.NCM"
+                                                                placeholder="NCM" required>
                                                             <label for="NCM">NCM</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um NCM válido.
@@ -290,10 +319,12 @@
                                                     <div class="input-group has-validation">
                                                         <span class="input-group-text bg-secondary">R$</span>
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="vUnCom" name="vUnCom"
-                                                                wire:model="prods.{{ $index }}.0.vUnCom"
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][vProd]"
+                                                                name="prods[{{ $index }}][0][vProd]"
+                                                                wire:model="prods.{{ $index }}.0.vProd" readonly
                                                                 placeholder="Valor unitário" required>
-                                                            <label for="vUnCom">Valor Unitário</label>
+                                                            <label for="vProd">Valor Unitário</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um valor unitário válido.
                                                             </div>
@@ -303,8 +334,10 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="qCom" id="qCom"
-                                                            wire:model="prods.{{ $index }}.0.qCom"
+                                                            <input type="number" class="form-control" readonly
+                                                                id="prods[{{ $index }}][0][qCom]"
+                                                                id="prods[{{ $index }}][0][qCom]"
+                                                                wire:model="prods.{{ $index }}.0.qCom"
                                                                 placeholder="Quantidade" required>
                                                             <label for="qCom">Quantidade</label>
                                                             <div class="invalid-feedback">
@@ -317,10 +350,12 @@
                                                     <div class="input-group has-validation">
                                                         <span class="input-group-text bg-secondary">R$</span>
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="vProd" name="vProd"
-                                                                wire:model="prods.{{ $index }}.0.vProd"
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][vTotalProd]"
+                                                                name="prods[{{ $index }}][0][vTotalProd]" readonly
+                                                                wire:model="prods.{{ $index }}.0.vTotalProd"
                                                                 placeholder="Valor total" required>
-                                                            <label for="vProd">Valor Total</label>
+                                                            <label for="vTotalProd">Valor Total</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um valor total válido.
                                                             </div>
@@ -330,9 +365,11 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control" id="CFOP" name="CFOP"
-                                                                wire:model="prods.{{ $index }}.0.CFOP" placeholder="CFOP"
-                                                                required>
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][CFOP]"
+                                                                name="prods[{{ $index }}][0][CFOP]"
+                                                                wire:model="prods.{{ $index }}.0.CFOP"
+                                                                placeholder="CFOP" required>
                                                             <label for="CFOP">CFOP</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um CFOP válido.
@@ -350,7 +387,9 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="icms" name="icms"
+                                                            <input type="text" class="form-control"
+                                                                id="prods[{{ $index }}][0][ICMS]"
+                                                                name="prods[{{ $index }}][0][ICMS]"
                                                                 wire:model="prods.{{ $index }}.0.ICMS"
                                                                 placeholder="ICMS" required>
                                                             <label for="icms">ICMS</label>
@@ -363,7 +402,9 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="ipi" name="ipi"
+                                                            <input type="number" class="form-control"
+                                                                id="prods[{{ $index }}][0][IPI]"
+                                                                name="prods[{{ $index }}][0][IPI]"
                                                                 wire:model="prods.{{ $index }}.0.IPI"
                                                                 placeholder="IPI" required>
                                                             <label for="ipi">IPI</label>
@@ -376,7 +417,9 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="pis" name="pis"
+                                                            <input type="number" class="form-control"
+                                                                id="prods[{{ $index }}][0][PIS]"
+                                                                name="prods[{{ $index }}][0][PIS]"
                                                                 wire:model="prods.{{ $index }}.0.PIS"
                                                                 placeholder="PIS" required>
                                                             <label for="pis">PIS</label>
@@ -389,9 +432,11 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <input type="number" class="form-control" id="cofins" name="cofins"
-                                                                wire:model="prods.{{ $index }}.0.COFINS" placeholder="COFINS"
-                                                                required>
+                                                            <input type="number" class="form-control"
+                                                                id="prods[{{ $index }}][0][COFINS]"
+                                                                name="prods[{{ $index }}][0][COFINS]"
+                                                                wire:model="prods.{{ $index }}.0.COFINS"
+                                                                placeholder="COFINS" required>
                                                             <label for="cofins">COFINS</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um COFINS válido.

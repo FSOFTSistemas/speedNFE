@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('entradas', function (Blueprint $table) {
             $table->id();
-            $table->date('dataEmissao');
-            $table->date('dataEntrada');
+            $table->string('dataEmissao');
+            $table->string('dataEntrada');
             $table->string('numeroNota');
             $table->string('fornecedor');
             $table->string('chave')->unique();
