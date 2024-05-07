@@ -67,6 +67,7 @@ class EntradaController extends Controller
             ], [
                 'required' => 'O campo :attribute é obrigatório!'
             ]);
+            // dd($request->all());
             DB::beginTransaction();
             $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
             $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);

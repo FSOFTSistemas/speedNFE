@@ -254,6 +254,26 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
+                                                            <select class="form-select" name="prods[{{ $index }}][0][categoria]" required>
+                                                                {{-- @dd($categorias)
+                                                                @foreach ($categorias as $categoria)
+                                                                    <option value="{{ $categoria->id }}">{{ $categoria->categoria }}</option>
+                                                                @endforeach --}}
+                                                            </select>
+                                                            <label for="">Categoria</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe uma categoria válida.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row g-2 p-2">
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
                                                             <input type="text" class="form-control"
                                                                 id="prods[{{ $index }}][0][cEAN]"
                                                                 name="prods[{{ $index }}][0][cEAN]"
@@ -283,16 +303,15 @@
                                                 </div>
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
-                                                        <span class="input-group-text bg-secondary">R$</span>
                                                         <div class="form-floating">
-                                                            <input type="text" class="form-control"
-                                                                id="prods[{{ $index }}][0][vVendaProd]"
-                                                                name="prods[{{ $index }}][0][vVendaProd]"
-                                                                wire:model="prods.{{ $index }}.0.vProd"
-                                                                placeholder="Valor de venda" required>
-                                                            <label for="vProd">Valor de Venda</label>
+                                                            <input type="number" class="form-control" readonly
+                                                                id="prods[{{ $index }}][0][qCom]"
+                                                                id="prods[{{ $index }}][0][qCom]"
+                                                                wire:model="prods.{{ $index }}.0.qCom"
+                                                                placeholder="Quantidade" required>
+                                                            <label for="qCom">Quantidade</label>
                                                             <div class="invalid-feedback">
-                                                                Informe um valor de venda válido.
+                                                                Informe uma quantidade válida.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -322,26 +341,11 @@
                                                             <input type="text" class="form-control"
                                                                 id="prods[{{ $index }}][0][vProd]"
                                                                 name="prods[{{ $index }}][0][vProd]"
-                                                                wire:model="prods.{{ $index }}.0.vProd" readonly
-                                                                placeholder="Valor unitário" required>
-                                                            <label for="vProd">Valor Unitário</label>
+                                                                wire:model="prods.{{ $index }}.0.vProd" step="0.01" readonly
+                                                                placeholder="Valor de custo" required>
+                                                            <label for="vProd">Valor de Custo</label>
                                                             <div class="invalid-feedback">
-                                                                Informe um valor unitário válido.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md">
-                                                    <div class="input-group has-validation">
-                                                        <div class="form-floating">
-                                                            <input type="number" class="form-control" readonly
-                                                                id="prods[{{ $index }}][0][qCom]"
-                                                                id="prods[{{ $index }}][0][qCom]"
-                                                                wire:model="prods.{{ $index }}.0.qCom"
-                                                                placeholder="Quantidade" required>
-                                                            <label for="qCom">Quantidade</label>
-                                                            <div class="invalid-feedback">
-                                                                Informe uma quantidade válida.
+                                                                Informe um valor de custo válido.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -351,15 +355,29 @@
                                                         <span class="input-group-text bg-secondary">R$</span>
                                                         <div class="form-floating">
                                                             <input type="text" class="form-control"
-                                                                id="prods[{{ $index }}][0][vTotalProd]"
-                                                                name="prods[{{ $index }}][0][vTotalProd]" readonly
-                                                                wire:model="prods.{{ $index }}.0.vTotalProd"
-                                                                placeholder="Valor total" required>
-                                                            <label for="vTotalProd">Valor Total</label>
+                                                                id="prods[{{ $index }}][0][vVendaProd]"
+                                                                name="prods[{{ $index }}][0][vVendaProd]"
+                                                                wire:model="prods.{{ $index }}.0.vVendaProd" step="0.01" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                                                placeholder="Valor de venda" required>
+                                                            <label for="vProd">Valor de Venda</label>
                                                             <div class="invalid-feedback">
-                                                                Informe um valor total válido.
+                                                                Informe um valor de venda válido.
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="input-group has-validation">
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control"
+                                                            wire:model="prods.{{ $index }}.0.margem" wire:input="calcValorVenda({{ $index }})" step="0.01" min="0"
+                                                            placeholder="Margem de lucro">
+                                                            <label for="margem">Margem de lucro</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe uma margem de lucro válida.
+                                                            </div>
+                                                        </div>
+                                                        <span class="input-group-text bg-secondary">%</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md">
@@ -448,6 +466,32 @@
                                         </fieldset>
                                     </div>
                                 </div>
+                                <input type="hidden" name="prods[{{ $index }}][0][tpProd]" wire:model="prods.{{ $index }}.0.tpProd" required>
+                                @if ($prods[$index][0]['tpProd'] == 1)
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpOp]" wire:model="prods.{{ $index }}.0.tpOp" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][chassi]" wire:model="prods.{{ $index }}.0.chassi" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cCor]" wire:model="prods.{{ $index }}.0.cCor" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][xCor]" wire:model="prods.{{ $index }}.0.xCor" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][pot]" wire:model="prods.{{ $index }}.0.pot" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cilin]" wire:model="prods.{{ $index }}.0.cilin" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][pesoL]" wire:model="prods.{{ $index }}.0.pesoL" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][pesoB]" wire:model="prods.{{ $index }}.0.pesoB" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][nSerie]" wire:model="prods.{{ $index }}.0.nSerie" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpComb]" wire:model="prods.{{ $index }}.0.tpComb" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][nMotor]" wire:model="prods.{{ $index }}.0.nMotor" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][CMT]" wire:model="prods.{{ $index }}.0.CMT" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][dist]" wire:model="prods.{{ $index }}.0.dist" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][anoMod]" wire:model="prods.{{ $index }}.0.anoMod" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][anoFab]" wire:model="prods.{{ $index }}.0.anoFab" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpPint]" wire:model="prods.{{ $index }}.0.tpPint" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][espVeic]" wire:model="prods.{{ $index }}.0.espVeic" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][VIN]" wire:model="prods.{{ $index }}.0.VIN" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][condVeic]" wire:model="prods.{{ $index }}.0.condVeic" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cMod]" wire:model="prods.{{ $index }}.0.cMod" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cCorDENATRAN]" wire:model="prods.{{ $index }}.0.cCorDENATRAN" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][lota]" wire:model="prods.{{ $index }}.0.lota" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpRest]" wire:model="prods.{{ $index }}.0.tpRest" required>
+                                @endif
                             </div>
                         @endforeach
                     </div>
