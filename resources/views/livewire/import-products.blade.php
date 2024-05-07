@@ -8,8 +8,7 @@
                         <h4>{{ $emit['xFant'] }}</h4>
                     </div>
 
-                    <input type="hidden" class="form-control" id="nNF" name="nNF"
-                    wire:model="ide.nNF" required>
+                    <input type="hidden" class="form-control" id="nNF" name="nNF" wire:model="ide.nNF" required>
 
                     <div class="row g-2 p-2">
                         <div class="col-md-7">
@@ -42,7 +41,8 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="dhSaiEnt" name="dhSaiEnt"
                                         placeholder="Data de saída/entrada"
-                                        value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'])) }}" readonly required>
+                                        value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'])) }}" readonly
+                                        required>
                                     <label for="dhSaiEnt">Data Saída/Entrada</label>
                                     <div class="invalid-feedback">
                                         Informe uma data válida.
@@ -223,7 +223,8 @@
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapse{{ $item[0]['cProd'] . $index }}"
                                         aria-expanded="true" aria-controls="collapse{{ $item[0]['cProd'] . $index }}">
-                                        <input class="form-control-plaintext" wire:model="prods.{{ $index }}.0.xProd" readonly>
+                                        <input class="form-control-plaintext"
+                                            wire:model="prods.{{ $index }}.0.xProd" readonly>
                                     </button>
                                 </h2>
                                 <div id="collapse{{ $item[0]['cProd'] . $index }}" class="accordion-collapse collapse"
@@ -254,11 +255,9 @@
                                                 <div class="col-md">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <select class="form-select" name="prods[{{ $index }}][0][categoria]" required>
-                                                                {{-- @dd($categorias)
-                                                                @foreach ($categorias as $categoria)
-                                                                    <option value="{{ $categoria->id }}">{{ $categoria->categoria }}</option>
-                                                                @endforeach --}}
+                                                            <select class="form-select" id="categorias"
+                                                                name="prods[{{ $index }}][0][categoria]"
+                                                                required>
                                                             </select>
                                                             <label for="">Categoria</label>
                                                             <div class="invalid-feedback">
@@ -341,8 +340,9 @@
                                                             <input type="text" class="form-control"
                                                                 id="prods[{{ $index }}][0][vProd]"
                                                                 name="prods[{{ $index }}][0][vProd]"
-                                                                wire:model="prods.{{ $index }}.0.vProd" step="0.01" readonly
-                                                                placeholder="Valor de custo" required>
+                                                                wire:model="prods.{{ $index }}.0.vProd"
+                                                                step="0.01" readonly placeholder="Valor de custo"
+                                                                required>
                                                             <label for="vProd">Valor de Custo</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um valor de custo válido.
@@ -357,7 +357,9 @@
                                                             <input type="text" class="form-control"
                                                                 id="prods[{{ $index }}][0][vVendaProd]"
                                                                 name="prods[{{ $index }}][0][vVendaProd]"
-                                                                wire:model="prods.{{ $index }}.0.vVendaProd" step="0.01" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                                                wire:model="prods.{{ $index }}.0.vVendaProd"
+                                                                step="0.01"
+                                                                oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                                                                 placeholder="Valor de venda" required>
                                                             <label for="vProd">Valor de Venda</label>
                                                             <div class="invalid-feedback">
@@ -370,8 +372,10 @@
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
                                                             <input type="number" class="form-control"
-                                                            wire:model="prods.{{ $index }}.0.margem" wire:input="calcValorVenda({{ $index }})" step="0.01" min="0"
-                                                            placeholder="Margem de lucro">
+                                                                wire:model="prods.{{ $index }}.0.margem"
+                                                                wire:input="calcValorVenda({{ $index }})"
+                                                                step="0.01" min="0"
+                                                                placeholder="Margem de lucro">
                                                             <label for="margem">Margem de lucro</label>
                                                             <div class="invalid-feedback">
                                                                 Informe uma margem de lucro válida.
@@ -466,31 +470,55 @@
                                         </fieldset>
                                     </div>
                                 </div>
-                                <input type="hidden" name="prods[{{ $index }}][0][tpProd]" wire:model="prods.{{ $index }}.0.tpProd" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][tpProd]"
+                                    wire:model="prods.{{ $index }}.0.tpProd" required>
                                 @if ($prods[$index][0]['tpProd'] == 1)
-                                    <input type="hidden" name="prods[{{ $index }}][0][tpOp]" wire:model="prods.{{ $index }}.0.tpOp" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][chassi]" wire:model="prods.{{ $index }}.0.chassi" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][cCor]" wire:model="prods.{{ $index }}.0.cCor" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][xCor]" wire:model="prods.{{ $index }}.0.xCor" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][pot]" wire:model="prods.{{ $index }}.0.pot" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][cilin]" wire:model="prods.{{ $index }}.0.cilin" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][pesoL]" wire:model="prods.{{ $index }}.0.pesoL" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][pesoB]" wire:model="prods.{{ $index }}.0.pesoB" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][nSerie]" wire:model="prods.{{ $index }}.0.nSerie" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][tpComb]" wire:model="prods.{{ $index }}.0.tpComb" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][nMotor]" wire:model="prods.{{ $index }}.0.nMotor" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][CMT]" wire:model="prods.{{ $index }}.0.CMT" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][dist]" wire:model="prods.{{ $index }}.0.dist" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][anoMod]" wire:model="prods.{{ $index }}.0.anoMod" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][anoFab]" wire:model="prods.{{ $index }}.0.anoFab" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][tpPint]" wire:model="prods.{{ $index }}.0.tpPint" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][espVeic]" wire:model="prods.{{ $index }}.0.espVeic" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][VIN]" wire:model="prods.{{ $index }}.0.VIN" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][condVeic]" wire:model="prods.{{ $index }}.0.condVeic" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][cMod]" wire:model="prods.{{ $index }}.0.cMod" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][cCorDENATRAN]" wire:model="prods.{{ $index }}.0.cCorDENATRAN" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][lota]" wire:model="prods.{{ $index }}.0.lota" required>
-                                    <input type="hidden" name="prods[{{ $index }}][0][tpRest]" wire:model="prods.{{ $index }}.0.tpRest" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpOp]"
+                                        wire:model="prods.{{ $index }}.0.tpOp" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][chassi]"
+                                        wire:model="prods.{{ $index }}.0.chassi" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cCor]"
+                                        wire:model="prods.{{ $index }}.0.cCor" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][xCor]"
+                                        wire:model="prods.{{ $index }}.0.xCor" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][pot]"
+                                        wire:model="prods.{{ $index }}.0.pot" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cilin]"
+                                        wire:model="prods.{{ $index }}.0.cilin" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][pesoL]"
+                                        wire:model="prods.{{ $index }}.0.pesoL" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][pesoB]"
+                                        wire:model="prods.{{ $index }}.0.pesoB" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][nSerie]"
+                                        wire:model="prods.{{ $index }}.0.nSerie" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpComb]"
+                                        wire:model="prods.{{ $index }}.0.tpComb" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][nMotor]"
+                                        wire:model="prods.{{ $index }}.0.nMotor" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][CMT]"
+                                        wire:model="prods.{{ $index }}.0.CMT" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][dist]"
+                                        wire:model="prods.{{ $index }}.0.dist" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][anoMod]"
+                                        wire:model="prods.{{ $index }}.0.anoMod" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][anoFab]"
+                                        wire:model="prods.{{ $index }}.0.anoFab" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpPint]"
+                                        wire:model="prods.{{ $index }}.0.tpPint" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][espVeic]"
+                                        wire:model="prods.{{ $index }}.0.espVeic" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][VIN]"
+                                        wire:model="prods.{{ $index }}.0.VIN" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][condVeic]"
+                                        wire:model="prods.{{ $index }}.0.condVeic" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cMod]"
+                                        wire:model="prods.{{ $index }}.0.cMod" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][cCorDENATRAN]"
+                                        wire:model="prods.{{ $index }}.0.cCorDENATRAN" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][lota]"
+                                        wire:model="prods.{{ $index }}.0.lota" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpRest]"
+                                        wire:model="prods.{{ $index }}.0.tpRest" required>
                                 @endif
                             </div>
                         @endforeach
@@ -535,3 +563,23 @@
         })()
     </script>
 @endsection
+
+<script>
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('setSelectData', function(categorias) {
+            var select = document.getElementById('categorias');
+            select.innerHTML = '';
+            var option1 = document.createElement('option');
+            option1.value = '';
+            option1.text = 'Selecionar';
+            select.add(option1);
+
+            categorias.forEach(function(categoria) {
+                var option2 = document.createElement('option');
+                option2.value = categoria.id;
+                option2.text = categoria.nome;
+                select.add(option2);
+            });
+        });
+    });
+</script>
