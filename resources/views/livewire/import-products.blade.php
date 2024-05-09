@@ -250,14 +250,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="row g-2 p-2">
-                                                <div class="col-md">
+                                                <div class="col-md-6">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
                                                             <select class="form-select" id="categorias"
                                                                 name="prods[{{ $index }}][0][categoria]"
                                                                 required>
+                                                                <option value="">Selecione um item</option>
+                                                                @foreach ($categorias as $cat)
+                                                                    <option value="{{ $cat->id }}">
+                                                                        {{ $cat->descricao }}</option>
+                                                                @endforeach
                                                             </select>
                                                             <label for="">Categoria</label>
                                                             <div class="invalid-feedback">
@@ -537,6 +541,12 @@
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .invalid-accordion {
+            border: 1px solid #dc3545;
+            border-radius: 0.25rem;
+        }
+    </style>
 @endsection
 
 @section('js')
@@ -555,6 +565,8 @@
                     if (!form.checkValidity()) {
                         event.preventDefault()
                         event.stopPropagation()
+                        const accordion = document.getElementById('accordion');
+                        accordion.classList.add('invalid-accordion');
                     }
 
                     form.classList.add('was-validated')
@@ -563,23 +575,3 @@
         })()
     </script>
 @endsection
-
-<script>
-    document.addEventListener('livewire:load', function() {
-        Livewire.on('setSelectData', function(categorias) {
-            var select = document.getElementById('categorias');
-            select.innerHTML = '';
-            var option1 = document.createElement('option');
-            option1.value = '';
-            option1.text = 'Selecionar';
-            select.add(option1);
-
-            categorias.forEach(function(categoria) {
-                var option2 = document.createElement('option');
-                option2.value = categoria.id;
-                option2.text = categoria.nome;
-                select.add(option2);
-            });
-        });
-    });
-</script>

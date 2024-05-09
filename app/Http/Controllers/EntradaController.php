@@ -51,8 +51,8 @@ class EntradaController extends Controller
                 'natOp' => 'required',
                 'dhEmi' => 'required',
                 'dhSaiEnt' => 'required',
-                'chNFe' => 'required',
-                'vNF' => 'required',
+                'chNFe' => 'required|unique:entradas,chave',
+                'vNF' => 'required|numeric',
                 'fornecedor' => 'required',
                 'CNPJ' => 'required',
                 'IE' => 'required',
@@ -63,25 +63,25 @@ class EntradaController extends Controller
                 'mun' => 'required',
                 'uf' => 'required',
                 'CEP' => 'required',
-                'prods' => 'required'
+                'prods' => 'required|array'
             ], [
-                'required' => 'O campo :attribute é obrigatório!'
+                'required' => 'O campo :attribute é obrigatório!',
+                'unique' => 'Nota ('. $request->chNFe .') já foi importada anteriormente!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
+                'array' => 'O campo :attribute deve ser uma lista de produtos!'
             ]);
-            // dd($request->all());
             DB::beginTransaction();
             $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
             $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
             DB::commit();
             return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
         } catch (ValidationException $e) {
-            dd($e);
             DB::rollBack();
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
-            return back()->with('warning', implode(PHP_EOL, $errors));
+            return redirect()->route('entradas.index')->with('warning', implode(PHP_EOL, $errors));
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
         }

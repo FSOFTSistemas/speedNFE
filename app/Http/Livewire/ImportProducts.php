@@ -14,6 +14,7 @@ class ImportProducts extends Component
     public $chNFe = '';
     public $prods = [];
     public $itemProd = [];
+    public $categorias = [];
 
     public function mount($data)
     {
@@ -22,8 +23,7 @@ class ImportProducts extends Component
         $this->emit = (array) $data['nota']['emit'];
         $this->vNF = (string) $data['nota']['vNF'][0];
         $this->chNFe = (string) $data['nota']['chNFe'][0];
-        $categorias = $categoriaService->todasCategoriasEmpresa(auth()->user()->empresa_id);
-        $this->emit('setSelectData', $categorias);
+        $this->categorias = $categoriaService->todasCategoriasEmpresa(auth()->user()->empresa_id);
         $this->createProductsList($data['prods']);
     }
 
