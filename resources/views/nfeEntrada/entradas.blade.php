@@ -91,11 +91,11 @@
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
-    <script>
-        function importXML(input) {
-            if (input.checked) {
-                return document.querySelector('#nota').type = 'file'
-            }
-            return document.querySelector('#nota').type = 'text'
+<script>
+    function importXML(input) {
+        if (input.checked) {
+            return document.querySelector('#nota').type = 'file'
         }
-    </script>
+        return document.querySelector('#nota').type = 'text'
+    }
+</script>

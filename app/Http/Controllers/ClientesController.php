@@ -77,6 +77,9 @@ class ClientesController extends Controller
                 'uf' => 'nullable',
                 'cep' => 'nullable',
                 'ibge' => 'nullable',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo ":attribute" deve conter no máximo :max caracteres!'
             ]);
             $id_empresa = Auth::user()->id_empresa;
             if ($request->has('empresa')) {
@@ -114,7 +117,7 @@ class ClientesController extends Controller
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
-            return back()->with('warning', implode(PHP_EOL, $errors));
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
