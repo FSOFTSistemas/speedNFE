@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AlreadyExistException;
 use App\Services\EmpresasService;
 use App\Services\EntradaService;
 use App\Services\ImportProductsService;
@@ -28,7 +29,7 @@ class EntradaController extends Controller
     public function index()
     {
         try {
-            $entradas = [];
+            $entradas = $this->entradaService->getEntradas(Auth::user()->empresa_id);
             return view('nfeEntrada.entradas', ['entradas' => $entradas]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
@@ -83,7 +84,7 @@ class EntradaController extends Controller
             return redirect()->route('entradas.index')->with('warning', implode(PHP_EOL, $errors));
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
+            return redirect()->route('entradas.index')->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
         }
     }
 
@@ -113,12 +114,15 @@ class EntradaController extends Controller
                 ], $emitente);
                 $response = $importProductsServices->importProducts($request->nota);
             }
+            $this->entradaService->entradaExist((string) $response['nota']['chNFe']);
             return view('nfeEntrada.create', ['data' => $response]);
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
             return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (AlreadyExistException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (\Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

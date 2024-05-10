@@ -84,7 +84,7 @@ class ProdutosService
     public function insertProductsList($request, $empresaId)
     {
         foreach ($request as $prod) {
-            if (!Produto::whereEmpresaId($empresaId)->whereCodigo($prod[0]['cEAN'])->orWhereProduto($prod[0]['xProd'])->orWhereChassiVeic($prod[0]['chassi'])->exist()) {
+            if (!Produto::whereEmpresaId($empresaId)->whereCodigo($prod[0]['cEAN'])->orWhere('produto', $prod[0]['xProd'])->orWhere('chassiVeic', $prod[0]['chassi'])->exists()) {
                 Produto::create([
                     'categoria_id' => 1,
                     'empresa_id' => $empresaId,

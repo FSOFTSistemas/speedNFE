@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\AlreadyExistException;
 use App\Models\Entrada;
 
 class EntradaService {
@@ -17,6 +18,19 @@ class EntradaService {
             'valor' => $request->vNF,
             'empresa_id' => $empresaId
         ]);
+    }
+
+    public function getEntradas($empresaId)
+    {
+        return Entrada::whereEmpresaId($empresaId)->get();
+    }
+
+    public function entradaExist($chNFe)
+    {
+        if (Entrada::whereChave($chNFe)->exists()) {
+            throw new AlreadyExistException("Nota (" . $chNFe . ") já importada anteriormente!");
+        }
+        return false;
     }
 
 }

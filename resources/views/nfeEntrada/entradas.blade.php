@@ -30,11 +30,10 @@
                         <th>Fornecedor</th>
                         <th>Chave</th>
                         <th>Valor</th>
-                        <th>Empresa</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody style="font-size: 80%">
                     @foreach ($entradas as $etd)
                         <tr>
                             <td>{{ date('d/m/Y', strtotime($etd->dataEmissao)) }}</td>
@@ -43,7 +42,6 @@
                             <td>{{ $etd->fornecedor }}</td>
                             <td>{{ $etd->chave }}</td>
                             <td>R$ {{ number_format($etd->valor, 2) }}</td>
-                            <td>{{ $etd->empresa_id }}</td>
                         </tr>
                     @endforeach
                 </tbody>
