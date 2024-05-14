@@ -39,12 +39,12 @@ return new class extends Migration
             $table->timestamps();
         });
         Empresa::create([
-            'razao' => 'Fsoft sistemas',
-            'fantasia' => 'Fsoft sistemas',
-            'cpf_cnpj' => '42879649000174',
+            'razao' => 'JOSE LUCIANO A. DE CARVALHO',
+            'fantasia' => 'FSOFT SISTEMAS',
+            'cpf_cnpj' => '42.879.649/0001-74',
             'endereco_id' => 1,
-            'rg_ie' => '00000000',
-            'celular' => '87981445566',
+            'rg_ie' => '0977173-55',
+            'celular' => '(87) 98144-5566',
             'ultimaNFe' => 1,
             'ultimaMDFe' => 1,
             'serie' => 1,

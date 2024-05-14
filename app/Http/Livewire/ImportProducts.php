@@ -18,7 +18,6 @@ class ImportProducts extends Component
 
     public function mount($data)
     {
-        // dd($data);
         $categoriaService = new CategoriasService();
         $this->ide = (array) $data['nota']['ide'];
         $this->emit = (array) $data['nota']['emit'];
@@ -39,15 +38,29 @@ class ImportProducts extends Component
 
     protected function createProductItem($item)
     {
+        $sscfop = substr($item->prod->CFOP[0], 0, 2);
+        $cfopInterno = '5102';
+        $cfopExterno = '6102';
+        if ($sscfop == '51' || $sscfop == '61') {
+            $cst = '000';
+            $csosn = '102';
+        } else if ($sscfop == '54' || $sscfop == '64') {
+            $cfopInterno = '5405';
+            $cfopExterno = '6405';
+            $cst = '060';
+            $csosn = '500';
+        } else {
+            $cst = '401';
+            $csosn = '400';
+        }
         if (isset($item->prod->veicProd)) {
+            $st = isset($item->imposto->ICMS->ICMSSN102->vICMSST[0]) ? number_format((double) $item->imposto->ICMS->ICMSSN102->vICMSST[0], 2) : 0;
             $this->itemProd[] = ['cProd' => (string) $item->prod->cProd[0], 'xProd' => (string) $item->prod->xProd[0],
                 'cEAN' => (string) $item->prod->cEAN[0], 'NCM' => (string) $item->prod->NCM[0], 'CFOP' => (string) $item->prod->CFOP[0],
-                'uCom' => (string) $item->prod->uCom[0], 'qCom' => (int) $item->prod->qCom[0], 'vVendaProd' => (double) $item->prod->vUnCom[0],
-                'vProd' => (double) $item->prod->vUnCom[0], 'ICMS' => isset($item->imposto->ICMS->ICMSSN102->CSON) ? (double) $item->imposto->ICMS->ICMSSN102->CSON : 0,
-                'IPI' => isset($item->imposto->IPI->IPINT->CST) ? (string) $item->imposto->IPI->IPINT->CST : '00', 'PIS' => isset($item->imposto->PIS->PISOutr->vPIS) ? (string) $item->imposto->PIS->PISOutr->vPIS : '00',
-                'COFINS' => isset($item->imposto->COFINS->COFINSOutr->vCOFINS) ? (string) $item->imposto->COFINS->COFINSOutr->vCOFINS : '00',
-                'CST' => isset($item->imposto->IPI->IPITrib->CST) ? (string) $item->imposto->IPI->IPITrib->CST : '00',
-                'CSOSN' =>  isset($item->imposto->ICMS->ICMSSN102->CSOSN) ? (string) $item->imposto->ICMS->ICMSSN102->CSOSN : '102', 'margem' => 0, 'tpProd' => 1,
+                'CFOP_INTERNO' => $cfopInterno, 'CFOP_EXTERNO' => $cfopExterno,
+                'uCom' => (string) $item->prod->uCom[0], 'qCom' => (int) $item->prod->qCom[0], 'vVendaProd' => (double) $item->prod->vUnCom[0] + $st,
+                'vProd' => (double) $item->prod->vUnCom[0], 'ICMS' => isset($item->imposto->ICMS->ICMSSN102->pICMS) ? (double) $item->imposto->ICMS->ICMSSN102->pICMS : 0,
+                'IPI' => '00', 'PIS' => '00', 'COFINS' => '00', 'margem' => 0, 'tpProd' => 1, 'CST' => $cst, 'CSOSN' =>  $csosn, 'ST' => $st,
                 'CST_PIS' => isset($item->imposto->PIS->PISOutr->CST) ? (string) $item->imposto->PIS->PISOutr->CST : '99',
                 'CST_COFINS' => isset($item->imposto->COFINS->COFINSOutr->CST) ? (string) $item->imposto->COFINS->COFINSOutr->CST : '99',
                 'tpOp' => (int) $item->prod->veicProd->tpOp[0], 'chassi' => (string) $item->prod->veicProd->chassi[0],
@@ -61,27 +74,26 @@ class ImportProducts extends Component
                 'espVeic' => (string) $item->prod->veicProd->espVeic[0], 'VIN' => (string) $item->prod->veicProd->VIN[0],
                 'condVeic' => (string) $item->prod->veicProd->condVeic[0], 'cMod' => (string) $item->prod->veicProd->cMod[0],
                 'cCorDENATRAN' => (string) $item->prod->veicProd->cCorDENATRAN, 'lota' => (string) $item->prod->veicProd->lota[0],
-                'tpRest' => (string) $item->prod->veicProd->tpRest[0]
+                'tpRest' => (string) $item->prod->veicProd->tpRest[0], 'tpVeic' => (string) $item->prod->veicProd->tpVeic[0]
             ];
         } else {
+            $st = isset($item->imposto->ICMS->ICMS10->vICMSST[0]) ? number_format((double) $item->imposto->ICMS->ICMS10->vICMSST[0], 2) : 0;
             $this->itemProd[] = ['cProd' => (string) $item->prod->cProd[0], 'xProd' => (string) $item->prod->xProd[0],
                 'cEAN' => (string) $item->prod->cEAN[0], 'NCM' => (string) $item->prod->NCM[0], 'CFOP' => (string) $item->prod->CFOP[0],
-                'uCom' => (string) $item->prod->uCom[0], 'qCom' => (int) $item->prod->qCom[0], 'vVendaProd' => (double) $item->prod->vUnCom[0],
+                'CFOP_INTERNO' => $cfopInterno, 'CFOP_EXTERNO' => $cfopExterno,
+                'uCom' => (string) $item->prod->uCom[0], 'qCom' => (int) $item->prod->qCom[0], 'vVendaProd' => (double) $item->prod->vUnCom[0] + $st,
                 'vProd' => (double) $item->prod->vUnCom[0], 'ICMS' => isset($item->imposto->ICMS->ICMS10->pICMS) ? (double) $item->imposto->ICMS->ICMS10->pICMS : 0,
-                'IPI' => isset($item->imposto->IPI->IPITrib->pIPI) ? (string) $item->imposto->IPI->IPITrib->pIPI : '00', 'PIS' => isset($item->imposto->PIS->PISNT->CST) ? (string) $item->imposto->PIS->PISNT->CST : '00',
-                'COFINS' => isset($item->imposto->COFINS->COFINSNT->CST) ? (string) $item->imposto->COFINS->COFINSNT->CST : '00', 'margem' => 0, 'tpProd' => 0,
-                'CST' => isset($item->imposto->ICMS->ICMS10->CST) ? (string) $item->imposto->ICMS->ICMS10->CST : '00',
-                'CSOSN' =>  isset($item->imposto->COFINS->COFINSNT->CST) ? (string) $item->imposto->COFINS->COFINSNT->CST : '00',
-                'CST_PIS' => isset($item->imposto->PIS->PISOutr->CST) ? (string) $item->imposto->PIS->PISOutr->CST : '99',
-                'CST_COFINS' => isset($item->imposto->COFINS->COFINSOutr->CST) ? (string) $item->imposto->COFINS->COFINSOutr->CST : '99'
+                'IPI' => '00', 'PIS' => '00', 'COFINS' => '00', 'margem' => 0, 'tpProd' => 0, 'CST' => $cst, 'CSOSN' => $csosn, 'ST' => $st,
+                'CST_PIS' => isset($item->imposto->PIS->PISNT->CST) ? (string) $item->imposto->PIS->PISNT->CST : '99',
+                'CST_COFINS' => isset($item->imposto->COFINS->COFINSNT->CST) ? (string) $item->imposto->COFINS->COFINSNT->CST : '99'
             ];
         }
     }
 
     public function calcValorVenda($index)
     {
-        if ($this->prods[$index][0]['margem']) {
-            $this->prods[$index][0]['vVendaProd'] = number_format(($this->prods[$index][0]['margem'] / 100 + 1) * $this->prods[$index][0]['vProd'], 2, '.');
+        if ($this->prods[$index][0]['margem'] != null) {
+            $this->prods[$index][0]['vVendaProd'] = number_format(($this->prods[$index][0]['margem'] / 100 + 1) * ($this->prods[$index][0]['vProd'] + $this->prods[$index][0]['ST']), 2, '.');
         }
     }
 

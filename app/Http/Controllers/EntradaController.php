@@ -83,6 +83,7 @@ class EntradaController extends Controller
             }
             return redirect()->route('entradas.index')->with('warning', implode(PHP_EOL, $errors));
         } catch (\Exception $e) {
+            dd($e);
             DB::rollBack();
             return redirect()->route('entradas.index')->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
         }

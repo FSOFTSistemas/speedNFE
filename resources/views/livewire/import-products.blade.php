@@ -254,7 +254,9 @@
                                                 <div class="col-md-6">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <select class="form-select" name="prods[{{ $index }}][0][categoria]" required>
+                                                            <select class="form-select"
+                                                                name="prods[{{ $index }}][0][categoria]"
+                                                                required>
                                                                 <option value="">Selecione um item</option>
                                                                 @foreach (json_decode($categorias) as $cat)
                                                                     <option value="{{ $cat->id }}">
@@ -264,6 +266,21 @@
                                                             <label for="">Categoria</label>
                                                             <div class="invalid-feedback">
                                                                 Informe uma categoria válida.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="input-group has-validation">
+                                                        <span class="input-group-text bg-secondary">R$</span>
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control"
+                                                                wire:model="prods.{{ $index }}.0.ST"
+                                                                step="0.01" placeholder="ST" readonly>
+                                                            <label for="">CST</label>
+                                                            <div class="invalid-feedback">
+                                                                Informe um cst válido.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -324,7 +341,7 @@
                                                                 id="prods[{{ $index }}][0][NCM]"
                                                                 name="prods[{{ $index }}][0][NCM]"
                                                                 wire:model="prods.{{ $index }}.0.NCM"
-                                                                placeholder="NCM" required>
+                                                                placeholder="NCM" readonly>
                                                             <label for="NCM">NCM</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um NCM válido.
@@ -393,77 +410,10 @@
                                                                 id="prods[{{ $index }}][0][CFOP]"
                                                                 name="prods[{{ $index }}][0][CFOP]"
                                                                 wire:model="prods.{{ $index }}.0.CFOP"
-                                                                placeholder="CFOP" required>
+                                                                placeholder="CFOP" disabled>
                                                             <label for="CFOP">CFOP</label>
                                                             <div class="invalid-feedback">
                                                                 Informe um CFOP válido.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </fieldset>
-
-                                        <fieldset class="border border-secondary mt-3 p-2 rounded">
-                                            <legend>Tributos</legend>
-
-                                            <div class="row g-2 p-2">
-                                                <div class="col-md">
-                                                    <div class="input-group has-validation">
-                                                        <div class="form-floating">
-                                                            <input type="text" class="form-control"
-                                                                id="prods[{{ $index }}][0][ICMS]"
-                                                                name="prods[{{ $index }}][0][ICMS]"
-                                                                wire:model="prods.{{ $index }}.0.ICMS"
-                                                                placeholder="ICMS" required>
-                                                            <label for="icms">ICMS</label>
-                                                            <div class="invalid-feedback">
-                                                                Informe um ICMS válido.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md">
-                                                    <div class="input-group has-validation">
-                                                        <div class="form-floating">
-                                                            <input type="number" class="form-control"
-                                                                id="prods[{{ $index }}][0][IPI]"
-                                                                name="prods[{{ $index }}][0][IPI]"
-                                                                wire:model="prods.{{ $index }}.0.IPI"
-                                                                placeholder="IPI" required>
-                                                            <label for="ipi">IPI</label>
-                                                            <div class="invalid-feedback">
-                                                                Informe um IPI válido.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md">
-                                                    <div class="input-group has-validation">
-                                                        <div class="form-floating">
-                                                            <input type="number" class="form-control"
-                                                                id="prods[{{ $index }}][0][PIS]"
-                                                                name="prods[{{ $index }}][0][PIS]"
-                                                                wire:model="prods.{{ $index }}.0.PIS"
-                                                                placeholder="PIS" required>
-                                                            <label for="pis">PIS</label>
-                                                            <div class="invalid-feedback">
-                                                                Informe um PIS válido.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md">
-                                                    <div class="input-group has-validation">
-                                                        <div class="form-floating">
-                                                            <input type="number" class="form-control"
-                                                                id="prods[{{ $index }}][0][COFINS]"
-                                                                name="prods[{{ $index }}][0][COFINS]"
-                                                                wire:model="prods.{{ $index }}.0.COFINS"
-                                                                placeholder="COFINS" required>
-                                                            <label for="cofins">COFINS</label>
-                                                            <div class="invalid-feedback">
-                                                                Informe um COFINS válido.
                                                             </div>
                                                         </div>
                                                     </div>
@@ -474,6 +424,26 @@
                                 </div>
                                 <input type="hidden" name="prods[{{ $index }}][0][tpProd]"
                                     wire:model="prods.{{ $index }}.0.tpProd" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][ICMS]"
+                                    wire:model="prods.{{ $index }}.0.ICMS" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][CFOP_INTERNO]"
+                                    wire:model="prods.{{ $index }}.0.CFOP_INTERNO" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][CFOP_EXTERNO]"
+                                    wire:model="prods.{{ $index }}.0.CFOP_EXTERNO" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][PIS]"
+                                    wire:model="prods.{{ $index }}.0.PIS" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][IPI]"
+                                    wire:model="prods.{{ $index }}.0.IPI" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][COFINS]"
+                                    wire:model="prods.{{ $index }}.0.COFINS" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][CST]"
+                                    wire:model="prods.{{ $index }}.0.CST" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][CSOSN]"
+                                    wire:model="prods.{{ $index }}.0.CSOSN" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][CST_PIS]"
+                                    wire:model="prods.{{ $index }}.0.CST_PIS" required>
+                                <input type="hidden" name="prods[{{ $index }}][0][CST_COFINS]"
+                                    wire:model="prods.{{ $index }}.0.CST_COFINS" required>
                                 @if ($prods[$index][0]['tpProd'] == 1)
                                     <input type="hidden" name="prods[{{ $index }}][0][tpOp]"
                                         wire:model="prods.{{ $index }}.0.tpOp" required>
@@ -521,6 +491,8 @@
                                         wire:model="prods.{{ $index }}.0.lota" required>
                                     <input type="hidden" name="prods[{{ $index }}][0][tpRest]"
                                         wire:model="prods.{{ $index }}.0.tpRest" required>
+                                    <input type="hidden" name="prods[{{ $index }}][0][tpVeic]"
+                                        wire:model="prods.{{ $index }}.0.tpVeic" required>
                                 @endif
                             </div>
                         @endforeach
