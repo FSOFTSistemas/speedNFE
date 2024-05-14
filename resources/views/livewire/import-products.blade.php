@@ -254,11 +254,9 @@
                                                 <div class="col-md-6">
                                                     <div class="input-group has-validation">
                                                         <div class="form-floating">
-                                                            <select class="form-select" id="categorias"
-                                                                name="prods[{{ $index }}][0][categoria]"
-                                                                required>
+                                                            <select class="form-select" name="prods[{{ $index }}][0][categoria]" required>
                                                                 <option value="">Selecione um item</option>
-                                                                @foreach ($categorias as $cat)
+                                                                @foreach (json_decode($categorias) as $cat)
                                                                     <option value="{{ $cat->id }}">
                                                                         {{ $cat->descricao }}</option>
                                                                 @endforeach
