@@ -83,9 +83,10 @@ class ProdutosService
 
     public function insertProductsList($request, $empresaId)
     {
+        $productsList = [];
         foreach ($request as $prod) {
             if (!Produto::whereEmpresaId($empresaId)->where('chassiVeic', $prod[0]['chassi'] ?? -1)->exists()) {
-                Produto::create([
+                $produtoId = Produto::create([
                     'categoria_id' => $prod[0]['categoria'],
                     'empresa_id' => $empresaId,
                     'codigo' => $prod[0]['cEAN'],
@@ -130,9 +131,11 @@ class ProdutosService
                     'restriVeic' => $prod[0]['tpRest'] ?? null,
                     'cargaVeic' => $prod[0]['CMT'] ?? null,
                     'operVeic' => $prod[0]['tpOp'] ?? null
-                ]);
+                ])->id;
+                array_push($productsList, ['produtoId' => $produtoId, 'qtde' => $prod[0]['qCom']]);
             }
         }
+        return $productsList;
     }
 
     public function store($categoria, $empresa, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,

@@ -21,8 +21,35 @@
 @section('content')
     <main>
         <section>
-            @component('components.dataTable')
-                <thead>
+            @component('components.dataTable', [
+                'responsive' => [
+                    [
+                        'responsivePriority' => 1,
+                        'targets' => 2,
+                    ],
+                    [
+                        'responsivePriority' => 2,
+                        'targets' => 0,
+                    ],
+                    [
+                        'responsivePriority' => 3,
+                        'targets' => 1,
+                    ],
+                    [
+                        'responsivePriority' => 4,
+                        'targets' => -2,
+                    ],
+                    [
+                        'responsivePriority' => 5,
+                        'targets' => 3,
+                    ],
+                    [
+                        'responsivePriority' => 6,
+                        'targets' => -1,
+                    ]
+                ]
+            ])
+                <thead class="table-primary">
                     <tr>
                         <th>Emissão</th>
                         <th>Entrada</th>
@@ -30,6 +57,7 @@
                         <th>Fornecedor</th>
                         <th>Chave</th>
                         <th>Valor</th>
+                        <th></th>
                     </tr>
                 </thead>
 
@@ -42,6 +70,10 @@
                             <td>{{ $etd->fornecedor }}</td>
                             <td>{{ $etd->chave }}</td>
                             <td>R$ {{ number_format($etd->valor, 2) }}</td>
+                            <td>
+                                <a title="Visualizar" href="{{ route('itens-entradas.show', [$etd->id]) }}"><i
+                                        class="fa fa-eye"></i></a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

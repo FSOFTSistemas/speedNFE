@@ -27,27 +27,7 @@
     <script>
         $('#{{ $uniqueId }}').DataTable({
             responsive: true,
-            columnDefs: [{
-                    responsivePriority: 1,
-                    targets: 1
-                },
-                {
-                    responsivePriority: 2,
-                    targets: 2
-                },
-                {
-                    responsivePriority: 3,
-                    targets: -1
-                },
-                {
-                    responsivePriority: 4,
-                    targets: 0
-                },
-                {
-                    responsivePriority: 5,
-                    targets: 3
-                }
-            ],
+            columnDefs: {{ Js::from($responsive) }},
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json',
             },

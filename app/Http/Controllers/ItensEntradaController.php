@@ -2,84 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ItensEntrada;
-use Illuminate\Http\Request;
+use App\Services\EntradaService;
 
 class ItensEntradaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private $entradaService;
+
+    public function __construct(EntradaService $entradaService)
     {
-        //
+        $this->entradaService = $entradaService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show($entradaId)
     {
-        //
+        try {
+            $entrada = $this->entradaService->getInput($entradaId);
+            return view('nfeEntrada.show', ['entrada' => $entrada]);
+        } catch (\Exception $e) {
+            return redirect()->route('entradas.index')->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ItensEntrada  $itensEntrada
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ItensEntrada $itensEntrada)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ItensEntrada  $itensEntrada
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ItensEntrada $itensEntrada)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\ItensEntrada  $itensEntrada
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ItensEntrada $itensEntrada)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ItensEntrada  $itensEntrada
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ItensEntrada $itensEntrada)
-    {
-        //
-    }
 }

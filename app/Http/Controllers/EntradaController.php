@@ -6,6 +6,7 @@ use App\Exceptions\AlreadyExistException;
 use App\Services\EmpresasService;
 use App\Services\EntradaService;
 use App\Services\ImportProductsService;
+use App\Services\ItemEntradaService;
 use App\Services\ProdutosService;
 use App\Utils\FormatationUtil;
 use Illuminate\Http\Request;
@@ -18,12 +19,14 @@ class EntradaController extends Controller
     private $empresaServices;
     private $produtoService;
     private $entradaService;
+    private $itemEntradaService;
 
-    public function __construct(EmpresasService $empresaService, ProdutosService $produtoService, EntradaService $entradaService)
+    public function __construct(EmpresasService $empresaService, ProdutosService $produtoService, EntradaService $entradaService, ItemEntradaService $itemEntradaService)
     {
         $this->empresaServices = $empresaService;
         $this->produtoService = $produtoService;
         $this->entradaService = $entradaService;
+        $this->itemEntradaService = $itemEntradaService;
     }
 
     public function index()
@@ -72,8 +75,9 @@ class EntradaController extends Controller
                 'array' => 'O campo :attribute deve ser uma lista de produtos!'
             ]);
             DB::beginTransaction();
-            $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
-            $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
+            $entradaId = $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
+            $productsList = $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
+            $this->itemEntradaService->createInputItems($entradaId, $productsList, Auth::user()->empresa_id);
             DB::commit();
             return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
         } catch (ValidationException $e) {

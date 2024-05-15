@@ -17,7 +17,12 @@ class EntradaService {
             'chave' => $request->chNFe,
             'valor' => $request->vNF,
             'empresa_id' => $empresaId
-        ]);
+        ])->id;
+    }
+
+    public function getInput($entradaId)
+    {
+        return Entrada::find($entradaId);
     }
 
     public function getEntradas($empresaId)

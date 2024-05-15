@@ -17,21 +17,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('entrada_id');
             $table->foreign('entrada_id')->references('id')->on('entradas')->onDelete('cascade');
-            $table->string('produto');
-            $table->string('codbarra')->nullable();
-            $table->decimal('qtde', 10, 2);
-            $table->decimal('unitario', 10, 2);
-            $table->decimal('total', 10, 2);
-            $table->string('NCM')->nullable();
-            $table->string('CST')->nullable();
-            $table->string('CFOP')->nullable();
-            $table->string('CSOSN')->nullable();
-            $table->string('IPI')->nullable();
-            $table->string('PIS')->nullable();
-            $table->string('COFINS')->nullable();
-            $table->decimal('ALIQUOTA', 10, 2)->nullable();
+            $table->unsignedBigInteger('produto_id');
+            $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
+            $table->integer('qtde');
             $table->unsignedBigInteger('empresa_id');
-            $table->foreign('empresa_id')->references('id')->on('empresas');
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
         });
     }

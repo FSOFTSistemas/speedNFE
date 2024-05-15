@@ -13,6 +13,7 @@ use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\EntradaController;
+use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NotasFiscaisController;
@@ -114,6 +115,10 @@ Route::prefix('entrada')->group(function () {
     Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
 });
 
+//ITENS ENTRADAS
+Route::prefix('item-entrada')->group(function () {
+    Route::get('/entrada/{entradaId}', [ItensEntradaController::class, 'show'])->name('itens-entradas.show')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+});
 
 //ESTOQUE
 Route::prefix('estoque')->group(function () {

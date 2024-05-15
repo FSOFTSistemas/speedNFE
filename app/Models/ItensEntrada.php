@@ -11,25 +11,24 @@ class ItensEntrada extends Model
 
     protected $fillable = [
         'entrada_id',
-        'produto',
-        'codbarra',
+        'produto_id',
         'qtde',
-        'unitario',
-        'total',
-        'NCM',
-        'CST',
-        'CFOP',
-        'CSOSN',
-        'IPI',
-        'PIS',
-        'COFINS',
-        'ALIQUOTA',
         'empresa_id',
     ];
 
     public function entrada()
     {
         return $this->belongsTo(Entrada::class, 'entrada_id');
+    }
+
+    public function produto()
+    {
+        return $this->belongsTo(Produto::class, 'produto_id');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'empresa_id');
     }
 
 }

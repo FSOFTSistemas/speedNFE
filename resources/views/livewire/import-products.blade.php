@@ -324,7 +324,7 @@
                                                         <div class="form-floating">
                                                             <input type="number" class="form-control" readonly
                                                                 id="prods[{{ $index }}][0][qCom]"
-                                                                id="prods[{{ $index }}][0][qCom]"
+                                                                name="prods[{{ $index }}][0][qCom]"
                                                                 wire:model="prods.{{ $index }}.0.qCom"
                                                                 placeholder="Quantidade" required>
                                                             <label for="qCom">Quantidade</label>
