@@ -341,7 +341,7 @@ return [
             'submenu' => [
                 [
                     'text'        => 'Emitir NFCe',
-                    'url'         => '/vendas/nova',
+                    'url'         => '/nfce/criar',
                     'icon'        => 'fas fa-upload',
                 ],
                 [

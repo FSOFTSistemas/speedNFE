@@ -13,7 +13,7 @@
 @section('content')
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
-            <a class="btn btn-primary" href="{{ route('mdfe.create') }}">+ Emitir NFCe</a>
+            <a class="btn btn-primary" href="{{ route('nfce.create') }}">+ Emitir NFCe</a>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
             [
                 'responsivePriority' => 6,
                 'targets' => 4,
-            ],
+            ]
         ]
     ])
         <thead class="table-primary">

@@ -36,7 +36,11 @@ class NFCeController extends Controller
 
     public function create()
     {
-        //
+        try {
+            return view('nfce.create');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function store(Request $request)
