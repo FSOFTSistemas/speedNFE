@@ -221,6 +221,7 @@ Route::prefix('veiculos')->group(function () {
 //NFCe
 Route::prefix('nfce')->group(function () {
     Route::get('', [NFCeController::class, 'index'])->name('nfce.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-MDFe|client-advanced']);
+    Route::get('/{id}/visualizar', [NFCeController::class, 'show'])->name('nfce.show')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-MDFe|client-advanced']);
 });
 
 //CUPOM
