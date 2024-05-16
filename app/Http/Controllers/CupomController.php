@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CupomService;
 use Illuminate\Http\Request;
 
 class CupomController extends Controller
 {
 
-    public function __construct()
-    {
+    private $cupomService;
 
+    public function __construct(CupomService $cupomService)
+    {
+        $this->cupomService = $cupomService;
     }
 
     public function index()

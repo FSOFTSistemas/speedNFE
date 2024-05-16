@@ -12,10 +12,12 @@ use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\CupomController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
+use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\VeiculoController;
@@ -214,6 +216,16 @@ Route::prefix('veiculos')->group(function () {
     Route::get('/editar/{id}', [VeiculoController::class, 'edit'])->name('veiculos.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
     Route::put('/atualizar/{id}', [VeiculoController::class, 'update'])->name('veiculos.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
     Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
+});
+
+//NFCe
+Route::prefix('nfce')->group(function () {
+    Route::get('', [NFCeController::class, 'index'])->name('nfce.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-MDFe|client-advanced']);
+});
+
+//CUPOM
+Route::prefix('cupom')->group(function () {
+    Route::get('', [CupomController::class, 'index'])->name('cupom.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-MDFe|client-advanced']);
 });
 
 require __DIR__ . '/auth.php';
