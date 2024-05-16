@@ -41,8 +41,12 @@
                         <option value="master" @if(old('cargo') == "master") selected @endif>master</option>
                         <option value="admin" @if(old('cargo') == "admin") selected @endif>admin</option>
                         <option value="client-NFe" @if(old('cargo') == "client-NFe") selected @endif>Apenas NFe</option>
+                        <option value="client-NFCe" @if(old('cargo') == "client-NFCe") selected @endif>Apenas NFCe</option>
                         <option value="client-MDFe" @if(old('cargo') == "client-MDFe") selected @endif>Apenas MDFe</option>
-                        <option value="client-advanced" @if(old('cargo') == "client-advanced") selected @endif>NFe e MDFe</option>
+                        <option value="client-CTe" @if(old('cargo') == "client-CTe") selected @endif>Apenas CTe</option>
+                        <option value="client-advanced1" @if(old('cargo') == "client-advanced1") selected @endif>NFe e MDFe</option>
+                        <option value="client-advanced2" @if(old('cargo') == "client-advanced2") selected @endif>NFe e NFCe</option>
+                        <option value="client-advanced3" @if(old('cargo') == "client-advanced3") selected @endif>CTe e MDFe</option>
                     </select>
                 @else
                     <input hidden name="empresa" id="empresa" value="{{ $empresa }}" />
