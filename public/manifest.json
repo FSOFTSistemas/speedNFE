@@ -1,7 +1,7 @@
 {
     "name": "SpeedNFE",
     "short_name": "SpeedNFE",
-    "start_url": "/",
+    "start_url": "/home",
     "background_color": "#6777ef",
     "description": "Emissão de NFE",
     "display": "fullscreen",
