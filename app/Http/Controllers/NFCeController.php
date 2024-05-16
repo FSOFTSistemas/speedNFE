@@ -20,7 +20,7 @@ class NFCeController extends Controller
     private $itemCupomService;
     private EmpresasService $empresaServices;
 
-    public function __construct(CupomService $cupomService, EmpresasService $empresaServices, CupomFormaService $cupomFormaService, ItemCupomService $itemCupomService, NFCeService $nfceService)
+    public function __construct(CupomService $cupomService, EmpresasService $empresaServices, CupomFormaService $cupomFormaService, ItemCupomService $itemCupomService)
     {
         $this->cupomService = $cupomService;
         $this->cupomFormaService = $cupomFormaService;
@@ -30,8 +30,8 @@ class NFCeController extends Controller
     public function index()
     {
         try {
-            dd("oi");
-            return view('nfce.index');
+            $nfces = NFCeService::getCompanyNFCes(Auth::user()->empresa_id);
+            return view('nfce.index', ['nfces' => $nfces]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -52,25 +52,32 @@ class NFCeController extends Controller
         //
     }
 
+    private function makeNFCeService($empresa)
+    {
+        $config = [
+            "atualizacao" => date('Y-m-d h:i:s'),
+            "tpAmb" => (int) $empresa->ambiente,
+            "razaosocial" => $empresa->razao,
+            "siglaUF" => $empresa->endereco->uf,
+            "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
+            "schemes" => "PL_009_V4",
+            "versao" => "4.00",
+            "tokenIBPT" => "AAAAAAA",
+            "CSC" => $empresa->csc,
+            "CSCid" => "00000" . $empresa->idCsc,
+        ];
+
+        return new NFCeService($config, $empresa);
+    }
+
     public function enviarNFCE($id){
 
         try {
 
             $venda = $this->cupomService->buscarCupom($id);
             $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
-            $config = [
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $empresa->ambiente,
-                "razaosocial" => $empresa->razao,
-                "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-                "schemes" => "PL_009_V4",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $empresa->csc,
-                "CSCid" => "00000" . $empresa->idCsc,
-            ];
-            $nfce_service = new NFCeService($config, $empresa);
+            $nfce_service = dd($this->makeNFCeService($empresa));
+
             if ($venda->estado->value == 'Rejeitado' || $venda->estado->value == 'Pendente') {
                 $result = $nfce_service->gerarXml($venda, $empresa);
                 // dd($result);
