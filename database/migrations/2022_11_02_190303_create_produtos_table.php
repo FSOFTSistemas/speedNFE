@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('cst_pis');
             $table->string('cst_cofins');
             $table->string('cst');
-            $table->integer('icms');
+            $table->double('icms');
             $table->string('pis');
             $table->string('cofins');
             $table->string('ipi');

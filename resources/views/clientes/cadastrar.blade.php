@@ -83,7 +83,7 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label for="limite">Limite</label>
                                             <input class="form-control" type="text" name="limite" id="limite"
-                                                placeholder="Limite..." value="{{ old('limite') }}" required>
+                                                placeholder="Limite..." value="{{ old('limite') ?? 0 }}" required>
                                         </div>
 
                                         <div class="col-md-6 col-xs-10">

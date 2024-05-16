@@ -8,18 +8,18 @@
             <h1 class="m-0 text-dark">Usuários</h1>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <a href="{{ route('cadastrar_usuario') }}" class='btn btn-info'>&nbsp;+ Usuário&nbsp;</a>
+        </div>
+        <div class="col" style="text-align: end">
+            <a href="{{ route('empresa.index') }}" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
 @stop
 
 @section('content')
-
-    <div>
-        @if ($logged->cargo == 'admin')
-            <a href="{{ route('cadastrar_usuario') }}" class='btn btn-info'>&nbsp;+ Usuário&nbsp;</a>
-        @else
-            <a disabled href="{{ route('cadastrar_usuario') }}" class='btn btn-info'>&nbsp;+ Usuário&nbsp;</a>
-        @endif
-    </div>
-    <table class="table table-hover" id="users">
+    <table class="table table-hover" id="users" style="width: 100%">
         <thead class="table-primary">
             <th>ID</th>
             <th>LOGIN</th>
@@ -35,22 +35,39 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->cargo }}</td>
                     <td>{{ $user->fantasia }}</td>
-                    @if ($logged->cargo == 'admin')
-                        <td><a class="btn btn-warning" href="{{ route('editar_usuario', ['id' => $user->id]) }}">Editar</a>
-                            <a class="btn btn-danger"
-                                href="route{{ route('excluir_usuario', ['id' => $user->id]) }}">Excluir</a>
-                        </td>
-                    @else
-                        <td><a disabled class="btn btn-warning"
-                                href="{{ route('editar_usuario', ['id' => $user->id]) }}">Editar</a>
-                            <a disabled class="btn btn-danger"
-                                href="{{ route('excluir_usuario', ['id' => $user->id]) }}">Excluir</a>
-                        </td>
-                    @endif
+                    <td>
+                        <div class="row">
+                            <div class="col">
+                                <a title="Editar" href="{{ route('editar_usuario', ['id' => $user->id]) }}"><i class="fa fa-edit text-info"></i></a>
+                            </div>
+
+                            <div class="col">
+                                <a title="Deletar" data-toggle="modal" data-target="#modalExcluirUsuario" onclick="setaDadosModal({{ $user->id }})"><i class="fa fa-trash text-danger"></i></a>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    @component('components.modal', [
+        'modalId' => 'modalExcluirUsuario',
+        'modalTitle' => 'Excluir Usuários',
+        'sizeModal' => 'modal-md',
+    ])
+        <form action="{{ route('excluir_usuario') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('DELETE')
+            <div class="row" style="text-align: center">
+                <div class="col">
+                    <input type="hidden" name="userId" id="userId" required>
+                    <p class="text-danger"><b>OBS:</b> Isso irá deletar permanentemente o registro!</p>
+                    <button class="btn btn-warning text-light" type="submit">Excluir</button>
+                </div>
+            </div>
+        </form>
+    @endcomponent
 
 @endsection
 
@@ -66,6 +83,10 @@
     </script>
 
     <script>
+        function setaDadosModal(userId) {
+            document.getElementById('userId').value = userId
+        }
+
         $('#users').DataTable({
             responsive: true,
             columnDefs: [{

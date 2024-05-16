@@ -12,9 +12,12 @@ use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\CupomController;
 use App\Http\Controllers\EntradaController;
+use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
+use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\VeiculoController;
@@ -50,10 +53,10 @@ Route::get('/dashboard', function () {
 
 //CATEGORIA
 Route::prefix('categoria')->group(function () {
-    Route::get('', [CategoriasController::class, 'show'])->name('categoria.index')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-    Route::get('/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-    Route::post('/cadastro', [CategoriasController::class, 'store'])->name('salvar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-    Route::get('/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+    Route::get('', [CategoriasController::class, 'show'])->name('categoria.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::post('/cadastro', [CategoriasController::class, 'store'])->name('salvar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 });
 
 //EMPRESA
@@ -68,13 +71,13 @@ Route::prefix('empresa')->group(function () {
 });
 
 //CLIENTE
-Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-Route::put('/cliente/salvar/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
-Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced|client-NFe']);
+Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::put('/cliente/salvar/{id}', [ClientesController::class, 'update'])->name('salvar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 Route::post('/clientes/cnpj/', [ClientesController::class, 'BuscarCnpj'])->name('cnpj.clientes');
 
 //FORMA DE PAGAMENTO
@@ -90,29 +93,34 @@ Route::prefix('usuarios')->group(function () {
     Route::get('', [UsersController::class, 'show'])->name('index_usuario')->middleware('auth');
     Route::get('/cadastro', [UsersController::class, 'new'])->name('cadastrar_usuario')->middleware(['auth', 'access.permission:master']);
     Route::post('/cadastro', [UsersController::class, 'store'])->name('salvar_usuario')->middleware(['auth', 'access.permission:master']);
-    Route::get('/del/{id}', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth', 'access.permission:master']);
+    Route::delete('/deletar', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth', 'access.permission:master']);
     Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware(['auth', 'access.permission:master']);
     Route::post('/editar/{id}', [UsersController::class, 'update'])->name('update_usuario')->middleware(['auth', 'access.permission:master']);
 });
 
 //PRODUTOS
 Route::prefix('produto')->group(function () {
-    Route::get('', [ProdutosController::class, 'show'])->name('produto.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::get('/cadastro', [ProdutosController::class, 'new'])->name('produto.new')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::post('/cadastro', [ProdutosController::class, 'store'])->name('salvar_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::get('/ver/{id}', [ProdutosController::class, 'view'])->name('ver_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::delete('/del', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::get('/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::put('/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+    Route::get('', [ProdutosController::class, 'show'])->name('produto.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('/cadastro', [ProdutosController::class, 'new'])->name('produto.new')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::post('/cadastro', [ProdutosController::class, 'store'])->name('salvar_produto')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('/ver/{id}', [ProdutosController::class, 'view'])->name('ver_produto')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::delete('/del', [ProdutosController::class, 'destroy'])->name('excluir_produto')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('/editar/{id}', [ProdutosController::class, 'editar'])->name('editar_produto')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::put('/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 });
 
 //ENTRADAS
 Route::prefix('entrada')->group(function () {
-    Route::get('/', [EntradaController::class, 'index'])->name('entradas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::get('/criar', [EntradaController::class, 'create'])->name('entradas.create')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+    Route::get('/', [EntradaController::class, 'index'])->name('entradas.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('/criar', [EntradaController::class, 'create'])->name('entradas.create')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::post('/salvar', [EntradaController::class, 'store'])->name('entradas.store')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 });
 
+//ITENS ENTRADAS
+Route::prefix('item-entrada')->group(function () {
+    Route::get('/entrada/{entradaId}', [ItensEntradaController::class, 'show'])->name('itens-entradas.show')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+});
 
 //ESTOQUE
 Route::prefix('estoque')->group(function () {
@@ -135,34 +143,34 @@ Route::prefix('receber')->group(function () {
 });
 
 //VENDAS
-Route::get('/venda', [PedidosController::class, 'todos'])->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::post('/vendas', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/visualizar/{pedido}', [PedidosController::class, 'visualizar'])->name('vendas.show')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/editar/{pedido}', [PedidosController::class, 'edit'])->name('vendas.editar')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::put('/atualizar/{id}', [PedidosController::class, 'update'])->name('vendas.atualizar')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/vendas/nova', [PedidosController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::post('/vendas/nova', [PedidosController::class, 'store'])->name('salvar_venda')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/venda/envio/{id}', [PedidosController::class, 'enviarNFe'])->name('enviarXML')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/venda/imprimir/{id}', [PedidosController::class, 'imprimir'])->name('imprimirXML')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'imprimirCancelamento'])->name('imprimirCancelamentoXML')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::post('/venda/cce', [PedidosController::class, 'cartaCorrecao'])->name('cartaCorrecao')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+Route::get('/venda', [PedidosController::class, 'todos'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::post('/vendas', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/visualizar/{pedido}', [PedidosController::class, 'visualizar'])->name('vendas.show')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/editar/{pedido}', [PedidosController::class, 'edit'])->name('vendas.editar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::put('/atualizar/{id}', [PedidosController::class, 'update'])->name('vendas.atualizar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/vendas/nova', [PedidosController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::post('/vendas/nova', [PedidosController::class, 'store'])->name('salvar_venda')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/venda/envio/{id}', [PedidosController::class, 'enviarNFe'])->name('enviarXML')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/venda/imprimir/{id}', [PedidosController::class, 'imprimir'])->name('imprimirXML')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'imprimirCancelamento'])->name('imprimirCancelamentoXML')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::post('/venda/cce', [PedidosController::class, 'cartaCorrecao'])->name('cartaCorrecao')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
+Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::get('/total-mes', [PedidosController::class, 'totalMes'])->name('totalMes');
 
 
 //NOTAS FISCAIS
-Route::get('/notas', [NotasFiscaisController::class, 'show'])->name('notas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::get('/notas/{chave}', [NotasFiscaisController::class, 'visualizarPdf'])->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::post('/notas/xml', [NotasFiscaisController::class, 'downloadXml'])->name('baixarXml')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-Route::post('/zip', [NotasFiscaisController::class, 'zip'])->name('zip')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+Route::get('/notas', [NotasFiscaisController::class, 'show'])->name('notas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
+Route::get('/notas/{chave}', [NotasFiscaisController::class, 'visualizarPdf'])->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
+Route::post('/notas/xml', [NotasFiscaisController::class, 'downloadXml'])->name('baixarXml')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
+Route::post('/zip', [NotasFiscaisController::class, 'zip'])->name('zip')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
 
 //INUTILIZAR
 Route::prefix('inutilizar')->group(function () {
-    Route::get('', [PedidosController::class, 'inutil'])->name('inutilizar.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
-    Route::post('', [PedidosController::class, 'inutilizar'])->name('inutilizar.create')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced']);
+    Route::get('', [PedidosController::class, 'inutil'])->name('inutilizar.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
+    Route::post('', [PedidosController::class, 'inutilizar'])->name('inutilizar.create')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
 });
 
 //RELATORIOS
@@ -176,38 +184,50 @@ Route::prefix('relatorios')->group(function () {
 
 //MDFe
 Route::prefix('mdfes')->group(function () {
-    Route::get('', [MDFEController::class, 'index'])->name('mdfe.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::put('/{id}/update', [MDFEController::class, 'update'])->name('mdfe.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::delete('/deletar', [MDFEController::class, 'delete'])->name('mdfe.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/{mdfeId}/visualizar', [MDFEController::class, 'visualizar'])->name('mdfe.view')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/{mdfeId}/download-xml', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/{mdfeId}/enviar-nota', [MDFEController::class, 'enviarMDFe'])->name('mdfe.enviar')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/{mdfeId}/encerrar-nota', [MDFEController::class, 'encerrarMDFe'])->name('mdfe.close')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
+    Route::get('', [MDFEController::class, 'index'])->name('mdfe.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::post('/emitir', [MDFEController::class, 'store'])->name('mdfe.store')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/{id}/editar', [MDFEController::class, 'edit'])->name('mdfe.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::put('/{id}/update', [MDFEController::class, 'update'])->name('mdfe.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::delete('/deletar', [MDFEController::class, 'delete'])->name('mdfe.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/{mdfeId}/visualizar', [MDFEController::class, 'visualizar'])->name('mdfe.view')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/{mdfeId}/download-xml', [MDFEController::class, 'downloadXML'])->name('mdfe.downloadXML')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/{mdfeId}/enviar-nota', [MDFEController::class, 'enviarMDFe'])->name('mdfe.enviar')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/{mdfeId}/encerrar-nota', [MDFEController::class, 'encerrarMDFe'])->name('mdfe.close')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
 });
 
 //MOTORISTAS
 Route::prefix('motoristas')->group(function () {
-    Route::get('', [MotoristaController::class, 'index'])->name('motorista.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/registrar', [MotoristaController::class, 'create'])->name('motorista.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::post('/salvar', [MotoristaController::class, 'store'])->name('motorista.store')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/editar/{id}', [MotoristaController::class, 'edit'])->name('motorista.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::put('/atualizar/{id}', [MotoristaController::class, 'update'])->name('motorista.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::delete('/deletar', [MotoristaController::class, 'delete'])->name('motorista.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
+    Route::get('', [MotoristaController::class, 'index'])->name('motorista.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/registrar', [MotoristaController::class, 'create'])->name('motorista.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::post('/salvar', [MotoristaController::class, 'store'])->name('motorista.store')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/editar/{id}', [MotoristaController::class, 'edit'])->name('motorista.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::put('/atualizar/{id}', [MotoristaController::class, 'update'])->name('motorista.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::delete('/deletar', [MotoristaController::class, 'delete'])->name('motorista.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
 });
 
 //VEICULO
 Route::prefix('veiculos')->group(function () {
-    Route::get('', [VeiculoController::class, 'index'])->name('veiculos.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/registrar', [VeiculoController::class, 'create'])->name('veiculos.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::post('/salvar', [VeiculoController::class, 'store'])->name('veiculos.salvar')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::get('/editar/{id}', [VeiculoController::class, 'edit'])->name('veiculos.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::put('/atualizar/{id}', [VeiculoController::class, 'update'])->name('veiculos.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
-    Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced']);
+    Route::get('', [VeiculoController::class, 'index'])->name('veiculos.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/registrar', [VeiculoController::class, 'create'])->name('veiculos.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::post('/salvar', [VeiculoController::class, 'store'])->name('veiculos.salvar')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/editar/{id}', [VeiculoController::class, 'edit'])->name('veiculos.edit')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::put('/atualizar/{id}', [VeiculoController::class, 'update'])->name('veiculos.update')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+});
+
+//NFCe
+Route::prefix('nfce')->group(function () {
+    Route::get('', [NFCeController::class, 'index'])->name('nfce.index')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::get('/criar', [NFCeController::class, 'create'])->name('nfce.create')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::get('/{id}/visualizar', [NFCeController::class, 'show'])->name('nfce.show')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+});
+
+//CUPOM
+Route::prefix('cupom')->group(function () {
+    Route::get('', [CupomController::class, 'index'])->name('cupom.index')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
 });
 
 require __DIR__ . '/auth.php';

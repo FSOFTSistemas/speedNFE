@@ -5,12 +5,12 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h4 class="text-dark">Importar NFe</h4>
+            <h4 class="text-dark">Importar nota de entrada</h4>
         </div>
     </div>
     <div class="row">
         <div class="col" style="text-align: end">
-            <a href="{{ route('entradas.index') }}" class="btn btn-secondary">Voltar</a>
+            <a href="{{ route('entradas.index') }}" class="btn btn-secondary">Cancelar</a>
         </div>
     </div>
 @stop
@@ -18,7 +18,7 @@
 @section('content')
     <main>
         <section>
-
+            @livewire('import-products', ['data' => $data])
         </section>
     </main>
 @stop

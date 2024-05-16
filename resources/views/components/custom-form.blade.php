@@ -1,5 +1,4 @@
-<form novalidate class="row g-3 needs-validation" action="{{ route($route) }}" method="POST"
-    enctype="multipart/form-data">
+<form novalidate class="row g-3 needs-validation" action="{{ route($route) }}" method="POST" enctype="multipart/form-data">
     @csrf
     {{ $slot }}
 </form>

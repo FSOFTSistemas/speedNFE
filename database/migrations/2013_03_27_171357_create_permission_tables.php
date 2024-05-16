@@ -122,7 +122,12 @@ return new class extends Migration
                 ['name' => 'admin', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
                 ['name' => 'client-NFe', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
                 ['name' => 'client-MDFe', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
-                ['name' => 'master', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')]
+                ['name' => 'master', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'client-NFCe', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'client-CTe', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'client-advanced1', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'client-advanced2', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')],
+                ['name' => 'client-advanced3', 'guard_name' => 'web', 'created_at' => date('y-m-d h:m:s'), 'updated_at' => date('y-m-d h:m:s')]
             ]);
 
     }

@@ -2,26 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Entrada;
+use App\Exceptions\AlreadyExistException;
 use App\Services\EmpresasService;
+use App\Services\EntradaService;
 use App\Services\ImportProductsService;
+use App\Services\ItemEntradaService;
+use App\Services\ProdutosService;
 use App\Utils\FormatationUtil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class EntradaController extends Controller
 {
     private $empresaServices;
+    private $produtoService;
+    private $entradaService;
+    private $itemEntradaService;
 
-    public function __construct(EmpresasService $empresaService)
+    public function __construct(EmpresasService $empresaService, ProdutosService $produtoService, EntradaService $entradaService, ItemEntradaService $itemEntradaService)
     {
         $this->empresaServices = $empresaService;
+        $this->produtoService = $produtoService;
+        $this->entradaService = $entradaService;
+        $this->itemEntradaService = $itemEntradaService;
     }
 
     public function index()
     {
         try {
-            $entradas = [];
+            $entradas = $this->entradaService->getEntradas(Auth::user()->empresa_id);
             return view('nfeEntrada.entradas', ['entradas' => $entradas]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
@@ -37,81 +48,86 @@ class EntradaController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Entrada  $entrada
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Entrada $entrada)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Entrada  $entrada
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Entrada $entrada)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Entrada  $entrada
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Entrada $entrada)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Entrada  $entrada
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Entrada $entrada)
-    {
-        //
+        try {
+            $request->validate([
+                'natOp' => 'required',
+                'dhEmi' => 'required',
+                'dhSaiEnt' => 'required',
+                'chNFe' => 'required|unique:entradas,chave',
+                'vNF' => 'required|numeric',
+                'fornecedor' => 'required',
+                'CNPJ' => 'required',
+                'IE' => 'required',
+                'fone' => 'required',
+                'rua' => 'required',
+                'nro' => 'required',
+                'bairro' => 'required',
+                'mun' => 'required',
+                'uf' => 'required',
+                'CEP' => 'required',
+                'prods' => 'required|array'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'unique' => 'Nota ('. $request->chNFe .') já foi importada anteriormente!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
+                'array' => 'O campo :attribute deve ser uma lista de produtos!'
+            ]);
+            DB::beginTransaction();
+            $entradaId = $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
+            $productsList = $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
+            $this->itemEntradaService->createInputItems($entradaId, $productsList, Auth::user()->empresa_id);
+            DB::commit();
+            return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return redirect()->route('entradas.index')->with('warning', implode(PHP_EOL, $errors));
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollBack();
+            return redirect()->route('entradas.index')->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
+        }
     }
 
     public function importProducts (Request $request)
     {
         try {
-            $emitente = $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id);
-            $importService = new ImportProductsService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $emitente->ambiente,
-                "razaosocial" => $emitente->razao,
-                "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_009_V4",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $emitente->csc,
-                "CSCid" => '00000' . $emitente->idCsc,
-            ], $emitente);
-            $result = $importService->importProducts($request->chaveNota);
-            dd($result);
-            // return redirect()->route('');
+            $request->validate([
+                'type' => 'nullable',
+                'nota' => 'required',
+            ]);
+            $companyId = Auth::user()->empresa_id;
+            if (isset($request->type)) {
+                $response = ImportProductsService::readXML($request->nota);
+            } else {
+                $emitente = $this->empresaServices->buscarEmpresa($companyId);
+                $importProductsServices = new ImportProductsService([
+                    "atualizacao" => date('Y-m-d h:i:s'),
+                    "tpAmb" => (int) $emitente->ambiente,
+                    "razaosocial" => $emitente->razao,
+                    "siglaUF" => $emitente->endereco->uf,
+                    "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
+                    "schemes" => "PL_009_V4",
+                    "versao" => "4.00",
+                    "tokenIBPT" => "AAAAAAA",
+                    "CSC" => $emitente->csc,
+                    "CSCid" => '00000' . $emitente->idCsc,
+                ], $emitente);
+                $response = $importProductsServices->importProducts($request->nota);
+            }
+            $this->entradaService->entradaExist((string) $response['nota']['chNFe']);
+            return view('nfeEntrada.create', ['data' => $response]);
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (AlreadyExistException $e) {
+            return back()->with('warning', $e->getMessage());
         } catch (\Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

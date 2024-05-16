@@ -13,15 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('itens_entradas', function (Blueprint $table) {
+        Schema::create('item_cupoms', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('entrada_id');
-            $table->foreign('entrada_id')->references('id')->on('entradas')->onDelete('cascade');
+            $table->integer('qtde');
+            $table->double('unitario');
+            $table->double('desconto');
+            $table->double('acrescimo');
+            $table->double('total');;
+            $table->double('subtotal');
+            $table->unsignedBigInteger('cupom_id');
+            $table->foreign('cupom_id')->references('id')->on('cupoms')->onDelete('cascade');
             $table->unsignedBigInteger('produto_id');
             $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
-            $table->integer('qtde');
-            $table->unsignedBigInteger('empresa_id');
-            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('itens_entradas');
+        Schema::dropIfExists('item_cupoms');
     }
 };

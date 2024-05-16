@@ -294,24 +294,23 @@ return [
             'text'        => 'Inicio',
             'url'         => '/home',
             'icon'        => 'fas fa-home',
-            'can'         => ['admin', 'client-NFe', 'client-advanced', 'client-MDFe', 'master']
         ],
         [
             'text'        => 'Cliente',
             'url'         => '/cliente',
             'icon'        => 'fas fa-solid fa-user',
-            'can'         => ['admin', 'client-NFe', 'client-advanced', 'master']
+            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
         ],
         [
             'text'        => 'Produtos',
             'url'         => '/produto',
             'icon'        => 'fas fa-box-open',
-            'can'         => ['admin', 'client-NFe','client-advanced', 'master']
+            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
         ],
         [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
-            'can'         => ['admin', 'client-NFe', 'client-advanced', 'master'],
+            'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
             'submenu' => [
                 [
                     'text'        => 'Emitir NFe',
@@ -336,9 +335,26 @@ return [
             ],
         ],
         [
+            'text'        => 'PDV',
+            'icon'        => 'fas fa-cash-register',
+            'can'         => ['admin', 'master', 'client-NFCe', 'client-advanced2'],
+            'submenu' => [
+                [
+                    'text'        => 'Emitir NFCe',
+                    'url'         => '/nfce/criar',
+                    'icon'        => 'fas fa-upload',
+                ],
+                [
+                    'text'        => 'Notas Emitidas (NFCe)',
+                    'url'         => '/nfce',
+                    'icon'        => 'fas fa-list-ul',
+                ]
+            ]
+        ],
+        [
             'text'        => 'MDFe',
             'icon'        => 'fas fa-truck',
-            'can'         => ['admin', 'client-MDFe', 'client-advanced', 'master'],
+            'can'         => ['admin', 'client-MDFe', 'master', 'client-advanced1', 'client-advanced3'],
             'submenu' => [
                 [
                     'text'        => 'Emitir MDFe',
@@ -371,7 +387,6 @@ return [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
-            'can'         => ['admin', 'master', 'client-MDFe', 'client-NFe', 'client-advanced']
         ]
     ],
 

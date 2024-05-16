@@ -13,13 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('itens_entradas', function (Blueprint $table) {
+        Schema::create('cupoms', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('entrada_id');
-            $table->foreign('entrada_id')->references('id')->on('entradas')->onDelete('cascade');
-            $table->unsignedBigInteger('produto_id');
-            $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
-            $table->integer('qtde');
+            $table->string('nroCupom');
+            $table->timestamp('data');
+            $table->string('situacao');
+            $table->double('total');
+            $table->double('desconto');
+            $table->double('acrescimo');
+            $table->double('subtotal');
+            $table->unsignedBigInteger('cliente_id');
+            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();
@@ -33,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('itens_entradas');
+        Schema::dropIfExists('cupoms');
     }
 };

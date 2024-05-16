@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Services;
+
+use App\Exceptions\AlreadyExistException;
+use App\Models\Entrada;
+
+class EntradaService {
+
+    public function createEntrada($request, $empresaId)
+    {
+        return Entrada::create([
+            'dataEmissao' => $request->dhEmi,
+            'dataEntrada' => $request->dhSaiEnt,
+            'numeroNota' => $request->nNF,
+            'fornecedor' => $request->fornecedor . ' / ' . $request->CNPJ,
+            'chave' => $request->chNFe,
+            'valor' => $request->vNF,
+            'empresa_id' => $empresaId
+        ])->id;
+    }
+
+    public function getInput($entradaId)
+    {
+        return Entrada::find($entradaId);
+    }
+
+    public function getEntradas($empresaId)
+    {
+        return Entrada::whereEmpresaId($empresaId)->get();
+    }
+
+    public function entradaExist($chNFe)
+    {
+        if (Entrada::whereChave($chNFe)->exists()) {
+            throw new AlreadyExistException("Nota (" . $chNFe . ") já importada anteriormente!");
+        }
+        return false;
+    }
+
+}

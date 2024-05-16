@@ -59,14 +59,7 @@ class User extends Authenticatable
     {
         parent::boot();
         static::created(function ($user) {
-            $permissao = [
-                "master" => ['master'],
-                "admin" => ['admin'],
-                "client-NFe" => ['client-NFe'],
-                "client-MDFe" => ['client-MDFe'],
-                "client-advanced" => ['client-NFe', 'client-MDFe']
-            ];
-            $user->givePermissionTo($permissao[$user->cargo]);
+            $user->givePermissionTo($user->cargo);
         });
     }
 
