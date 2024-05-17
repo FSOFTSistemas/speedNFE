@@ -236,4 +236,10 @@ class ProdutosService
             ->count();
     }
 
+    public function searchProdByFilter($filter)
+    {
+        $filter = $filter ?? '%';
+        return Produto::where('produto', 'like', $filter)->get();
+    }
+
 }

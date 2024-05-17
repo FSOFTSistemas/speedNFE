@@ -57,11 +57,33 @@
                                 <div class="col">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" name="codProd" wire:model="codProd"
+                                            <input type="text" class="form-control" name="prod" wire:model="prod" wire:keydown="searchProds()"
                                                 placeholder=" " required>
-                                            <label for="codProd">Cód. Produto</label>
+                                            <label for="prod">Produto</label>
                                         </div>
                                     </div>
+
+                                    <div class="row"
+                                    style="max-height: 180px; overflow-y: auto; position: absolute; z-index: 1; width: 100%; background-color: white; border-radius: 10px;">
+                                    <div class="col">
+                                        <button type="button" class="close" wire:click="clearQuery()">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <ul style="list-style-type: none;">
+                                            @if (count($results) > 0)
+                                                @foreach ($results as $index => $result)
+                                                    <li style="margin-top: 1%" wire:click="selectMedicamento({{ $result->id }}, '{{ $result->produto }}')">
+                                                        <button class="btn btn-muted"
+                                                            style="width: 90%; background-color: rgb(239, 239, 239);">{{ $result->produto }}</button>
+                                                    </li>
+
+                                                @endforeach
+                                            @else
+                                                <span>Sem resultados...</span>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
 
@@ -75,11 +97,42 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" wire:model="desconto"
+                                                placeholder=" " min="0" step="0.01" required>
+                                            <label for="desconto">Desconto</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="input-group">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" wire:model="acrescimo"
+                                                placeholder=" " min="0" step="0.01" required>
+                                            <label for="acrescimo">Acrescimo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" name="qtde" wire:model="qtde"
+                                                placeholder=" " min="0" required>
+                                            <label for="qtde">Total</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row text-center mt-2">
                                 <div class="col">
-                                    <button class="btn btn-primary" wire:click="adicionarProd">+ Adicionar</button>
+                                    <button class="btn btn-primary" wire:click="addProd">+ Adicionar</button>
                                 </div>
                             </div>
                         </div>
