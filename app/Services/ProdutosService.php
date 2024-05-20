@@ -238,7 +238,7 @@ class ProdutosService
 
     public function searchProdByFilter($filter)
     {
-        $filter = $filter ?? '%';
+        $filter = empty($filter) ? '' : '%' . $filter . '%';
         return Produto::where('produto', 'like', $filter)->get();
     }
 

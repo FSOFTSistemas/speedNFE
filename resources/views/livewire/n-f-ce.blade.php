@@ -57,33 +57,11 @@
                                 <div class="col">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" name="prod" wire:model="prod" wire:keydown="searchProds()"
-                                                placeholder=" " required>
+                                            <input type="text" class="form-control" name="prod" wire:model="prod"
+                                                wire:keydown.enter="searchProds()" placeholder=" " required>
                                             <label for="prod">Produto</label>
                                         </div>
                                     </div>
-
-                                    <div class="row"
-                                    style="max-height: 180px; overflow-y: auto; position: absolute; z-index: 1; width: 100%; background-color: white; border-radius: 10px;">
-                                    <div class="col">
-                                        <button type="button" class="close" wire:click="clearQuery()">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <ul style="list-style-type: none;">
-                                            @if (count($results) > 0)
-                                                @foreach ($results as $index => $result)
-                                                    <li style="margin-top: 1%" wire:click="selectMedicamento({{ $result->id }}, '{{ $result->produto }}')">
-                                                        <button class="btn btn-muted"
-                                                            style="width: 90%; background-color: rgb(239, 239, 239);">{{ $result->produto }}</button>
-                                                    </li>
-
-                                                @endforeach
-                                            @else
-                                                <span>Sem resultados...</span>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                </div>
                                 </div>
                             </div>
 
@@ -151,6 +129,20 @@
     </div>
 </div>
 
+@if (!empty($results))
+    @component('components.modal', [
+        'modalId' => 'AddProdModal',
+        'modalTitle' => 'Adicionar Produtos',
+        'sizeModal' => 'modal-lg',
+    ])
+        @foreach ($results as $result)
+            <ol>
+                <li>{{ $result->id }}</li>
+            </ol>
+        @endforeach
+    @endcomponent
+@endif
+
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -182,3 +174,12 @@
         })()
     </script>
 @endsection
+
+
+<script>
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('OpenAddProdModal', function() {
+            $('#AddProdModal').modal('show');
+        });
+    });
+</script>
