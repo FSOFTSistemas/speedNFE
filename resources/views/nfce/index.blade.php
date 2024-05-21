@@ -43,7 +43,9 @@
                 'responsivePriority' => 6,
                 'targets' => 4,
             ]
-        ]
+        ],
+        'searching' => false,
+        'lengthChange' => false
     ])
         <thead class="table-primary">
             <tr>

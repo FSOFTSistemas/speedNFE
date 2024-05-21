@@ -15,8 +15,8 @@
                         <thead class="table-primary">
                             <tr>
                                 <th>Item</th>
-                                <th>Qtde.</th>
                                 <th>Nome</th>
+                                <th>Qtde.</th>
                                 <th>Unitário</th>
                                 <th>Desconto</th>
                                 <th>Acrescimo</th>
@@ -25,15 +25,15 @@
                         </thead>
 
                         <tbody>
-                            @forelse ([] as $index => $item)
+                            @forelse ($itens as $index => $item)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{ $item['produto'] }}</td>
+                                    <td>{{ $item['qtde'] }}</td>
+                                    <td>{{ number_format($item['unitario'], 2) }}</td>
+                                    <td>{{ number_format($item['desconto'], 2) }}</td>
+                                    <td>{{ number_format($item['acrescimo'], 2) }}</td>
+                                    <td>{{ number_format($item['total'], 2) }}</td>
                                 </tr>
                             @empty
                                 <tr class="text-center">
@@ -69,8 +69,8 @@
                                 <div class="col">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" name="qtde" wire:model="qtde"
-                                                placeholder=" " min="0" required>
+                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" name="qtde" wire:model="qtde" wire:change="updateProductTotal"
+                                                placeholder=" " min="1" required>
                                             <label for="qtde">Quantidade</label>
                                         </div>
                                     </div>
@@ -78,7 +78,7 @@
                                 <div class="col">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" wire:model="desconto"
+                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" wire:model="desconto" wire:change="updateProductTotal"
                                                 placeholder=" " min="0" step="0.01" required>
                                             <label for="desconto">Desconto</label>
                                         </div>
@@ -88,7 +88,7 @@
                                 <div class="col">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" wire:model="acrescimo"
+                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" wire:model="acrescimo" wire:change="updateProductTotal"
                                                 placeholder=" " min="0" step="0.01" required>
                                             <label for="acrescimo">Acrescimo</label>
                                         </div>
@@ -100,9 +100,9 @@
                                 <div class="col">
                                     <div class="input-group">
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" name="qtde" wire:model="qtde"
+                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" name="total" wire:model="total"
                                                 placeholder=" " min="0" required>
-                                            <label for="qtde">Total</label>
+                                            <label for="total">Total</label>
                                         </div>
                                     </div>
                                 </div>
@@ -147,19 +147,16 @@
             [
                 'responsivePriority' => 3,
                 'targets' => 2,
-            ],
-            [
-                'responsivePriority' => 4,
-                'targets' => -1,
-            ],
+            ]
         ],
+        'searching' => false,
+        'lengthChange' => false
     ])
         <thead>
             <tr>
+                <th>Código</th>
                 <th>Produto</th>
-                <th>Chassi</th>
-                <th>Marca</th>
-                <th>Cor</th>
+                <th>Unitário</th>
             </tr>
         </thead>
 
@@ -204,33 +201,38 @@
     document.addEventListener('livewire:load', function() {
         Livewire.on('OpenAddProdModal', function(data) {
             $('#AddProdModal').modal('show');
-            console.log(data);
 
             const tbody = document.querySelector('.product-table-body');
             tbody.innerHTML = '';
 
             data.forEach(item => {
                 const tr = document.createElement('tr');
+                tr.addEventListener('dblclick', function() {
+                    Livewire.emit('selectProd', item.produto, item.codigo, item.precovenda);
+                });
 
                 const tdProduto = document.createElement('td');
                 tdProduto.textContent = item.produto || 'Produto Desconhecido';
 
-                const tdChassi = document.createElement('td');
-                tdChassi.textContent = item.chassiVeic;
+                const tdCodigo = document.createElement('td');
+                tdCodigo.textContent = item.codigo;
 
-                const tdMarca = document.createElement('td');
-                tdMarca.textContent = item.cMarcaVeic;
-
-                const tdCor = document.createElement('td');
-                tdCor.textContent = item.corVeic;
+                const tdUnitario = document.createElement('td');
+                tdUnitario.textContent = item.precovenda.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
 
                 tr.appendChild(tdProduto);
-                tr.appendChild(tdChassi);
-                tr.appendChild(tdMarca);
-                tr.appendChild(tdCor);
+                tr.appendChild(tdCodigo);
+                tr.appendChild(tdUnitario);
 
                 tbody.appendChild(tr);
             });
+        });
+
+        Livewire.on('CloseAddProdModal', function() {
+            $('#AddProdModal').modal('hide');
         });
     });
 </script>

@@ -9,7 +9,7 @@
 
     {{-- Sidebar menu --}}
     <div class="sidebar" style="background-color: #193D55; height: 200dvh;  position: fixed; height: 100%; overflow-y: auto">
-        
+
         <nav class="pt-2" >
             <ul  class="nav nav-pills nav-sidebar flex-column {{ config('adminlte.classes_sidebar_nav', '') }}"
                 data-widget="treeview" role="menu"

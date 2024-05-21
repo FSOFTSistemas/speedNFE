@@ -26,6 +26,8 @@
 
     <script>
         $('#{{ $uniqueId }}').DataTable({
+            lengthChange: {{ Js::from($lengthChange) }},
+            searching: {{ Js::from($searching) }},
             responsive: true,
             columnDefs: {{ Js::from($responsive) }},
             language: {
