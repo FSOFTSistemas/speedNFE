@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header text-center">
                 <h5 class="modal-title w-100 text-bold">{{ $modalTitle }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -11,7 +11,7 @@
                 {{ $slot }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>

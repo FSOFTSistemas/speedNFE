@@ -129,19 +129,44 @@
     </div>
 </div>
 
-@if (!empty($results))
-    @component('components.modal', [
-        'modalId' => 'AddProdModal',
-        'modalTitle' => 'Adicionar Produtos',
-        'sizeModal' => 'modal-lg',
+@component('components.modal', [
+    'modalId' => 'AddProdModal',
+    'modalTitle' => 'Adicionar Produtos',
+    'sizeModal' => 'modal-lg',
+])
+    @component('components.dataTable', [
+        'responsive' => [
+            [
+                'responsivePriority' => 1,
+                'targets' => 0,
+            ],
+            [
+                'responsivePriority' => 2,
+                'targets' => 1,
+            ],
+            [
+                'responsivePriority' => 3,
+                'targets' => 2,
+            ],
+            [
+                'responsivePriority' => 4,
+                'targets' => -1,
+            ],
+        ],
     ])
-        @foreach ($results as $result)
-            <ol>
-                <li>{{ $result->id }}</li>
-            </ol>
-        @endforeach
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Chassi</th>
+                <th>Marca</th>
+                <th>Cor</th>
+            </tr>
+        </thead>
+
+        <tbody class="product-table-body">
+        </tbody>
     @endcomponent
-@endif
+@endcomponent
 
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -175,11 +200,37 @@
     </script>
 @endsection
 
-
 <script>
     document.addEventListener('livewire:load', function() {
-        Livewire.on('OpenAddProdModal', function() {
+        Livewire.on('OpenAddProdModal', function(data) {
             $('#AddProdModal').modal('show');
+            console.log(data);
+
+            const tbody = document.querySelector('.product-table-body');
+            tbody.innerHTML = '';
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+
+                const tdProduto = document.createElement('td');
+                tdProduto.textContent = item.produto || 'Produto Desconhecido';
+
+                const tdChassi = document.createElement('td');
+                tdChassi.textContent = item.chassiVeic;
+
+                const tdMarca = document.createElement('td');
+                tdMarca.textContent = item.cMarcaVeic;
+
+                const tdCor = document.createElement('td');
+                tdCor.textContent = item.corVeic;
+
+                tr.appendChild(tdProduto);
+                tr.appendChild(tdChassi);
+                tr.appendChild(tdMarca);
+                tr.appendChild(tdCor);
+
+                tbody.appendChild(tr);
+            });
         });
     });
 </script>

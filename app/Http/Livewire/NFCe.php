@@ -32,7 +32,9 @@ class NFCe extends Component
     public function searchProds(ProdutosService $produtoService)
     {
         $this->results = $produtoService->searchProdByFilter($this->prod);
-        $this->emit('OpenAddProdModal');
+        if($this->results->isNotEmpty()) {
+            $this->emit('OpenAddProdModal', $this->results);
+        }
     }
 
     public function clearQuery()
