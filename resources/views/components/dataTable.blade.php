@@ -2,7 +2,7 @@
     $uniqueId = 'myTable_' . uniqid();
 @endphp
 
-<table id="{{ $uniqueId }}" style="width: 100%">
+<table class="table table-hover" id="{{ $uniqueId }}" style="width: 100%">
     {{ $slot }}
 </table>
 

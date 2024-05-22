@@ -25,8 +25,15 @@ class NFCe extends Component
 
     public function addProd()
     {
-        $this->itens[] = ['produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total];
-        $this->updateSaleTotal();
+        if (isset($this->prod) && isset($this->cod) && isset($this->qtde) && isset($this->unitario) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total)) {
+            $this->itens[] = ['produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total];
+            $this->updateSaleTotal();
+            $this->cancelProd();
+        }
+    }
+
+    public function cancelProd()
+    {
         $this->prod = null;
         $this->cod = null;
         $this->unitario = 0;
@@ -38,7 +45,7 @@ class NFCe extends Component
 
     public function updateProductTotal()
     {
-        if(isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo)) {
+        if (isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo)) {
             $this->total = $this->qtde * ($this->unitario - $this->desconto + $this->acrescimo);
         }
     }
@@ -55,7 +62,7 @@ class NFCe extends Component
     public function searchProds(ProdutosService $produtoService)
     {
         $this->results = $produtoService->searchProdByFilter($this->prod);
-        if($this->results->isNotEmpty()) {
+        if ($this->results->isNotEmpty()) {
             $this->emit('OpenAddProdModal', $this->results);
         }
     }

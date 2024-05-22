@@ -1,173 +1,222 @@
 <div>
-    <div class="card">
-        <div class="card-header">
-            <div class="row text-center">
-                <div class="col">
-                    <h4>Venda em Aberto</h4>
+    <form action="">
+        <div class="card">
+            <div class="card-header">
+                <div class="row text-center">
+                    <div class="col">
+                        <h4>Venda em Aberto</h4>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card-body">
-            <div class="row">
-                <div class="col col-md-7">
-                    <table class="table table-hover table-responsive shadow p-3 mb-5 bg-body rounded">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Item</th>
-                                <th>Nome</th>
-                                <th>Qtde.</th>
-                                <th>Unitário</th>
-                                <th>Desconto</th>
-                                <th>Acrescimo</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
+            <div class="card-body">
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-md-7 d-flex align-items-stretch">
+                            <div class="table-responsive shadow p-3 mb-3 bg-body rounded w-100">
+                                <table class="table table-hover w-100">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Nome</th>
+                                            <th>Qtde.</th>
+                                            <th>Unitário</th>
+                                            <th>Desconto</th>
+                                            <th>Acrescimo</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($itens as $index => $item)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $item['produto'] }}</td>
+                                                <td>{{ $item['qtde'] }}</td>
+                                                <td>{{ number_format($item['unitario'], 2) }}</td>
+                                                <td>{{ number_format($item['desconto'], 2) }}</td>
+                                                <td>{{ number_format($item['acrescimo'], 2) }}</td>
+                                                <td>{{ number_format($item['total'], 2) }}</td>
+                                            </tr>
 
-                        <tbody>
-                            @forelse ($itens as $index => $item)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $item['produto'] }}</td>
-                                    <td>{{ $item['qtde'] }}</td>
-                                    <td>{{ number_format($item['unitario'], 2) }}</td>
-                                    <td>{{ number_format($item['desconto'], 2) }}</td>
-                                    <td>{{ number_format($item['acrescimo'], 2) }}</td>
-                                    <td>{{ number_format($item['total'], 2) }}</td>
-                                </tr>
-                            @empty
-                                <tr class="text-center">
-                                    <td class="text-blue" colspan="7">Sem itens...</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="col col-md-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <img src="{{ asset('logo.png') }}" class="w-100" alt="Teste de doidinnn">
-                                </div>
+                                            <input type="hidden" name="itens[{{ $index }}][produto]"
+                                                wire:model="itens.{{ $index }}.produto" required>
+                                            <input type="hidden" name="itens[{{ $index }}][qtde]"
+                                                wire:model="itens.{{ $index }}.qtde" required>
+                                            <input type="hidden" name="itens[{{ $index }}][unitario]"
+                                                wire:model="itens.{{ $index }}.unitario" required>
+                                            <input type="hidden" name="itens[{{ $index }}][desconto]"
+                                                wire:model="itens.{{ $index }}.desconto" required>
+                                            <input type="hidden" name="itens[{{ $index }}][acrescimo]"
+                                                wire:model="itens.{{ $index }}.acrescimo" required>
+                                            <input type="hidden" name="itens[{{ $index }}][total]"
+                                                wire:model="itens.{{ $index }}.total" required>
+                                        @empty
+                                            <tr class="text-center">
+                                                <td class="text-blue" colspan="7">Sem itens...</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
+                        </div>
 
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="input-group">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" name="prod" wire:model="prod"
-                                                wire:keydown.enter="searchProds()" placeholder=" " required>
-                                            <label for="prod">Produto</label>
+                        <div class="col col-md-5 d-flex align-items-stretch">
+                            <div class="card w-100">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <img src="{{ asset('logo_pdv.jpg') }}" class="w-100" alt="Ícone do PDV">
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="input-group">
-                                        <div class="form-floating">
-                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" name="qtde" wire:model="qtde" wire:change="updateProductTotal"
-                                                placeholder=" " min="1" required>
-                                            <label for="qtde">Quantidade</label>
+                                    <div class="row mt-2">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control"
+                                                        @isset($cod) disabled @endisset
+                                                        wire:model="prod" wire:keydown.enter="searchProds()"
+                                                        placeholder=" ">
+                                                    <label for="prod">Produto</label>
+                                                </div>
+                                                @isset($cod)
+                                                    <button class="btn btn-secondary" wire:click="cancelProd"><i
+                                                            class="fa fa-times"></i></button>
+                                                @endisset
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col">
-                                    <div class="input-group">
-                                        <div class="form-floating">
-                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" wire:model="desconto" wire:change="updateProductTotal"
-                                                placeholder=" " min="0" step="0.01" required>
-                                            <label for="desconto">Desconto</label>
+
+                                    <div class="row mt-2">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <div class="form-floating">
+                                                    <input type="number"
+                                                        @if (!isset($cod)) disabled @endif
+                                                        class="form-control" name="qtde" wire:model="qtde"
+                                                        wire:change="updateProductTotal" placeholder=" " min="1"
+                                                        required>
+                                                    <label for="qtde">Quantidade</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <div class="form-floating">
+                                                    <input type="number"
+                                                        @if (!isset($cod)) disabled @endif
+                                                        class="form-control" wire:model="desconto"
+                                                        wire:change="updateProductTotal" placeholder=" " min="0"
+                                                        step="0.01" required>
+                                                    <label for="desconto">Desconto</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <div class="form-floating">
+                                                    <input type="number"
+                                                        @if (!isset($cod)) disabled @endif
+                                                        class="form-control" wire:model="acrescimo"
+                                                        wire:change="updateProductTotal" placeholder=" " min="0"
+                                                        step="0.01" required>
+                                                    <label for="acrescimo">Acrescimo</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="col">
-                                    <div class="input-group">
-                                        <div class="form-floating">
-                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" wire:model="acrescimo" wire:change="updateProductTotal"
-                                                placeholder=" " min="0" step="0.01" required>
-                                            <label for="acrescimo">Acrescimo</label>
+                                    <div class="row mt-2">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <div class="form-floating">
+                                                    <input type="number"
+                                                        @if (!isset($cod)) disabled @endif
+                                                        class="form-control" name="total" wire:model="total"
+                                                        placeholder=" " min="0" required>
+                                                    <label for="total">Total</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="input-group">
-                                        <div class="form-floating">
-                                            <input type="number" @if(!isset($cod)) disabled @endif class="form-control" name="total" wire:model="total"
-                                                placeholder=" " min="0" required>
-                                            <label for="total">Total</label>
+                                    <div class="row text-center mt-2">
+                                        <div class="col">
+                                            <button class="btn btn-primary" wire:click="addProd">+ Adicionar</button>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row text-center mt-2">
-                                <div class="col">
-                                    <button class="btn btn-primary" wire:click="addProd">+ Adicionar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card-footer">
-            <div class="row text-center">
-                <div class="col">
-                    <h5>Valor Total: <b>R$ {{ number_format($valorTotal, 2) }}</b></h5>
+            <div class="card-footer">
+                <div class="row text-center">
+                    <div class="col">
+                        <h5>Valor Total: <b>R$ {{ number_format($valorTotal, 2) }}</b></h5>
+                        <input type="hidden" name="valorTotal"
+                        wire:model="valorTotal" required>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-@component('components.modal', [
-    'modalId' => 'AddProdModal',
-    'modalTitle' => 'Adicionar Produtos',
-    'sizeModal' => 'modal-lg',
-])
-    @component('components.dataTable', [
-        'responsive' => [
-            [
-                'responsivePriority' => 1,
-                'targets' => 0,
-            ],
-            [
-                'responsivePriority' => 2,
-                'targets' => 1,
-            ],
-            [
-                'responsivePriority' => 3,
-                'targets' => 2,
-            ]
-        ],
-        'searching' => false,
-        'lengthChange' => false
+        <div class="row mb-3">
+            <div class="col text-center">
+                <button class="btn btn-outline-success btn-lg" type="submit">Finalizar</button>
+            </div>
+        </div>
+    </form>
+
+    @component('components.modal', [
+        'modalId' => 'AddProdModal',
+        'modalTitle' => 'Adicionar Produtos',
+        'sizeModal' => 'modal-lg',
     ])
-        <thead>
-            <tr>
-                <th>Código</th>
-                <th>Produto</th>
-                <th>Unitário</th>
-            </tr>
-        </thead>
+        @component('components.dataTable', [
+            'responsive' => [
+                [
+                    'responsivePriority' => 1,
+                    'targets' => 0,
+                ],
+                [
+                    'responsivePriority' => 2,
+                    'targets' => 1,
+                ],
+                [
+                    'responsivePriority' => 3,
+                    'targets' => 2,
+                ],
+            ],
+            'searching' => false,
+            'lengthChange' => false,
+        ])
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Unitário</th>
+                </tr>
+            </thead>
 
-        <tbody class="product-table-body">
-        </tbody>
+            <tbody class="product-table-body">
+            </tbody>
+        @endcomponent
     @endcomponent
-@endcomponent
+</div>
 
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .table-responsive-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
 @endsection
 
 @section('js')
@@ -208,7 +257,8 @@
             data.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.addEventListener('dblclick', function() {
-                    Livewire.emit('selectProd', item.produto, item.codigo, item.precovenda);
+                    Livewire.emit('selectProd', item.produto, item.codigo, item
+                        .precovenda);
                 });
 
                 const tdProduto = document.createElement('td');
