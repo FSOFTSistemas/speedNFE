@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Enums\FormaPagamentoEnum;
 use App\Services\ProdutosService;
 use Livewire\Component;
 
@@ -21,7 +22,13 @@ class NFCe extends Component
     public $valorTotal = 0;
     public $itens = [];
 
+    public $formas = [];
+
     protected $listeners = ['selectProd'];
+
+    public function mount() {
+        $this->formas = FormaPagamentoEnum::cases();
+    }
 
     public function addProd()
     {
@@ -62,9 +69,7 @@ class NFCe extends Component
     public function searchProds(ProdutosService $produtoService)
     {
         $this->results = $produtoService->searchProdByFilter($this->prod);
-        if ($this->results->isNotEmpty()) {
-            $this->emit('OpenAddProdModal', $this->results);
-        }
+        $this->emit('OpenAddProdModal', $this->results);
     }
 
     public function clearQuery()
@@ -80,6 +85,11 @@ class NFCe extends Component
         $this->total = $this->qtde * $this->unitario;
         $this->cod = $codigo;
         $this->emit('CloseAddProdModal');
+    }
+
+    public function selectPaymentMethod()
+    {
+        $this->emit('OpenSelectPaymentMethodModal');
     }
 
     public function render()
