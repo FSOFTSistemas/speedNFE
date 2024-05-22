@@ -18,7 +18,7 @@ class NFCeController extends Controller
     private $cupomService;
     private $cupomFormaService;
     private $itemCupomService;
-    private EmpresasService $empresaServices;
+    private $empresaServices;
 
     public function __construct(CupomService $cupomService, EmpresasService $empresaServices, CupomFormaService $cupomFormaService, ItemCupomService $itemCupomService)
     {
@@ -48,7 +48,10 @@ class NFCeController extends Controller
 
     public function store(Request $request)
     {
-        //
+        try {
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function show($id)
