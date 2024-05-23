@@ -161,7 +161,8 @@
 
     <div class="row mb-3">
         <div class="col text-center">
-            <button class="btn btn-outline-success btn-lg" @if (count($itens) < 1) disabled @endif wire:click="selectPaymentMethod">Finalizar</button>
+            <button class="btn btn-outline-success btn-lg" @if (count($itens) < 1) disabled @endif
+                wire:click="selectPaymentMethod">Finalizar</button>
         </div>
     </div>
     {{-- </form> --}}
@@ -171,9 +172,89 @@
         'modalTitle' => 'Forma de Pagamento',
         'sizeModal' => 'modal-lg',
     ])
-        @foreach ($formas as $forma)
-            <p>{{ $forma }}</p>
-        @endforeach
+        <div class="container">
+            <div class="row">
+                <div class="col-7 d-flex align-items-stretch">
+                    <div class="row">
+                        @foreach ($formas as $index => $forma)
+                            <div class="col-6">
+                                <div class="card h-50">
+                                    <div class="card-body text-center">
+                                        <p><b>{{ $forma }}</b></p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="col-5 d-flex align-items-stretch">
+                    <div class="card w-100">
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary w-45">Subtotal</span>
+                                        <input type="number" class="form-control" wire:model="prod"
+                                            wire:keydown.enter="searchProds()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary w-45">Desconto</span>
+                                        <input type="number" class="form-control" wire:model="prod"
+                                            wire:keydown.enter="searchProds()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary w-45">Acrescimo</span>
+                                        <input type="number" class="form-control" wire:model="prod"
+                                            wire:keydown.enter="searchProds()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary w-45">Total</span>
+                                        <input type="number" class="form-control" wire:model="prod"
+                                            wire:keydown.enter="searchProds()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary w-45">Valor Pago</span>
+                                        <input type="number" class="form-control" wire:model="prod"
+                                            wire:keydown.enter="searchProds()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-secondary w-50">Troco</span>
+                                        <input type="number" class="form-control" wire:model="prod"
+                                            wire:keydown.enter="searchProds()">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endcomponent
 
     @component('components.modal', [

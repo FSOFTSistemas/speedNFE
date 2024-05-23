@@ -19,6 +19,7 @@ class NFCe extends Component
 
     public $results = [];
 
+    public $forma = null;
     public $valorTotal = 0;
     public $itens = [];
 
@@ -85,6 +86,11 @@ class NFCe extends Component
         $this->total = $this->qtde * $this->unitario;
         $this->cod = $codigo;
         $this->emit('CloseAddProdModal');
+    }
+
+    public function addPaymentMethod($index)
+    {
+        $this->forma = $this->formas[$index];
     }
 
     public function selectPaymentMethod()
