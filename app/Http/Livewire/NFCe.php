@@ -17,17 +17,24 @@ class NFCe extends Component
     public $acrescimo = 0;
     public $total = 0;
 
+    public $formaAtual = null;
     public $results = [];
 
-    public $forma = null;
+    public $formasSelecionadas = [];
     public $valorTotal = 0;
+    public $descontoTotal = 0;
+    public $acrescimoTotal = 0;
+    public $subtotal = 0;
+    public $valorPago = 0;
+    public $troco = 0;
     public $itens = [];
 
     public $formas = [];
 
     protected $listeners = ['selectProd'];
 
-    public function mount() {
+    public function mount()
+    {
         $this->formas = FormaPagamentoEnum::cases();
     }
 
@@ -60,11 +67,14 @@ class NFCe extends Component
 
     public function updateSaleTotal()
     {
-        $valorTotal = 0;
-        foreach ($this->itens as $item) {
-            $valorTotal += $item['total'];
+        if(empty($this->formasSelecionadas)) {
+            $valorTotal = 0;
+            foreach ($this->itens as $item) {
+                $valorTotal += $item['total'];
+            }
+            $this->valorTotal = $valorTotal - $this->descontoTotal + $this->acrescimoTotal;
+            $this->subtotal = $valorTotal;
         }
-        $this->valorTotal = $valorTotal;
     }
 
     public function searchProds(ProdutosService $produtoService)
@@ -90,12 +100,24 @@ class NFCe extends Component
 
     public function addPaymentMethod($index)
     {
-        $this->forma = $this->formas[$index];
+        $this->formaAtual = $index;
+        $this->emit('OpenPaymentModal');
     }
 
     public function selectPaymentMethod()
     {
         $this->emit('OpenSelectPaymentMethodModal');
+    }
+
+    public function updateAmountPaid()
+    {
+        if ($this->formaAtual != 0 && $this->troco > 0) {
+            return false;
+        }
+        $this->formasSelecionadas[] = ['forma' => $this->formas[$this->formaAtual], 'valorPago' => $this->valorPago];
+        $this->troco = $this->valorPago - $this->valorTotal;
+        $this->valorPago = 0;
+        $this->emit('ClosePaymentModal');
     }
 
     public function render()

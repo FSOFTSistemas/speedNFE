@@ -174,11 +174,11 @@
     ])
         <div class="container">
             <div class="row">
-                <div class="col-7 d-flex align-items-stretch">
+                <div class="col-12 col-md-7 d-flex align-items-stretch">
                     <div class="row">
                         @foreach ($formas as $index => $forma)
-                            <div class="col-6">
-                                <div class="card h-50">
+                            <div class="col-6 col-md-6">
+                                <div class="card pb-5" wire:click="addPaymentMethod({{ $index }})">
                                     <div class="card-body text-center">
                                         <p><b>{{ $forma }}</b></p>
                                     </div>
@@ -188,15 +188,14 @@
                     </div>
                 </div>
 
-                <div class="col-5 d-flex align-items-stretch">
+                <div class="col-12 col-md-5 d-flex align-items-stretch">
                     <div class="card w-100">
                         <div class="card-body">
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-45">Subtotal</span>
-                                        <input type="number" class="form-control" wire:model="prod"
-                                            wire:keydown.enter="searchProds()">
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Subtotal</span>
+                                        <input type="number" class="form-control" wire:model="subtotal" name="subtotal" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -204,9 +203,8 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-45">Desconto</span>
-                                        <input type="number" class="form-control" wire:model="prod"
-                                            wire:keydown.enter="searchProds()">
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Desconto</span>
+                                        <input type="number" @if(empty($forma)) readonly @endif class="form-control" wire:model="descontoTotal" name="descontoTotal" wire:change="updateSaleTotal">
                                     </div>
                                 </div>
                             </div>
@@ -214,9 +212,8 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-45">Acrescimo</span>
-                                        <input type="number" class="form-control" wire:model="prod"
-                                            wire:keydown.enter="searchProds()">
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Acrescimo</span>
+                                        <input type="number" @if(empty($forma)) readonly @endif class="form-control" wire:model="acrescimoTotal" name="acrescimoTotal" wire:change="updateSaleTotal">
                                     </div>
                                 </div>
                             </div>
@@ -224,9 +221,8 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-45">Total</span>
-                                        <input type="number" class="form-control" wire:model="prod"
-                                            wire:keydown.enter="searchProds()">
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Total</span>
+                                        <input type="number" disabled class="form-control" wire:model="valorTotal">
                                     </div>
                                 </div>
                             </div>
@@ -234,9 +230,8 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-45">Valor Pago</span>
-                                        <input type="number" class="form-control" wire:model="prod"
-                                            wire:keydown.enter="searchProds()">
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor Pago</span>
+                                        <input type="number" class="form-control" wire:model="valorPago" name="valorPago" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -244,15 +239,35 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50">Troco</span>
-                                        <input type="number" class="form-control" wire:model="prod"
-                                            wire:keydown.enter="searchProds()">
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Troco</span>
+                                        <input type="number" class="form-control" wire:model="troco" name="troco" readonly>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    @endcomponent
+
+    @component('components.modal', [
+        'modalId' => 'PaymentModal',
+        'modalTitle' => 'Recebimento',
+        'sizeModal' => 'modal-md',
+    ])
+        <div class="row">
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor Recebimento</span>
+                    <input type="number" class="form-control" wire:model="valorPago" wire:change="updateAmountPaid">
+                </div>
+            </div>
+        </div>
+
+        <div class="row text-center mt-2">
+            <div class="col">
+                <button class="btn btn-outline-success">Salvar</button>
             </div>
         </div>
     @endcomponent
@@ -377,6 +392,14 @@
 
         Livewire.on('OpenSelectPaymentMethodModal', function() {
             $('#PaymentMethodModal').modal('show');
+        });
+
+        Livewire.on('OpenPaymentModal', function() {
+            $('#PaymentModal').modal('show');
+        });
+
+        Livewire.on('ClosePaymentModal', function() {
+            $('#PaymentModal').modal('hide');
         });
     });
 </script>
