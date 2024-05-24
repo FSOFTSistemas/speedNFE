@@ -42,8 +42,10 @@ class NFCe extends Component
     public function addProd()
     {
         if (isset($this->prod) && isset($this->cod) && isset($this->qtde) && isset($this->unitario) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total)) {
-            $this->itens[] = ['produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total];
-            $this->updateSaleTotal();
+            if (!$this->existValueInSubArray($this->itens, $this->prod)) {
+                $this->itens[] = ['produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total];
+                $this->updateSaleTotal();
+            }
             $this->cancelProd();
         }
     }
@@ -68,7 +70,7 @@ class NFCe extends Component
 
     public function updateSaleTotal()
     {
-        if(empty($this->formasSelecionadas)) {
+        if (empty($this->formasSelecionadas)) {
             $valorTotal = 0;
             foreach ($this->itens as $item) {
                 $valorTotal += $item['total'];
@@ -118,10 +120,8 @@ class NFCe extends Component
             return false;
         } else if ($this->formaAtual != 0 && (($this->valorPago + $this->valorRecebimento) - $this->valorTotal) > 0) {
             return false;
-        } else if ($this->existValueInSubArray($this->formasSelecionadas, $this->formas[$this->formaAtual])) {
-            return false;
         }
-        $this->formasSelecionadas[] = ['forma' => $this->formas[$this->formaAtual], 'valorRecebimento' => $this->valorRecebimento];
+        $this->formasSelecionadas[$this->formas[$this->formaAtual]] = $this->getReceiptValueByMethod() ? $this->getReceiptValueByMethod() + $this->valorRecebimento : $this->valorRecebimento;
         $this->valorPago += $this->valorRecebimento;
         $this->troco = $this->valorPago - $this->valorTotal;
         $this->valorRecebimento = 0;
@@ -130,11 +130,18 @@ class NFCe extends Component
 
     private function existValueInSubArray($array, $value)
     {
-        foreach($array as $subArray) {
+        foreach ($array as $subArray) {
             if (in_array($value, $subArray)) {
                 return true;
             }
         }
+        return false;
+    }
+
+    private function getReceiptValueByMethod()
+    {
+        if (isset($this->formasSelecionadas[$this->formas[$this->formaAtual]]))
+            return $this->formasSelecionadas[$this->formas[$this->formaAtual]];
         return false;
     }
 

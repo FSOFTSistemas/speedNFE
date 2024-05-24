@@ -178,9 +178,13 @@
                     <div class="row">
                         @foreach ($formas as $index => $forma)
                             <div class="col-6 col-md-6">
-                                <div class="card pb-5" wire:click="addPaymentMethod({{ $index }})">
-                                    <div class="card-body text-center">
+                                <div class="card" wire:click="addPaymentMethod({{ $index }})">
+                                    <div class="card-body pb-5 text-center">
                                         <p><b>{{ $forma }}</b></p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <input class="form-control-plaintext text-center" readonly type="text"
+                                        wire:model="formasSelecionadas.{{ $forma }}">
                                     </div>
                                 </div>
                             </div>
@@ -194,8 +198,10 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Subtotal</span>
-                                        <input type="number" class="form-control" wire:model="subtotal" name="subtotal" readonly>
+                                        <span
+                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Subtotal</span>
+                                        <input type="number" class="form-control" wire:model="subtotal" name="subtotal"
+                                            readonly>
                                     </div>
                                 </div>
                             </div>
@@ -203,8 +209,11 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Desconto</span>
-                                        <input type="number" @if(empty($forma)) readonly @endif class="form-control" wire:model="descontoTotal" name="descontoTotal" wire:change="updateSaleTotal">
+                                        <span
+                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Desconto</span>
+                                        <input type="number" @if (empty($forma)) readonly @endif
+                                            class="form-control" wire:model="descontoTotal" name="descontoTotal"
+                                            wire:change="updateSaleTotal">
                                     </div>
                                 </div>
                             </div>
@@ -212,8 +221,11 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Acrescimo</span>
-                                        <input type="number" @if(empty($forma)) readonly @endif class="form-control" wire:model="acrescimoTotal" name="acrescimoTotal" wire:change="updateSaleTotal">
+                                        <span
+                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Acrescimo</span>
+                                        <input type="number" @if (empty($forma)) readonly @endif
+                                            class="form-control" wire:model="acrescimoTotal" name="acrescimoTotal"
+                                            wire:change="updateSaleTotal">
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +233,8 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Total</span>
+                                        <span
+                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Total</span>
                                         <input type="number" disabled class="form-control" wire:model="valorTotal">
                                     </div>
                                 </div>
@@ -230,8 +243,10 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor Pago</span>
-                                        <input type="number" class="form-control" wire:model="valorPago" name="valorPago" readonly>
+                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor
+                                            Pago</span>
+                                        <input type="number" class="form-control" wire:model="valorPago"
+                                            name="valorPago" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -239,8 +254,10 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Troco</span>
-                                        <input type="number" class="form-control" wire:model="troco" name="troco" readonly>
+                                        <span
+                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Troco</span>
+                                        <input type="number" class="form-control" wire:model="troco" name="troco"
+                                            readonly>
                                     </div>
                                 </div>
                             </div>
@@ -260,7 +277,8 @@
             <div class="col">
                 <div class="input-group">
                     <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor Recebimento</span>
-                    <input type="number" class="form-control" wire:model="valorRecebimento" wire:change="updateAmountPaid">
+                    <input type="number" class="form-control" wire:model="valorRecebimento"
+                        wire:change="updateAmountPaid">
                 </div>
             </div>
         </div>
