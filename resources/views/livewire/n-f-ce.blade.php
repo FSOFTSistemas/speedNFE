@@ -162,7 +162,7 @@
     <div class="row mb-3">
         <div class="col text-center">
             <button class="btn btn-outline-success btn-lg" @if (count($itens) < 1) disabled @endif
-                wire:click="selectPaymentMethod">Finalizar</button>
+                wire:click="selectPaymentMethod">Encerrar Cupom</button>
         </div>
     </div>
     {{-- </form> --}}
@@ -260,7 +260,7 @@
             <div class="col">
                 <div class="input-group">
                     <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor Recebimento</span>
-                    <input type="number" class="form-control" wire:model="valorPago" wire:change="updateAmountPaid">
+                    <input type="number" class="form-control" wire:model="valorRecebimento" wire:change="updateAmountPaid">
                 </div>
             </div>
         </div>

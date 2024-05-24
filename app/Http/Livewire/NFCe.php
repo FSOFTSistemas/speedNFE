@@ -26,6 +26,7 @@ class NFCe extends Component
     public $acrescimoTotal = 0;
     public $subtotal = 0;
     public $valorPago = 0;
+    public $valorRecebimento = 0;
     public $troco = 0;
     public $itens = [];
 
@@ -73,8 +74,10 @@ class NFCe extends Component
                 $valorTotal += $item['total'];
             }
             $this->valorTotal = $valorTotal - $this->descontoTotal + $this->acrescimoTotal;
-            $this->subtotal = $valorTotal;
+            return $this->subtotal = $valorTotal;
         }
+        $this->descontoTotal = 0;
+        $this->acrescimoTotal = 0;
     }
 
     public function searchProds(ProdutosService $produtoService)
@@ -111,13 +114,28 @@ class NFCe extends Component
 
     public function updateAmountPaid()
     {
-        if ($this->formaAtual != 0 && $this->troco > 0) {
+        if ($this->valorPago >= $this->valorTotal) {
+            return false;
+        } else if ($this->formaAtual != 0 && (($this->valorPago + $this->valorRecebimento) - $this->valorTotal) > 0) {
+            return false;
+        } else if ($this->existValueInSubArray($this->formasSelecionadas, $this->formas[$this->formaAtual])) {
             return false;
         }
-        $this->formasSelecionadas[] = ['forma' => $this->formas[$this->formaAtual], 'valorPago' => $this->valorPago];
+        $this->formasSelecionadas[] = ['forma' => $this->formas[$this->formaAtual], 'valorRecebimento' => $this->valorRecebimento];
+        $this->valorPago += $this->valorRecebimento;
         $this->troco = $this->valorPago - $this->valorTotal;
-        $this->valorPago = 0;
+        $this->valorRecebimento = 0;
         $this->emit('ClosePaymentModal');
+    }
+
+    private function existValueInSubArray($array, $value)
+    {
+        foreach($array as $subArray) {
+            if (in_array($value, $subArray)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function render()
