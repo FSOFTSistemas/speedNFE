@@ -162,7 +162,7 @@
     <div class="row mb-3">
         <div class="col text-center">
             <button class="btn btn-outline-success btn-lg" @if (count($itens) < 1) disabled @endif
-                wire:click="showPaymentArea" onclick="scrollToSection()">Encerrar Cupom</button>
+                wire:click="showPaymentArea">Encerrar Cupom</button>
         </div>
     </div>
     {{-- </form> --}}
@@ -172,9 +172,9 @@
             <div class="row">
                 <div class="col-12 col-md-7 d-flex align-items-stretch">
                     <div class="row">
-                        @foreach ($formas as $index => $forma)
+                        @foreach ($formas as $forma)
                             <div class="col-6 col-md-6">
-                                <div class="card" wire:click="addPaymentMethod({{ $index }})">
+                                <div class="card" wire:click="addPaymentMethod('{{ $forma }}')">
                                     <div class="card-body pb-5 text-center">
                                         <p><b>{{ $forma }}</b></p>
                                     </div>
@@ -207,7 +207,7 @@
                                     <div class="input-group">
                                         <span
                                             class="input-group-text bg-secondary w-50 d-flex justify-content-end">Desconto</span>
-                                        <input type="number" @if (empty($forma)) readonly @endif
+                                        <input type="number" @if (!empty($formasSelecionadas)) readonly @endif
                                             class="form-control" wire:model="descontoTotal" name="descontoTotal"
                                             wire:change="updateSaleTotal">
                                     </div>
@@ -219,7 +219,7 @@
                                     <div class="input-group">
                                         <span
                                             class="input-group-text bg-secondary w-50 d-flex justify-content-end">Acrescimo</span>
-                                        <input type="number" @if (empty($forma)) readonly @endif
+                                        <input type="number" @if (!empty($formasSelecionadas)) readonly @endif
                                             class="form-control" wire:model="acrescimoTotal" name="acrescimoTotal"
                                             wire:change="updateSaleTotal">
                                     </div>
@@ -261,8 +261,9 @@
 
                             <div class="row text-center">
                                 <div class="col">
-                                    <button class="btn btn-outline-success" type="submit"
-                                        id="finishBtn">Finalizar</button>
+                                    <button class="btn btn-outline-success"
+                                        @if ($valorPago != $valorTotal || $troco < 0) disabled @endif
+                                        type="submit">Finalizar</button>
                                 </div>
                             </div>
                         </div>
@@ -277,19 +278,24 @@
         'modalTitle' => 'Recebimento',
         'sizeModal' => 'modal-md',
     ])
+    <div class="row">
+        <div class="col">
+            <input class="form-control-plaintext text-center text-bold" type="text" wire:model="selectedForma">
+        </div>
+    </div>
+
         <div class="row">
             <div class="col">
                 <div class="input-group">
                     <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor Recebimento</span>
-                    <input type="number" class="form-control" wire:model="valorRecebimento"
-                        wire:change="updateAmountPaid">
+                    <input type="number" class="form-control" wire:model="valorRecebimento">
                 </div>
             </div>
         </div>
 
         <div class="row text-center mt-2">
             <div class="col">
-                <button class="btn btn-outline-success">Salvar</button>
+                <button class="btn btn-outline-success" wire:click="updateValueReceived">Salvar</button>
             </div>
         </div>
     @endcomponent
@@ -370,12 +376,6 @@
 @endsection
 
 <script>
-            function scrollToSection() {
-            document.getElementById('addPaymentMethod').scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-
     document.addEventListener('livewire:load', function() {
         Livewire.on('OpenAddProdModal', function(data) {
             if (data.length > 0) {
@@ -424,6 +424,12 @@
 
         Livewire.on('ClosePaymentModal', function() {
             $('#PaymentModal').modal('hide');
+        });
+
+        Livewire.on('ShowPaymentArea', function() {
+            document.getElementById('addPaymentMethod').scrollIntoView({
+                behavior: 'smooth'
+            });
         });
     });
 </script>

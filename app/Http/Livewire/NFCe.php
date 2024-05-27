@@ -17,8 +17,8 @@ class NFCe extends Component
     public $acrescimo = 0;
     public $total = 0;
 
-    public $formaAtual = null;
     public $results = [];
+    public $selectedForma = null;
 
     public $formasSelecionadas = [];
     public $valorTotal = 0;
@@ -105,27 +105,23 @@ class NFCe extends Component
         $this->emit('CloseAddProdModal');
     }
 
-    public function addPaymentMethod($index)
+    public function addPaymentMethod($method)
     {
-        $this->formaAtual = $index;
-        if ($this->getReceiptValueByMethod()) {
-            $this->valorRecebimento = $this->getReceiptValueByMethod();
-        } else {
-            $this->valorRecebimento = 0;
-        }
+        $this->selectedForma = $method;
+        $this->valorRecebimento = $this->getValueReceivedByMethod($method);
         $this->emit('OpenPaymentModal');
     }
 
-    public function updateAmountPaid()
+    public function updateValueReceived()
     {
-        $valorPagoAtual = $this->calculateAmountPaid();
-        if ($valorPagoAtual >= $this->valorTotal) {
+        $valueReceived = $this->calculateNewValueReceived();
+        if ($this->valorPago >= $this->valorTotal) {
             return false;
-        } else if ($this->formaAtual != 0 && (($valorPagoAtual + $this->valorRecebimento) - $this->valorTotal) > 0) {
+        } else if ($this->selectedForma != 'DINHEIRO' && ($valueReceived > $this->valorTotal)) {
             return false;
         }
-        $this->formasSelecionadas[$this->formas[$this->formaAtual]] = $this->valorRecebimento;
-        $this->valorPago = $valorPagoAtual;
+        $this->formasSelecionadas[$this->selectedForma] = $this->valorRecebimento;
+        $this->valorPago = $valueReceived;
         $this->troco = $this->valorPago - $this->valorTotal;
         $this->valorRecebimento = 0;
         $this->emit('ClosePaymentModal');
@@ -141,25 +137,31 @@ class NFCe extends Component
         return false;
     }
 
-    private function getReceiptValueByMethod()
+    private function getValueReceivedByMethod($method)
     {
-        if (isset($this->formasSelecionadas[$this->formas[$this->formaAtual]]))
-            return $this->formasSelecionadas[$this->formas[$this->formaAtual]];
-        return false;
+        if (isset($this->formasSelecionadas[$method])) {
+            $value = $this->formasSelecionadas[$method];
+        } else {
+            $value = 0;
+        }
+        return $value;
     }
 
-    private function calculateAmountPaid()
+    private function calculateNewValueReceived()
     {
-        $valorPago = 0;
-        foreach ($this->formasSelecionadas as $forma) {
-            $valorPago += $forma;
+        $value = $this->valorRecebimento;
+        foreach ($this->formasSelecionadas as $index => $forma) {
+            if ($index != $this->selectedForma) {
+                $value += $forma;
+            }
         }
-        return $valorPago;
+        return $value;
     }
 
     public function showPaymentArea()
     {
         $this->showPaymentArea = 'block';
+        $this->emit('ShowPaymentArea');
     }
 
     public function render()
