@@ -261,6 +261,12 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row text-center">
+                                <div class="col">
+                                    <button class="btn btn-outline-success" type="submit" id="finishBtn">Finalizar</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

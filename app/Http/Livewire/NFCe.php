@@ -106,6 +106,11 @@ class NFCe extends Component
     public function addPaymentMethod($index)
     {
         $this->formaAtual = $index;
+        if ($this->getReceiptValueByMethod()) {
+            $this->valorRecebimento = $this->getReceiptValueByMethod();
+        } else {
+            $this->valorRecebimento = 0;
+        }
         $this->emit('OpenPaymentModal');
     }
 
@@ -116,13 +121,14 @@ class NFCe extends Component
 
     public function updateAmountPaid()
     {
-        if ($this->valorPago >= $this->valorTotal) {
+        $valorPagoAtual = $this->calculateAmountPaid();
+        if ($valorPagoAtual >= $this->valorTotal) {
             return false;
-        } else if ($this->formaAtual != 0 && (($this->valorPago + $this->valorRecebimento) - $this->valorTotal) > 0) {
+        } else if ($this->formaAtual != 0 && (($valorPagoAtual + $this->valorRecebimento) - $this->valorTotal) > 0) {
             return false;
         }
-        $this->formasSelecionadas[$this->formas[$this->formaAtual]] = $this->getReceiptValueByMethod() ? $this->getReceiptValueByMethod() + $this->valorRecebimento : $this->valorRecebimento;
-        $this->valorPago += $this->valorRecebimento;
+        $this->formasSelecionadas[$this->formas[$this->formaAtual]] = $this->valorRecebimento;
+        $this->valorPago = $valorPagoAtual;
         $this->troco = $this->valorPago - $this->valorTotal;
         $this->valorRecebimento = 0;
         $this->emit('ClosePaymentModal');
@@ -143,6 +149,15 @@ class NFCe extends Component
         if (isset($this->formasSelecionadas[$this->formas[$this->formaAtual]]))
             return $this->formasSelecionadas[$this->formas[$this->formaAtual]];
         return false;
+    }
+
+    private function calculateAmountPaid()
+    {
+        $valorPago = 0;
+        foreach ($this->formasSelecionadas as $forma) {
+            $valorPago += $forma;
+        }
+        return $valorPago;
     }
 
     public function render()
