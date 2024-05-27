@@ -32,6 +32,8 @@ class NFCe extends Component
 
     public $formas = [];
 
+    public $showPaymentArea = 'none';
+
     protected $listeners = ['selectProd'];
 
     public function mount()
@@ -114,11 +116,6 @@ class NFCe extends Component
         $this->emit('OpenPaymentModal');
     }
 
-    public function selectPaymentMethod()
-    {
-        $this->emit('OpenSelectPaymentMethodModal');
-    }
-
     public function updateAmountPaid()
     {
         $valorPagoAtual = $this->calculateAmountPaid();
@@ -158,6 +155,11 @@ class NFCe extends Component
             $valorPago += $forma;
         }
         return $valorPago;
+    }
+
+    public function showPaymentArea()
+    {
+        $this->showPaymentArea = 'block';
     }
 
     public function render()

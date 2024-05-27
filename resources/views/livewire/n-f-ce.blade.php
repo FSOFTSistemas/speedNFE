@@ -162,16 +162,12 @@
     <div class="row mb-3">
         <div class="col text-center">
             <button class="btn btn-outline-success btn-lg" @if (count($itens) < 1) disabled @endif
-                wire:click="selectPaymentMethod">Encerrar Cupom</button>
+                wire:click="showPaymentArea" onclick="scrollToSection()">Encerrar Cupom</button>
         </div>
     </div>
     {{-- </form> --}}
 
-    @component('components.modal', [
-        'modalId' => 'PaymentMethodModal',
-        'modalTitle' => 'Forma de Pagamento',
-        'sizeModal' => 'modal-lg',
-    ])
+    <div id="addPaymentMethod" style="display: {{ $showPaymentArea }}">
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-7 d-flex align-items-stretch">
@@ -184,7 +180,7 @@
                                     </div>
                                     <div class="card-footer">
                                         <input class="form-control-plaintext text-center" readonly type="text"
-                                        wire:model="formasSelecionadas.{{ $forma }}">
+                                            wire:model="formasSelecionadas.{{ $forma }}">
                                     </div>
                                 </div>
                             </div>
@@ -200,8 +196,8 @@
                                     <div class="input-group">
                                         <span
                                             class="input-group-text bg-secondary w-50 d-flex justify-content-end">Subtotal</span>
-                                        <input type="number" class="form-control" wire:model="subtotal" name="subtotal"
-                                            readonly>
+                                        <input type="number" class="form-control" wire:model="subtotal"
+                                            name="subtotal" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -243,7 +239,8 @@
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
-                                        <span class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor
+                                        <span
+                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor
                                             Pago</span>
                                         <input type="number" class="form-control" wire:model="valorPago"
                                             name="valorPago" readonly>
@@ -264,7 +261,8 @@
 
                             <div class="row text-center">
                                 <div class="col">
-                                    <button class="btn btn-outline-success" type="submit" id="finishBtn">Finalizar</button>
+                                    <button class="btn btn-outline-success" type="submit"
+                                        id="finishBtn">Finalizar</button>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +270,7 @@
                 </div>
             </div>
         </div>
-    @endcomponent
+    </div>
 
     @component('components.modal', [
         'modalId' => 'PaymentModal',
@@ -372,6 +370,12 @@
 @endsection
 
 <script>
+            function scrollToSection() {
+            document.getElementById('addPaymentMethod').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
     document.addEventListener('livewire:load', function() {
         Livewire.on('OpenAddProdModal', function(data) {
             if (data.length > 0) {
@@ -412,10 +416,6 @@
 
         Livewire.on('CloseAddProdModal', function() {
             $('#AddProdModal').modal('hide');
-        });
-
-        Livewire.on('OpenSelectPaymentMethodModal', function() {
-            $('#PaymentMethodModal').modal('show');
         });
 
         Livewire.on('OpenPaymentModal', function() {
