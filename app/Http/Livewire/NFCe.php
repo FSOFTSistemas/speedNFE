@@ -52,6 +52,13 @@ class NFCe extends Component
         }
     }
 
+    public function removeItem($index)
+    {
+        unset($this->itens[$index]);
+        $this->itens = array_values($this->itens);
+        $this->updateSaleTotal();
+    }
+
     public function cancelProd()
     {
         $this->prod = null;
@@ -65,7 +72,7 @@ class NFCe extends Component
 
     public function updateProductTotal()
     {
-        if (isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo)) {
+        if (isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo) && empty($this->formasSelecionadas)) {
             $this->total = $this->qtde * ($this->unitario - $this->desconto + $this->acrescimo);
         }
     }
@@ -115,9 +122,11 @@ class NFCe extends Component
     public function updateValueReceived()
     {
         $valueReceived = $this->calculateNewValueReceived();
-        if ($this->valorPago >= $this->valorTotal) {
-            return false;
-        } else if ($this->selectedForma != 'DINHEIRO' && ($valueReceived > $this->valorTotal)) {
+        // DEIXAR PARA VERIFICAR ESSA SITUAÇÃO COM MAIS CARINHO
+        // if ($this->valorPago >= $this->valorTotal) {
+        //     return false;
+        // }
+        if ($this->selectedForma != 'DINHEIRO' && ($valueReceived > $this->valorTotal)) {
             return false;
         }
         $this->formasSelecionadas[$this->selectedForma] = $this->valorRecebimento;

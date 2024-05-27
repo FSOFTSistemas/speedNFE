@@ -24,6 +24,7 @@
                                         <th>Desconto</th>
                                         <th>Acrescimo</th>
                                         <th>Total</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -36,6 +37,9 @@
                                             <td>{{ number_format($item['desconto'], 2) }}</td>
                                             <td>{{ number_format($item['acrescimo'], 2) }}</td>
                                             <td>{{ number_format($item['total'], 2) }}</td>
+                                            <td>
+                                                <a class="text-danger" wire:click="removeItem({{ $index }})"><i class="fa fa-trash"></i></a>
+                                            </td>
                                         </tr>
 
                                         <input type="hidden" name="itens[{{ $index }}][produto]"
@@ -248,6 +252,7 @@
                                 </div>
                             </div>
 
+                            @if ($troco > 0)
                             <div class="row mb-2">
                                 <div class="col">
                                     <div class="input-group">
@@ -258,11 +263,12 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
 
                             <div class="row text-center">
                                 <div class="col">
                                     <button class="btn btn-outline-success"
-                                        @if ($valorPago != $valorTotal || $troco < 0) disabled @endif
+                                        @if ($valorPago < $valorTotal || $troco < 0) disabled @endif
                                         type="submit">Finalizar</button>
                                 </div>
                             </div>
