@@ -3,7 +3,9 @@
 namespace App\Http\Livewire;
 
 use App\Enums\FormaPagamentoEnum;
+use App\Services\ClientesService;
 use App\Services\ProdutosService;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class NFCe extends Component
@@ -33,14 +35,18 @@ class NFCe extends Component
     public $itens = [];
 
     public $formas = [];
+    public $customers = [];
+    public $products = [];
 
     public $showPaymentArea = 'none';
     public $editProd = false;
 
-    protected $listeners = ['selectProd'];
+    protected $listeners = ['selectProd', 'searchCustomers', 'searchProducts', 'clearItems'];
 
-    public function mount()
+    public function mount(ClientesService $clienteService, ProdutosService $produtoService)
     {
+        $this->customers = $clienteService->todos(Auth::user()->empresa_id);
+        $this->products = $produtoService->todos(Auth::user()->empresa_id);
         $this->formas = FormaPagamentoEnum::cases();
     }
 
@@ -131,6 +137,11 @@ class NFCe extends Component
         $this->prod = null;
     }
 
+    public function selectClient($clientCode, $name)
+    {
+        dd($clientCode, $name);
+    }
+
     public function selectProd($prod, $codigo, $unitario)
     {
         $this->prod = $prod;
@@ -161,6 +172,23 @@ class NFCe extends Component
         $this->aReceber = $this->valorTotal - $this->valorPago;
         $this->valorRecebimento = 0;
         $this->emit('ClosePaymentModal');
+    }
+
+    public function searchCustomers()
+    {
+        $this->emit('OpenCustomersModal');
+    }
+
+    public function searchProducts()
+    {
+        $this->emit('OpenProductsModal');
+    }
+
+    public function clearItems()
+    {
+        $this->itens = [];
+        $this->showPaymentArea = 'none';
+        $this->updateSaleTotal();
     }
 
     public function clearMethods()
