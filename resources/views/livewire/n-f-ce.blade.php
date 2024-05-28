@@ -38,7 +38,11 @@
                                             <td>{{ number_format($item['acrescimo'], 2) }}</td>
                                             <td>{{ number_format($item['total'], 2) }}</td>
                                             <td>
-                                                <a class="text-danger" wire:click="removeItem({{ $index }})"><i class="fa fa-trash"></i></a>
+                                                @if (empty($formasSelecionadas))
+                                                <a class="text-danger" wire:click="removeItem({{ $index }})"><i
+                                                        class="fa fa-trash"></i></a>
+                                                <a class="text-info" wire:click="editItem({{ $index }})"><i class="fa fa-edit"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
 
@@ -143,7 +147,11 @@
 
                                 <div class="row text-center mt-2">
                                     <div class="col">
-                                        <button class="btn btn-primary" wire:click="addProd">+ Adicionar</button>
+                                        @if ($editProd)
+                                            <button class="btn btn-primary" wire:click="updateProd">Salvar</button>
+                                        @else
+                                            <button class="btn btn-primary" @if (!empty($formasSelecionadas)) disabled @endif wire:click="addProd">+ Adicionar</button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -253,20 +261,33 @@
                             </div>
 
                             @if ($troco > 0)
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <div class="input-group">
-                                        <span
-                                            class="input-group-text bg-secondary w-50 d-flex justify-content-end">Troco</span>
-                                        <input type="number" class="form-control" wire:model="troco" name="troco"
-                                            readonly>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <div class="input-group">
+                                            <span
+                                                class="input-group-text bg-secondary w-50 d-flex justify-content-end">Troco</span>
+                                            <input type="number" class="form-control" wire:model="troco"
+                                                name="troco" readonly>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @else
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <div class="input-group">
+                                            <span
+                                                class="input-group-text bg-secondary w-50 d-flex justify-content-end">Restante</span>
+                                            <input type="number" class="form-control" wire:model="aReceber"
+                                                name="aReceber" readonly>
+                                        </div>
+                                    </div>
+                                </div>
                             @endif
 
                             <div class="row text-center">
                                 <div class="col">
+                                    <button class="btn btn-secondary" wire:click="clearMethods"
+                                        @if (empty($formasSelecionadas)) disabled @endif>Limpar</button>
                                     <button class="btn btn-outline-success"
                                         @if ($valorPago < $valorTotal || $troco < 0) disabled @endif
                                         type="submit">Finalizar</button>
@@ -284,11 +305,11 @@
         'modalTitle' => 'Recebimento',
         'sizeModal' => 'modal-md',
     ])
-    <div class="row">
-        <div class="col">
-            <input class="form-control-plaintext text-center text-bold" type="text" wire:model="selectedForma">
+        <div class="row">
+            <div class="col">
+                <input class="form-control-plaintext text-center text-bold" type="text" wire:model="selectedForma">
+            </div>
         </div>
-    </div>
 
         <div class="row">
             <div class="col">
@@ -436,6 +457,10 @@
             document.getElementById('addPaymentMethod').scrollIntoView({
                 behavior: 'smooth'
             });
+        });
+
+        Livewire.on('ErrorInPayment', function($message) {
+            alert($message)
         });
     });
 </script>

@@ -19,6 +19,7 @@ class NFCe extends Component
 
     public $results = [];
     public $selectedForma = null;
+    public $prodIndexUpdating = null;
 
     public $formasSelecionadas = [];
     public $valorTotal = 0;
@@ -28,11 +29,13 @@ class NFCe extends Component
     public $valorPago = 0;
     public $valorRecebimento = 0;
     public $troco = 0;
+    public $aReceber = 0;
     public $itens = [];
 
     public $formas = [];
 
     public $showPaymentArea = 'none';
+    public $editProd = false;
 
     protected $listeners = ['selectProd'];
 
@@ -59,6 +62,29 @@ class NFCe extends Component
         $this->updateSaleTotal();
     }
 
+    public function updateProd()
+    {
+        $this->itens[$this->prodIndexUpdating]['qtde'] = $this->qtde;
+        $this->itens[$this->prodIndexUpdating]['desconto'] = $this->desconto;
+        $this->itens[$this->prodIndexUpdating]['acrescimo'] = $this->acrescimo;
+        $this->itens[$this->prodIndexUpdating]['total'] = $this->total;
+        $this->updateSaleTotal();
+        $this->cancelProd();
+    }
+
+    public function editItem($index)
+    {
+        $this->editProd = true;
+        $this->prodIndexUpdating = $index;
+        $this->prod = $this->itens[$index]['produto'];
+        $this->cod = $this->itens[$index]['codigo'];
+        $this->qtde = $this->itens[$index]['qtde'];
+        $this->acrescimo = $this->itens[$index]['acrescimo'];
+        $this->desconto = $this->itens[$index]['desconto'];
+        $this->unitario = $this->itens[$index]['unitario'];
+        $this->total = $this->itens[$index]['total'];
+    }
+
     public function cancelProd()
     {
         $this->prod = null;
@@ -68,6 +94,7 @@ class NFCe extends Component
         $this->desconto = 0;
         $this->acrescimo = 0;
         $this->total = 0;
+        $this->editProd = false;
     }
 
     public function updateProductTotal()
@@ -85,6 +112,7 @@ class NFCe extends Component
                 $valorTotal += $item['total'];
             }
             $this->valorTotal = $valorTotal - $this->descontoTotal + $this->acrescimoTotal;
+            $this->aReceber = $this->valorTotal;
             return $this->subtotal = $valorTotal;
         }
         $this->descontoTotal = 0;
@@ -122,18 +150,25 @@ class NFCe extends Component
     public function updateValueReceived()
     {
         $valueReceived = $this->calculateNewValueReceived();
-        // DEIXAR PARA VERIFICAR ESSA SITUAÇÃO COM MAIS CARINHO
-        // if ($this->valorPago >= $this->valorTotal) {
-        //     return false;
-        // }
-        if ($this->selectedForma != 'DINHEIRO' && ($valueReceived > $this->valorTotal)) {
-            return false;
+        if ($this->valorPago >= $this->valorTotal && $valueReceived >= $this->valorTotal) {
+            return $this->emit('ErrorInPayment', 'O valor já foi totalmente liquidado!');
+        } elseif ($this->selectedForma != 'DINHEIRO' && ($valueReceived > $this->valorTotal)) {
+            return $this->emit('ErrorInPayment', 'Não é possível colocar valor acima do valor total com esse método ('.$this->selectedForma.')');
         }
         $this->formasSelecionadas[$this->selectedForma] = $this->valorRecebimento;
         $this->valorPago = $valueReceived;
         $this->troco = $this->valorPago - $this->valorTotal;
+        $this->aReceber = $this->valorTotal - $this->valorPago;
         $this->valorRecebimento = 0;
         $this->emit('ClosePaymentModal');
+    }
+
+    public function clearMethods()
+    {
+        $this->formasSelecionadas = [];
+        $this->valorPago = 0;
+        $this->troco = 0;
+        $this->showPaymentArea = 'none';
     }
 
     private function existValueInSubArray($array, $value)
