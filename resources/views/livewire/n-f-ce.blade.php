@@ -10,7 +10,7 @@
         </div>
 
         <div class="card-body">
-            <div class="container mt-5">
+            <div class="container mt-3">
                 <div class="row">
                     <div class="col-md-7 d-flex align-items-stretch">
                         <div class="table-responsive shadow p-3 mb-3 bg-body rounded w-100">
@@ -60,7 +60,9 @@
                                             wire:model="itens.{{ $index }}.total" required>
                                     @empty
                                         <tr class="text-center">
-                                            <td class="text-blue" colspan="7">Sem itens...</td>
+                                            <td colspan="7">
+                                                <span class="text-blue">Sem itens...</span>
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -73,7 +75,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col">
-                                        <img src="{{ asset('logo_pdv.jpg') }}" class="w-100" alt="Ícone do PDV">
+                                        <img src="{{ asset('logo_pdv.jpg') }}" class="w-100 h-100" alt="Ícone do PDV">
                                     </div>
                                 </div>
 
@@ -166,6 +168,12 @@
                 <div class="col">
                     <h5>Valor Total: <b>R$ {{ number_format($valorTotal, 2) }}</b></h5>
                     <input type="hidden" name="valorTotal" wire:model="valorTotal" required>
+                </div>
+            </div>
+
+            <div class="row text-center">
+                <div class="col">
+                    <h5>Adicionar o cliente aqui!</h5>
                 </div>
             </div>
         </div>
