@@ -18,6 +18,7 @@ class Cupom extends Model
         'total',
         'desconto',
         'acrescimo',
+        'troco',
         'subtotal',
         'cliente_id',
         'empresa_id'

@@ -12,7 +12,7 @@ class CupomService
         return Cupom::find($id);
     }
 
-    public function createCupom($nroCupom, $total, $desconto, $acrescimo, $subtotal, $clientId, $empresaId) {
+    public function createCupom($nroCupom, $total, $desconto, $acrescimo, $subtotal, $troco, $clientId, $empresaId) {
         return Cupom::create([
             'nroCupom' => $nroCupom,
             'situacao' => SituacaoEnum::ATIVO,
@@ -22,6 +22,7 @@ class CupomService
             'desconto' => $desconto,
             'acrescimo' => $acrescimo,
             'subtotal' => $subtotal,
+            'troco' => $troco > 0 ? $troco : 0,
             'cliente_id' => $clientId,
             'empresa_id' => $empresaId
         ])->id;

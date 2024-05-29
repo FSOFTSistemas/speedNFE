@@ -324,8 +324,7 @@
                                                 <span
                                                     class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor
                                                     Pago</span>
-                                                <input type="number" class="form-control" wire:model="valorPago"
-                                                    name="valorPago" readonly>
+                                                <input type="number" class="form-control" wire:model="valorPago" readonly>
                                             </div>
                                         </div>
                                     </div>
