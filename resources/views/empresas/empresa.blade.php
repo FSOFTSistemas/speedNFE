@@ -206,20 +206,29 @@
                                 <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-4 col-xs-10">
                                             <label>Nº da Última NFe</label>
                                             <input required placeholder="Nº Última NFe..." class=form-control
                                                 type="number" name="nfe" id="nfe"
                                                 value="{{ $empresa->ultimaNFe }}" />
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
+
+                                        <div class="col-md-4 col-xs-10">
                                             <label>Nº da Última MDFe</label>
                                             <input required placeholder="Nº Última MDFe..." class=form-control
                                                 type="number" name="mdfe" id="mdfe"
                                                 value="{{ $empresa->ultimaMDFe }}" />
                                         </div>
 
+                                        <div class="col-md-4 col-xs-10">
+                                            <label>Nº da Última NFCe</label>
+                                            <input required placeholder="Nº Última NFCe..." class=form-control
+                                                type="number" name="nfce" id="nfce"
+                                                value="{{ $empresa->ultimaNFCe }}" />
+                                        </div>
+                                    </div>
 
+                                <div class="row">
                                         <div class="col-md-6 col-xs-10">
                                             <label>Serie</label>
                                             <input required placeholder="Série..." class=form-control type="number"

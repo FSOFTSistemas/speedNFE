@@ -26,7 +26,9 @@ return new class extends Migration
             $table->string('csc');
             $table->integer('idCsc');
             $table->string('status')->nullable();
+            $table->integer('sequenciaCupom');
             $table->integer('ultimaNFe')->nullable();
+            $table->integer('ultimaNFCe')->nullable();
             $table->integer('ultimaMDFe')->nullable();
             $table->integer('serie')->nullable();
             $table->binary('certificado')->nullable();
@@ -34,6 +36,7 @@ return new class extends Migration
             $table->integer('ambiente')->nullable();
             $table->integer('limNFes');
             $table->integer('limMDFes');
+            $table->integer('limNFCes');
             $table->integer('limClientes');
             $table->integer('limProdutos');
             $table->timestamps();
@@ -45,7 +48,9 @@ return new class extends Migration
             'endereco_id' => 1,
             'rg_ie' => '0977173-55',
             'celular' => '(87) 98144-5566',
+            'sequenciaCupom' => 1,
             'ultimaNFe' => 1,
+            'ultimaNFCe' => 1,
             'ultimaMDFe' => 1,
             'serie' => 1,
             'certificado' => null,
@@ -57,6 +62,7 @@ return new class extends Migration
             'limClientes' => 10,
             'limProdutos' => 100,
             'limNFes' => 1000,
+            'limNFCes' => 1000,
             'limMDFes' => 1000
         ]);
     }

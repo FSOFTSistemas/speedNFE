@@ -117,14 +117,15 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cep">CEP</label>
                                             <div class="input-group">
-                                                <input class="form-control" type="text" id="cep" name="cep" value="{{ $empresa->cep }}" />
-                                                
+                                                <input class="form-control" type="text" id="cep" name="cep"
+                                                    value="{{ $empresa->cep }}" />
+
                                             </div>
                                         </div>
-                                        
-                                        </div>
 
-                                   
+                                    </div>
+
+
 
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
@@ -162,13 +163,19 @@
                             <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
                                 <div class="row">
-                                    <div class="col-md-6 col-xs-10">
+                                    <div class="col-md-4 col-xs-10">
                                         <label>Nº da Última NFe</label>
                                         <input class=form-control type="number" name="nfe" id="nfe"
                                             value="{{ $empresa->ultimaNFe }}" />
-
                                     </div>
-                                    <div class="col-md-6 col-xs-10">
+
+                                    <div class="col-md-4 col-xs-10">
+                                        <label>Nº da Última NFCe</label>
+                                        <input class=form-control type="number" name="nfce" id="nfce"
+                                            value="{{ $empresa->ultimaNFCe }}" />
+                                    </div>
+
+                                    <div class="col-md-4 col-xs-10">
                                         <label>Serie</label>
                                         <input class=form-control type="number" name="serie" id="serie"
                                             value="{{ $empresa->serie }}" />
@@ -208,10 +215,13 @@
                                 <input class=form-control type="number" name="produtos" id="produtos"
                                     value="{{ $empresa->limProdutos }}" />
 
-                                <label>Limite de Notas</label>
+                                <label>Limite de Notas (NFe)</label>
                                 <input class=form-control type="number" name="notas" id="notas"
                                     value="{{ $empresa->limNFes }}" />
 
+                                <label>Limite de Notas (NFCe)</label>
+                                <input class=form-control type="number" name="notas" id="notas"
+                                    value="{{ $empresa->limNFCes }}" />
                             </div>
 
                             <div class="tab-pane fade" id="user" role="tabpanel" aria-labelledby="user-tab">
