@@ -11,6 +11,7 @@ use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use NFePHP\Common\Exception\ValidatorException;
 
 class NFCeController extends Controller
@@ -49,7 +50,28 @@ class NFCeController extends Controller
     public function store(Request $request)
     {
         try {
+            $request->validate([
+                'cliente' => 'nullable|array',
+                'itens' => 'required|array',
+                'valorTotal' => 'required|numeric',
+                'subtotal' => 'required|numeric',
+                'descontoTotal' => 'required|numeric',
+                'acrescimoTotal' => 'required|numeric',
+                'valorPago' => 'required|numeric',
+                'troco' => 'nullable|numeric',
+                'aReceber' => 'nullable|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ser numérico!'
+            ]);
+            DB::beginTransaction();
+            $cupomId = $this->cupomService->createCupom($request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->cliente->codigo, Auth::user()->empresa_id);
+            $this->itemCupomService->createItemsCupom($request->itens, $cupomId);
+            // $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
+            DB::commit();
+            return redirect()->route('nfce.create')->with('success','Venda realizada com sucesso!');
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }

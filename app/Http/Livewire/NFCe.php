@@ -10,6 +10,7 @@ use Livewire\Component;
 
 class NFCe extends Component
 {
+    public $prodId = null;
     public $prod = null;
     public $cod = null;
     public $unitario = 0;
@@ -53,9 +54,9 @@ class NFCe extends Component
 
     public function addProd()
     {
-        if (isset($this->prod) && isset($this->cod) && isset($this->qtde) && isset($this->unitario) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total)) {
+        if (isset($this->prodId) && isset($this->prod) && isset($this->cod) && isset($this->qtde) && isset($this->unitario) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total)) {
             if (!$this->existValueInSubArray($this->itens, $this->prod)) {
-                $this->itens[] = ['produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total];
+                $this->itens[] = ['prodId' => $this->prodId, 'produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total];
                 $this->updateSaleTotal();
             }
             $this->cancelProd();
@@ -94,6 +95,7 @@ class NFCe extends Component
 
     public function cancelProd()
     {
+        $this->prodId = null;
         $this->prod = null;
         $this->cod = null;
         $this->unitario = 0;
@@ -142,11 +144,13 @@ class NFCe extends Component
     {
         if (isset($clientCode) && isset($name)) {
             $this->cliente = ['codigo' => $clientCode, 'nome' => $name];
+            $this->emit('CloseCustomersModal');
         }
     }
 
-    public function selectProd($prod, $codigo, $unitario)
+    public function selectProd($prodId, $prod, $codigo, $unitario)
     {
+        $this->prodId = $prodId;
         $this->prod = $prod;
         $this->unitario = $unitario;
         $this->total = $this->qtde * $this->unitario;

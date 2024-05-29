@@ -1,5 +1,6 @@
 <div>
-    <form action="">
+    <form action="{{ route('nfce.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
         <section>
             <div class="card">
                 <div class="card-header">
@@ -65,6 +66,8 @@
                                                     </td>
                                                 </tr>
 
+                                                <input type="hidden" name="itens[{{ $index }}][prodId]"
+                                                    wire:model="itens.{{ $index }}.prodId" required>
                                                 <input type="hidden" name="itens[{{ $index }}][produto]"
                                                     wire:model="itens.{{ $index }}.produto" required>
                                                 <input type="hidden" name="itens[{{ $index }}][qtde]"
@@ -465,7 +468,7 @@
             <tbody>
                 @foreach (json_decode($products) as $product)
                     <tr
-                        wire:dblclick="selectProd('{{ $product->produto }}', '{{ $product->codigo }}', {{ $product->precovenda }})">
+                        wire:dblclick="selectProd({{ $product->id }}, '{{ $product->produto }}', '{{ $product->codigo }}', {{ $product->precovenda }})">
                         <td>{{ $product->codigo }}</td>
                         <td>{{ $product->produto }}</td>
                         <td>{{ number_format($product->precovenda, 2) }}</td>
@@ -590,7 +593,7 @@
                 data.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.addEventListener('dblclick', function() {
-                        Livewire.emit('selectProd', item.produto, item.codigo, item
+                        Livewire.emit('selectProd', item.id, item.produto, item.codigo, item
                             .precovenda);
                     });
 
@@ -623,6 +626,10 @@
 
         Livewire.on('OpenCustomersModal', function() {
             $('#SearchClientModal').modal('show');
+        });
+
+        Livewire.on('CloseCustomersModal', function() {
+            $('#SearchClientModal').modal('hide');
         });
 
         Livewire.on('CloseAddProdModal', function() {

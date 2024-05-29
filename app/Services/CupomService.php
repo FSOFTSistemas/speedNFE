@@ -11,18 +11,18 @@ class CupomService
         return Cupom::find($id);
     }
 
-    public function createCupom($request) {
+    public function createCupom($total, $desconto, $acrescimo, $subtotal, $clientId, $empresaId) {
         return Cupom::create([
-            'nroCupom' => $request->nroCupom,
-            'data' => $request->data,
-            'situacao' => $request->situacao,
-            'total' => $request->total,
-            'desconto' => $request->desconto,
-            'acrescimo' => $request->acrescimo,
-            'subtotal' => $request->subtotal,
-            'cliente_id' => $request->cliente_id,
-            'empresa_id' => $request->empresa_id
-        ]);
+            'nroCupom' => '123456',
+            'data' => date('d/m/Y'),
+            'situacao' => 'Finalizada',
+            'total' => $total,
+            'desconto' => $desconto,
+            'acrescimo' => $acrescimo,
+            'subtotal' => $subtotal,
+            'cliente_id' => $clientId,
+            'empresa_id' => $empresaId
+        ])->id;
     }
 
 }
