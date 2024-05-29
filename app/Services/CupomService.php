@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\SituacaoEnum;
 use App\Models\Cupom;
 
 class CupomService
@@ -14,7 +15,9 @@ class CupomService
     public function createCupom($total, $desconto, $acrescimo, $subtotal, $clientId, $empresaId) {
         return Cupom::create([
             'nroCupom' => '123456',
-            'situacao' => 'Finalizada',
+            'situacao' => SituacaoEnum::ATIVO,
+            'gerado_nfce' => false,
+            'contingencia' => false,
             'total' => $total,
             'desconto' => $desconto,
             'acrescimo' => $acrescimo,

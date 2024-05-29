@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('nroCupom');
             $table->timestamp('data');
             $table->string('situacao');
+            $table->boolean('gerado_nfce');
+            $table->boolean('contingencia');
             $table->double('total');
             $table->double('desconto');
             $table->double('acrescimo');
