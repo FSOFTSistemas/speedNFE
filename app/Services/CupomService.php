@@ -12,9 +12,9 @@ class CupomService
         return Cupom::find($id);
     }
 
-    public function createCupom($total, $desconto, $acrescimo, $subtotal, $clientId, $empresaId) {
+    public function createCupom($nroCupom, $total, $desconto, $acrescimo, $subtotal, $clientId, $empresaId) {
         return Cupom::create([
-            'nroCupom' => '123456',
+            'nroCupom' => $nroCupom,
             'situacao' => SituacaoEnum::ATIVO,
             'gerado_nfce' => false,
             'contingencia' => false,

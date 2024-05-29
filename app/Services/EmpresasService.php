@@ -164,4 +164,12 @@ class EmpresasService
         return $path;
     }
 
+    public function incrementCupomSequence($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->sequenciaCupom = $company->sequenciaCupom + 1;
+        $company->save();
+        return $company->sequenciaCupom;
+    }
+
 }

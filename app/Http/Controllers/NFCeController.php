@@ -21,18 +21,21 @@ class NFCeController extends Controller
     private $cupomFormaService;
     private $itemCupomService;
     private $empresaServices;
+    private $empresaId;
 
     public function __construct(CupomService $cupomService, EmpresasService $empresaServices, CupomFormaService $cupomFormaService, ItemCupomService $itemCupomService)
     {
         $this->cupomService = $cupomService;
         $this->cupomFormaService = $cupomFormaService;
         $this->itemCupomService = $itemCupomService;
+        $this->empresaServices = $empresaServices;
+        $this->empresaId = Auth::user()->id;
     }
 
     public function index()
     {
         try {
-            $nfces = NFCeService::getCompanyNFCes(Auth::user()->empresa_id);
+            $nfces = NFCeService::getCompanyNFCes($this->empresaId);
             return view('nfce.index', ['nfces' => $nfces]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -68,7 +71,7 @@ class NFCeController extends Controller
                 'array' => 'O campo :attribiute deve ser uma lista!'
             ]);
             DB::beginTransaction();
-            $cupomId = $this->cupomService->createCupom($request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->cliente['id'], Auth::user()->empresa_id);
+            $cupomId = $this->cupomService->createCupom($this->empresaServices->incrementCupomSequence($this->empresaId), $request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->cliente['id'], $this->empresaId);
             $this->itemCupomService->createItemsCupom($request->itens, $cupomId);
             $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
             DB::commit();
