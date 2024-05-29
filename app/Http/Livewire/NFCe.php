@@ -32,6 +32,7 @@ class NFCe extends Component
     public $valorRecebimento = 0;
     public $troco = 0;
     public $aReceber = 0;
+    public $cliente = null;
     public $itens = [];
 
     public $formas = [];
@@ -139,7 +140,9 @@ class NFCe extends Component
 
     public function selectClient($clientCode, $name)
     {
-        dd($clientCode, $name);
+        if (isset($clientCode) && isset($name)) {
+            $this->cliente = ['codigo' => $clientCode, 'nome' => $name];
+        }
     }
 
     public function selectProd($prod, $codigo, $unitario)
