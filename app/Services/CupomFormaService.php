@@ -9,12 +9,14 @@ class CupomFormaService
 
     public function createCupomFormas($listMethods, $cupomId)
     {
-        foreach ($listMethods as $listMethod) {
-            CupomForma::create([
-                'forma' => $listMethod['forma'],
-                'valor' => $listMethod['valorRecebimento'],
-                'cupom_id' => $cupomId
-            ]);
+        foreach ($listMethods as $index => $method) {
+            if (isset($method)) {
+                CupomForma::create([
+                    'forma' => $index,
+                    'valor' => $method,
+                    'cupom_id' => $cupomId
+                ]);
+            }
         }
     }
 

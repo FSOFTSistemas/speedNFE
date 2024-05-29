@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use NFePHP\Common\Exception\ValidatorException;
 
 class NFCeController extends Controller
@@ -53,6 +54,7 @@ class NFCeController extends Controller
             $request->validate([
                 'cliente' => 'nullable|array',
                 'itens' => 'required|array',
+                'formas' => 'required|array',
                 'valorTotal' => 'required|numeric',
                 'subtotal' => 'required|numeric',
                 'descontoTotal' => 'required|numeric',
@@ -62,14 +64,21 @@ class NFCeController extends Controller
                 'aReceber' => 'nullable|numeric'
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
-                'numeric' => 'O campo :attribute deve ser numérico!'
+                'numeric' => 'O campo :attribute deve ser numérico!',
+                'array' => 'O campo :attribiute deve ser uma lista!'
             ]);
             DB::beginTransaction();
-            $cupomId = $this->cupomService->createCupom($request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->cliente->codigo, Auth::user()->empresa_id);
+            $cupomId = $this->cupomService->createCupom($request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->cliente['id'], Auth::user()->empresa_id);
             $this->itemCupomService->createItemsCupom($request->itens, $cupomId);
-            // $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
+            $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
             DB::commit();
             return redirect()->route('nfce.create')->with('success','Venda realizada com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());

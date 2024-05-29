@@ -22,7 +22,7 @@
                                         <label for="cliente.nome">Cliente</label>
                                     </div>
                                 </div>
-                                <input type="hidden" name="cliente[codigo]" wire:model="cliente.codigo">
+                                <input type="hidden" name="cliente[id]" wire:model="cliente.id">
                             @endif
                         </div>
                     </div>
@@ -80,6 +80,8 @@
                                                     wire:model="itens.{{ $index }}.acrescimo" required>
                                                 <input type="hidden" name="itens[{{ $index }}][total]"
                                                     wire:model="itens.{{ $index }}.total" required>
+                                                    <input type="hidden" name="itens[{{ $index }}][subtotal]"
+                                                    wire:model="itens.{{ $index }}.subtotal" required>
                                             @empty
                                                 <tr class="text-center">
                                                     <td colspan="7">
@@ -257,8 +259,7 @@
                                             </div>
                                             <div class="card-footer">
                                                 <input class="form-control-plaintext text-center" readonly
-                                                    type="text"
-                                                    wire:model="formasSelecionadas.{{ $forma }}">
+                                                    type="text" name="formas[{{ $forma }}]" wire:model="formasSelecionadas.{{ $forma }}">
                                             </div>
                                         </div>
                                     </div>
@@ -516,7 +517,7 @@
 
             <tbody>
                 @foreach (json_decode($customers) as $client)
-                    <tr wire:dblclick="selectClient('{{ $client->codigo }}', '{{ $client->nome }}')">
+                    <tr wire:dblclick="selectClient('{{ $client->id }}', '{{ $client->nome }}')">
                         <td>{{ $client->codigo }}</td>
                         <td>{{ $client->nome }}</td>
                         <td>{{ $client->cpf_cnpj }}</td>

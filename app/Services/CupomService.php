@@ -14,7 +14,6 @@ class CupomService
     public function createCupom($total, $desconto, $acrescimo, $subtotal, $clientId, $empresaId) {
         return Cupom::create([
             'nroCupom' => '123456',
-            'data' => date('d/m/Y'),
             'situacao' => 'Finalizada',
             'total' => $total,
             'desconto' => $desconto,
