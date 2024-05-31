@@ -30,7 +30,7 @@
                     <div class="container mt-3">
                         <div class="row">
                             <div class="col-md-7 d-flex align-items-stretch">
-                                <div class="table-responsive shadow p-3 mb-3 bg-body rounded w-100">
+                                <div class="table-responsive shadow p-3 mb-3 bg-body rounded">
                                     <table class="table table-hover w-100">
                                         <thead class="table-primary">
                                             <tr>
@@ -84,7 +84,7 @@
                                                     wire:model="itens.{{ $index }}.subtotal" required>
                                             @empty
                                                 <tr class="text-center">
-                                                    <td colspan="7">
+                                                    <td colspan="8">
                                                         <span class="text-blue">Sem itens...</span>
                                                     </td>
                                                 </tr>
@@ -531,12 +531,6 @@
 @section('css')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-        .table-responsive-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-    </style>
 @endsection
 
 @section('js')
@@ -565,6 +559,13 @@
         })()
     </script>
 @endsection
+
+<style>
+    .table-responsive {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+</style>
 
 <script>
     document.addEventListener('keydown', function(event) {

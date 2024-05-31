@@ -62,12 +62,12 @@ class NFCe extends Component
     {
         try {
             if (isset($this->prodId) && isset($this->prod) && isset($this->cod) && isset($this->qtde) && isset($this->unitario) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total) && isset($this->subtotalItem)) {
-                if (!$this->existValueInSubArray($this->itens, $this->prod)) {
+                // if (!$this->existValueInSubArray($this->itens, $this->prod)) {
                     $this->itens[] = ['prodId' => $this->prodId, 'produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total, 'subtotal' => $this->subtotalItem];
                     $this->updateSaleTotal();
-                } else {
-                    $this->emit('ProdutoJaInserido', 'Item já foi inserido anteriormente!');
-                }
+                // } else {
+                //     $this->emit('ProdutoJaInserido', 'Item já foi inserido anteriormente!');
+                // }
                 $this->cancelProd();
             }
         } catch (\Exception $e) {
