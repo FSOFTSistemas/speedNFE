@@ -42,10 +42,10 @@
             [
                 'responsivePriority' => 6,
                 'targets' => 4,
-            ]
+            ],
         ],
         'searching' => true,
-        'lengthChange' => true
+        'lengthChange' => true,
     ])
         <thead class="table-primary">
             <tr>
@@ -71,24 +71,28 @@
                     <td>
                         <div class="row">
                             <div class="col">
-                                <a title="Visualizar" target="_blank" href='{{ route('mdfe.view', [$cpm->id]) }}'
+                                <a title="Visualizar" target="_blank" href='{{ route('nfce.show', [$cpm->id]) }}'
                                     class='text-primary'><i class="fa fa-eye"></i></a>
                             </div>
 
-                            <div class="col">
-                                <a title="Cancelar" href='{{ route('mdfe.view', [$cpm->id]) }}'
-                                    class='text-danger'><i class="fa fa-trash"></i></a>
-                            </div>
+                            @if ($cpm->situacao == 'ATIVO')
+                                <div class="col">
+                                    <a title="Cancelar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-danger'><i
+                                            class="fa fa-trash"></i></a>
+                                </div>
 
-                            <div class="col">
-                                <a title="Inutilizar" href='{{ route('mdfe.view', [$cpm->id]) }}'
-                                    class='text-info'><i class="fa fa-trash"></i></a>
-                            </div>
+                                <div class="col">
+                                    <a title="Enviar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-success'><i
+                                            class="fa fa-upload"></i></a>
+                                </div>
+                            @endif
 
+                            @if (!empty($cpm->nfce->nro))
                             <div class="col">
-                                <a title="Enviar" href='{{ route('mdfe.view', [$cpm->id]) }}'
-                                    class='text-success'><i class="fa fa-upload"></i></a>
+                                <a title="Inutilizar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-warning'><i
+                                        class="fa fa-ban"></i></a>
                             </div>
+                            @endif
                         </div>
                     </td>
                 </tr>

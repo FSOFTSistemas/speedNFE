@@ -8,12 +8,14 @@ use App\Services\EmpresasService;
 use App\Services\ItemCupomService;
 use App\Services\NFCeService;
 use App\Utils\FormatationUtil;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use NFePHP\Common\Exception\ValidatorException;
+use NFePHP\DA\NFe\Danfce;
 
 class NFCeController extends Controller
 {
@@ -87,7 +89,13 @@ class NFCeController extends Controller
 
     public function show($id)
     {
-        //
+        try {
+            $cupom = $this->cupomService->getCupom($id);
+            $pdf = Pdf::loadView('nfce.coupon-preview')->setPaper([0, 0, 225, 1000], 'portrait');
+            return $pdf->stream(date('d-m-Y') . ' coupon'.$cupom->nroCupom.'.pdf');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     private function makeNFCeService($empresa)
@@ -103,16 +111,21 @@ class NFCeController extends Controller
             "tokenIBPT" => "AAAAAAA",
             "CSC" => $empresa->csc,
             "CSCid" => "00000" . $empresa->idCsc,
+            "proxyConf"   => [
+                "proxyIp"   => "",
+                "proxyPort" => "",
+                "proxyUser" => "",
+                "proxyPass" => ""
+            ]
         ];
-
         return new NFCeService($config, $empresa);
     }
 
-    public function enviarNFCE($id){
+    public function sendNFCe($id){
 
         try {
 
-            $venda = $this->cupomService->buscarCupom($id);
+            $venda = $this->cupomService->getCupom($id);
             $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $nfce_service = dd($this->makeNFCeService($empresa));
 

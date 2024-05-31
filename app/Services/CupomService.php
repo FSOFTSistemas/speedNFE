@@ -13,7 +13,7 @@ class CupomService
         return Cupom::where("empresa_id", $companyId)->get();
     }
 
-    public function buscarCupom($id){
+    public function getCupom($id){
         return Cupom::find($id);
     }
 
