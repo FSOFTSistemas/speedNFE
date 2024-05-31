@@ -44,8 +44,8 @@
                 'targets' => 4,
             ]
         ],
-        'searching' => false,
-        'lengthChange' => false
+        'searching' => true,
+        'lengthChange' => true
     ])
         <thead class="table-primary">
             <tr>
@@ -60,33 +60,33 @@
         </thead>
 
         <tbody>
-            @foreach ($nfces as $nfce)
+            @foreach ($cupoms as $cpm)
                 <tr>
-                    <td>{{ $nfce->nro }}</td>
-                    <td>{{ $nfce->data }}</td>
-                    <td>{{ $nfce->serie }}</td>
-                    <td>{{ $nfce->chave }}</td>
-                    <td>{{ $nfce->situacao }}</td>
-                    <td>{{ $nfce->cupom->nroCupom }}</td>
+                    <td>{{ $cpm->nfce->nro ?? null }}</td>
+                    <td>{{ $cpm->data }}</td>
+                    <td>{{ $cpm->nfce->serie ?? null }}</td>
+                    <td>{{ $cpm->nfce->chave ?? null }}</td>
+                    <td>{{ $cpm->situacao }}</td>
+                    <td>{{ $cpm->nroCupom }}</td>
                     <td>
                         <div class="row">
                             <div class="col">
-                                <a title="Visualizar" target="_blank" href='{{ route('mdfe.view', [$mdfe->id]) }}'
+                                <a title="Visualizar" target="_blank" href='{{ route('mdfe.view', [$cpm->id]) }}'
                                     class='text-primary'><i class="fa fa-eye"></i></a>
                             </div>
 
                             <div class="col">
-                                <a title="Cancelar" href='{{ route('mdfe.view', [$mdfe->id]) }}'
+                                <a title="Cancelar" href='{{ route('mdfe.view', [$cpm->id]) }}'
                                     class='text-danger'><i class="fa fa-trash"></i></a>
                             </div>
 
                             <div class="col">
-                                <a title="Inutilizar" href='{{ route('mdfe.view', [$mdfe->id]) }}'
-                                    class='text-info'><i class="fa fa-block"></i></a>
+                                <a title="Inutilizar" href='{{ route('mdfe.view', [$cpm->id]) }}'
+                                    class='text-info'><i class="fa fa-trash"></i></a>
                             </div>
 
                             <div class="col">
-                                <a title="Enviar" href='{{ route('mdfe.view', [$mdfe->id]) }}'
+                                <a title="Enviar" href='{{ route('mdfe.view', [$cpm->id]) }}'
                                     class='text-success'><i class="fa fa-upload"></i></a>
                             </div>
                         </div>

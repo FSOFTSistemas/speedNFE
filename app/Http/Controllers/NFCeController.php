@@ -33,8 +33,8 @@ class NFCeController extends Controller
     public function index()
     {
         try {
-            $nfces = NFCeService::getCompanyNFCes(Auth::user()->empresa_id);
-            return view('nfce.index', ['nfces' => $nfces]);
+            $cupoms = $this->cupomService->getCompanyCoupons(Auth::user()->empresa_id);
+            return view('nfce.index', ['cupoms' => $cupoms]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }

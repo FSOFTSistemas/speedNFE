@@ -44,4 +44,9 @@ class Cupom extends Model
         return $this->hasMany(CupomForma::class, 'cupom_id');
     }
 
+    public function nfce()
+    {
+        return $this->hasOne(NFCe::class, 'cupom_id');
+    }
+
 }

@@ -8,6 +8,11 @@ use App\Models\Cupom;
 class CupomService
 {
 
+    public function getCompanyCoupons($companyId)
+    {
+        return Cupom::where("empresa_id", $companyId)->get();
+    }
+
     public function buscarCupom($id){
         return Cupom::find($id);
     }
