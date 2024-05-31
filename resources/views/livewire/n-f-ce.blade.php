@@ -651,6 +651,10 @@
             });
         });
 
+        Livewire.on('ProdutoJaInserido', function(message) {
+            alert(message)
+        });
+
         Livewire.on('ErrorInPayment', function($message) {
             alert($message)
         });
