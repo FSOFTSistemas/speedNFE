@@ -7,6 +7,7 @@ use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\ItemCupomService;
 use App\Services\NFCeService;
+use App\Utils\CalculateCouponHeight;
 use App\Utils\FormatationUtil;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -91,7 +92,7 @@ class NFCeController extends Controller
     {
         try {
             $cupom = $this->cupomService->getCupom($id);
-            $pdf = Pdf::loadView('nfce.coupon-preview')->setPaper([0, 0, 225, 1000], 'portrait');
+            $pdf = Pdf::loadView('nfce.coupon-preview')->setPaper([0, 0, 225, CalculateCouponHeight::calculate(count($cupom->itens))], 'portrait');
             return $pdf->stream(date('d-m-Y') . ' coupon'.$cupom->nroCupom.'.pdf');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
