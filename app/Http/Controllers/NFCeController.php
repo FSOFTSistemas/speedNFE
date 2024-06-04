@@ -92,7 +92,7 @@ class NFCeController extends Controller
     {
         try {
             $cupom = $this->cupomService->getCupom($id);
-            $pdf = Pdf::loadView('nfce.coupon-preview', ['cupom' => $cupom])->setPaper([0, 0, 225, CalculateCouponHeight::calculate(count($cupom->itens))], 'portrait');
+            $pdf = Pdf::loadView('nfce.coupon-preview', ['cupom' => $cupom])->setPaper([0, 0, 225, CalculateCouponHeight::calculate(count($cupom->itens), count($cupom->formasPagamento), $cupom->cliente)], 'portrait');
             return $pdf->stream(date('d-m-Y') . '_' . $cupom->nroCupom . '.pdf');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());

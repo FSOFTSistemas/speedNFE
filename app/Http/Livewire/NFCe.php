@@ -141,8 +141,8 @@ class NFCe extends Component
     {
         try {
             if (isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total) && isset($this->subtotalItem) && empty($this->formasSelecionadas)) {
-                $this->subtotalItem = $this->qtde * $this->unitario;
-                $this->total = $this->qtde * ($this->unitario - $this->desconto + $this->acrescimo);
+                $this->subtotalItem = number_format($this->qtde * $this->unitario, 2);
+                $this->total = number_format($this->qtde * ($this->unitario - $this->desconto + $this->acrescimo), 2);
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Ocorreu um erro interno, tente novamente em outro momento, Erro: ' . $e->getMessage());
@@ -157,9 +157,9 @@ class NFCe extends Component
                 foreach ($this->itens as $item) {
                     $valorTotal += $item['total'];
                 }
-                $this->valorTotal = $valorTotal - $this->descontoTotal + $this->acrescimoTotal;
+                $this->valorTotal = number_format($valorTotal - $this->descontoTotal + $this->acrescimoTotal, 2);
                 $this->aReceber = number_format($this->valorTotal, 2);
-                return $this->subtotal = $valorTotal;
+                return $this->subtotal = number_format($valorTotal, 2);
             }
             $this->descontoTotal = 0;
             $this->acrescimoTotal = 0;
@@ -236,8 +236,8 @@ class NFCe extends Component
                 return $this->emit('ErrorInPayment', 'Não é possível colocar valor acima do valor total com esse método (' . $this->selectedForma . ')');
             }
             $this->formasSelecionadas[$this->selectedForma] = $this->valorRecebimento;
-            $this->valorPago = $valueReceived;
-            $this->troco = $this->valorPago - $this->valorTotal;
+            $this->valorPago = number_format($valueReceived, 2);
+            $this->troco = number_format($this->valorPago - $this->valorTotal, 2);
             $this->aReceber = number_format($this->valorTotal - $this->valorPago, 2);
             $this->valorRecebimento = 0;
             $this->emit('ClosePaymentModal');

@@ -42,10 +42,6 @@
 </head>
 
 <body>
-    <div class="position-fixed top-50 start-50 text-center translate-middle w-100">
-        <div class="watermark"><strong>SEM VALOR FISCAL</strong></div>
-    </div>
-
     <header>
         <section class="coupon-header text-center">
             <div class="row">
@@ -90,12 +86,12 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th>Código</th>
-                    <th>Descrição</th>
-                    <th>Qtde</th>
-                    <th>UN</th>
-                    <th>Vl Unit</th>
-                    <th>Vl Total</th>
+                    <th class="w-50">Código</th>
+                    <th class="w-75">Descrição</th>
+                    <th class="w-25">Qtde</th>
+                    <th class="w-25">UN</th>
+                    <th class="w-50">Vl Unit</th>
+                    <th class="w-50">Vl Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -124,6 +120,9 @@
                     <td colspan="5">Valor Total R$</td>
                     <td class="text-end">{{ number_format($cupom->total, 2) }}</td>
                 </tr>
+                <div class="position-fixed start-50 text-center translate-middle w-100">
+                    <div class="watermark"><strong>SEM VALOR FISCAL</strong></div>
+                </div>
                 <tr>
                     <td colspan="5">Desconto R$</td>
                     <td class="text-end">{{ number_format($cupom->desconto, 2) }}</td>
@@ -142,8 +141,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="5">FORMA PAGAMENTO</td>
-                    <td class="text-end">VALOR PAGO R$</td>
+                    <td colspan="4">FORMA PAGAMENTO</td>
+                    <td class="text-end" colspan="3">VALOR PAGO R$</td>
                 </tr>
                 @foreach ($cupom->formasPagamento as $formaPagamento)
                     <tr>
