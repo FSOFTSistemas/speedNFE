@@ -123,43 +123,13 @@ class NFCeController extends Controller
     }
 
     public function sendNFCe($id){
-
         try {
-
-            $venda = $this->cupomService->getCupom($id);
-            $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
-            $nfce_service = dd($this->makeNFCeService($empresa));
-
-            if ($venda->estado->value == 'Rejeitado' || $venda->estado->value == 'Pendente') {
-                $result = $nfce_service->gerarXml($venda, $empresa);
-                // dd($result);
-                if (!isset($result['erros_xml'])) {
-                    $signed = $nfce_service->sign($result['xml']);
-                    // dd($signed);
-                    $resultado = $nfce_service->transmitir($signed, $result['chave'], $empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
-                    // dd($resultado);
-                    if (isset($resultado['sucesso'])) {
-                        $venda->chave = $result['chave'];
-                        $venda->status = 1;
-                        $venda->estado = 'Autorizado';
-                        $venda->numero_nfe = $result['nNf'];
-                        $venda->save();
-                        $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
-                        return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
-                    } else {
-                        $venda->status = 3;
-                        $venda->estado = 'Rejeitado';
-                        $venda->save();
-                        return redirect('/vendas')->with('warning', $resultado['erro']);
-                    }
-                } else {
-                    return redirect('/vendas')->with('error', $result['erros_xml']);
-                }
-            } else {
-                return redirect('/vendas')->with("error", 404);
-            }
-        } catch (ValidatorException $e) {
-            return back()->with('warning', $e->getMessage());
+            $cupom = $this->cupomService->getCupom($id);
+            $nfceService = $this->makeNFCeService($cupom->empresa);
+            $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
+            dd($resultXml);
+            $cupom->chave = $resultXml['chave'];
+            return redirect()->route('success', 'Cupom foi enviado com sucesso!');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }

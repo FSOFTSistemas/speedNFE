@@ -25,23 +25,27 @@
             ],
             [
                 'responsivePriority' => 2,
-                'targets' => 1,
+                'targets' => 6,
             ],
             [
                 'responsivePriority' => 3,
-                'targets' => 2,
+                'targets' => 5,
             ],
             [
                 'responsivePriority' => 4,
-                'targets' => -1,
+                'targets' => 1,
             ],
             [
                 'responsivePriority' => 5,
-                'targets' => 3,
+                'targets' => 2,
             ],
             [
                 'responsivePriority' => 6,
                 'targets' => 4,
+            ],
+            [
+                'responsivePriority' => 7,
+                'targets' => -1,
             ],
         ],
         'searching' => true,
@@ -54,6 +58,7 @@
                 <th>Série</th>
                 <th>Chave</th>
                 <th>Situação</th>
+                <th>Cliente</th>
                 <th>Cupom</th>
                 <th></th>
             </tr>
@@ -67,6 +72,7 @@
                     <td>{{ $cpm->nfce->serie ?? null }}</td>
                     <td>{{ $cpm->nfce->chave ?? null }}</td>
                     <td>{{ $cpm->situacao }}</td>
+                    <td>{{ $cpm->cliente->nome ?? 'CONSUMIDOR FINAL' }}</td>
                     <td>{{ $cpm->nroCupom }}</td>
                     <td>
                         <div class="row">
@@ -82,7 +88,7 @@
                                 </div>
 
                                 <div class="col">
-                                    <a title="Enviar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-success'><i
+                                    <a title="Enviar" href='{{ route('nfce.send', [$cpm->id]) }}' class='text-success'><i
                                             class="fa fa-upload"></i></a>
                                 </div>
                             @endif

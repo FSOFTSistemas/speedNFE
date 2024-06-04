@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Models\NFCe;
+use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
+use NFePHP\NFe\Common\Standardize;
+use NFePHP\NFe\Complements;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
 
@@ -23,7 +26,7 @@ class NFCeService
         return NFCe::whereEmpresaId($empresaId)->get();
     }
 
-    public function gerarXml($venda, $emitente)
+    public function generateXml($venda, $emitente)
     {
         $make = new Make();
 
@@ -273,17 +276,18 @@ class NFCeService
         try {
             $make->monta();
             $xml = $make->getXML();
-            $signXML = $this->sign($xml);
+            $signedXml = $this->sign($xml);
+            $key = $make->getChave();
+            $this->toTransmit($signedXml, $key, 'historia');
             $arr = [
-                'chave' => $make->getChave(),
-                'xml' => $signXML,
+                'chave' => $key,
+                'xml' => $signedXml,
                 'nNf' => $std,
             ];
             return $arr;
         } catch (\Exception $e) {
-            return [
-                'erros_xml' => $make->getErrors(),
-            ];
+            dd($e);
+            return redirect('/vendas')->with('error', $make->getErrors());
         }
     }
 
@@ -291,4 +295,28 @@ class NFCeService
     {
         return $this->tools->signNFe($xml);
     }
+
+    private function toTransmit($signedXml, $chave, $caminho)
+    {
+            $loteId = str_pad(100, 15, '0', STR_PAD_LEFT);
+            $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId);
+            $st = new Standardize();
+            $std = $st->toStd($resp);
+            if ($std->cStat != 103) {
+                return [
+                    'erro' => "[$std->cStat] - $std->xMotivo",
+                ];
+            }
+            $recibo = $std->infRec->nRec;
+            $protocolo = $this->tools->sefazConsultaRecibo($recibo);
+            sleep(2);
+            // sleep(2);
+            // $xml = Complements::toAuthorize($signedXml, $protocolo);
+            // if (!File::exists(public_path($caminho . '/'))) {
+            //     File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+            // }
+            // file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+            return $recibo;
+    }
+
 }
