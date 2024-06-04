@@ -9,7 +9,7 @@ class CalculateCouponHeight
         $height = 280;
         if ($itemsLength > 1) {
             for ($i = 1; $i < $itemsLength; $i++) {
-                $height += 20;
+                $height += 35;
             }
         }
         return $height;

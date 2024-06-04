@@ -62,12 +62,12 @@ class NFCe extends Component
     {
         try {
             if (isset($this->prodId) && isset($this->prod) && isset($this->cod) && isset($this->qtde) && isset($this->unitario) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total) && isset($this->subtotalItem)) {
-                // if (!$this->existValueInSubArray($this->itens, $this->prod)) {
+                if (!$this->existValueInSubArray($this->itens, $this->prodId, 'prodId')) {
                     $this->itens[] = ['prodId' => $this->prodId, 'produto' => $this->prod, 'codigo' => $this->cod, 'qtde' => $this->qtde, 'unitario' => $this->unitario, 'desconto' => $this->desconto, 'acrescimo' => $this->acrescimo, 'total' => $this->total, 'subtotal' => $this->subtotalItem];
                     $this->updateSaleTotal();
-                // } else {
-                //     $this->emit('ProdutoJaInserido', 'Item já foi inserido anteriormente!');
-                // }
+                } else {
+                    $this->emit('ProdutoJaInserido', 'Item já foi inserido anteriormente!');
+                }
                 $this->cancelProd();
             }
         } catch (\Exception $e) {
@@ -158,7 +158,7 @@ class NFCe extends Component
                     $valorTotal += $item['total'];
                 }
                 $this->valorTotal = $valorTotal - $this->descontoTotal + $this->acrescimoTotal;
-                $this->aReceber = $this->valorTotal;
+                $this->aReceber = number_format($this->valorTotal, 2);
                 return $this->subtotal = $valorTotal;
             }
             $this->descontoTotal = 0;
@@ -238,7 +238,7 @@ class NFCe extends Component
             $this->formasSelecionadas[$this->selectedForma] = $this->valorRecebimento;
             $this->valorPago = $valueReceived;
             $this->troco = $this->valorPago - $this->valorTotal;
-            $this->aReceber = $this->valorTotal - $this->valorPago;
+            $this->aReceber = number_format($this->valorTotal - $this->valorPago, 2);
             $this->valorRecebimento = 0;
             $this->emit('ClosePaymentModal');
         } catch (\Exception $e) {
@@ -287,11 +287,11 @@ class NFCe extends Component
         }
     }
 
-    private function existValueInSubArray($array, $value)
+    private function existValueInSubArray($array, $value, $field)
     {
         try {
             foreach ($array as $subArray) {
-                if (in_array($value, $subArray)) {
+                if ($value == $subArray[$field]) {
                     return true;
                 }
             }

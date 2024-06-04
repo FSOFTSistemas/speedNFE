@@ -24,7 +24,12 @@
 
         <section>
             @component('components.dataTable', [
-                'responsive' => [['responsivePriority' => 1, 'targets' => 0], ['responsivePriority' => 2, 'targets' => 1]]
+                'responsive' => [
+                    ['responsivePriority' => 1, 'targets' => 0],
+                    ['responsivePriority' => 2, 'targets' => 1]
+                ],
+                'searching' => true,
+                'lengthChange' => true
             ])
                 <thead class="table-primary">
                     <tr>
