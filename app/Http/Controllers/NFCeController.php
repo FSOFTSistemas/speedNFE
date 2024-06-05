@@ -124,14 +124,17 @@ class NFCeController extends Controller
 
     public function sendNFCe($id){
         try {
+            DB::beginTransaction();
             $cupom = $this->cupomService->getCupom($id);
             $nfceService = $this->makeNFCeService($cupom->empresa);
-            $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
             $this->empresaServices->incrementLastNFCe($cupom->empresa_id);
+            $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
             $this->cupomService->updateCoupon($cupom);
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
+            DB::commit();
             return redirect()->route('nfce.index')->with('success', 'Cupom foi enviado com sucesso!');
         } catch (Exception $e) {
+            DB::rollback();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }

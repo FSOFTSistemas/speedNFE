@@ -46,22 +46,21 @@ class NFCeService
         try {
             $make = new Make();
 
-            //infNFe OBRIGATÓRIA
             $std = new \stdClass();
             $std->Id = '';
             $std->versao = '4.00';
-            $infNFe = $make->taginfNFe($std);
+            $make->taginfNFe($std);
 
-            //ide OBRIGATÓRIA
             $std = new \stdClass();
-            $std->cUF = 14;
-            $std->cNF = '03701267';
+            dd($emitente);
+            $std->cUF = $emitente::getCUF($emitente->endereco->uf);
+            $std->cNF = rand(11111, 99999);
             $std->natOp = 'VENDA CONSUMIDOR';
             $std->mod = 65;
-            $std->serie = 1;
-            $std->nNF = 100;
-            $std->dhEmi = (new \DateTime())->format('Y-m-d\TH:i:sP');
-            $std->dhSaiEnt = null;
+            $std->serie = $emitente->serie;
+            $std->nNF = $emitente->ultimaNFCe;
+            $std->dhEmi = date("Y-m-d\TH:i:sP");;
+            $std->dhSaiEnt = date("Y-m-d\TH:i:sP");;
             $std->tpNF = 1;
             $std->idDest = 1;
             $std->cMunFG = 1400100;
@@ -293,7 +292,7 @@ class NFCeService
             $xml = $make->getXML();
             $signedXml = $this->sign($xml);
             $key = $make->getChave();
-            $this->toTransmit($signedXml, $key, 'historia');
+            $this->toTransmit($signedXml);
             $arr = [
                 'chave' => $key,
                 'xml' => $signedXml,
@@ -310,7 +309,7 @@ class NFCeService
         return $this->tools->signNFe($xml);
     }
 
-    private function toTransmit($signedXml, $chave, $caminho)
+    private function toTransmit($signedXml)
     {
         $loteId = str_pad(100, 15, '0', STR_PAD_LEFT);
         $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId);
@@ -321,15 +320,8 @@ class NFCeService
                 'erro' => "[$std->cStat] - $std->xMotivo",
             ];
         }
-        $recibo = $std->infRec->nRec;
-        $protocolo = $this->tools->sefazConsultaRecibo($recibo);
+        $std->infRec->nRec;
         sleep(2);
-        // sleep(2);
-        // $xml = Complements::toAuthorize($signedXml, $protocolo);
-        // if (!File::exists(public_path($caminho . '/'))) {
-        //     File::makeDirectory(public_path($caminho . '/'), 755, true, true);
-        // }
-        // file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
-        return $recibo;
+        return $resp;
     }
 }
