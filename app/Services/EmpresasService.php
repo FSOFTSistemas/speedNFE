@@ -172,4 +172,11 @@ class EmpresasService
         return $company->sequenciaCupom;
     }
 
+    public function incrementLastNFCe($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->ultimaNFCe = $company->ultimaNFCe + 1;
+        $company->save();
+    }
+
 }

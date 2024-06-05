@@ -33,4 +33,11 @@ class CupomService
         ])->id;
     }
 
+    public function updateCoupon($coupon)
+    {
+        $coupon->gerado_nfce = true;
+        $coupon->contingencia = true;
+        $coupon->save();
+    }
+
 }
