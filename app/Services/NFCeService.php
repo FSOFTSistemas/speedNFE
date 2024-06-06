@@ -5,13 +5,13 @@ namespace App\Services;
 use App\Enums\EstadoEnum;
 use App\Models\NFCe;
 use App\Utils\FormatationUtil;
-use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
-use NFePHP\NFe\Complements;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
 
+error_reporting(E_ERROR);
+ini_set('display_errors', 'On');
 class NFCeService
 {
     private $tools;
@@ -62,9 +62,12 @@ class NFCeService
             $std->dhEmi = date("Y-m-d\TH:i:sP");;
             $std->dhSaiEnt = date("Y-m-d\TH:i:sP");;
             $std->tpNF = 1;
-            $std->idDest = $emitente->endereco->uf == $cupom->cliente->endereco->uf ? 1 : 2;
+            $cliente = $cupom->cliente ?? null;
+            $clientAddress = $cliente->endereco ?? null;
+            $std->idDest = $clientAddress || $emitente->endereco->uf == $clientAddress->uf ? 1 : 2;
             $std->cMunFG = $emitente->endereco->codigoIBGE;
-            $std->tpImp = 1;
+            $std->tpImp = 4;
+            $std->indSinc = 0;
             $std->tpEmis = 1;
             $std->cDV = 0;
             $std->tpAmb = $emitente->ambiente;
@@ -83,7 +86,7 @@ class NFCeService
             $std->IE = FormatationUtil::retiraPontuacoes($emitente->rg_ie);
             $std->IEST = null;
             $std->CRT = 1; //Simples Nacional
-            if (strlen($emitente->cpf_cnpj) > 11) {
+            if (strlen(FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj)) >= 12) {
                 $std->CNPJ = FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj);
             } else {
                 $std->CPF = FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj);
@@ -104,44 +107,45 @@ class NFCeService
             $std->fone = FormatationUtil::retiraPontuacoes($emitente->celular);
             $make->tagenderemit($std);
 
-            $std = new \stdClass();
-            $std->xNome = FormatationUtil::retiraAcentos($cupom->cliente->nome);
-            if (strlen($cupom->cliente->cpf_cnpj) > 11) {
-                $std->CNPJ = FormatationUtil::retiraPontuacoes($cupom->cliente->cpf_cnpj);
-                $std->IE = FormatationUtil::retiraPontuacoes($cupom->cliente->rg_ie);
-            } else {
-                $std->CPF = FormatationUtil::retiraPontuacoes($cupom->cliente->cpf_cnpj);
-                $ie = FormatationUtil::retiraPontuacoes($cupom->cliente->rg_ie);
-                if (strtolower($ie) != "isento" && $cupom->cliente->contribuinte) {
-                    $std->IE = $ie;
-                }
-            }
-            if ($cupom->cliente->contribuinte) {
-                if ($cupom->cliente->rg_ie == 'ISENTO') {
-                    $std->indIEDest = 2;
+            if ($cliente) {
+                $std = new \stdClass();
+                $std->xNome = FormatationUtil::retiraAcentos($cliente->nome);
+                if (strlen(FormatationUtil::retiraPontuacoes($cliente->cpf_cnpj)) >= 12) {
+                    $std->CNPJ = FormatationUtil::retiraPontuacoes($cliente->cpf_cnpj);
+                    // $std->IE = FormatationUtil::retiraPontuacoes($cliente->rg_ie);
                 } else {
-                    $std->indIEDest = 1;
+                    $std->CPF = FormatationUtil::retiraPontuacoes($cliente->cpf_cnpj);
+                    // $ie = FormatationUtil::retiraPontuacoes($cliente->rg_ie);
+                    // if (strtolower($ie) != "isento" && $cliente->contribuinte) {
+                    //     $std->IE = $ie;
+                    // }
                 }
-            } else {
-                $std->indIEDest = 9;
+                if ($cliente->contribuinte) {
+                    if ($cliente->rg_ie == 'ISENTO') {
+                        $std->indIEDest = 2;
+                    } else {
+                        $std->indIEDest = 1;
+                    }
+                } else {
+                    $std->indIEDest = 9;
+                }
+                $make->tagdest($std);
+
+                $std = new \stdClass();
+                $std->xLgr = FormatationUtil::retiraAcentos($cliente->endereco->rua);
+                $std->nro = FormatationUtil::retiraAcentos($cliente->endereco->numero);
+                $std->xCpl = FormatationUtil::retiraAcentos($cliente->endereco->complemento);
+                $std->xBairro = FormatationUtil::retiraAcentos($cliente->endereco->bairro);
+                $std->cMun = $cliente->endereco->codigoIBGE;
+                $std->xMun = FormatationUtil::retiraAcentos($cliente->endereco->cidade);
+                $std->UF = $cliente->endereco->uf;
+                $std->CEP = FormatationUtil::retiraPontuacoes($cliente->endereco->cep);
+                $std->cPais = 1058;
+                $std->xPais = 'Brasil';
+                $std->fone = FormatationUtil::retiraPontuacoes($cliente->celular);
+                $make->tagenderdest($std);
             }
-            $make->tagdest($std);
 
-            $std = new \stdClass();
-            $std->xLgr = FormatationUtil::retiraAcentos($cupom->cliente->endereco->rua);
-            $std->nro = FormatationUtil::retiraAcentos($cupom->cliente->endereco->numero);
-            $std->xCpl = FormatationUtil::retiraAcentos($cupom->cliente->endereco->complemento);
-            $std->xBairro = FormatationUtil::retiraAcentos($cupom->cliente->endereco->bairro);
-            $std->cMun = $cupom->cliente->endereco->codigoIBGE;
-            $std->xMun = FormatationUtil::retiraAcentos($cupom->cliente->endereco->cidade);
-            $std->UF = $cupom->cliente->endereco->uf;
-            $std->CEP = FormatationUtil::retiraPontuacoes($cupom->cliente->endereco->cep);
-            $std->cPais = 1058;
-            $std->xPais = 'Brasil';
-            $std->fone = FormatationUtil::retiraPontuacoes($cupom->cliente->celular);
-            $make->tagenderdest($std);
-
-            dd($cupom);
             foreach ($cupom->itens as $index => $item) {
                 $std = new \stdClass();
                 $std->item = $index + 1;
@@ -154,7 +158,8 @@ class NFCeService
                 $std->uCom = $item->produto->un;
                 $std->qCom = $item->qtde;
                 $std->vUnCom = FormatationUtil::format($item->unitario);
-                $std->vProd = FormatationUtil::format($item->qtde * $item->unitario);
+                $vProd = FormatationUtil::format($item->qtde * $item->unitario);
+                $std->vProd = $vProd;
                 $std->cEANTrib = FormatationUtil::retiraPontuacoes($item->produto->codigo);
                 $std->uTrib = $item->produto->un;
                 $std->qTrib = $item->qtde;
@@ -208,9 +213,9 @@ class NFCeService
                 $std = new \stdClass();
                 $std->item = $index + 1;
                 $std->CST = $item->produto->cst_pis;
-                $std->vBC = FormatationUtil::format($item->produto->pis) > 0 ? $std->vProd : 0.00;
+                $std->vBC = FormatationUtil::format($item->produto->pis) > 0 ? $vProd : 0.00;
                 $std->pPIS = FormatationUtil::format($item->produto->pis);
-                $std->vPIS = FormatationUtil::format(($std->vProd) * ($item->produto->pis / 100));
+                $std->vPIS = FormatationUtil::format(($vProd) * ($item->produto->pis / 100));
                 $std->qBCProd = 0;
                 $std->vAliqProd = 0;
                 $make->tagPIS($std);
@@ -218,9 +223,9 @@ class NFCeService
                 $std = new \stdClass();
                 $std->item = $index + 1;
                 $std->CST = $item->produto->cst_cofins;
-                $std->vBC = FormatationUtil::format($item->produto->cofins) > 0 ? $std->vProd : 0.00;
+                $std->vBC = FormatationUtil::format($item->produto->cofins) > 0 ? $vProd : 0.00;
                 $std->pCOFINS = FormatationUtil::format($item->produto->cofins);
-                $std->vCOFINS = FormatationUtil::format(($std->vProd) *
+                $std->vCOFINS = FormatationUtil::format(($vProd) *
                     ($item->produto->cofins / 100));
                 $std->qBCProd = 0;
                 $std->vAliqProd = 0;
@@ -254,25 +259,34 @@ class NFCeService
             $std->vTroco = FormatationUtil::format($cupom->troco);
             $make->tagpag($std);
 
-            $std = new \stdClass();
-            $std->indPag = 1;
-            $std->tPag = '01';
-            $std->vPag = 100.00;
-            $detpag = $make->tagdetpag($std);
+            foreach ($cupom->formasPagamento as $item) {
+                $std = new \stdClass();
+                $std->indPag = 1;
+                if ($item->forma == "DINHEIRO") {
+                    $std->tPag = '01';
+                } else if ($item->forma == 'CARTÃO/CRÉDITO') {
+                    $std->tPag = '03';
+                } else if ($item->forma == 'CARTÃO/DÉBITO') {
+                    $std->tPag = '04';
+                } else if ($item->forma == 'PIX') {
+                    $std->tPag = '17';
+                } else if ($item->forma == 'OUTROS') {
+                    $std->tPag = '99';
+                }
+                $std->vPag = FormatationUtil::format($cupom->total);
+                $make->tagdetpag($std);
+            }
 
-            //infadic
             $std = new \stdClass();
             $std->infAdFisco = '';
             $std->infCpl = '';
-            $info = $make->taginfadic($std);
+            $make->taginfadic($std);
 
             $std = new \stdClass();
-            $std->CNPJ = '99999999999999'; //CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico
-            $std->xContato = 'Fulano de Tal'; //Nome da pessoa a ser contatada
-            $std->email = 'fulano@soft.com.br'; //E-mail da pessoa jurídica a ser contatada
-            $std->fone = '1155551122'; //Telefone da pessoa jurídica/física a ser contatada
-            //$std->CSRT = 'G8063VRTNDMO886SFNK5LDUDEI24XJ22YIPO'; //Código de Segurança do Responsável Técnico
-            //$std->idCSRT = '01'; //Identificador do CSRT
+            $std->CNPJ = getenv('RESP_CNPJ');
+            $std->xContato = getenv('RESP_NOME');
+            $std->email = getenv('RESP_EMAIL');
+            $std->fone = getenv('RESP_FONE');
             $make->taginfRespTec($std);
 
             $make->monta();
@@ -287,7 +301,6 @@ class NFCeService
             return $arr;
         } catch (\Exception $e) {
             dd($e);
-            return redirect('/vendas')->with('error', $make->getErrors());
         }
     }
 
@@ -302,6 +315,7 @@ class NFCeService
         $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId);
         $st = new Standardize();
         $std = $st->toStd($resp);
+        dd($std);
         if ($std->cStat != 103) {
             return [
                 'erro' => "[$std->cStat] - $std->xMotivo",
