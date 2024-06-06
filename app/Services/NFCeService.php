@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\EstadoEnum;
 use App\Models\NFCe;
+use App\Utils\FormatationUtil;
 use Illuminate\Support\Facades\File;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
@@ -41,7 +42,7 @@ class NFCeService
         ]);
     }
 
-    public function generateXml($venda, $emitente)
+    public function generateXml($cupom, $emitente)
     {
         try {
             $make = new Make();
@@ -52,7 +53,6 @@ class NFCeService
             $make->taginfNFe($std);
 
             $std = new \stdClass();
-            dd($emitente);
             $std->cUF = $emitente::getCUF($emitente->endereco->uf);
             $std->cNF = rand(11111, 99999);
             $std->natOp = 'VENDA CONSUMIDOR';
@@ -62,211 +62,198 @@ class NFCeService
             $std->dhEmi = date("Y-m-d\TH:i:sP");;
             $std->dhSaiEnt = date("Y-m-d\TH:i:sP");;
             $std->tpNF = 1;
-            $std->idDest = 1;
-            $std->cMunFG = 1400100;
+            $std->idDest = $emitente->endereco->uf == $cupom->cliente->endereco->uf ? 1 : 2;
+            $std->cMunFG = $emitente->endereco->codigoIBGE;
             $std->tpImp = 1;
             $std->tpEmis = 1;
-            $std->cDV = 2;
-            $std->tpAmb = 2;
+            $std->cDV = 0;
+            $std->tpAmb = $emitente->ambiente;
             $std->finNFe = 1;
             $std->indFinal = 1;
             $std->indPres = 1;
-            $std->procEmi = 3;
+            $std->procEmi = 0;
             $std->verProc = '4.13';
             $std->dhCont = null;
             $std->xJust = null;
-            $ide = $make->tagIde($std);
+            $make->tagIde($std);
 
-            //emit OBRIGATÓRIA
             $std = new \stdClass();
-            $std->xNome = 'SUA RAZAO SOCIAL LTDA';
-            $std->xFant = 'RAZAO';
-            $std->IE = '111111111';
+            $std->xNome = $emitente->razao;
+            $std->xFant = $emitente->fantasia;
+            $std->IE = FormatationUtil::retiraPontuacoes($emitente->rg_ie);
             $std->IEST = null;
-            //$std->IM = '95095870';
-            $std->CNAE = '4642701';
-            $std->CRT = 1;
-            $std->CNPJ = '99999999999999';
-            //$std->CPF = '12345678901'; //NÃO PASSE TAGS QUE NÃO EXISTEM NO CASO
-            $emit = $make->tagemit($std);
+            $std->CRT = 1; //Simples Nacional
+            if (strlen($emitente->cpf_cnpj) > 11) {
+                $std->CNPJ = FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj);
+            } else {
+                $std->CPF = FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj);
+            }
+            $make->tagemit($std);
 
-            //enderEmit OBRIGATÓRIA
             $std = new \stdClass();
-            $std->xLgr = 'Avenida Getúlio Vargas';
-            $std->nro = '5022';
-            $std->xCpl = 'LOJA 42';
-            $std->xBairro = 'CENTRO';
-            $std->cMun = 1400100;
-            $std->xMun = 'BOA VISTA';
-            $std->UF = 'RR';
-            $std->CEP = '69301030';
+            $std->xLgr = FormatationUtil::retiraAcentos($emitente->endereco->rua);
+            $std->nro = $emitente->endereco->numero;
+            $std->xCpl = FormatationUtil::retiraAcentos($emitente->endereco->complemento);
+            $std->xBairro = FormatationUtil::retiraAcentos($emitente->endereco->bairro);
+            $std->cMun = $emitente->endereco->codigoIBGE;
+            $std->xMun = FormatationUtil::retiraAcentos($emitente->endereco->cidade);
+            $std->UF = $emitente->endereco->uf;
+            $std->CEP = FormatationUtil::retiraPontuacoes($emitente->endereco->cep);
             $std->cPais = 1058;
             $std->xPais = 'Brasil';
-            $std->fone = '55555555';
-            $ret = $make->tagenderemit($std);
+            $std->fone = FormatationUtil::retiraPontuacoes($emitente->celular);
+            $make->tagenderemit($std);
 
-            //dest OPCIONAL
             $std = new \stdClass();
-            $std->xNome = 'Eu Ltda';
-            $std->CNPJ = '01234123456789';
-            //$std->CPF = '12345678901';
-            //$std->idEstrangeiro = 'AB1234';
-            $std->indIEDest = 9;
-            //$std->IE = '';
-            //$std->ISUF = '12345679';
-            //$std->IM = 'XYZ6543212';
-            $std->email = 'seila@seila.com.br';
-            $dest = $make->tagdest($std);
+            $std->xNome = FormatationUtil::retiraAcentos($cupom->cliente->nome);
+            if (strlen($cupom->cliente->cpf_cnpj) > 11) {
+                $std->CNPJ = FormatationUtil::retiraPontuacoes($cupom->cliente->cpf_cnpj);
+                $std->IE = FormatationUtil::retiraPontuacoes($cupom->cliente->rg_ie);
+            } else {
+                $std->CPF = FormatationUtil::retiraPontuacoes($cupom->cliente->cpf_cnpj);
+                $ie = FormatationUtil::retiraPontuacoes($cupom->cliente->rg_ie);
+                if (strtolower($ie) != "isento" && $cupom->cliente->contribuinte) {
+                    $std->IE = $ie;
+                }
+            }
+            if ($cupom->cliente->contribuinte) {
+                if ($cupom->cliente->rg_ie == 'ISENTO') {
+                    $std->indIEDest = 2;
+                } else {
+                    $std->indIEDest = 1;
+                }
+            } else {
+                $std->indIEDest = 9;
+            }
+            $make->tagdest($std);
 
-            //enderDest OPCIONAL
             $std = new \stdClass();
-            $std->xLgr = 'Avenida Sebastião Diniz';
-            $std->nro = '458';
-            $std->xCpl = null;
-            $std->xBairro = 'CENTRO';
-            $std->cMun = 1400100;
-            $std->xMun = 'Boa Vista';
-            $std->UF = 'RR';
-            $std->CEP = '69301088';
+            $std->xLgr = FormatationUtil::retiraAcentos($cupom->cliente->endereco->rua);
+            $std->nro = FormatationUtil::retiraAcentos($cupom->cliente->endereco->numero);
+            $std->xCpl = FormatationUtil::retiraAcentos($cupom->cliente->endereco->complemento);
+            $std->xBairro = FormatationUtil::retiraAcentos($cupom->cliente->endereco->bairro);
+            $std->cMun = $cupom->cliente->endereco->codigoIBGE;
+            $std->xMun = FormatationUtil::retiraAcentos($cupom->cliente->endereco->cidade);
+            $std->UF = $cupom->cliente->endereco->uf;
+            $std->CEP = FormatationUtil::retiraPontuacoes($cupom->cliente->endereco->cep);
             $std->cPais = 1058;
             $std->xPais = 'Brasil';
-            $std->fone = '1111111111';
-            $ret = $make->tagenderdest($std);
+            $std->fone = FormatationUtil::retiraPontuacoes($cupom->cliente->celular);
+            $make->tagenderdest($std);
 
+            dd($cupom);
+            foreach ($cupom->itens as $index => $item) {
+                $std = new \stdClass();
+                $std->item = $index + 1;
+                $std->cProd = $item->produto->id;
+                $std->cEAN = FormatationUtil::retiraPontuacoes($item->produto->codigo);
+                $std->xProd = FormatationUtil::retiraAcentos($item->produto->produto);
+                $std->NCM = FormatationUtil::retiraPontuacoes($item->produto->ncm);
+                $std->EXTIPI = '';
+                $std->CFOP = $item->produto->cfop_interno;
+                $std->uCom = $item->produto->un;
+                $std->qCom = $item->qtde;
+                $std->vUnCom = FormatationUtil::format($item->unitario);
+                $std->vProd = FormatationUtil::format($item->qtde * $item->unitario);
+                $std->cEANTrib = FormatationUtil::retiraPontuacoes($item->produto->codigo);
+                $std->uTrib = $item->produto->un;
+                $std->qTrib = $item->qtde;
+                $std->vUnTrib = FormatationUtil::format($item->unitario);
+                $std->indTot = 1;
+                $make->tagprod($std);
 
-            //prod OBRIGATÓRIA
+                $tag = new \stdClass();
+                $tag->item = $index + 1;
+                $tag->infAdProd = FormatationUtil::retiraAcentos($item->produto->produto);
+                $make->taginfAdProd($tag);
+
+                $std = new \stdClass();
+                $std->item = $index + 1;
+                $std->vTotTrib = 0.00;
+                $make->tagimposto($std);
+
+                $std = new \stdClass();
+                $std->item = $index + 1;
+                $std->orig = 0;
+                $std->CSOSN = $item->produto->cst_csosn;
+                $std->pCredSN = 0.00;
+                $std->vCredICMSSN = 0.00;
+                $std->modBCST = null;
+                $std->pMVAST = null;
+                $std->pRedBCST = null;
+                $std->vBCST = null;
+                $std->pICMSST = null;
+                $std->vICMSST = null;
+                $std->vBCFCPST = null;
+                $std->pFCPST = null;
+                $std->vFCPST = null;
+                $std->vBCSTRet = null;
+                $std->pST = null;
+                $std->vICMSSTRet = null;
+                $std->vBCFCPSTRet = null;
+                $std->pFCPSTRet = null;
+                $std->vFCPSTRet = null;
+                $std->modBC = null;
+                $std->vBC = null;
+                $std->pRedBC = null;
+                $std->pICMS = null;
+                $std->vICMS = null;
+                $std->pRedBCEfet = null;
+                $std->vBCEfet = null;
+                $std->pICMSEfet = null;
+                $std->vICMSEfet = null;
+                $std->vICMSSubstituto = null;
+                $make->tagICMSSN($std);
+
+                $std = new \stdClass();
+                $std->item = $index + 1;
+                $std->CST = $item->produto->cst_pis;
+                $std->vBC = FormatationUtil::format($item->produto->pis) > 0 ? $std->vProd : 0.00;
+                $std->pPIS = FormatationUtil::format($item->produto->pis);
+                $std->vPIS = FormatationUtil::format(($std->vProd) * ($item->produto->pis / 100));
+                $std->qBCProd = 0;
+                $std->vAliqProd = 0;
+                $make->tagPIS($std);
+
+                $std = new \stdClass();
+                $std->item = $index + 1;
+                $std->CST = $item->produto->cst_cofins;
+                $std->vBC = FormatationUtil::format($item->produto->cofins) > 0 ? $std->vProd : 0.00;
+                $std->pCOFINS = FormatationUtil::format($item->produto->cofins);
+                $std->vCOFINS = FormatationUtil::format(($std->vProd) *
+                    ($item->produto->cofins / 100));
+                $std->qBCProd = 0;
+                $std->vAliqProd = 0;
+                $make->tagCOFINS($std);
+            }
+
             $std = new \stdClass();
-            $std->item = 1;
-            $std->cProd = '1111';
-            $std->cEAN = "SEM GTIN";
-            $std->xProd = 'CAMISETA REGATA GG';
-            $std->NCM = 61052000;
-            //$std->cBenef = 'ab222222';
-            $std->EXTIPI = '';
-            $std->CFOP = 5101;
-            $std->uCom = 'UNID';
-            $std->qCom = 1;
-            $std->vUnCom = 100.00;
-            $std->vProd = 100.00;
-            $std->cEANTrib = "SEM GTIN"; //'6361425485451';
-            $std->uTrib = 'UNID';
-            $std->qTrib = 1;
-            $std->vUnTrib = 100.00;
-            //$std->vFrete = 0.00;
-            //$std->vSeg = 0;
-            //$std->vDesc = 0;
-            //$std->vOutro = 0;
-            $std->indTot = 1;
-            //$std->xPed = '12345';
-            //$std->nItemPed = 1;
-            //$std->nFCI = '12345678-1234-1234-1234-123456789012';
-            $prod = $make->tagprod($std);
-
-            $tag = new \stdClass();
-            $tag->item = 1;
-            $tag->infAdProd = 'DE POLIESTER 100%';
-            $make->taginfAdProd($tag);
-
-            //Imposto
-            $std = new \stdClass();
-            $std->item = 1; //item da NFe
-            $std->vTotTrib = 25.00;
-            $make->tagimposto($std);
-
-            $std = new \stdClass();
-            $std->item = 1; //item da NFe
-            $std->orig = 0;
-            $std->CSOSN = '102';
-            $std->pCredSN = 0.00;
-            $std->vCredICMSSN = 0.00;
-            $std->modBCST = null;
-            $std->pMVAST = null;
-            $std->pRedBCST = null;
-            $std->vBCST = null;
-            $std->pICMSST = null;
-            $std->vICMSST = null;
-            $std->vBCFCPST = null; //incluso no layout 4.00
-            $std->pFCPST = null; //incluso no layout 4.00
-            $std->vFCPST = null; //incluso no layout 4.00
-            $std->vBCSTRet = null;
-            $std->pST = null;
-            $std->vICMSSTRet = null;
-            $std->vBCFCPSTRet = null; //incluso no layout 4.00
-            $std->pFCPSTRet = null; //incluso no layout 4.00
-            $std->vFCPSTRet = null; //incluso no layout 4.00
-            $std->modBC = null;
-            $std->vBC = null;
-            $std->pRedBC = null;
-            $std->pICMS = null;
-            $std->vICMS = null;
-            $std->pRedBCEfet = null;
-            $std->vBCEfet = null;
-            $std->pICMSEfet = null;
-            $std->vICMSEfet = null;
-            $std->vICMSSubstituto = null;
-            $make->tagICMSSN($std);
-
-            //PIS
-            $std = new \stdClass();
-            $std->item = 1; //item da NFe
-            $std->CST = '99';
-            //$std->vBC = 1200;
-            //$std->pPIS = 0;
+            $std->vProd = 0.00;
+            $std->vBC = 0.00;
+            $std->vICMS = 0.00;
+            $std->vICMSDeson = 0.00;
+            $std->vBCST = 0.00;
+            $std->vST = 0.00;
+            $std->vFrete = 0.00;
+            $std->vSeg = 0.00;
+            $std->vDesc = FormatationUtil::format($cupom->desconto);
+            $std->vII = 0.00;
+            $std->vIPI = 0.00;
             $std->vPIS = 0.00;
-            $std->qBCProd = 0;
-            $std->vAliqProd = 0;
-            $pis = $make->tagPIS($std);
-
-            //COFINS
-            $std = new \stdClass();
-            $std->item = 1; //item da NFe
-            $std->CST = '99';
-            $std->vBC = null;
-            $std->pCOFINS = null;
             $std->vCOFINS = 0.00;
-            $std->qBCProd = 0;
-            $std->vAliqProd = 0;
-            $make->tagCOFINS($std);
+            $std->vOutro = 0.00;
+            $std->vTotTrib = 0.00;
+            $std->vNF = FormatationUtil::format($cupom->total);
+            $make->tagicmstot($std);
 
-            //icmstot OBRIGATÓRIA
             $std = new \stdClass();
-            //$std->vBC = 100;
-            //$std->vICMS = 0;
-            //$std->vICMSDeson = 0;
-            //$std->vFCPUFDest = 0;
-            //$std->vICMSUFDest = 0;
-            //$std->vICMSUFRemet = 0;
-            //$std->vFCP = 0;
-            //$std->vBCST = 0;
-            //$std->vST = 0;
-            //$std->vFCPST = 0;
-            //$std->vFCPSTRet = 0.23;
-            //$std->vProd = 2000;
-            //$std->vFrete = 100;
-            //$std->vSeg = null;
-            //$std->vDesc = null;
-            //$std->vII = 12;
-            //$std->vIPI = 23;
-            //$std->vIPIDevol = 9;
-            //$std->vPIS = 6;
-            //$std->vCOFINS = 25;
-            //$std->vOutro = null;
-            //$std->vNF = 2345.83;
-            //$std->vTotTrib = 798.12;
-            $icmstot = $make->tagicmstot($std);
+            $std->modFrete = 9;
+            $make->tagtransp($std);
 
-            //transp OBRIGATÓRIA
             $std = new \stdClass();
-            $std->modFrete = 0;
-            $transp = $make->tagtransp($std);
+            $std->vTroco = FormatationUtil::format($cupom->troco);
+            $make->tagpag($std);
 
-
-            //pag OBRIGATÓRIA
-            $std = new \stdClass();
-            $std->vTroco = 0;
-            $pag = $make->tagpag($std);
-
-            //detPag OBRIGATÓRIA
             $std = new \stdClass();
             $std->indPag = 1;
             $std->tPag = '01';
