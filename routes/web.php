@@ -230,6 +230,7 @@ Route::prefix('cupom')->group(function () {
     Route::get('/criar', [CupomController::class, 'create'])->name('cupom.create')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::post('/salvar', [CupomController::class, 'store'])->name('cupom.store')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::get('/{id}/visualizar', [CupomController::class, 'showPreView'])->name('cupom.showPreView')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
 });
 
 require __DIR__ . '/auth.php';

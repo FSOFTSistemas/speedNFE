@@ -33,6 +33,13 @@ class CupomService
         ])->id;
     }
 
+    public function cancelCoupon($couponId)
+    {
+        $coupon = $this->getCupom($couponId);
+        $coupon->situacao = SituacaoEnum::CANCELADO;
+        $coupon->save();
+    }
+
     public function updateCoupon($coupon)
     {
         $coupon->gerado_nfce = true;

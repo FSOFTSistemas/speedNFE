@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 <!DOCTYPE html>
 <html lang="pt-br" class="m-2">
 
@@ -13,6 +17,10 @@
         .items-table {
             width: 100%;
             font-size: 60%;
+        }
+
+        .items-rows {
+            border-top: 1px solid #ddd;
         }
 
         .coupon-client {
@@ -86,8 +94,8 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th class="w-50">Código</th>
-                    <th class="w-75">Descrição</th>
+                    <th class="w-25">Item</th>
+                    <th class="w-100">Descrição</th>
                     <th class="w-25">Qtde</th>
                     <th class="w-25">UN</th>
                     <th class="w-50">Vl Unit</th>
@@ -95,10 +103,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($cupom->itens as $item)
-                    <tr>
-                        <td>{{ $item->produto->codigo }}</td>
-                        <td>{{ $item->produto->produto }}</td>
+                @foreach ($cupom->itens as $index => $item)
+                    <tr class="items-rows">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ Str::limit($item->produto->produto, 20, '...') }}</td>
                         <td>{{ $item->qtde }}</td>
                         <td>{{ $item->produto->un }}</td>
                         <td>{{ number_format($item->unitario, 2) }}</td>

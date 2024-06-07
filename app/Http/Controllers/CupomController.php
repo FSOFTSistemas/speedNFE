@@ -85,6 +85,19 @@ class CupomController extends Controller
         }
     }
 
+    public function destroyCoupon(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $this->cupomService->cancelCoupon($request->couponId);
+            DB::commit();
+            return redirect()->route('cupom.index')->with('success','Venda cancelada com sucesso!');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
     public function showPreView($id)
     {
         try {

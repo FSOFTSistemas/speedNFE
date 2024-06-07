@@ -84,7 +84,7 @@
                                     </div>
                                 @else
                                     <div class="col">
-                                        <a title="Cancelar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-danger'><i
+                                        <a title="Cancelar" class='text-danger' onclick="openModal({{ $cpm->id }})"><i
                                                 class="fa fa-trash"></i></a>
                                     </div>
 
@@ -112,11 +112,36 @@
             @endforeach
         </tbody>
     @endcomponent
+
+    @component('components.modal', [
+        'modalId' => 'ModalCancelCoupon',
+        'modalTitle' => 'Cancelar Cupom',
+        'sizeModal' => 'modal-md',
+    ])
+        <p style="color: red; text-align: center">OBS: Você irá cancelar este cupom!</p>
+
+        <div class="text-center">
+            <form action="{{ route('cupom.destroy') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('DELETE')
+                <input type="hidden" required class="form-control" id="couponId" name="couponId" value="">
+
+                <div class="text-center mb-2">
+                    <button type="submit" class="btn btn-warning">CONFIRMAR</button>
+                </div>
+            </form>
+
+        </div>
+    @endcomponent
+
+    <script>
+        function openModal(couponId) {
+            document.getElementById('couponId').value = couponId
+            $('#ModalCancelCoupon').modal('show')
+        }
+    </script>
 @stop
 
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
-
-@section('js')
 @stop
