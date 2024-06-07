@@ -1,5 +1,5 @@
 <div>
-    <form action="{{ route('nfce.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('cupom.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <section>
             <div class="card">

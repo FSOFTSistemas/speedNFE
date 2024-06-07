@@ -13,7 +13,7 @@
 @section('content')
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
-            <a class="btn btn-primary" href="{{ route('nfce.create') }}">+ Emitir NFCe</a>
+            <a class="btn btn-primary" href="{{ route('cupom.create') }}">+ Emitir NFCe</a>
         </div>
     </div>
 
@@ -77,7 +77,7 @@
                     <td>
                         <div class="row">
                             @if ($cpm->situacao == 'ATIVO')
-                                @if (isset($cpm->nfce) & ($cpm->nfce->situacao == 'Autorizado'))
+                                @if (isset($cpm->nfce) && $cpm->nfce->situacao == 'Autorizado')
                                     <div class="col">
                                         <a title="Inutilizar" href='{{ route('mdfe.view', [$cpm->id]) }}'
                                             class='text-warning'><i class="fa fa-ban"></i></a>
@@ -97,7 +97,7 @@
 
                             @if (!isset($cpm->nfce))
                                 <div class="col">
-                                    <a title="Visualizar" target="_blank" href='{{ route('nfce.showPreView', [$cpm->id]) }}'
+                                    <a title="Visualizar" target="_blank" href='{{ route('cupom.showPreView', [$cpm->id]) }}'
                                         class='text-primary'><i class="fa fa-eye"></i></a>
                                 </div>
                             @else

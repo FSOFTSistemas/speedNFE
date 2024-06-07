@@ -341,12 +341,12 @@ return [
             'submenu' => [
                 [
                     'text'        => 'Emitir NFCe',
-                    'url'         => '/nfce/criar',
+                    'url'         => '/cupom/criar',
                     'icon'        => 'fas fa-upload',
                 ],
                 [
                     'text'        => 'Notas Emitidas (NFCe)',
-                    'url'         => '/nfce',
+                    'url'         => '/cupom',
                     'icon'        => 'fas fa-list-ul',
                 ]
             ]
