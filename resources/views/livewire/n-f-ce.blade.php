@@ -18,7 +18,7 @@
                                 <div class="input-group">
                                     <div class="form-floating">
                                         <input type="text" class="form-control-plaintext text-bold"
-                                            wire:model="cliente.nome" placeholder=" ">
+                                            wire:model="cliente.nome" readonly placeholder=" ">
                                         <label for="cliente.nome">Cliente</label>
                                     </div>
                                 </div>

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('data');
             $table->integer('serie');
             $table->string('chave');
-            $table->string('contingencia');
+            $table->boolean('contingencia');
             $table->string('situacao');
             $table->binary('xml');
             $table->unsignedBigInteger('cupom_id');

@@ -223,6 +223,7 @@ Route::prefix('nfce')->group(function () {
     Route::get('', [NFCeController::class, 'index'])->name('nfce.index')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::get('/criar', [NFCeController::class, 'create'])->name('nfce.create')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::post('/salvar', [NFCeController::class, 'store'])->name('nfce.store')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::get('/{id}/visualizar', [NFCeController::class, 'showPreView'])->name('nfce.showPreView')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::get('/{id}/visualizar', [NFCeController::class, 'show'])->name('nfce.show')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::get('/{id}/enviar', [NFCeController::class, 'sendNFCe'])->name('nfce.send')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
 });

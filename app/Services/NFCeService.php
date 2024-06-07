@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\EstadoEnum;
+use App\Exceptions\MalformedXmlException;
 use App\Models\NFCe;
 use App\Utils\FormatationUtil;
 use NFePHP\Common\Certificate;
@@ -34,7 +35,7 @@ class NFCeService
             'nro' => $company->ultimaNFCe,
             'serie' => $company->serie,
             'chave' => $body['chave'],
-            'contingencia' => 'n sei dizer',
+            'contingencia' => false,
             'situacao' => EstadoEnum::AUTORIZADO,
             'xml' => $body['xml'],
             'cupom_id' => $couponId,
@@ -300,7 +301,7 @@ class NFCeService
             ];
             return $arr;
         } catch (\Exception $e) {
-            dd($e);
+            throw $e;
         }
     }
 
@@ -312,17 +313,18 @@ class NFCeService
     private function toTransmit($signedXml)
     {
         $loteId = str_pad(100, 15, '0', STR_PAD_LEFT);
-        $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId);
+        $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId, 1);
         $st = new Standardize();
         $std = $st->toStd($resp);
-        dd($std);
-        if ($std->cStat != 103) {
-            return [
-                'erro' => "[$std->cStat] - $std->xMotivo",
-            ];
-        }
-        $std->infRec->nRec;
         sleep(2);
-        return $resp;
+        if ($std->cStat == 104) {
+            if ($std->protNFe->infProt->cStat == 100) {
+                return true;
+            } else {
+                throw new MalformedXmlException($std->protNFe->infProt->xMotivo);
+            }
+        } else {
+            throw new MalformedXmlException($std->xMotivo);
+        }
     }
 }

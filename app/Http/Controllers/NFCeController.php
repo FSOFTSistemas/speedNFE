@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\MalformedXmlException;
 use App\Services\CupomFormaService;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
@@ -15,7 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use NFePHP\Common\Exception\ValidatorException;
 use NFePHP\DA\NFe\Danfce;
 
 class NFCeController extends Controller
@@ -88,12 +88,25 @@ class NFCeController extends Controller
         }
     }
 
-    public function show($id)
+    public function showPreView($id)
     {
         try {
             $cupom = $this->cupomService->getCupom($id);
             $pdf = Pdf::loadView('nfce.coupon-preview', ['cupom' => $cupom])->setPaper([0, 0, 225, CalculateCouponHeight::calculate(count($cupom->itens), count($cupom->formasPagamento), $cupom->cliente)], 'portrait');
             return $pdf->stream(date('d-m-Y') . '_' . $cupom->nroCupom . '.pdf');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $cupom = $this->cupomService->getCupom($id);
+            $dancfe = new Danfce($cupom->nfce->xml);
+            $pdf = $dancfe->render();
+            return response($pdf)
+                ->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -133,6 +146,9 @@ class NFCeController extends Controller
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
             DB::commit();
             return redirect()->route('nfce.index')->with('success', 'Cupom foi enviado com sucesso!');
+        } catch (MalformedXmlException $e) {
+            DB::rollback();
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollback();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);

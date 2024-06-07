@@ -76,28 +76,35 @@
                     <td>{{ $cpm->nroCupom }}</td>
                     <td>
                         <div class="row">
-                            <div class="col">
-                                <a title="Visualizar" target="_blank" href='{{ route('nfce.show', [$cpm->id]) }}'
-                                    class='text-primary'><i class="fa fa-eye"></i></a>
-                            </div>
-
                             @if ($cpm->situacao == 'ATIVO')
-                                <div class="col">
-                                    <a title="Cancelar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-danger'><i
-                                            class="fa fa-trash"></i></a>
-                                </div>
+                                @if (isset($cpm->nfce) & ($cpm->nfce->situacao == 'Autorizado'))
+                                    <div class="col">
+                                        <a title="Inutilizar" href='{{ route('mdfe.view', [$cpm->id]) }}'
+                                            class='text-warning'><i class="fa fa-ban"></i></a>
+                                    </div>
+                                @else
+                                    <div class="col">
+                                        <a title="Cancelar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-danger'><i
+                                                class="fa fa-trash"></i></a>
+                                    </div>
 
-                                <div class="col">
-                                    <a title="Enviar" href='{{ route('nfce.send', [$cpm->id]) }}' class='text-success'><i
-                                            class="fa fa-upload"></i></a>
-                                </div>
+                                    <div class="col">
+                                        <a title="Enviar" href='{{ route('nfce.send', [$cpm->id]) }}' class='text-success'><i
+                                                class="fa fa-upload"></i></a>
+                                    </div>
+                                @endif
                             @endif
 
-                            @if (!empty($cpm->nfce->nro))
-                            <div class="col">
-                                <a title="Inutilizar" href='{{ route('mdfe.view', [$cpm->id]) }}' class='text-warning'><i
-                                        class="fa fa-ban"></i></a>
-                            </div>
+                            @if (!isset($cpm->nfce))
+                                <div class="col">
+                                    <a title="Visualizar" target="_blank" href='{{ route('nfce.showPreView', [$cpm->id]) }}'
+                                        class='text-primary'><i class="fa fa-eye"></i></a>
+                                </div>
+                            @else
+                                <div class="col">
+                                    <a title="Visualizar" target="_blank" href='{{ route('nfce.show', [$cpm->id]) }}'
+                                        class='text-primary'><i class="fa fa-eye"></i></a>
+                                </div>
                             @endif
                         </div>
                     </td>
