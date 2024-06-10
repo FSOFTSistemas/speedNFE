@@ -80,7 +80,7 @@
                                                     wire:model="itens.{{ $index }}.acrescimo" required>
                                                 <input type="hidden" name="itens[{{ $index }}][total]"
                                                     wire:model="itens.{{ $index }}.total" required>
-                                                    <input type="hidden" name="itens[{{ $index }}][subtotal]"
+                                                <input type="hidden" name="itens[{{ $index }}][subtotal]"
                                                     wire:model="itens.{{ $index }}.subtotal" required>
                                             @empty
                                                 <tr class="text-center">
@@ -99,7 +99,8 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col">
-                                                <img src="{{ asset('logo_pdv.jpg') }}" class="w-100 h-100" style="user-select: none; -webkit-user-drag: none"
+                                                <img src="{{ asset('logo_pdv.jpg') }}" class="w-100 h-100"
+                                                    style="user-select: none; -webkit-user-drag: none"
                                                     alt="Ícone do PDV">
                                             </div>
                                         </div>
@@ -115,8 +116,8 @@
                                                         <label for="prod">Produto</label>
                                                     </div>
                                                     @isset($cod)
-                                                        <button class="btn btn-secondary" type="button" wire:click="cancelProd"><i
-                                                                class="fa fa-times"></i></button>
+                                                        <button class="btn btn-secondary" type="button"
+                                                            wire:click="cancelProd"><i class="fa fa-times"></i></button>
                                                     @endisset
                                                 </div>
                                             </div>
@@ -142,7 +143,8 @@
                                                             @if (!isset($cod)) disabled @endif
                                                             class="form-control" wire:model="desconto"
                                                             wire:change="updateProductTotal" placeholder=" "
-                                                            min="0" max="{{ $unitario }}" step="0.01" required>
+                                                            min="0" max="{{ $unitario }}" step="0.01"
+                                                            required>
                                                         <label for="desconto">Desconto</label>
                                                     </div>
                                                 </div>
@@ -212,12 +214,14 @@
                     <div class="card-body">
                         <div class="row text-center">
                             <div class="col">
-                                <button class="btn btn-outline-info" type="button" wire:click="searchCustomers">Buscar Cliente
+                                <button class="btn btn-outline-info" type="button"
+                                    wire:click="searchCustomers">Buscar Cliente
                                     (F1)</button>
                             </div>
 
                             <div class="col">
-                                <button class="btn btn-outline-dark" type="button" @if (!empty($formasSelecionadas)) disabled @endif
+                                <button class="btn btn-outline-dark" type="button"
+                                    @if (!empty($formasSelecionadas)) disabled @endif
                                     wire:click="searchProducts">Buscar Produto (F2)</button>
                             </div>
 
@@ -240,8 +244,9 @@
 
         <div class="row mb-3">
             <div class="col text-center">
-                <button class="btn btn-outline-success btn-lg" type="button" @if (empty($itens)) disabled @endif
-                    wire:click="showPaymentArea">Encerrar Cupom</button>
+                <button class="btn btn-outline-success btn-lg" type="button"
+                    @if (empty($itens)) disabled @endif wire:click="showPaymentArea">Encerrar
+                    Cupom</button>
             </div>
         </div>
 
@@ -256,10 +261,20 @@
                                         <div class="card" wire:click="addPaymentMethod('{{ $forma }}')">
                                             <div class="card-body pb-5 text-center">
                                                 <p><b>{{ $forma }}</b></p>
+                                                @if ($forma == 'DINHEIRO')
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                @elseif ($forma == 'PIX')
+                                                    <iconify-icon icon="fa6-brands:pix"></iconify-icon>
+                                                @elseif ($forma == 'CARTÃO/CRÉDITO')
+                                                    <i class="far fa-credit-card"></i>
+                                                @else
+                                                    <i class="fas fa-credit-card"></i>
+                                                @endif
                                             </div>
                                             <div class="card-footer">
                                                 <input class="form-control-plaintext text-center" readonly
-                                                    type="text" name="formas[{{ $forma }}]" wire:model="formasSelecionadas.{{ $forma }}">
+                                                    type="text" name="formas[{{ $forma }}]"
+                                                    wire:model="formasSelecionadas.{{ $forma }}">
                                             </div>
                                         </div>
                                     </div>
@@ -288,8 +303,9 @@
                                                     class="input-group-text bg-secondary w-50 d-flex justify-content-end">Desconto</span>
                                                 <input type="number"
                                                     @if (!empty($formasSelecionadas)) readonly @endif
-                                                    class="form-control" wire:model="descontoTotal" min="0" max="{{ $valorTotal }}"
-                                                    name="descontoTotal" wire:change="updateSaleTotal">
+                                                    class="form-control" wire:model="descontoTotal" min="0"
+                                                    max="{{ $valorTotal }}" name="descontoTotal"
+                                                    wire:change="updateSaleTotal">
                                             </div>
                                         </div>
                                     </div>
@@ -324,7 +340,8 @@
                                                 <span
                                                     class="input-group-text bg-secondary w-50 d-flex justify-content-end">Valor
                                                     Pago</span>
-                                                <input type="number" class="form-control" wire:model="valorPago" readonly>
+                                                <input type="number" class="form-control" wire:model="valorPago"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -355,7 +372,8 @@
 
                                     <div class="row text-center">
                                         <div class="col">
-                                            <button class="btn btn-outline-secondary" type="button" wire:click="clearMethods"
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                wire:click="clearMethods"
                                                 @if (empty($formasSelecionadas)) disabled @endif>Limpar</button>
                                             <button class="btn btn-outline-success"
                                                 @if ($valorPago < $valorTotal || $troco < 0) disabled @endif
@@ -537,7 +555,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-
     <script>
         (() => {
             'use strict'
@@ -567,6 +584,7 @@
     }
 </style>
 
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 <script>
     document.addEventListener('keydown', function(event) {
         if (event.key === 'enter' || event.keyCode === 13) {
@@ -594,7 +612,8 @@
                 data.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.addEventListener('dblclick', function() {
-                        Livewire.emit('selectProd', item.id, item.produto, item.codigo, item
+                        Livewire.emit('selectProd', item.id, item.produto, item.codigo,
+                            item
                             .precovenda);
                     });
 
