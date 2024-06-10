@@ -27,7 +27,7 @@ class CupomService
             'desconto' => $desconto,
             'acrescimo' => $acrescimo,
             'subtotal' => $subtotal,
-            'troco' => $troco > 0 ? $troco : 0,
+            'troco' => $troco,
             'cliente_id' => $clientId,
             'empresa_id' => $empresaId
         ])->id;

@@ -99,7 +99,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col">
-                                                <img src="{{ asset('logo_pdv.jpg') }}" class="w-100 h-100"
+                                                <img src="{{ asset('logo_pdv.jpg') }}" class="w-100 h-100" style="user-select: none; -webkit-user-drag: none"
                                                     alt="Ícone do PDV">
                                             </div>
                                         </div>
@@ -142,7 +142,7 @@
                                                             @if (!isset($cod)) disabled @endif
                                                             class="form-control" wire:model="desconto"
                                                             wire:change="updateProductTotal" placeholder=" "
-                                                            min="0" step="0.01" required>
+                                                            min="0" max="{{ $unitario }}" step="0.01" required>
                                                         <label for="desconto">Desconto</label>
                                                     </div>
                                                 </div>
@@ -288,7 +288,7 @@
                                                     class="input-group-text bg-secondary w-50 d-flex justify-content-end">Desconto</span>
                                                 <input type="number"
                                                     @if (!empty($formasSelecionadas)) readonly @endif
-                                                    class="form-control" wire:model="descontoTotal"
+                                                    class="form-control" wire:model="descontoTotal" min="0" max="{{ $valorTotal }}"
                                                     name="descontoTotal" wire:change="updateSaleTotal">
                                             </div>
                                         </div>
@@ -301,7 +301,7 @@
                                                     class="input-group-text bg-secondary w-50 d-flex justify-content-end">Acrescimo</span>
                                                 <input type="number"
                                                     @if (!empty($formasSelecionadas)) readonly @endif
-                                                    class="form-control" wire:model="acrescimoTotal"
+                                                    class="form-control" wire:model="acrescimoTotal" min="0"
                                                     name="acrescimoTotal" wire:change="updateSaleTotal">
                                             </div>
                                         </div>

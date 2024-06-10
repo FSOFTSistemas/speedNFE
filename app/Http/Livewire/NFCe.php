@@ -140,6 +140,9 @@ class NFCe extends Component
     public function updateProductTotal()
     {
         try {
+            if ($this->desconto > $this->unitario) {
+                $this->desconto = $this->unitario;
+            }
             if (isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total) && isset($this->subtotalItem) && empty($this->formasSelecionadas)) {
                 $this->subtotalItem = number_format($this->qtde * $this->unitario, 2);
                 $this->total = number_format($this->qtde * ($this->unitario - $this->desconto + $this->acrescimo), 2);
@@ -152,6 +155,9 @@ class NFCe extends Component
     public function updateSaleTotal()
     {
         try {
+            if ($this->descontoTotal > $this->subtotal) {
+                $this->descontoTotal = $this->subtotal;
+            }
             if (empty($this->formasSelecionadas)) {
                 $valorTotal = 0;
                 foreach ($this->itens as $item) {
