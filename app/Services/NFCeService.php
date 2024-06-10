@@ -327,4 +327,13 @@ class NFCeService
             throw new MalformedXmlException($std->xMotivo);
         }
     }
+
+    public function unuse($serie, $numI, $numF, $xJust)
+    {
+        $response = $this->tools->sefazInutiliza($serie, $numI, $numF, $xJust);
+        $stdCl = new Standardize($response);
+        $std = $stdCl->toStd($response);
+        dd($std);
+        return true;
+    }
 }

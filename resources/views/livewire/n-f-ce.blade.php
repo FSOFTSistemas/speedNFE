@@ -58,10 +58,10 @@
                                                         @if (empty($formasSelecionadas))
                                                             <a title="Remover Item" class="text-red"
                                                                 wire:click="removeItem({{ $index }})"><i
-                                                                    class="fa fa-trash"></i></a>
+                                                                    class="far fa-trash-alt"></i></a>
                                                             <a title="Editar Item" class="text-teal"
                                                                 wire:click="editItem({{ $index }})"><i
-                                                                    class="fa fa-edit"></i></a>
+                                                                    class="far fa-edit"></i></a>
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -264,7 +264,8 @@
                                                 @if ($forma == 'DINHEIRO')
                                                     <i class="fas fa-dollar-sign fa-2x text-green"></i>
                                                 @elseif ($forma == 'PIX')
-                                                    <iconify-icon icon="fa6-brands:pix" class="fa-2x text-cyan"></iconify-icon>
+                                                    <iconify-icon icon="fa6-brands:pix"
+                                                        class="fa-2x text-cyan"></iconify-icon>
                                                 @elseif ($forma == 'CARTÃO/CRÉDITO')
                                                     <i class="far fa-credit-card fa-2x text-blue"></i>
                                                 @else

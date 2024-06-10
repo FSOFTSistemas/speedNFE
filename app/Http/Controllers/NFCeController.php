@@ -78,4 +78,17 @@ class NFCeController extends Controller
         }
     }
 
+    public function unuseNFCe($couponId)
+    {
+        try {
+            DB::beginTransaction();
+            $cupom = $this->cupomService->getCupom($couponId);
+            $nfceService = $this->makeNFCeService($cupom->empresa);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        }
+    }
+
 }
