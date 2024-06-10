@@ -56,10 +56,10 @@
                                                     <td>{{ number_format($item['total'], 2) }}</td>
                                                     <td>
                                                         @if (empty($formasSelecionadas))
-                                                            <a title="Remover Item" class="text-danger"
+                                                            <a title="Remover Item" class="text-red"
                                                                 wire:click="removeItem({{ $index }})"><i
                                                                     class="fa fa-trash"></i></a>
-                                                            <a title="Editar Item" class="text-info"
+                                                            <a title="Editar Item" class="text-teal"
                                                                 wire:click="editItem({{ $index }})"><i
                                                                     class="fa fa-edit"></i></a>
                                                         @endif
@@ -259,16 +259,16 @@
                                 @foreach ($formas as $forma)
                                     <div class="col-6 col-md-6">
                                         <div class="card" wire:click="addPaymentMethod('{{ $forma }}')">
-                                            <div class="card-body pb-5 text-center">
-                                                <p><b>{{ $forma }}</b></p>
+                                            <div class="card-body text-center">
+                                                <p style="font-size: 90%"><b>{{ $forma }}</b></p>
                                                 @if ($forma == 'DINHEIRO')
-                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <i class="fas fa-dollar-sign fa-2x text-green"></i>
                                                 @elseif ($forma == 'PIX')
-                                                    <iconify-icon icon="fa6-brands:pix"></iconify-icon>
+                                                    <iconify-icon icon="fa6-brands:pix" class="fa-2x text-cyan"></iconify-icon>
                                                 @elseif ($forma == 'CARTÃO/CRÉDITO')
-                                                    <i class="far fa-credit-card"></i>
+                                                    <i class="far fa-credit-card fa-2x text-blue"></i>
                                                 @else
-                                                    <i class="fas fa-credit-card"></i>
+                                                    <i class="fas fa-credit-card fa-2x text-gray"></i>
                                                 @endif
                                             </div>
                                             <div class="card-footer">
