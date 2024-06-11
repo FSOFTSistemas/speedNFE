@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h3 class="m-0 text-dark">Inutilizar Nota Fiscal</h3>
+            <h3 class="m-0 text-dark">Inutilizar Faixa de Nº</h3>
         </div>
     </div>
 @stop
@@ -22,23 +22,24 @@
 
     <div class="card">
         <div class="card-body">
-            <form class="g-3 needs-validation" novalidate method="POST" action="/inutilizar">
+            <form class="g-3 needs-validation" novalidate method="POST" @if ($mode == "nfce") action="{{ route('nfce.unuse') }}" @else action="/inutilizar" @endif>
                 @csrf
                 <input type="hidden" value="{{ $empresa }}" name="empresa_id">
 
                 <div class="row">
-                    <div class="col-6">
-                        <div class="form-floating">
-                            <input type="number" class="form-control" step="1" min="1" name="serie"
-                                id="serie" placeholder=" " required>
-                            <label for="serie">Série</label>
-                        </div>
-                    </div>
-                    <div class="col-6">
+                    <div class="col">
                         <div class="form-floating">
                             <input type="number" class="form-control" step="1" min="1" name="numI"
                                 id="numI" placeholder=" " required>
-                            <label for="numI">Número</label>
+                            <label for="numI">Número Inicial</label>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" step="1" min="1" name="numF"
+                                id="numF" placeholder=" " required>
+                            <label for="numF">Número Final</label>
                         </div>
                     </div>
                 </div>
@@ -46,7 +47,7 @@
                 <div class="row mt-3">
                     <div class="col">
                         <div class="form-floating">
-                            <textarea class="form-control" placeholder=" " name="justificativa" id="justificativa" style="height: 150px;" maxlength="1200"
+                            <textarea class="form-control" placeholder=" " name="justificativa" id="justificativa" style="height: 150px;" minlength="15" maxlength="1200"
                                 required></textarea>
                             <label for="justificativa">Justificativa</label>
                         </div>

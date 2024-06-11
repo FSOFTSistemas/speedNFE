@@ -333,7 +333,6 @@ class NFCeService
         $response = $this->tools->sefazInutiliza($nSerie, $numI, $numF, $xJust);
         $stdCl = new Standardize($response);
         $std = $stdCl->toStd($response);
-        dd($std);
-        return true;
+        return $std;
     }
 }

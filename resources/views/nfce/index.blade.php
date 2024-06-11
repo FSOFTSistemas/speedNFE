@@ -14,6 +14,7 @@
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
             <a class="btn btn-primary" href="{{ route('cupom.create') }}">+ Emitir NFCe</a>
+            <a class="btn btn-info text-light" href="{{ route('nfce.showUnuser') }}">Inutilizar Faixa</a>
         </div>
     </div>
 
@@ -79,8 +80,8 @@
                             @if ($cpm->situacao == 'ATIVO')
                                 @if (isset($cpm->nfce) && $cpm->nfce->situacao == 'Autorizado')
                                     <div class="col">
-                                        <a title="Inutilizar" onclick="openModalUnuseNumber({{ $cpm->id }})"
-                                            class='text-orange'><i class="fa fa-ban"></i></a>
+                                        <a title="Cancelar" onclick="openModalCancelNFCe({{ $cpm->id }})"
+                                            class='text-red'><i class="far fa-trash-alt"></i></a>
                                     </div>
                                 @else
                                     <div class="col">
@@ -135,7 +136,7 @@
     @endcomponent
 
     @component('components.modal', [
-        'modalId' => 'ModalUnuseNumber',
+        'modalId' => 'ModalCancelNFCe',
         'modalTitle' => 'Inutilizar Nº NFCe',
         'sizeModal' => 'modal-md',
     ])
@@ -160,9 +161,9 @@
             $('#ModalCancelCoupon').modal('show')
         }
 
-        function openModalUnuseNumber(couponId) {
+        function openModalCancelNFCe(couponId) {
             document.getElementById('cpnId').value = couponId
-            $('#ModalUnuseNumber').modal('show')
+            $('#ModalCancelNFCe').modal('show')
         }
     </script>
 @stop

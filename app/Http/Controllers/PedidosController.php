@@ -57,7 +57,7 @@ class PedidosController extends Controller
     {
         try {
             $user = Auth::user();
-            return view('notas.inutilizar', ['empresa' => $user->empresa_id]);
+            return view('notas.inutilizar', ['empresa' => $user->empresa_id, 'mode' => 'nfe']);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }

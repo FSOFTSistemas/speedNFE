@@ -9,7 +9,9 @@ use App\Services\NFCeService;
 use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use NFePHP\DA\NFe\Danfce;
 
 class NFCeController extends Controller
@@ -79,16 +81,36 @@ class NFCeController extends Controller
         }
     }
 
+    public function showUnuser()
+    {
+        try {
+            $user = Auth::user();
+            return view('notas.inutilizar', ['empresa' => $user->empresa_id, 'mode' => 'nfce']);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        }
+    }
+
     public function unuseNFCe(Request $request)
     {
         try {
             DB::beginTransaction();
             $request->validate([
-                'cpnId' => 'required|numeric'
+                'empresa_id' => 'required|numeric',
+                'numI' => 'required|numeric',
+                'numF' => 'required|numeric'
             ]);
-            $cupom = $this->cupomService->getCupom($request->couponId);
-            $nfceService = $this->makeNFCeService($cupom->empresa);
+            $company = $this->empresaServices->buscarEmpresa($request->empresa_id);
+            $nfceService = $this->makeNFCeService($company);
+            $nfceService->unuse($company->serie, $request->numI, $request->numF, $request->justificativa);
             DB::commit();
+            return redirect()->route('cupom.index')->with('success', 'Faixa de nº foi inutilizada com sucesso');
+        } catch(ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
             DB::rollback();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
