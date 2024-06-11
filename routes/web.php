@@ -222,7 +222,7 @@ Route::prefix('veiculos')->group(function () {
 Route::prefix('nfce')->group(function () {
     Route::get('/{id}/visualizar', [NFCeController::class, 'show'])->name('nfce.show')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::get('/{id}/enviar', [NFCeController::class, 'sendNFCe'])->name('nfce.send')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
-    Route::get('/{id}/inutilizar', [NFCeController::class, 'unuseNFCe'])->name('nfce.unuse')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::post('/inutilizar', [NFCeController::class, 'unuseNFCe'])->name('nfce.unuse')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
 });
 
 //CUPOM

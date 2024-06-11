@@ -8,6 +8,7 @@ use App\Services\EmpresasService;
 use App\Services\NFCeService;
 use App\Utils\FormatationUtil;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use NFePHP\DA\NFe\Danfce;
 
@@ -78,11 +79,14 @@ class NFCeController extends Controller
         }
     }
 
-    public function unuseNFCe($couponId)
+    public function unuseNFCe(Request $request)
     {
         try {
             DB::beginTransaction();
-            $cupom = $this->cupomService->getCupom($couponId);
+            $request->validate([
+                'cpnId' => 'required|numeric'
+            ]);
+            $cupom = $this->cupomService->getCupom($request->couponId);
             $nfceService = $this->makeNFCeService($cupom->empresa);
             DB::commit();
         } catch (Exception $e) {

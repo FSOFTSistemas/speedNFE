@@ -328,9 +328,9 @@ class NFCeService
         }
     }
 
-    public function unuse($serie, $numI, $numF, $xJust)
+    public function unuse($nSerie, $numI, $numF, $xJust)
     {
-        $response = $this->tools->sefazInutiliza($serie, $numI, $numF, $xJust);
+        $response = $this->tools->sefazInutiliza($nSerie, $numI, $numF, $xJust);
         $stdCl = new Standardize($response);
         $std = $stdCl->toStd($response);
         dd($std);

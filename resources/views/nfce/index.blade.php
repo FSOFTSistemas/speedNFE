@@ -79,12 +79,12 @@
                             @if ($cpm->situacao == 'ATIVO')
                                 @if (isset($cpm->nfce) && $cpm->nfce->situacao == 'Autorizado')
                                     <div class="col">
-                                        <a title="Inutilizar" href='{{ route('nfce.unuse', [$cpm->id]) }}'
+                                        <a title="Inutilizar" onclick="openModalUnuseNumber({{ $cpm->id }})"
                                             class='text-orange'><i class="fa fa-ban"></i></a>
                                     </div>
                                 @else
                                     <div class="col">
-                                        <a title="Cancelar" class='text-danger' onclick="openModal({{ $cpm->id }})"><i
+                                        <a title="Cancelar" class='text-danger' onclick="openModalCancelCoupon({{ $cpm->id }})"><i
                                                 class="far fa-trash-alt"></i></a>
                                     </div>
 
@@ -134,10 +134,35 @@
         </div>
     @endcomponent
 
+    @component('components.modal', [
+        'modalId' => 'ModalUnuseNumber',
+        'modalTitle' => 'Inutilizar Nº NFCe',
+        'sizeModal' => 'modal-md',
+    ])
+        <p style="color: red; text-align: center">OBS: Você irá inutilizar este número de NFCe!</p>
+
+        <div class="text-center">
+            <form action="{{ route('nfce.unuse') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" required class="form-control" id="cpnId" name="cpnId" value="2">
+
+                <div class="text-center mb-2">
+                    <button type="submit" class="btn btn-warning">CONFIRMAR</button>
+                </div>
+            </form>
+
+        </div>
+    @endcomponent
+
     <script>
-        function openModal(couponId) {
+        function openModalCancelCoupon(couponId) {
             document.getElementById('couponId').value = couponId
             $('#ModalCancelCoupon').modal('show')
+        }
+
+        function openModalUnuseNumber(couponId) {
+            document.getElementById('cpnId').value = couponId
+            $('#ModalUnuseNumber').modal('show')
         }
     </script>
 @stop
