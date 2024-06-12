@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AlreadyExistException;
 use App\Exceptions\MalformedXmlException;
+use App\Exceptions\TimeExceededException;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\NFCeService;
@@ -62,7 +63,8 @@ class NFCeController extends Controller
         }
     }
 
-    public function sendNFCe($id){
+    public function sendNFCe($id)
+    {
         try {
             DB::beginTransaction();
             $cupom = $this->cupomService->getCupom($id);
@@ -72,10 +74,36 @@ class NFCeController extends Controller
             $this->cupomService->updateCoupon($cupom);
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
             DB::commit();
-            return redirect()->route('nfce.index')->with('success', 'Cupom foi enviado com sucesso!');
+            return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
         } catch (MalformedXmlException $e) {
             DB::rollback();
             return back()->with('warning', $e->getMessage());
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        }
+    }
+
+    public function cancelNFCe(Request $request)
+    {
+        try {
+            $request->validate([
+                'cpnId' => 'required|numeric',
+                'justificativa' => 'required|min:15'
+            ]);
+            DB::beginTransaction();
+            $coupon = $this->cupomService->getCupom($request->cpnId);
+            $nfceService = $this->makeNFCeService($coupon->empresa);
+            $nfceService->cancel($coupon->nfce->chave, $request->justificativa);
+            $this->cupomService->cancelCoupon($request->cpnId);
+            DB::commit();
+            return redirect()->route('cupom.index')->with('success', 'Cupom foi cancelado com sucesso!');
+        } catch (AlreadyExistException $e) {
+            DB::rollback();
+            return back()->with('warning', $e->getMessage() . ' ' . $coupon->nfce->chave);
+        } catch (TimeExceededException $e) {
+            DB::rollback();
+            return back()->with('warning', $e->getMessage() . ' ' . $coupon->nfce->chave);
         } catch (Exception $e) {
             DB::rollback();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
@@ -106,7 +134,7 @@ class NFCeController extends Controller
             $nfceService->unuse($company->serie, $request->numI, $request->numF, $request->justificativa);
             DB::commit();
             return redirect()->route('cupom.index')->with('success', 'Faixa de nº foi inutilizada com sucesso');
-        } catch(ValidationException $e) {
+        } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
@@ -120,5 +148,4 @@ class NFCeController extends Controller
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
-
 }

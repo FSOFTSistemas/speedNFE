@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\EstadoEnum;
 use App\Exceptions\AlreadyExistException;
 use App\Exceptions\MalformedXmlException;
+use App\Exceptions\TimeExceededException;
 use App\Models\NFCe;
 use App\Utils\FormatationUtil;
 use NFePHP\Common\Certificate;
@@ -327,6 +328,26 @@ class NFCeService
             }
         } else {
             throw new MalformedXmlException($std->xMotivo);
+        }
+    }
+
+    public function cancel($key, $xJust) {
+        $response = $this->tools->sefazConsultaChave($key);
+        $std = new Standardize($response);
+        $std = $std->toStd();
+        $nProt = $std->protNFe->infProt->nProt;
+        $response = $this->tools->sefazCancela($key, $xJust, $nProt);
+        $std = new Standardize($response);
+        $std = $std->toStd();
+        if ($std->cStat == 128) {
+            $cStat = $std->retEvento->infEvento->cStat;
+            if ($cStat == '101' || $cStat == '135' || $cStat == '155') {
+                return $std;
+            } elseif ($cStat == '573') {
+                throw new AlreadyExistException($std->retEvento->infEvento->xMotivo);
+            } else {
+                throw new TimeExceededException($std->retEvento->infEvento->xMotivo);
+            }
         }
     }
 

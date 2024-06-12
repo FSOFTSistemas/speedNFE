@@ -85,7 +85,8 @@
                                     </div>
                                 @else
                                     <div class="col">
-                                        <a title="Cancelar" class='text-danger' onclick="openModalCancelCoupon({{ $cpm->id }})"><i
+                                        <a title="Cancelar" class='text-danger'
+                                            onclick="openModalCancelCoupon({{ $cpm->id }})"><i
                                                 class="far fa-trash-alt"></i></a>
                                     </div>
 
@@ -137,15 +138,26 @@
 
     @component('components.modal', [
         'modalId' => 'ModalCancelNFCe',
-        'modalTitle' => 'Inutilizar Nº NFCe',
+        'modalTitle' => 'Cancelar NFCe',
         'sizeModal' => 'modal-md',
     ])
-        <p style="color: red; text-align: center">OBS: Você irá inutilizar este número de NFCe!</p>
+        <p style="color: red; text-align: center">OBS: Você irá cancelar esta NFCe!</p>
 
         <div class="text-center">
-            <form action="{{ route('nfce.unuse') }}" method="POST" enctype="multipart/form-data">
+            <form class="g-3 needs-validation" novalidate action="{{ route('nfce.cancel') }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" required class="form-control" id="cpnId" name="cpnId" value="2">
+                @method('DELETE')
+                <input type="hidden" required class="form-control" id="cpnId" name="cpnId" value="">
+
+                <div class="form-floating mb-3">
+                    <textarea class="form-control" placeholder=" " name="justificativa" id="justificativa" style="height: 120px;"
+                        minlength="15" maxlength="1200" required></textarea>
+                    <label for="justificativa">Justificativa</label>
+                    <div class="form-text">
+                        Apresente uma justificativa para cancelamento desta NFCe!
+                    </div>
+                </div>
 
                 <div class="text-center mb-2">
                     <button type="submit" class="btn btn-warning">CONFIRMAR</button>
@@ -165,6 +177,23 @@
             document.getElementById('cpnId').value = couponId
             $('#ModalCancelNFCe').modal('show')
         }
+
+        (function() {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
     </script>
 @stop
 
