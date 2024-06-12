@@ -14,7 +14,7 @@
 
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
-            <a class="btn btn-secondary" href="{{ route('notas.index') }}">
+            <a class="btn btn-secondary" href="{{ $mode == "nfce" ? route('cupom.index') : route('notas.index') }}">
                 Voltar
             </a>
         </div>

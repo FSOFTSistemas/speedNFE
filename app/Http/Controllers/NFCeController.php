@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AlreadyExistException;
 use App\Exceptions\MalformedXmlException;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
@@ -111,6 +112,9 @@ class NFCeController extends Controller
             }
             DB::rollBack();
             return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (AlreadyExistException $e) {
+            DB::rollBack();
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollback();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);

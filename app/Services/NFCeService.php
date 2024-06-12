@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Enums\EstadoEnum;
+use App\Exceptions\AlreadyExistException;
 use App\Exceptions\MalformedXmlException;
 use App\Models\NFCe;
 use App\Utils\FormatationUtil;
 use NFePHP\Common\Certificate;
 use NFePHP\NFe\Common\Standardize;
+use NFePHP\NFe\Complements;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
 
@@ -333,6 +335,10 @@ class NFCeService
         $response = $this->tools->sefazInutiliza($nSerie, $numI, $numF, $xJust);
         $stdCl = new Standardize($response);
         $std = $stdCl->toStd($response);
-        return $std;
+        if ($std->infInut->cStat == 102) {
+            return Complements::toAuthorize($this->tools->lastRequest, $response);
+        } else {
+            throw new AlreadyExistException($std->infInut->xMotivo);
+        }
     }
 }
