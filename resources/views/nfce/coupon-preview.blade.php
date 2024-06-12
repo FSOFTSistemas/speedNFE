@@ -21,6 +21,14 @@
 
         .items-rows {
             border-top: 1px solid #ddd;
+            height: 80px;
+        }
+
+        .items-rows td {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            vertical-align: middle;
         }
 
         .coupon-client {

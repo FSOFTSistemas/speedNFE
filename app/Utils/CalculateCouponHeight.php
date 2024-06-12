@@ -6,10 +6,10 @@ class CalculateCouponHeight
 {
     public static function calculate($itemsLength, $methodsLength, $client)
     {
-        $height = 225;
+        $height = 220;
         if ($itemsLength > 0) {
             for ($i = 0; $i < $itemsLength; $i++) {
-                $height += 35;
+                $height += 25;
             }
         }
         if ($methodsLength > 0) {
@@ -18,7 +18,7 @@ class CalculateCouponHeight
             }
         }
         if ($client) {
-            $height += 20;
+            $height += 35;
         }
         return $height;
     }
