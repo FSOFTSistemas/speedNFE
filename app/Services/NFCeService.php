@@ -14,8 +14,6 @@ use NFePHP\NFe\Complements;
 use NFePHP\NFe\Make;
 use NFePHP\NFe\Tools;
 
-error_reporting(E_ERROR);
-ini_set('display_errors', 'On');
 class NFCeService
 {
     private $tools;
@@ -264,20 +262,34 @@ class NFCeService
             $make->tagpag($std);
 
             foreach ($cupom->formasPagamento as $item) {
+                $card = false;
                 $std = new \stdClass();
-                $std->indPag = 1;
-                if ($item->forma == "DINHEIRO") {
-                    $std->tPag = '01';
-                } else if ($item->forma == 'CARTÃO/CRÉDITO') {
-                    $std->tPag = '03';
-                } else if ($item->forma == 'CARTÃO/DÉBITO') {
-                    $std->tPag = '04';
-                } else if ($item->forma == 'PIX') {
-                    $std->tPag = '17';
-                } else if ($item->forma == 'OUTROS') {
-                    $std->tPag = '99';
+                switch ($item->forma) {
+                    case 'DINHEIRO':
+                        $std->tPag = '01';
+                        break;
+                    case 'CARTÃO/CRÉDITO':
+                        $std->tPag = '03';
+                        $card = true;
+                        break;
+                    case 'CARTÃO/DÉBITO':
+                        $std->tPag = '04';
+                        $card = true;
+                        break;
+                    case 'PIX':
+                        $std->tPag = '17';
+                        $card = true;
+                        break;
+                    case 'OUTROS':
+                        $std->tPag = '99';
+                        break;
+                    default:
+                        throw new \Exception("Forma de pagamento inválida: $item->forma");
                 }
-                $std->vPag = FormatationUtil::format($cupom->total);
+                $std->vPag = FormatationUtil::format($item->valor);
+                if ($card) {
+                    $std->tpIntegra = 2;
+                }
                 $make->tagdetpag($std);
             }
 
@@ -331,7 +343,8 @@ class NFCeService
         }
     }
 
-    public function cancel($key, $xJust) {
+    public function cancel($key, $xJust)
+    {
         $response = $this->tools->sefazConsultaChave($key);
         $std = new Standardize($response);
         $std = $std->toStd();
