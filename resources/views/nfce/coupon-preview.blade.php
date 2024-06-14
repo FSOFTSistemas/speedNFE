@@ -17,6 +17,24 @@
         .items-table {
             width: 100%;
             font-size: 60%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        thead tr {
+            height: 50px;
+            background-color: #f2f2f2;
+        }
+
+        th {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: left;
+            border: 1px solid #ddd;
         }
 
         .items-rows {
