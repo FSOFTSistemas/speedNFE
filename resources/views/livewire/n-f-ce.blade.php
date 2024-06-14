@@ -454,53 +454,9 @@
     @endcomponent
 
     @component('components.modal', [
-        'modalId' => 'SearchProdModal',
-        'modalTitle' => 'Adicionar Produtos',
-        'sizeModal' => 'modal-lg',
-    ])
-        @component('components.dataTable', [
-            'responsive' => [
-                [
-                    'responsivePriority' => 1,
-                    'targets' => 0,
-                ],
-                [
-                    'responsivePriority' => 2,
-                    'targets' => 1,
-                ],
-                [
-                    'responsivePriority' => 3,
-                    'targets' => 2,
-                ],
-            ],
-            'searching' => true,
-            'lengthChange' => true,
-        ])
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Produto</th>
-                    <th>Unitário</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach (json_decode($products) as $product)
-                    <tr
-                        wire:dblclick="selectProd({{ $product->id }}, '{{ $product->produto }}', '{{ $product->codigo }}', {{ $product->precovenda }})">
-                        <td>{{ $product->codigo }}</td>
-                        <td>{{ $product->produto }}</td>
-                        <td>{{ number_format($product->precovenda, 2) }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        @endcomponent
-    @endcomponent
-
-    @component('components.modal', [
         'modalId' => 'SearchClientModal',
         'modalTitle' => 'Adicionar Cliente',
-        'sizeModal' => 'modal-lg',
+        'sizeModal' => 'modal-xl',
     ])
         @component('components.dataTable', [
             'responsive' => [
@@ -641,10 +597,6 @@
             }
         });
 
-        Livewire.on('OpenProductsModal', function() {
-            $('#SearchProdModal').modal('show');
-        });
-
         Livewire.on('OpenCustomersModal', function() {
             $('#SearchClientModal').modal('show');
         });
@@ -655,7 +607,6 @@
 
         Livewire.on('CloseAddProdModal', function() {
             $('#AddProdModal').modal('hide');
-            $('#SearchProdModal').modal('hide');
         });
 
         Livewire.on('OpenPaymentModal', function() {

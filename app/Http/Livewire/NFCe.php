@@ -264,7 +264,8 @@ class NFCe extends Component
     public function searchProducts()
     {
         try {
-            $this->emit('OpenProductsModal');
+            $this->prod = '%';
+            $this->searchProds(new ProdutosService());
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Ocorreu um erro interno, tente novamente em outro momento, Erro: ' . $e->getMessage());
         }
