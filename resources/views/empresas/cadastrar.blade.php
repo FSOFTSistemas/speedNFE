@@ -294,14 +294,22 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-xs-10">
-                                        <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                        <input required placeholder="Certificado..." accept=".pfx" type="file"
-                                            name="certificado" id="certificado" class="file-upload-default"
-                                            value="{{ old('certificado') }}">
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>Certificado</label><br> <!-- inserir arquivo pfx -->
+                                            <input required placeholder="Certificado..." accept=".pfx" type="file"
+                                                name="certificado" id="certificado" class="file-upload-default"
+                                                value="{{ old('certificado') }}">
+                                        </div>
 
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>Email Contador</label>
+                                            <input required placeholder="Email contador..." class="form-control"
+                                                type="email" name="contador" id="contador"
+                                                value="{{ old('contador') }}">
+
+                                        </div>
                                     </div>
-
                                 </div>
 
                                 <div class="tab-pane fade" id="limite" role="tabpanel" aria-labelledby="limite-tab">

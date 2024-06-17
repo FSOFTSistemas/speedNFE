@@ -73,6 +73,12 @@
                                     href='{{ route('nfce.downloadXml', [$nfce->id]) }}' class='text-primary'><i
                                         class="far fa-file-code text-success"></i></a>
                             </div>
+
+                            <div class="col">
+                                <a title="Enviar"
+                                    href='{{ route('nfce.downloadXml', [$nfce->id]) }}' class='text-primary'><i
+                                        class="far fa-share-square text-secondary"></i></a>
+                            </div>
                         </div>
                     </td>
                 </tr>

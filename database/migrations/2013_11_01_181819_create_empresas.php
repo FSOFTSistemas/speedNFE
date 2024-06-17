@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreign('endereco_id')->references('id')->on('enderecos')->onDelete('cascade');
             $table->string('rg_ie')->nullable();
             $table->string('celular')->nullable();
+            $table->string('contador')->nullable();
             $table->string('csc');
             $table->integer('idCsc');
             $table->string('status')->nullable();
