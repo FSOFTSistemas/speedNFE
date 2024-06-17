@@ -316,21 +316,25 @@ return [
                     'text'        => 'Emitir NFe',
                     'url'         => '/vendas/nova',
                     'icon'        => 'fas fa-upload',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Notas Emitidas (NFe)',
                     'url'         => '/vendas',
                     'icon'        => 'fas fa-list-ul',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Baixar XML (NFe)',
                     'url'         => '/notas',
                     'icon'        => 'fas fa-download',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Relatórios (NFe)',
                     'url'         => '/relatorios',
                     'icon'        => 'fas fa-chart-area',
+                    'shift' => 'ml-2'
                 ],
             ],
         ],
@@ -343,16 +347,19 @@ return [
                     'text'        => 'Emitir NFCe',
                     'url'         => '/cupom/criar',
                     'icon'        => 'fas fa-upload',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Notas Emitidas (NFCe)',
                     'url'         => '/cupom',
                     'icon'        => 'fas fa-list-ul',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Baixar XML (NFCe)',
                     'url'         => 'nfce/xmls/download',
                     'icon'        => 'fas fa-download',
+                    'shift' => 'ml-2'
                 ]
             ]
         ],
@@ -365,26 +372,31 @@ return [
                     'text'        => 'Emitir MDFe',
                     'url'         => 'mdfes/emitir',
                     'icon'        => 'fas fa-upload',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Notas Emitidas (MDFe)',
                     'url'         => 'mdfes',
                     'icon'        => 'fas fa-list-ul',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Relatórios (MDFe)',
                     'url'         => 'relatorios/mdfe',
                     'icon'        => 'fas fa-chart-area',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Veículos',
                     'url'         => 'veiculos',
                     'icon'        => 'fa fa-car',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Motoristas',
                     'url'         => 'motoristas',
                     'icon'        => 'far fa-address-card',
+                    'shift' => 'ml-2'
                 ],
             ],
         ],

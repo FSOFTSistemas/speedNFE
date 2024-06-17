@@ -71,7 +71,7 @@ class NFCeService
             $std->tpNF = 1;
             $cliente = $cupom->cliente ?? null;
             $clientAddress = $cliente->endereco ?? null;
-            $std->idDest = $clientAddress || $emitente->endereco->uf == $clientAddress->uf ? 1 : 2;
+            $std->idDest = ($clientAddress && $emitente->endereco->uf == $clientAddress->uf) || !$clientAddress ? 1 : 2;
             $std->cMunFG = $emitente->endereco->codigoIBGE;
             $std->tpImp = 4;
             $std->indSinc = 0;

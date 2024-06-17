@@ -63,7 +63,7 @@
                 <tr>
                     <td>{{ $nfce->nro }}</td>
                     <td>{{ $nfce->data }}</td>
-                    <td><a class="text-decoration-none" title="Visualizar" target="_blank" href="{{ route('nfce.show', [$nfce->id]) }}">{{ $nfce->chave }}</a></td>
+                    <td><a class="text-decoration-none" title="Visualizar" target="_blank" href="{{ route('nfce.show', [$nfce->cupom->id]) }}">{{ $nfce->chave }}</a></td>
                     <td>{{ $nfce->cupom->cliente->nome ?? 'CONSUMIDOR FINAL' }}</td>
                     <td>{{ $nfce->cupom->nroCupom }}</td>
                     <td>
