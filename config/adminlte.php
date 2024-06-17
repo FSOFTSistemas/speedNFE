@@ -348,6 +348,11 @@ return [
                     'text'        => 'Notas Emitidas (NFCe)',
                     'url'         => '/cupom',
                     'icon'        => 'fas fa-list-ul',
+                ],
+                [
+                    'text'        => 'Baixar XML (NFCe)',
+                    'url'         => 'nfce/xmls/download',
+                    'icon'        => 'fas fa-download',
                 ]
             ]
         ],

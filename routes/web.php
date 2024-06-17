@@ -225,6 +225,8 @@ Route::prefix('nfce')->group(function () {
     Route::get('/inutilizar', [NFCeController::class, 'showUnuser'])->name('nfce.showUnuser')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::post('/inutilizar', [NFCeController::class, 'unuseNFCe'])->name('nfce.unuse')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::delete('/cancelar', [NFCeController::class, 'cancelNFCe'])->name('nfce.cancel')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::get('/xmls/download', [NFCeController::class, 'index'])->name('nfce.index')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::get('/download/xml/{nfceId}', [NFCeController::class, 'downloadXmlNFCe'])->name('nfce.downloadXml')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
 });
 
 //CUPOM

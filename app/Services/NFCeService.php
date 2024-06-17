@@ -30,6 +30,11 @@ class NFCeService
         return NFCe::whereEmpresaId($empresaId)->get();
     }
 
+    public static function getNFCe($nfceId)
+    {
+        return NFCe::find($nfceId);
+    }
+
     public static function createNFCe($body, $couponId, $company)
     {
         return NFCe::create([

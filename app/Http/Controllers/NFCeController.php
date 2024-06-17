@@ -148,4 +148,26 @@ class NFCeController extends Controller
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
+
+    public function index()
+    {
+        try {
+            $nfces = NFCeService::getCompanyNFCes(Auth::user()->empresa_id);
+            return view('nfce.xmls', ['nfces' => $nfces]);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadXmlNFCe($nfceId)
+    {
+        try {
+            $nfce = NFCeService::getNFCe($nfceId);
+            header('Content-disposition: attachment; filename="' . $nfce->chave . '.xml"');
+            header('Content-type: "text/xml"; charset="utf8"');
+            echo $nfce->xml;
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+        }
+    }
 }
