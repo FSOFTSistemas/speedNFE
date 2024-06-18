@@ -14,6 +14,7 @@
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
             <a class="btn btn-info text-light" href="{{ route('nfce.showUnuser') }}">Inutilizar Faixa</a>
+            <a class="btn btn-secondary" href="{{ route('nfce.sendXmlsToAccountant') }}"><i class="far fa-share-square text-light"></i> Enviar para contador</a>
         </div>
     </div>
 
@@ -63,21 +64,15 @@
                 <tr>
                     <td>{{ $nfce->nro }}</td>
                     <td>{{ $nfce->data }}</td>
-                    <td><a class="text-decoration-none" title="Visualizar" target="_blank" href="{{ route('nfce.show', [$nfce->cupom->id]) }}">{{ $nfce->chave }}</a></td>
+                    <td><a class="text-decoration-none" title="Visualizar" target="_blank"
+                            href="{{ route('nfce.show', [$nfce->cupom->id]) }}">{{ $nfce->chave }}</a></td>
                     <td>{{ $nfce->cupom->cliente->nome ?? 'CONSUMIDOR FINAL' }}</td>
                     <td>{{ $nfce->cupom->nroCupom }}</td>
                     <td>
                         <div class="row">
                             <div class="col">
-                                <a title="Download"
-                                    href='{{ route('nfce.downloadXml', [$nfce->id]) }}' class='text-primary'><i
+                                <a title="Download" href='{{ route('nfce.downloadXml', [$nfce->id]) }}' class='text-primary'><i
                                         class="far fa-file-code text-success"></i></a>
-                            </div>
-
-                            <div class="col">
-                                <a title="Enviar"
-                                    href='{{ route('nfce.downloadXml', [$nfce->id]) }}' class='text-primary'><i
-                                        class="far fa-share-square text-secondary"></i></a>
                             </div>
                         </div>
                     </td>

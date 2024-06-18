@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\AlreadyExistException;
 use App\Exceptions\MalformedXmlException;
 use App\Exceptions\TimeExceededException;
+use App\Mail\EmailXmlContador;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\NFCeService;
@@ -13,6 +14,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use NFePHP\DA\NFe\Danfce;
 
@@ -170,4 +172,15 @@ class NFCeController extends Controller
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
     }
+
+    public function sendXmlsToAccountant()
+    {
+        try {
+            Mail::to('fsoftsistemas@gmail.com')->send(new EmailXmlContador('Tu é mano?'));
+            return redirect()->route('nfce.index');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+        }
+    }
+
 }
