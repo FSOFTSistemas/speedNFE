@@ -14,16 +14,20 @@ class EmailXmlContador extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $archives;
+    private $sender;
+    private $filePath;
+    private $period;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($archives)
+    public function __construct($sender, $filePath, $period)
     {
-        $this->archives = $archives;
+        $this->sender = $sender;
+        $this->filePath = $filePath;
+        $this->period = $period;
     }
 
     /**
@@ -34,7 +38,7 @@ class EmailXmlContador extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'XMLS de ' . date('m/Y') . 'empresa',
+            subject: 'XMLS de ' . $this->sender->razao . ' - ' . date('m/Y', strtotime($this->period)),
         );
     }
 
@@ -47,6 +51,10 @@ class EmailXmlContador extends Mailable
     {
         return new Content(
             view: 'mail.xml-contador',
+            with: [
+                'sender' => $this->sender,
+                'period' => $this->period
+            ]
         );
     }
 
@@ -58,7 +66,7 @@ class EmailXmlContador extends Mailable
     public function attachments()
     {
         return [
-            Attachment::fromData(fn () => $this->archives, 'XMLS.xml')
+            Attachment::fromPath($this->filePath)->as('xmls.zip')->withMime('application/xml')
         ];
     }
 }

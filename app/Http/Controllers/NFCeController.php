@@ -10,6 +10,7 @@ use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\NFCeService;
 use App\Utils\FormatationUtil;
+use App\Utils\ZipArchiveUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -155,7 +156,7 @@ class NFCeController extends Controller
     {
         try {
             $nfces = NFCeService::getCompanyNFCes(Auth::user()->empresa_id);
-            return view('nfce.xmls', ['nfces' => $nfces]);
+            return view('nfce.xmls', ['nfces' => $nfces, 'accountant' => $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id)->contador]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
@@ -173,11 +174,29 @@ class NFCeController extends Controller
         }
     }
 
-    public function sendXmlsToAccountant()
+    public function sendXmlsToAccountant(Request $request)
     {
         try {
-            Mail::to('fsoftsistemas@gmail.com')->send(new EmailXmlContador('Tu é mano?'));
-            return redirect()->route('nfce.index');
+            $request->validate([
+                'month' => 'required|date',
+                'accountant' => 'required|email'
+            ], [
+                'month.required' => 'O campo Mês é obrigatório!',
+                'accountant.required' => 'O campo Contador é obrigatório!',
+                'month.date' => 'O campo Mês deve ser uma data!',
+                'email' => 'O campo Contador deve ser um email!'
+            ]);
+            $company = Auth::user()->empresa;
+            $xmls = NFCeService::getMonthlyCompanyXmls($company->id, $request->month);
+            $zipedXmlsPath = ZipArchiveUtil::zip($xmls, $company->id);
+            Mail::to($request->accountant)->send(new EmailXmlContador($company, $zipedXmlsPath, $request->month));
+            ZipArchiveUtil::deleteArchive($company->id);
+            return redirect()->route('nfce.index')->with('success', 'XMLS enviados com sucesso para: ' . $request->accountant);
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }

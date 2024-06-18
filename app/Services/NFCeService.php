@@ -35,9 +35,9 @@ class NFCeService
         return NFCe::find($nfceId);
     }
 
-    public static function getMonthlyCompanyXmls($companyId)
+    public static function getMonthlyCompanyXmls($companyId, $month)
     {
-
+        return NFCe::select('xml', 'chave')->whereEmpresaId($companyId)->where('data', 'like', $month.'%')->get();
     }
 
     public static function createNFCe($body, $couponId, $company)
