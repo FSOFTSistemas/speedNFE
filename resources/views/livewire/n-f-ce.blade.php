@@ -13,7 +13,7 @@
 
                 <div class="card-body">
                     <div class="row">
-                        <div class="col">
+                        <div class="col-6">
                             @if (!empty($cliente))
                                 <div class="input-group">
                                     <div class="form-floating">
@@ -21,6 +21,10 @@
                                             wire:model="cliente.nome" readonly placeholder=" ">
                                         <label for="cliente.nome">Cliente</label>
                                     </div>
+                                    @if ($cliente['nome'] != 'Consumidor Final')
+                                        <button title="Remover Cliente" class="btn btn-secondary" type="button" wire:click="removeClient"><i
+                                                class="fa fa-times"></i></button>
+                                    @endif
                                 </div>
                                 <input type="hidden" name="cliente[id]" wire:model="cliente.id">
                             @endif
@@ -116,7 +120,7 @@
                                                         <label for="prod">Produto</label>
                                                     </div>
                                                     @isset($cod)
-                                                        <button class="btn btn-secondary" type="button"
+                                                        <button title="Remover Item" class="btn btn-secondary" type="button"
                                                             wire:click="cancelProd"><i class="fa fa-times"></i></button>
                                                     @endisset
                                                 </div>
@@ -214,7 +218,7 @@
                     <div class="card-body">
                         <div class="row text-center">
                             <div class="col">
-                                <button class="btn btn-outline-info" type="button"
+                                <button class="btn btn-outline-primary" type="button"
                                     wire:click="searchCustomers">Buscar Cliente
                                     (F1)</button>
                             </div>

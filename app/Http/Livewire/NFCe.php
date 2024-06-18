@@ -261,6 +261,15 @@ class NFCe extends Component
         }
     }
 
+    public function removeClient()
+    {
+        try {
+            $this->cliente = ['id' => null, 'nome' => 'Consumidor Final'];
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Ocorreu um erro interno, tente novamente em outro momento, Erro: ' . $e->getMessage());
+        }
+    }
+
     public function searchProducts()
     {
         try {
