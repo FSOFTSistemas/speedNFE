@@ -33,6 +33,11 @@ class CupomService
         ])->id;
     }
 
+    public function getOutstandingCouponsOfTheDay($companyId, $day)
+    {
+        return Cupom::whereEmpresaId($companyId)->where('data', 'like', $day.'%')->where('gerado_nfce', false)->get();
+    }
+
     public function cancelCoupon($couponId)
     {
         $coupon = $this->getCupom($couponId);

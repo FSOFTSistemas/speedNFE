@@ -202,4 +202,39 @@ class NFCeController extends Controller
         }
     }
 
+    public function sendLotOfNFCe(Request $request)
+    {
+        try {
+            $request->validate([
+                'day' => 'required|date',
+            ], [
+                'day.required' => 'O campo Dia é obrigatório!',
+                'day.date' => 'O campo Dia deve ser uma data!',
+            ]);
+            DB::beginTransaction();
+            $outstandingCoupons = $this->cupomService->getOutstandingCouponsOfTheDay(Auth::user()->empresa_id, $request->day);
+            $nfceService = $this->makeNFCeService(Auth::user()->empresa);
+            foreach ($outstandingCoupons as $coupon) {
+                try {
+                    $this->empresaServices->incrementLastNFCe($coupon->empresa_id);
+                    $resultXml = $nfceService->generateXml($coupon, $coupon->empresa);
+                    $this->cupomService->updateCoupon($coupon);
+                    NFCeService::createNFCe($resultXml, $coupon->id, $coupon->empresa);
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
+            DB::commit();
+            return redirect()->route('cupom.index')->with('success', 'Cupoms foram enviados com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+        }
+    }
 }

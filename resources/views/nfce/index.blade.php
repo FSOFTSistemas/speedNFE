@@ -15,6 +15,7 @@
         <div class="col">
             <a class="btn btn-primary" href="{{ route('cupom.create') }}">+ Emitir NFCe</a>
             <a class="btn btn-info text-light" href="{{ route('nfce.showUnuser') }}">Inutilizar Faixa</a>
+            <a class="btn btn-warning" data-toggle="modal" data-target="#ModalEnviaLoteCupom">Enviar Lote</a>
         </div>
     </div>
 
@@ -129,7 +130,7 @@
                 <input type="hidden" required class="form-control" id="couponId" name="couponId" value="">
 
                 <div class="text-center mb-2">
-                    <button type="submit" class="btn btn-warning">CONFIRMAR</button>
+                    <button type="submit" class="btn btn-outline-warning">CONFIRMAR</button>
                 </div>
             </form>
 
@@ -160,7 +161,39 @@
                 </div>
 
                 <div class="text-center mb-2">
-                    <button type="submit" class="btn btn-warning">CONFIRMAR</button>
+                    <button type="submit" class="btn btn-outline-warning">CONFIRMAR</button>
+                </div>
+            </form>
+
+        </div>
+    @endcomponent
+
+    @component('components.modal', [
+        'modalId' => 'ModalEnviaLoteCupom',
+        'modalTitle' => 'Enviar Lote de NFCe',
+        'sizeModal' => 'modal-md',
+    ])
+        <div class="text-center">
+            <form class="g-3 needs-validation" novalidate action="{{ route('nfce.sendLot') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="form-floating mb-3">
+                                <input class="form-control" type="date" id="day" name="day" placeholder=" "
+                                    required>
+                                <label for="day">Dia</label>
+                                <div class="form-text">
+                                    Você irá enviar todos os cupoms pendentes da data selecionada!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-2">
+                    <button type="submit" class="btn btn-outline-success">CONFIRMAR</button>
                 </div>
             </form>
 
