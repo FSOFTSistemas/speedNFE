@@ -14,12 +14,53 @@
 
     <div class="row" style="padding-top: 1%;">
         <div class="col">
-            <a class="btn btn-info" style="margin-bottom: 1%;" href="{{ route('veiculos.create') }}">&nbsp;+ Novo
+            <a class="btn btn-primary" style="margin-bottom: 1%;" href="{{ route('veiculos.create') }}">&nbsp;+ Novo
                 veículo&nbsp;</a>
         </div>
     </div>
 
-    <table class="table table-hover" id="veiculos" style="width: 100%">
+    @component('components.dataTable', [
+        'responsive' => [
+            [
+                'responsivePriority' => 1,
+                'targets' => 0,
+            ],
+            [
+                'responsivePriority' => 2,
+                'targets' => 1,
+            ],
+            [
+                'responsivePriority' => 3,
+                'targets' => 2,
+            ],
+            [
+                'responsivePriority' => 4,
+                'targets' => 3,
+            ],
+            [
+                'responsivePriority' => 5,
+                'targets' => 4,
+            ],
+            [
+                'responsivePriority' => 6,
+                'targets' => 5,
+            ],
+            [
+                'responsivePriority' => 7,
+                'targets' => 6,
+            ],
+            [
+                'responsivePriority' => 8,
+                'targets' => 7,
+            ],
+            [
+                'responsivePriority' => 9,
+                'targets' => -1,
+            ],
+        ],
+        'searching' => true,
+        'lengthChange' => true,
+    ])
         <thead class="table-primary" style="width: 100%">
             <tr>
                 <th style="width: 5%">Id</th>
@@ -63,7 +104,7 @@
                 </tr>
             @endforeach
         </tbody>
-    </table>
+    @endcomponent
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
@@ -119,22 +160,9 @@
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script>
         function setaDadosModal(veiculoID) {
             document.getElementById('veiculoID').value = veiculoID;
         }
-
-        $(document).ready(function() {
-            $('#veiculos').DataTable({
-                responsive: true,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json',
-                },
-            });
-        });
     </script>
 @stop

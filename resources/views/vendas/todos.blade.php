@@ -13,17 +13,50 @@
 @stop
 
 @section('content')
-    <p><a href="/vendas/nova" class="btn btn-info">&nbsp; + Nova NFe &nbsp;</a></p>
+    <p><a href="/vendas/nova" class="btn btn-primary">&nbsp; + Nova NFe &nbsp;</a></p>
 
-    <table class="table table-hover" id="notas">
+    @component('components.dataTable', [
+        'responsive' => [
+            [
+                'responsivePriority' => 1,
+                'targets' => 0,
+            ],
+            [
+                'responsivePriority' => 2,
+                'targets' => 1,
+            ],
+            [
+                'responsivePriority' => 3,
+                'targets' => 2,
+            ],
+            [
+                'responsivePriority' => 4,
+                'targets' => 3,
+            ],
+            [
+                'responsivePriority' => 5,
+                'targets' => 4,
+            ],
+            [
+                'responsivePriority' => 6,
+                'targets' => 5,
+            ],
+            [
+                'responsivePriority' => 7,
+                'targets' => -1,
+            ],
+        ],
+        'searching' => true,
+        'lengthChange' => true,
+    ])
         <thead class="table-primary" style="text-align: center">
             <th width="5%">Nº</th>
             <th width="20%">CLIENTE</th>
             <th width="10%">VALOR</th>
             <th width="10%">DATA</th>
             <th width="5%">ESTADO</th>
-            @if($empresa == 1)
-            <th width="25%">EMPRESA</th>
+            @if ($empresa == 1)
+                <th width="25%">EMPRESA</th>
             @endif
             <th width="25%">AÇÕES</th>
         </thead>
@@ -38,8 +71,8 @@
                         <span class="<?php echo $pedido->estado == 'Pendente' ? 'pendente' : ($pedido->estado == 'Autorizado' ? 'autorizado' : 'cancelado'); ?>" id="estado">{{ $pedido->estado }}
                         </span>
                     </td>
-                    @if($empresa == 1)
-                    <td style="font-size: 80%">{{ $pedido->fantasia }}</td>
+                    @if ($empresa == 1)
+                        <td style="font-size: 80%">{{ $pedido->fantasia }}</td>
                     @endif
                     <td>
                         @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
@@ -63,8 +96,7 @@
                                     <a title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger">
                                         <button class="btn btn-danger form-control d-block d-sm-none" data-toggle="modal"
                                             data-target="#excluir" style="margin-bottom: 1%">Excluir</button>
-                                        <i class="fa fa-trash d-none d-sm-block" data-toggle="modal"
-                                            data-target="#excluir"></i>
+                                        <i class="fa fa-trash d-none d-sm-block" data-toggle="modal" data-target="#excluir"></i>
                                     </a>
                                 </div>
                                 <div class="col-md-3 col-xs-6">
@@ -79,8 +111,8 @@
                             <div class="row">
                                 @if ($pedido->sequencia_evento == 0)
                                     <div class="col-md-3 col-xs-6">
-                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}"
-                                            title="Visualizar" class="text-primary">
+                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Visualizar"
+                                            class="text-primary">
                                             <button class="btn btn-primary form-control d-block d-sm-none"
                                                 style="margin-bottom: 1%">Visualizar</button>
                                             <i class="fa fa-eye d-none d-sm-block"></i>
@@ -89,7 +121,8 @@
                                     <div class="col-md-3 col-xs-6">
                                         <a title="Carta de Correção" href="#">
                                             <button class="btn btn-warning form-control d-block d-sm-none"
-                                                style="margin-bottom: 1%" data-toggle="modal" data-target="#cceModal">CCe</button>
+                                                style="margin-bottom: 1%" data-toggle="modal"
+                                                data-target="#cceModal">CCe</button>
                                             <i class="text-danger d-none d-sm-block" data-toggle="modal"
                                                 data-target="#cceModal"><b>CCe</b></i>
                                         </a>
@@ -138,7 +171,8 @@
 
                                 <div class="col-md-3 col-xs-6">
                                     <a title="Cancelar" href="#">
-                                        <button class="btn btn-danger form-control d-block d-sm-none" data-toggle="modal" data-target="#exampleModal">Cancelar</button>
+                                        <button class="btn btn-danger form-control d-block d-sm-none" data-toggle="modal"
+                                            data-target="#exampleModal">Cancelar</button>
                                         <i data-toggle="modal" data-target="#exampleModal"
                                             class="fa fa-ban text-danger d-none d-sm-block"></i>
                                     </a>
@@ -195,7 +229,7 @@
                 </tr>
             @endforeach
         </tbody>
-    </table>
+    @endcomponent
 
     <div class="modal fade" id="excluir" tabindex="-1" role="dialog" aria-labelledby="excluirLabel"
         aria-hidden="true">
@@ -253,6 +287,7 @@
 @endsection
 
 @section('css')
+    <link rel="stylesheet" href="{{ asset('css/loading.css') }}">
     <style>
         .bloqueado {
             opacity: 0.5;
@@ -277,7 +312,6 @@
             padding: 2px 8px;
             border-radius: 50px;
             color: #ffffff;
-            /* Espaçamento interno para manter a borda longe do texto */
         }
 
         #estado:before {
@@ -285,37 +319,15 @@
             top: 0;
             left: 0;
             width: 100%;
-            /* Largura do retângulo */
             height: 100%;
-            /* Altura do retângulo */
             border-color: inherit;
-            /* Usa a mesma cor do texto para a borda */
             box-sizing: border-box;
-            /* Mantém o tamanho da borda dentro do retângulo */
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('css/loading.css') }}">
-    <link
-        href="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.css"
-        rel="stylesheet">
 @endsection
 
 @section('js')
-    <script
-        src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.0.1/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/cr-2.0.0/date-1.5.2/r-3.0.0/sr-1.4.0/datatables.min.js">
-    </script>
-
     <script>
-        $(document).ready(function() {
-            var tabela = $('#notas').DataTable({
-                responsive: true,
-                ordering: false,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json',
-                },
-            });
-        });
-
         function setaDadosExcluir($id) {
             document.getElementById('pedido_id').value = $id;
         }
