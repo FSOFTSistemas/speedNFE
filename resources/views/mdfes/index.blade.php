@@ -260,7 +260,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered">
             <div class="modal-content">
@@ -287,7 +286,7 @@
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+    <link rel="stylesheet" href="{{ asset('css/loading.css') }}">
     <style>
         .bloqueado {
             opacity: 0.5;

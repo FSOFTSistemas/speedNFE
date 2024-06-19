@@ -74,7 +74,7 @@
                     <td>{{ $cpm->data }}</td>
                     {{-- <td>{{ $cpm->nfce->serie ?? null }}</td> --}}
                     {{-- <td>{{ $cpm->nfce->chave ?? null }}</td> --}}
-                    <td>{{ $cpm->situacao }}</td>
+                    <td>@if ($cpm->situacao == 'CANCELADO') <span class="badge rounded-pill bg-danger">{{ $cpm->situacao }}</span> @else <span class="badge rounded-pill bg-success">{{ $cpm->situacao }}</span> @endif</td>
                     <td>
                         <div class="row">
                             @if ($cpm->situacao == 'ATIVO')
@@ -91,8 +91,8 @@
                                     </div>
 
                                     <div class="col">
-                                        <a title="Enviar" href='{{ route('nfce.send', [$cpm->id]) }}' class='text-success'><i
-                                                class="fa fa-upload"></i></a>
+                                        <a title="Enviar" onclick="loadPage()" href='{{ route('nfce.send', [$cpm->id]) }}'
+                                            class='text-success'><i class="fa fa-upload"></i></a>
                                     </div>
                                 @endif
                             @endif
@@ -167,6 +167,42 @@
         </div>
     @endcomponent
 
+    <div class="modal fade" id="ModalPreLoader" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="exampleModalLabel" style="text-align: center;">Aguarde...</h3>
+                </div>
+                <div class="modal-content" style="min-height: 200px;">
+                    <div class="banter-loader">
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                        <div class="banter-loader__box"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/loading.css') }}">
+    <style>
+        .bloqueado {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+@endsection
+
+@section('js')
     <script>
         function openModalCancelCoupon(couponId) {
             document.getElementById('couponId').value = couponId
@@ -176,6 +212,25 @@
         function openModalCancelNFCe(couponId) {
             document.getElementById('cpnId').value = couponId
             $('#ModalCancelNFCe').modal('show')
+        }
+
+        function loadPage() {
+            var botoes = document.getElementsByTagName("a");
+            for (var i = 0; i < botoes.length; i++) {
+                bloquearBotao(botoes[i]);
+            }
+
+            var myModal = new bootstrap.Modal(document.getElementById('ModalPreLoader'), {
+                keyboard: false,
+                backdrop: 'static'
+
+            });
+            myModal.show();
+        }
+
+        function bloquearBotao(botao) {
+            botao.disabled = true;
+            botao.classList.add("bloqueado");
         }
 
         (function() {
@@ -195,8 +250,4 @@
                 })
         })()
     </script>
-@stop
-
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
+@endsection
