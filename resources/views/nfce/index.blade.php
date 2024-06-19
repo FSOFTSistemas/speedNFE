@@ -26,28 +26,28 @@
             ],
             [
                 'responsivePriority' => 2,
-                'targets' => 6,
+                'targets' => 2,
             ],
             [
                 'responsivePriority' => 3,
-                'targets' => 5,
+                'targets' => -1,
             ],
-            [
-                'responsivePriority' => 4,
-                'targets' => 1,
-            ],
+            // [
+            //     'responsivePriority' => 4,
+            //     'targets' => 1,
+            // ],
             [
                 'responsivePriority' => 5,
-                'targets' => 2,
+                'targets' => 3,
             ],
             [
                 'responsivePriority' => 6,
                 'targets' => 4,
             ],
-            [
-                'responsivePriority' => 7,
-                'targets' => -1,
-            ],
+            // [
+            //     'responsivePriority' => 7,
+            //     'targets' => -1,
+            // ],
         ],
         'searching' => true,
         'lengthChange' => true,
@@ -55,12 +55,12 @@
         <thead class="table-primary">
             <tr>
                 <th>Nº</th>
-                <th>Data</th>
-                <th>Série</th>
-                <th>Chave</th>
-                <th>Situação</th>
-                <th>Cliente</th>
                 <th>Cupom</th>
+                <th>Cliente</th>
+                <th>Data</th>
+                <th>Situação</th>
+                {{-- <th>Série</th> --}}
+                {{-- <th>Chave</th> --}}
                 <th></th>
             </tr>
         </thead>
@@ -69,12 +69,12 @@
             @foreach ($cupoms as $cpm)
                 <tr>
                     <td>{{ $cpm->nfce->nro ?? null }}</td>
-                    <td>{{ $cpm->data }}</td>
-                    <td>{{ $cpm->nfce->serie ?? null }}</td>
-                    <td>{{ $cpm->nfce->chave ?? null }}</td>
-                    <td>{{ $cpm->situacao }}</td>
-                    <td>{{ $cpm->cliente->nome ?? 'CONSUMIDOR FINAL' }}</td>
                     <td>{{ $cpm->nroCupom }}</td>
+                    <td>{{ $cpm->cliente->nome ?? 'CONSUMIDOR FINAL' }}</td>
+                    <td>{{ $cpm->data }}</td>
+                    {{-- <td>{{ $cpm->nfce->serie ?? null }}</td> --}}
+                    {{-- <td>{{ $cpm->nfce->chave ?? null }}</td> --}}
+                    <td>{{ $cpm->situacao }}</td>
                     <td>
                         <div class="row">
                             @if ($cpm->situacao == 'ATIVO')

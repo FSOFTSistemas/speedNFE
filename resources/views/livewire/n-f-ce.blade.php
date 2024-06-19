@@ -22,8 +22,8 @@
                                         <label for="cliente.nome">Cliente</label>
                                     </div>
                                     @if ($cliente['nome'] != 'Consumidor Final')
-                                        <button title="Remover Cliente" class="btn btn-secondary" type="button" wire:click="removeClient"><i
-                                                class="fa fa-times"></i></button>
+                                        <button title="Remover Cliente" class="btn btn-secondary" type="button"
+                                            wire:click="removeClient"><i class="fa fa-times"></i></button>
                                     @endif
                                 </div>
                                 <input type="hidden" name="cliente[id]" wire:model="cliente.id">
@@ -35,30 +35,34 @@
                         <div class="row">
                             <div class="col-md-7 d-flex align-items-stretch">
                                 <div class="table-responsive shadow p-3 mb-3 bg-body rounded">
-                                    <table class="table table-hover w-100">
+                                    <table class="w-100">
                                         <thead class="table-primary">
                                             <tr>
-                                                <th>Item</th>
-                                                <th>Nome</th>
-                                                <th>Qtde.</th>
-                                                <th>Unitário</th>
-                                                <th>Desconto</th>
-                                                <th>Acrescimo</th>
-                                                <th>Total</th>
-                                                <th></th>
+                                                <th colspan="1">Item</th>
+                                                <th colspan="5">Nome</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-right">Qt.</th>
+                                                <th class="text-center">Unitário</th>
+                                                <th class="text-center">Desconto</th>
+                                                <th class="text-center">Acrescimo</th>
+                                                <th class="text-center">Total</th>
+                                                <th class="text-center"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse ($itens as $index => $item)
                                                 <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $item['produto'] }}</td>
-                                                    <td>{{ $item['qtde'] }}</td>
-                                                    <td>{{ number_format($item['unitario'], 2) }}</td>
-                                                    <td>{{ number_format($item['desconto'], 2) }}</td>
-                                                    <td>{{ number_format($item['acrescimo'], 2) }}</td>
-                                                    <td>{{ number_format($item['total'], 2) }}</td>
-                                                    <td>
+                                                    <td colspan="1">{{ $index + 1 }}</td>
+                                                    <td colspan="5">{{ $item['produto'] }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-right">{{ $item['qtde'] }}</td>
+                                                    <td class="text-center">{{ number_format($item['unitario'], 2) }}</td>
+                                                    <td class="text-center">{{ number_format($item['desconto'], 2) }}</td>
+                                                    <td class="text-center">{{ number_format($item['acrescimo'], 2) }}</td>
+                                                    <td class="text-center">{{ number_format($item['total'], 2) }}</td>
+                                                    <td class="text-center">
                                                         @if (empty($formasSelecionadas))
                                                             <a title="Remover Item" class="text-red"
                                                                 wire:click="removeItem({{ $index }})"><i
@@ -67,6 +71,12 @@
                                                                 wire:click="editItem({{ $index }})"><i
                                                                     class="far fa-edit"></i></a>
                                                         @endif
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="7">
+                                                        <hr>
                                                     </td>
                                                 </tr>
 
@@ -120,8 +130,9 @@
                                                         <label for="prod">Produto</label>
                                                     </div>
                                                     @isset($cod)
-                                                        <button title="Remover Item" class="btn btn-secondary" type="button"
-                                                            wire:click="cancelProd"><i class="fa fa-times"></i></button>
+                                                        <button title="Remover Item" class="btn btn-secondary"
+                                                            type="button" wire:click="cancelProd"><i
+                                                                class="fa fa-times"></i></button>
                                                     @endisset
                                                 </div>
                                             </div>
