@@ -2,7 +2,7 @@
 
 namespace App\Utils;
 
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use ZipArchive;
 
 class ZipArchiveUtil {
@@ -23,10 +23,13 @@ class ZipArchiveUtil {
         }
     }
 
-    public static function deleteArchive($companyId)
+    public static function deleteArchive($filePath)
     {
-        $filePath = 'public/xmls' . $companyId . '.zip';
-        Storage::delete($filePath);
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+        } else {
+            return false;
+        }
     }
 
 }

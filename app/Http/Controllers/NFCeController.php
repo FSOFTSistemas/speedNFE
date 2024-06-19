@@ -190,7 +190,7 @@ class NFCeController extends Controller
             $xmls = NFCeService::getMonthlyCompanyXmls($company->id, $request->month);
             $zipedXmlsPath = ZipArchiveUtil::zip($xmls, $company->id);
             Mail::to($request->accountant)->send(new EmailXmlContador($company, $zipedXmlsPath, $request->month));
-            ZipArchiveUtil::deleteArchive($company->id);
+            ZipArchiveUtil::deleteArchive($zipedXmlsPath);
             return redirect()->route('nfce.index')->with('success', 'XMLS enviados com sucesso para: ' . $request->accountant);
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
