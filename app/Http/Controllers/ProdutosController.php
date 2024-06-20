@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
+use App\Services\EstoquesService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
 use Exception;
@@ -20,13 +21,15 @@ class ProdutosController extends Controller
     private CategoriasService $categoriaServices;
     private EmpresasService $empresaServices;
     private PedidosService $pedidoServices;
+    private EstoquesService $estoqueService;
 
-    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices, PedidosService $pedidoServices)
+    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices, PedidosService $pedidoServices, EstoquesService $estoqueService)
     {
         $this->produtoServices = $produtoServices;
         $this->categoriaServices = $categoriaServices;
         $this->empresaServices = $empresaServices;
         $this->pedidoServices = $pedidoServices;
+        $this->estoqueService = $estoqueService;
     }
 
     public function update($id, Request $request)
@@ -176,6 +179,7 @@ class ProdutosController extends Controller
                 'precocusto' => 'required',
                 'precovenda' => 'required',
                 'un' => 'required',
+                'estoque' => 'nullable|numeric',
                 'tpProd' => 'nullable',
                 'cfopinterno' => 'required',
                 'cfopexterno' => 'required',
@@ -220,7 +224,7 @@ class ProdutosController extends Controller
             DB::beginTransaction();
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             if ($this->produtoServices->contagemProdutos($empresa) < $this->empresaServices->buscarEmpresa($empresa)->limProdutos || $empresa == 1) {
-                $this->produtoServices->store(
+                $produto = $this->produtoServices->store(
                     $request->categoria,
                     $empresa,
                     $request->codigo,
@@ -266,6 +270,7 @@ class ProdutosController extends Controller
                     $request->tpProd ? $request->cargaVeic : null,
                     $request->tpProd ? $request->operVeic : null
                 );
+                $this->estoqueService->create($request->estoque, $empresa, $produto->id);
             }
             DB::commit();
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');

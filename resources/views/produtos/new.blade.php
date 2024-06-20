@@ -73,14 +73,21 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-3 col-xs-10">
                                             <label for="codigo">Código de Barras</label>
                                             <input class="form-control" type="text" name="codigo" id="codigo"
                                                 placeholder="Código de Barras..."
                                                 oninput="this.value = this.value.toUpperCase()"
                                                 value="{{ old('codigo') }}">
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
+
+                                        <div class="col-md-2 col-xs-4">
+                                            <label>Estoque</label>
+                                            <input class="form-control" type="number" name="estoque" id="estoque"
+                                                placeholder="Estoque..." value="{{ old('estoque') }}">
+                                        </div>
+
+                                        <div class="col-md-7 col-xs-10">
                                             <label for="produto">Produto</label>
                                             <input class="form-control" type="text" name="produto" id="produto"
                                                 required placeholder="Produto..."
@@ -93,8 +100,9 @@
                                             <div class="row">
                                                 <div class="col-md-10 col-xs-10">
                                                     <label for="ncm">NCM</label>
-                                                    <input class="form-control" type="text" name="ncm" id="ncm"
-                                                        required placeholder="Ncm..." value="{{ old('ncm') }}">
+                                                    <input class="form-control" type="text" name="ncm"
+                                                        id="ncm" required placeholder="Ncm..."
+                                                        value="{{ old('ncm') }}">
                                                 </div>
                                                 <div class="col-md-2 col-xs-2">
                                                     <br>
@@ -486,22 +494,29 @@
                                             <label for="tpVeic" class="col-sm-6 col-form-label">Tipo de Veículo</label>
                                             <select class="form-control" name="tpVeic" id="tpVeic">
                                                 <option value="02"
-                                                    @if (old('tpVeic') == '02') selected @endif>02 - CICLOMOTOR</option>
+                                                    @if (old('tpVeic') == '02') selected @endif>02 - CICLOMOTOR
+                                                </option>
                                                 <option value="03"
-                                                    @if (old('tpVeic') == '03') selected @endif>03 - MOTONETA</option>
+                                                    @if (old('tpVeic') == '03') selected @endif>03 - MOTONETA
+                                                </option>
                                                 <option value="04"
-                                                    @if (old('tpVeic') == '04') selected @endif>04 - MOTOCICLO</option>
+                                                    @if (old('tpVeic') == '04') selected @endif>04 - MOTOCICLO
+                                                </option>
                                                 <option value="05"
-                                                    @if (old('tpVeic') == '05') selected @endif>05 - TRICICLO</option>
+                                                    @if (old('tpVeic') == '05') selected @endif>05 - TRICICLO
+                                                </option>
                                                 <option value="06"
-                                                    @if (old('tpVeic') == '06') selected @endif>06 - AUTOMÓVEL</option>
+                                                    @if (old('tpVeic') == '06') selected @endif>06 - AUTOMÓVEL
+                                                </option>
                                                 <option value="07"
                                                     @if (old('tpVeic') == '07') selected @endif>07 - MICROÔNIBUS
                                                 </option>
                                                 <option value="08"
-                                                    @if (old('tpVeic') == '07') selected @endif>07 - ÔNIBUS</option>
+                                                    @if (old('tpVeic') == '07') selected @endif>07 - ÔNIBUS
+                                                </option>
                                                 <option value="10"
-                                                    @if (old('tpVeic') == '10') selected @endif>10 - REBOQUE</option>
+                                                    @if (old('tpVeic') == '10') selected @endif>10 - REBOQUE
+                                                </option>
                                                 <option value="11"
                                                     @if (old('tpVeic') == '11') selected @endif>11 - SEMIREBOQUE
                                                 </option>
@@ -509,16 +524,20 @@
                                                     @if (old('tpVeic') == '13') selected @endif>13 - CAMINHONETA
                                                 </option>
                                                 <option value="14"
-                                                    @if (old('tpVeic') == '14') selected @endif>14 - CAMINHÃO</option>
+                                                    @if (old('tpVeic') == '14') selected @endif>14 - CAMINHÃO
+                                                </option>
                                                 <option value="17"
-                                                    @if (old('tpVeic') == '17') selected @endif>17 - C.TRATOR</option>
+                                                    @if (old('tpVeic') == '17') selected @endif>17 - C.TRATOR
+                                                </option>
                                                 <option value="22"
                                                     @if (old('tpVeic') == '22') selected @endif>22 - ESP/ÔNIBUS
                                                 </option>
                                                 <option value="23"
-                                                    @if (old('tpVeic') == '23') selected @endif>23 - MISTO/CAM</option>
+                                                    @if (old('tpVeic') == '23') selected @endif>23 - MISTO/CAM
+                                                </option>
                                                 <option value="24"
-                                                    @if (old('tpVeic') == '24') selected @endif>24 - CARGA/CAM</option>
+                                                    @if (old('tpVeic') == '24') selected @endif>24 - CARGA/CAM
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="col-md-8">
@@ -637,37 +656,49 @@
                                             <label for="cCorVeic" class="col-sm-6 col-form-label">Código de Cor</label>
                                             <select class="form-control" name="cCorVeic" id="cCorVeic">
                                                 <option value="01"
-                                                    @if (old('cCorVeic') == '01') selected @endif>01 - AMARELO</option>
+                                                    @if (old('cCorVeic') == '01') selected @endif>01 - AMARELO
+                                                </option>
                                                 <option value="02"
                                                     @if (old('cCorVeic') == '02') selected @endif>02 - AZUL</option>
                                                 <option value="03"
                                                     @if (old('cCorVeic') == '03') selected @endif>03 - BEGE</option>
                                                 <option value="04"
-                                                    @if (old('cCorVeic') == '04') selected @endif>04 - BRANCA</option>
+                                                    @if (old('cCorVeic') == '04') selected @endif>04 - BRANCA
+                                                </option>
                                                 <option value="05"
-                                                    @if (old('cCorVeic') == '05') selected @endif>05 - CINZA</option>
+                                                    @if (old('cCorVeic') == '05') selected @endif>05 - CINZA
+                                                </option>
                                                 <option value="06"
-                                                    @if (old('cCorVeic') == '06') selected @endif>06 - DOURADA</option>
+                                                    @if (old('cCorVeic') == '06') selected @endif>06 - DOURADA
+                                                </option>
                                                 <option value="07"
-                                                    @if (old('cCorVeic') == '07') selected @endif>07 - GRENAR</option>
+                                                    @if (old('cCorVeic') == '07') selected @endif>07 - GRENAR
+                                                </option>
                                                 <option value="08"
-                                                    @if (old('cCorVeic') == '08') selected @endif>08 - LARANJA</option>
+                                                    @if (old('cCorVeic') == '08') selected @endif>08 - LARANJA
+                                                </option>
                                                 <option value="09"
-                                                    @if (old('cCorVeic') == '09') selected @endif>09 - MARROM</option>
+                                                    @if (old('cCorVeic') == '09') selected @endif>09 - MARROM
+                                                </option>
                                                 <option value="10"
-                                                    @if (old('cCorVeic') == '10') selected @endif>10 - PRATA</option>
+                                                    @if (old('cCorVeic') == '10') selected @endif>10 - PRATA
+                                                </option>
                                                 <option value="11"
-                                                    @if (old('cCorVeic') == '11') selected @endif>11 - PRETA</option>
+                                                    @if (old('cCorVeic') == '11') selected @endif>11 - PRETA
+                                                </option>
                                                 <option value="12"
                                                     @if (old('cCorVeic') == '12') selected @endif>12 - ROSA</option>
                                                 <option value="13"
                                                     @if (old('cCorVeic') == '13') selected @endif>13 - ROXA</option>
                                                 <option value="14"
-                                                    @if (old('cCorVeic') == '14') selected @endif>14 - VERDE</option>
+                                                    @if (old('cCorVeic') == '14') selected @endif>14 - VERDE
+                                                </option>
                                                 <option value="15"
-                                                    @if (old('cCorVeic') == '15') selected @endif>15 - VERMELHA</option>
+                                                    @if (old('cCorVeic') == '15') selected @endif>15 - VERMELHA
+                                                </option>
                                                 <option value="16"
-                                                    @if (old('cCorVeic') == '16') selected @endif>16 - FANTASIA</option>
+                                                    @if (old('cCorVeic') == '16') selected @endif>16 - FANTASIA
+                                                </option>
                                             </select>
                                         </div>
                                     </div>

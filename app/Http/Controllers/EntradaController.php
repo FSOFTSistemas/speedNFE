@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exceptions\AlreadyExistException;
 use App\Services\EmpresasService;
 use App\Services\EntradaService;
+use App\Services\EstoquesService;
 use App\Services\ImportProductsService;
 use App\Services\ItemEntradaService;
 use App\Services\ProdutosService;
@@ -20,13 +21,15 @@ class EntradaController extends Controller
     private $produtoService;
     private $entradaService;
     private $itemEntradaService;
+    private $estoqueService;
 
-    public function __construct(EmpresasService $empresaService, ProdutosService $produtoService, EntradaService $entradaService, ItemEntradaService $itemEntradaService)
+    public function __construct(EmpresasService $empresaService, ProdutosService $produtoService, EntradaService $entradaService, ItemEntradaService $itemEntradaService, EstoquesService $estoqueService)
     {
         $this->empresaServices = $empresaService;
         $this->produtoService = $produtoService;
         $this->entradaService = $entradaService;
         $this->itemEntradaService = $itemEntradaService;
+        $this->estoqueService = $estoqueService;
     }
 
     public function index()
@@ -77,6 +80,9 @@ class EntradaController extends Controller
             DB::beginTransaction();
             $entradaId = $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
             $productsList = $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
+            foreach ($productsList as $prod) {
+                $this->estoqueService->create($prod['qtde'], Auth::user()->empresa_id, $prod['produtoId']);
+            }
             $this->itemEntradaService->createInputItems($entradaId, $productsList, Auth::user()->empresa_id);
             DB::commit();
             return redirect()->route('entradas.index')->with('success', 'Produtos importados com sucesso!');
@@ -87,7 +93,6 @@ class EntradaController extends Controller
             }
             return redirect()->route('entradas.index')->with('warning', implode(PHP_EOL, $errors));
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->route('entradas.index')->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
         }

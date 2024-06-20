@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Services\EmpresasService;
+use App\Services\EstoquesService;
 use App\Services\FaturaService;
 use App\Services\ItemService;
 use App\Services\NFeService;
@@ -28,14 +29,16 @@ class PedidosController extends Controller
     private FaturaService $faturaServices;
     private ItemService $itemServices;
     private ProdutosService $produtoServices;
+    private EstoquesService $estoqueService;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
         $this->itemServices = $itemServices;
         $this->faturaServices = $faturaServices;
         $this->produtoServices = $produtoServices;
+        $this->estoqueService = $estoqueService;
     }
 
     public function imprimirCorrecao($id)
@@ -171,6 +174,9 @@ class PedidosController extends Controller
                 $venda->estado = 'Cancelado';
                 $venda->total = 0;
                 $venda->save();
+                foreach ($venda->itens as $item) {
+                    $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
+                }
                 return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
             } else {
                 return redirect('/venda')->with('error', $nfe['data']);
@@ -247,6 +253,9 @@ class PedidosController extends Controller
                         $venda->numero_nfe = $result['nNf'];
                         $venda->save();
                         $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
+                        foreach ($venda->itens as $item) {
+                            $this->estoqueService->out($item->produto_id, $item->qtde);
+                        }
                         return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
                     } else {
                         $venda->status = 3;

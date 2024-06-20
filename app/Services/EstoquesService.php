@@ -5,13 +5,13 @@ use App\Models\Estoque;
 
 class EstoquesService{
 
-    public function create($stock, $inputs, $outputs, $companyId, $productId)
+    public function create($stock, $companyId, $productId)
     {
         return Estoque::create([
-            'estoque_atual' => $stock,
+            'estoque_atual' => $stock ?? 1,
             'estoque_anterior' => 0,
-            'entradas' => $inputs ?? $stock,
-            'saidas' => $outputs,
+            'entradas' => $stock ?? 1,
+            'saidas' => 0,
             'empresa_id' => $companyId,
             'produto_id' => $productId
         ]);
@@ -28,14 +28,24 @@ class EstoquesService{
         ]);
     }
 
-    public function entry()
+    public function reverseStock($prodId, $amount)
     {
-
+        $stock = Estoque::whereProdutoId($prodId)->first();
+        return $stock->update([
+            'estoque_atual' => $stock->estoque_anterior,
+            'estoque_anterior' => $stock->estoque_anterior == $stock->entradas ? 0 : $stock->estoque_anterior + $amount,
+            'saidas' => $stock->saidas - $amount
+        ]);
     }
 
-    public function out()
+    public function out($prodId, $amount)
     {
-
+        $stock = Estoque::whereProdutoId($prodId)->first();
+        return $stock->update([
+            'estoque_anterior' => $stock->estoque_atual,
+            'estoque_atual' => $stock->estoque_atual - $amount,
+            'saidas' => $stock->saidas + $amount
+        ]);
     }
 
     public function getCompanyStocks($companyId)

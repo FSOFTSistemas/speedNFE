@@ -8,6 +8,7 @@ use App\Exceptions\TimeExceededException;
 use App\Mail\EmailXmlContador;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
+use App\Services\EstoquesService;
 use App\Services\NFCeService;
 use App\Utils\FormatationUtil;
 use App\Utils\ZipArchiveUtil;
@@ -23,11 +24,13 @@ class NFCeController extends Controller
 {
     private $cupomService;
     private $empresaServices;
+    private $estoqueService;
 
-    public function __construct(CupomService $cupomService, EmpresasService $empresaServices)
+    public function __construct(CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService)
     {
         $this->cupomService = $cupomService;
         $this->empresaServices = $empresaServices;
+        $this->estoqueService = $estoqueService;
     }
 
     private function makeNFCeService($empresa)
@@ -76,6 +79,9 @@ class NFCeController extends Controller
             $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
             $this->cupomService->updateCoupon($cupom);
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
+            foreach ($cupom->itens as $item) {
+                $this->estoqueService->out($item->produto_id, $item->qtde);
+            }
             DB::commit();
             return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
         } catch (MalformedXmlException $e) {
@@ -99,6 +105,9 @@ class NFCeController extends Controller
             $nfceService = $this->makeNFCeService($coupon->empresa);
             $nfceService->cancel($coupon->nfce->chave, $request->justificativa);
             $this->cupomService->cancelCoupon($request->cpnId);
+            foreach ($coupon->itens as $item) {
+                $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
+            }
             DB::commit();
             return redirect()->route('cupom.index')->with('success', 'Cupom foi cancelado com sucesso!');
         } catch (AlreadyExistException $e) {

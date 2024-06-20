@@ -56,4 +56,19 @@ class Produto extends Model
         'operVeic'
     ];
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    public function estoque()
+    {
+        return $this->hasOne(Estoque::class, 'produto_id');
+    }
+
 }

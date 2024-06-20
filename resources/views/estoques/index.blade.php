@@ -42,11 +42,20 @@
             @foreach ($estoques as $estoque)
                 <tr>
                     <td><b>#{{ $estoque->id }}</b></td>
-                    <td>{{ $estoque->produto }}</td>
-                    <td>{{ $estoque->estoque }}</td>
+                    <td>{{ $estoque->produto->produto }}</td>
+                    <td>{{ $estoque->estoque_atual }}</td>
                     <td>
-                        <a title="Editar" href="{{ route('estoque.edit', [$estoque->id]) }}" class="text-teal"><i
-                            class="far fa-edit"></i></a>
+                        <div class="row">
+                            <div class="col">
+                                <a title="Visualizar" href="{{ route('estoque.show', [$estoque->id]) }}" class="text-blue"><i
+                                        class="far fa-eye"></i></a>
+                            </div>
+
+                            <div class="col">
+                                <a title="Editar" href="{{ route('estoque.edit', [$estoque->id]) }}" class="text-teal"><i
+                                        class="far fa-edit"></i></a>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             @endforeach

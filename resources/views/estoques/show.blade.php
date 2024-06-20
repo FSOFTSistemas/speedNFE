@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Estoque')
+@section('title', 'Visualizar Estoque')
 
 @section('content_header')
     <div class="text-center text-dark">
-        <h3>Edição de Estoque</h3>
+        <h3>Visualização de Estoque</h3>
     </div>
 @stop
 
@@ -23,14 +23,10 @@
                 </div>
             </div>
 
-            <form class="g-3 needs-validation" novalidate action="{{ route('estoque.update', [$estoque->id]) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
                 <div class="row">
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input class="form-control" name="estoque" id="estoque" value="{{ $estoque->estoque_atual }}" placeholder=" " required>
+                            <input class="form-control" name="estoque" id="estoque" value="{{ $estoque->estoque_atual }}" placeholder=" " readonly>
                             <label for="estoque">Estoque Atual</label>
                         </div>
                     </div>
@@ -38,7 +34,7 @@
                     <div class="col">
                         <div class="form-floating mb-3">
                             <input class="form-control" name="estoque_anterior" id="estoque_anterior" value="{{ $estoque->estoque_anterior }}" placeholder=" "
-                                required>
+                                readonly>
                             <label for="estoque_anterior">Estoque Anterior</label>
                         </div>
                     </div>
@@ -47,23 +43,18 @@
                 <div class="row">
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input class="form-control" name="entradas" id="entradas" value="{{ $estoque->entradas }}" placeholder=" " required>
+                            <input class="form-control" name="entradas" id="entradas" value="{{ $estoque->entradas }}" placeholder=" " readonly>
                             <label for="entradas">Entradas</label>
                         </div>
                     </div>
 
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input class="form-control" name="saidas" id="saidas" value="{{ $estoque->saidas }}" placeholder=" " required>
+                            <input class="form-control" name="saidas" id="saidas" value="{{ $estoque->saidas }}" placeholder=" " readonly>
                             <label for="saidas">Saidas</label>
                         </div>
                     </div>
                 </div>
-
-                <div class="text-center">
-                    <button class="btn btn-outline-success w-25" type="submit">Salvar</button>
-                </div>
-            </form>
         </div>
     </div>
 @endsection

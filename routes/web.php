@@ -125,7 +125,9 @@ Route::prefix('item-entrada')->group(function () {
 //ESTOQUE
 Route::prefix('estoque')->group(function () {
     Route::get('', [EstoqueController::class, 'index'])->name('estoque.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('{estoqueId}/visualizar', [EstoqueController::class, 'show'])->name('estoque.show')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     Route::get('{estoqueId}/editar', [EstoqueController::class, 'edit'])->name('estoque.edit')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::put('{estoqueId}/atualizar', [EstoqueController::class, 'update'])->name('estoque.update')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 });
 
 //RECEBER
