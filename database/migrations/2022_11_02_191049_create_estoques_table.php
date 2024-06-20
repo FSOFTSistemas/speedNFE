@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
             $table->float('entradas');
             $table->float('saidas');
-            $table->float('estoque');
+            $table->float('estoque_atual');
+            $table->float('estoque_anterior');
             $table->unsignedBigInteger('empresa_id');
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->timestamps();

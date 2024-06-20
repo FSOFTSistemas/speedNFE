@@ -308,6 +308,12 @@ return [
             'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
         ],
         [
+            'text'        => 'Estoque',
+            'url'         => '/estoque',
+            'icon'        => 'fas fa-boxes',
+            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+        ],
+        [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
             'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],

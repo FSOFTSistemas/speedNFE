@@ -124,12 +124,8 @@ Route::prefix('item-entrada')->group(function () {
 
 //ESTOQUE
 Route::prefix('estoque')->group(function () {
-    Route::get('', [EstoqueController::class, 'show'])->middleware('auth');
-    Route::get('/cadastro', [EstoqueController::class, 'new'])->middleware('auth');
-    Route::post('/cadastro', [EstoqueController::class, 'store'])->name('salvar_estoque')->middleware('auth');
-    Route::get('/del/{id}', [EstoqueController::class, 'destroy'])->name('excluir_estoque')->middleware('auth');
-    Route::get('/edit/{id}', [EstoqueController::class, 'editar'])->name('editar_estoque')->middleware('auth');
-    Route::post('/edit/{id}', [EstoqueController::class, 'update'])->name('update_estoque')->middleware('auth');
+    Route::get('', [EstoqueController::class, 'index'])->name('estoque.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+    Route::get('{estoqueId}/editar', [EstoqueController::class, 'edit'])->name('estoque.edit')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 });
 
 //RECEBER
