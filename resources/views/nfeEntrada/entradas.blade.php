@@ -50,6 +50,7 @@
                 ],
                 'searching' => false,
                 'lengthChange' => false,
+                'pageLength' => 10,
             ])
                 <thead class="table-primary">
                     <tr>

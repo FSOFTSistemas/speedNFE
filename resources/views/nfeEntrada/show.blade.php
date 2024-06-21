@@ -29,7 +29,8 @@
                     ['responsivePriority' => 2, 'targets' => 1]
                 ],
                 'searching' => true,
-                'lengthChange' => true
+                'lengthChange' => true,
+                'pageLength' => 10,
             ])
                 <thead class="table-primary">
                     <tr>
