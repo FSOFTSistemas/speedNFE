@@ -455,6 +455,7 @@
             'searching' => false,
             'lengthChange' => false,
             'pageLength' => 10,
+            'ordering' => true
         ])
             <thead>
                 <tr>
@@ -496,6 +497,7 @@
             'searching' => true,
             'lengthChange' => true,
             'pageLength' => 10,
+            'ordering' => true
         ])
             <thead>
                 <tr>

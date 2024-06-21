@@ -55,7 +55,8 @@ class PedidosService
             ->join('empresas', 'empresas.id', '=', 'pedidos.empresa_id')
             ->join('clientes', 'clientes.id', '=', 'pedidos.cliente_id')
             ->where('pedidos.empresa_id', 'like', $idEmpresa)
-            ->orderByDesc('pedidos.created_at')
+            ->orderByDesc('pedidos.status')
+            ->orderByDesc('pedidos.updated_at')
             ->get();
     }
 

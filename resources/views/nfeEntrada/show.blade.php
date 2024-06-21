@@ -31,6 +31,7 @@
                 'searching' => true,
                 'lengthChange' => true,
                 'pageLength' => 10,
+                'ordering' => true
             ])
                 <thead class="table-primary">
                     <tr>

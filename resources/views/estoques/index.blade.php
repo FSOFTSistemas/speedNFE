@@ -31,6 +31,7 @@
         'searching' => true,
         'lengthChange' => true,
         'pageLength' => 25,
+        'ordering' => true
     ])
         <thead class="table-primary">
             <th>ID</th>

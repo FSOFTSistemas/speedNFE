@@ -49,6 +49,7 @@
         'searching' => true,
         'lengthChange' => true,
         'pageLength' => 10,
+        'ordering' => false
     ])
         <thead class="table-primary" style="text-align: center">
             <th width="5%">Nº</th>
