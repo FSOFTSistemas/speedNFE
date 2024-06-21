@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Enums\FormaPagamentoEnum;
 use App\Services\ClientesService;
 use App\Services\ProdutosService;
+use App\Utils\FormatationUtil;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -144,8 +145,8 @@ class NFCe extends Component
                 $this->desconto = $this->unitario;
             }
             if (isset($this->cod) && isset($this->qtde) && isset($this->desconto) && isset($this->acrescimo) && isset($this->total) && isset($this->subtotalItem) && empty($this->formasSelecionadas)) {
-                $this->subtotalItem = number_format($this->qtde * $this->unitario, 2);
-                $this->total = number_format($this->qtde * ($this->unitario - $this->desconto + $this->acrescimo), 2);
+                $this->subtotalItem = FormatationUtil::format($this->qtde * $this->unitario);
+                $this->total = FormatationUtil::format($this->qtde * ($this->unitario - $this->desconto + $this->acrescimo));
             }
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Ocorreu um erro interno, tente novamente em outro momento, Erro: ' . $e->getMessage());
@@ -163,9 +164,9 @@ class NFCe extends Component
                 foreach ($this->itens as $item) {
                     $valorTotal += $item['total'];
                 }
-                $this->valorTotal = number_format($valorTotal - $this->descontoTotal + $this->acrescimoTotal, 2);
-                $this->aReceber = number_format($this->valorTotal, 2);
-                return $this->subtotal = number_format($valorTotal, 2);
+                $this->valorTotal = FormatationUtil::format($valorTotal - $this->descontoTotal + $this->acrescimoTotal);
+                $this->aReceber = FormatationUtil::format($this->valorTotal);
+                return $this->subtotal = FormatationUtil::format($valorTotal);
             }
             $this->descontoTotal = 0;
             $this->acrescimoTotal = 0;
@@ -242,9 +243,9 @@ class NFCe extends Component
                 return $this->emit('ErrorInPayment', 'Não é possível colocar valor acima do valor total com esse método (' . $this->selectedForma . ')');
             }
             $this->formasSelecionadas[$this->selectedForma] = $this->valorRecebimento;
-            $this->valorPago = number_format($valueReceived, 2);
-            $this->troco = number_format($this->valorPago - $this->valorTotal, 2);
-            $this->aReceber = number_format($this->valorTotal - $this->valorPago, 2);
+            $this->valorPago = FormatationUtil::format($valueReceived);
+            $this->troco = FormatationUtil::format($this->valorPago - $this->valorTotal);
+            $this->aReceber = FormatationUtil::format($this->valorTotal - $this->valorPago);
             $this->valorRecebimento = 0;
             $this->emit('ClosePaymentModal');
         } catch (\Exception $e) {
