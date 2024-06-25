@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\SituacaoEnum;
+use App\Exceptions\NotFoundException;
 use App\Models\Cupom;
 
 class CupomService
@@ -13,11 +14,13 @@ class CupomService
         return Cupom::where("empresa_id", $companyId)->get();
     }
 
-    public function getCupom($id){
+    public function getCupom($id)
+    {
         return Cupom::find($id);
     }
 
-    public function createCupom($nroCupom, $total, $desconto, $acrescimo, $subtotal, $troco, $clientId, $empresaId) {
+    public function createCupom($nroCupom, $total, $desconto, $acrescimo, $subtotal, $troco, $clientId, $empresaId)
+    {
         return Cupom::create([
             'nroCupom' => $nroCupom,
             'situacao' => SituacaoEnum::ATIVO,
@@ -35,7 +38,11 @@ class CupomService
 
     public function getOutstandingCouponsOfTheDay($companyId, $day)
     {
-        return Cupom::whereEmpresaId($companyId)->where('data', 'like', $day.'%')->where('gerado_nfce', false)->get();
+        $coupons = Cupom::whereEmpresaId($companyId)->where('data', 'like', $day . '%')->where('gerado_nfce', false)->get();
+        if ($coupons->isEmpty()) {
+            throw new NotFoundException("Não foram encontrados cupoms para data selecionada!");
+        }
+        return $coupons;
     }
 
     public function cancelCoupon($couponId)
@@ -51,5 +58,4 @@ class CupomService
         $coupon->contingencia = true;
         $coupon->save();
     }
-
 }

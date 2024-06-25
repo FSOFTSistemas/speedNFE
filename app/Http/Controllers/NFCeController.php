@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AlreadyExistException;
 use App\Exceptions\MalformedXmlException;
+use App\Exceptions\NotFoundException;
 use App\Exceptions\TimeExceededException;
 use App\Mail\EmailXmlContador;
 use App\Services\CupomService;
@@ -213,6 +214,7 @@ class NFCeController extends Controller
 
     public function sendLotOfNFCe(Request $request)
     {
+        $errorsCaught = [];
         try {
             $request->validate([
                 'day' => 'required|date',
@@ -229,21 +231,33 @@ class NFCeController extends Controller
                     $resultXml = $nfceService->generateXml($coupon, $coupon->empresa);
                     $this->cupomService->updateCoupon($coupon);
                     NFCeService::createNFCe($resultXml, $coupon->id, $coupon->empresa);
+                    foreach ($coupon->itens as $item) {
+                        $this->estoqueService->out($item->produto_id, $item->qtde);
+                    }
                 } catch (Exception $e) {
+                    array_push($errorsCaught, 'Cupom: ' . $coupon->nroCupom . ' - ' . $e->getMessage());
                     continue;
                 }
             }
             DB::commit();
-            return redirect()->route('cupom.index')->with('success', 'Cupoms foram enviados com sucesso!');
+            if (empty($errorsCaught)) {
+                return redirect()->route('cupom.index')->with('success', 'Cupoms foram enviados com sucesso!');
+            } else {
+                return redirect()->route('cupom.index')->with('warning', 'Algumas notas podem apresentar rejeições e não foram enviadas! As notas que não apresentaram rejeições, foram enviadas com sucesso!<br>' . implode('<br>', $errorsCaught));
+            }
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors));
+            return back()->with('warning', implode('<br>', $errors));
+        } catch (NotFoundException $e) {
+            DB::rollBack();
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
     }
+
 }

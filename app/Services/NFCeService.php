@@ -37,7 +37,7 @@ class NFCeService
 
     public static function getMonthlyCompanyXmls($companyId, $month)
     {
-        return NFCe::select('xml', 'chave')->whereEmpresaId($companyId)->where('data', 'like', $month.'%')->get();
+        return NFCe::select('xml', 'chave')->whereEmpresaId($companyId)->where('data', 'like', $month . '%')->get();
     }
 
     public static function createNFCe($body, $couponId, $company)
@@ -162,7 +162,7 @@ class NFCeService
                 $std = new \stdClass();
                 $std->item = $index + 1;
                 $std->cProd = $item->produto->id;
-                $std->cEAN = FormatationUtil::retiraPontuacoes($item->produto->codigo);
+                $std->cEAN = $item->produto->codigo != "SEM GTIN" ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
                 $std->xProd = FormatationUtil::retiraAcentos($item->produto->produto);
                 $std->NCM = FormatationUtil::retiraPontuacoes($item->produto->ncm);
                 $std->EXTIPI = '';
@@ -172,7 +172,7 @@ class NFCeService
                 $std->vUnCom = FormatationUtil::format($item->unitario);
                 $vProd = FormatationUtil::format($item->qtde * $item->unitario);
                 $std->vProd = $vProd;
-                $std->cEANTrib = FormatationUtil::retiraPontuacoes($item->produto->codigo);
+                $std->cEANTrib = $item->produto->codigo != "SEM GTIN" ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
                 $std->uTrib = $item->produto->un;
                 $std->qTrib = $item->qtde;
                 $std->vUnTrib = FormatationUtil::format($item->unitario);
