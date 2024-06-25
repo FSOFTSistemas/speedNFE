@@ -119,7 +119,7 @@ class ClientesController extends Controller
             }
             return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 

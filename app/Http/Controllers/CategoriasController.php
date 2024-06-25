@@ -7,6 +7,7 @@ use App\Services\EmpresasService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class CategoriasController extends Controller
 {
@@ -46,7 +47,7 @@ class CategoriasController extends Controller
         }
     }
 
-    public function new ()
+    public function new()
     {
         try {
             $user = Auth::user();
@@ -63,16 +64,23 @@ class CategoriasController extends Controller
             $request->validate([
                 'descricao' => 'required|max:512',
                 'empresa' => 'nullable',
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attribute deve ter no máximo :max caracteres!'
             ]);
-
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             $this->categoriaServices->store(
                 $request->descricao,
                 $empresa
             );
             return redirect()->route('categoria.index')->with('success', 'Categoria Cadastrada com sucesso');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 }
