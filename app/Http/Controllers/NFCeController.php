@@ -87,6 +87,7 @@ class NFCeController extends Controller
             return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
         } catch (MalformedXmlException $e) {
             DB::rollback();
+            $this->cupomService->rejectedCoupon($id);
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollback();
@@ -235,6 +236,7 @@ class NFCeController extends Controller
                         $this->estoqueService->out($item->produto_id, $item->qtde);
                     }
                 } catch (Exception $e) {
+                    $this->cupomService->rejectedCoupon($coupon->id);
                     array_push($errorsCaught, 'Cupom: ' . $coupon->nroCupom . ' - ' . $e->getMessage());
                     continue;
                 }

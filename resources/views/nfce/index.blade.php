@@ -77,10 +77,10 @@
                     <td>{{ $cpm->data }}</td>
                     {{-- <td>{{ $cpm->nfce->serie ?? null }}</td> --}}
                     {{-- <td>{{ $cpm->nfce->chave ?? null }}</td> --}}
-                    <td>@if ($cpm->situacao == 'CANCELADO') <span class="badge rounded-pill bg-danger">{{ $cpm->situacao }}</span> @else <span class="badge rounded-pill bg-success">{{ $cpm->situacao }}</span> @endif</td>
+                    <td>@if ($cpm->situacao == 'CANCELADO') <span class="badge rounded-pill bg-danger">{{ $cpm->situacao }}</span> @elseif ($cpm->situacao == 'ATIVO') <span class="badge rounded-pill bg-success">{{ $cpm->situacao }}</span> @else <span class="badge rounded-pill bg-orange text-light">{{ $cpm->situacao }}</span> @endif</td>
                     <td>
                         <div class="row">
-                            @if ($cpm->situacao == 'ATIVO')
+                            @if ($cpm->situacao != 'CANCELADO')
                                 @if (isset($cpm->nfce) && $cpm->nfce->situacao == 'Autorizado')
                                     <div class="col">
                                         <a title="Cancelar" onclick="openModalCancelNFCe({{ $cpm->id }})"

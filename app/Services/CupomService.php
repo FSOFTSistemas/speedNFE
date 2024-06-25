@@ -45,6 +45,13 @@ class CupomService
         return $coupons;
     }
 
+    public function rejectedCoupon($couponId)
+    {
+        $coupon = $this->getCupom($couponId);
+        $coupon->situacao = SituacaoEnum::REJEITADO;
+        $coupon->save();
+    }
+
     public function cancelCoupon($couponId)
     {
         $coupon = $this->getCupom($couponId);
