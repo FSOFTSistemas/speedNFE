@@ -4,7 +4,7 @@
 
 @section('content_header')
     <div class="text-center">
-        <h3 class="m-0 text-dark">Produtos</h3>
+        <h3 class="m-0 text-dark">Cadastro de Produtos</h3>
     </div>
 @stop
 
