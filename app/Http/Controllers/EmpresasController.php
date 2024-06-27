@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
-use App\Services\CidadeService;
 use App\Services\EmpresasService;
 use App\Services\EnderecosService;
 use App\Services\UsersService;
@@ -27,6 +26,16 @@ class EmpresasController extends Controller
         $this->empresaServices = $empresaServices;
         $this->userServices = $userServices;
         $this->enderecoServices = $enderecoServices;
+    }
+
+    public function index()
+    {
+        try {
+            $company = $this->empresaServices->minhaEmpresa(Auth::user()->empresa_id);
+            return view('empresas.edit', ['empresa' => $company]);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function cadastrar()
@@ -62,7 +71,7 @@ class EmpresasController extends Controller
                 return redirect('/empresa/editar/' . $empresa->id);
             } else {
                 $empresa = $this->empresaServices->todas();
-                return view('empresas.todos', ['empresas' => $empresa]);
+                return view('empresas.index', ['empresas' => $empresa]);
             }
         } catch (Exception $e) {
             return back();

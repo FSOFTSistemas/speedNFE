@@ -61,7 +61,8 @@ Route::prefix('categoria')->group(function () {
 
 //EMPRESA
 Route::prefix('empresa')->group(function () {
-    Route::get('', [EmpresasController::class, 'show'])->name('empresa.index')->middleware(['auth']);
+    Route::get('', [EmpresasController::class, 'index'])->name('empresa.index')->middleware(['auth']);
+    Route::get('/todas', [EmpresasController::class, 'show'])->name('empresa.show')->middleware(['auth']);
     Route::get('/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware(['auth', 'access.permission:master']);
     Route::get('/status/{id}', [EmpresasController::class, 'desativarReativar'])->name('desativarReativar_empresa')->middleware(['auth', 'access.permission:master']);
     Route::get('/cadastro', [EmpresasController::class, 'cadastrar'])->middleware(['auth', 'access.permission:master']);

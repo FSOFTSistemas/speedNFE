@@ -123,9 +123,7 @@ class EmpresasService
 
     public function minhaEmpresa($id)
     {
-        return Empresa::select('empresas.*')
-            ->where('empresas.id', $id)
-            ->get();
+        return Empresa::find($id);
     }
 
     public function buscarEmpresa($id)

@@ -1,20 +1,20 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Editar Congigurações')
 
 @section('content_header')
-    <div class="row" style="text-align: center">
-        <div class="col">
-            <h1 class="m-0 text-dark">Editar Empresa</h1>
-        </div>
+    <div class="text-center">
+        <h3 class="m-0 text-dark">Edição de Configurações</h3>
     </div>
 @stop
 
 @section('content')
-
-    @if ($user->empresa_id == 1)
-        <a href="{{ route('empresa.index') }}" class="btn btn-secondary" style="margin-bottom: 2%">Voltar</a>
-    @endif
+    <div class="row mb-3">
+        <div class="col">
+            <a class="btn btn-info text-light" href="{{ route('empresa.show') }}">Empresas</a>
+            <a class="btn btn-info text-light" href="{{ route('index_usuario') }}">Usuários</a>
+        </div>
+    </div>
 
     <div class="content">
         <div class="container-fluid">
@@ -36,19 +36,18 @@
                                 <a class="nav-link" id="fiscal-tab" data-toggle="pill" href="#fiscal" role="tab"
                                     aria-controls="fiscal" aria-selected="false"><b>Fiscal</b></a>
                             </li>
-                            @if ($user->cargo == 'admin')
+                            @can('master')
                                 <li class="nav-item">
                                     <a class="nav-link" id="limite-tab" data-toggle="pill" href="#limite" role="tab"
                                         aria-controls="limite" aria-selected="false"><b>Limites</b></a>
                                 </li>
-                            @endif
+                            @endcan
                         </ul>
                     </div>
-                    <form action="{{ route('update_empresa', ['id' => $empresa->id]) }}" method="post"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="card-body">
-
+                    <div class="card-body">
+                        <form action="{{ route('update_empresa', ['id' => $empresa->id]) }}" method="post"
+                            enctype="multipart/form-data">
+                            @csrf
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
@@ -58,13 +57,16 @@
                                     <div class="col">
                                         <label for="cpf_cnpj">CPF ou CNPJ</label>
                                         <div class="input-group">
-                                            <input required placeholder="CPF/CNPJ..." class="form-control" type="text" id="cpf_cnpj" name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" value="{{ $empresa->cpf_cnpj }}" disabled/>
+                                            <input required placeholder="CPF/CNPJ..." class="form-control" type="text"
+                                                id="cpf_cnpj" name="cpf_cnpj"
+                                                onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14"
+                                                value="{{ $empresa->cpf_cnpj }}" disabled />
                                             <div class="input-group-append">
-                                                <button id="cnpj_button" type="button" class="btn btn-light"><i class="fa fa-search"></i></button>
+                                                <button id="cnpj_button" type="button" class="btn btn-light"><i
+                                                        class="fa fa-search"></i></button>
                                             </div>
                                         </div>
                                     </div>
-
 
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
@@ -83,16 +85,11 @@
                                     </div>
 
                                     <div class="row">
-
-
                                         <div class="col-md-6 col-xs-10">
                                             <label>RG ou IE</label>
                                             <input required placeholder="RG/IE..." class="form-control" type="text"
                                                 id="rg_ie" name="rg_ie" value="{{ $empresa->rg_ie }}" />
                                         </div>
-
-
-
 
                                         <div class="col-md-6 col-xs-10">
                                             <label>Celular</label>
@@ -109,13 +106,14 @@
                                     <div class="col">
                                         <label for="cep">CEP</label>
                                         <div class="input-group">
-                                            <input required placeholder="Cep..." class="form-control" type="text" id="cep" name="cep" value="{{ $empresa->cep }}" />
+                                            <input required placeholder="Cep..." class="form-control" type="text"
+                                                id="cep" name="cep" value="{{ $empresa->cep }}" />
                                             <div class="input-group-append">
-                                                <button class="btn btn-light" type="button" id="cep_button"><i class="fa fa-search"></i></button>
+                                                <button class="btn btn-light" type="button" id="cep_button"><i
+                                                        class="fa fa-search"></i></button>
                                             </div>
                                         </div>
                                     </div>
-
 
                                     <div class="col">
                                         <div class="row">
@@ -132,76 +130,73 @@
                                         </div>
                                     </div>
 
-                                        <div class="row">
-                                            <div class="col-md-6 col-xs-10">
-                                                <label>Bairro</label>
-                                                <input required placeholder="Bairro..." class="form-control"
-                                                    type="text" id="bairro" name="bairro"
-                                                    value="{{ $empresa->bairro }}" />
-                                            </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>Bairro</label>
+                                            <input required placeholder="Bairro..." class="form-control" type="text"
+                                                id="bairro" name="bairro" value="{{ $empresa->bairro }}" />
+                                        </div>
 
-                                            <div class="col">
-                                                <label>Cidade</label>
-                                                <input class="form-control" type="text" name="cidade" id="cidade" value="{{ $empresa->cidade }}" placeholder="Cidade..." required>
-                                            </div>
-                                            <div class="col-md-6 col-xs-10">
-                                                <label>UF</label>
-                                                <select class="form-control" id="uf" name="uf" required>
-                                                    <option value="{{ $empresa->uf }}">{{ $empresa->uf }}</option>
-                                                    <option value='RO'>RO</option>
-                                                    <option value='AC'>AC</option>
-                                                    <option value='AM'>AM</option>
-                                                    <option value='RR'>RR</option>
-                                                    <option value='PA'>PA</option>
-                                                    <option value='AP'>AP</option>
-                                                    <option value='TO'>TO</option>
-                                                    <option value='MA'>MA</option>
-                                                    <option value='PI'>PI</option>
-                                                    <option value='CE'>CE</option>
-                                                    <option value='RN'>RN</option>
-                                                    <option value='PB'>PB</option>
-                                                    <option value='PE'>PE</option>
-                                                    <option value='AL'>AL</option>
-                                                    <option value='SE'>SE</option>
-                                                    <option value='BA'>BA</option>
-                                                    <option value='MG'>MG</option>
-                                                    <option value='ES'>ES</option>
-                                                    <option value='RJ'>RJ</option>
-                                                    <option value='SP'>SP</option>
-                                                    <option value='PR'>PR</option>
-                                                    <option value='SC'>SC</option>
-                                                    <option value='RS'>RS</option>
-                                                    <option value='MS'>MS</option>
-                                                    <option value='MT'>MT</option>
-                                                    <option value='GO'>GO</option>
-                                                    <option value='DF'>DF</option>
-                                                </select>
-
-                                            </div>
-
-                                            <div class="col-md-6 col-xs-10">
-
-                                                <label>Código IBGE</label>
-                                                <input required placeholder="Código IBGE..." class="form-control"
-                                                    type="number" id="ibge" name="ibge"
-                                                    value="{{ $empresa->codigoIBGE }}" />
-                                            </div>
+                                        <div class="col">
+                                            <label>Cidade</label>
+                                            <input class="form-control" type="text" name="cidade" id="cidade"
+                                                value="{{ $empresa->cidade }}" placeholder="Cidade..." required>
+                                        </div>
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>UF</label>
+                                            <select class="form-control" id="uf" name="uf" required>
+                                                <option value="{{ $empresa->uf }}">{{ $empresa->uf }}</option>
+                                                <option value='RO'>RO</option>
+                                                <option value='AC'>AC</option>
+                                                <option value='AM'>AM</option>
+                                                <option value='RR'>RR</option>
+                                                <option value='PA'>PA</option>
+                                                <option value='AP'>AP</option>
+                                                <option value='TO'>TO</option>
+                                                <option value='MA'>MA</option>
+                                                <option value='PI'>PI</option>
+                                                <option value='CE'>CE</option>
+                                                <option value='RN'>RN</option>
+                                                <option value='PB'>PB</option>
+                                                <option value='PE'>PE</option>
+                                                <option value='AL'>AL</option>
+                                                <option value='SE'>SE</option>
+                                                <option value='BA'>BA</option>
+                                                <option value='MG'>MG</option>
+                                                <option value='ES'>ES</option>
+                                                <option value='RJ'>RJ</option>
+                                                <option value='SP'>SP</option>
+                                                <option value='PR'>PR</option>
+                                                <option value='SC'>SC</option>
+                                                <option value='RS'>RS</option>
+                                                <option value='MS'>MS</option>
+                                                <option value='MT'>MT</option>
+                                                <option value='GO'>GO</option>
+                                                <option value='DF'>DF</option>
+                                            </select>
 
                                         </div>
 
+                                        <div class="col-md-6 col-xs-10">
 
-                                        <div class="row">
-                                            <div class="col">
-                                                <label>Complemento</label>
-                                                <input placeholder="Complemento..." class="form-control" type="text"
-                                                    id="complemento" name="complemento"
-                                                    value="{{ $empresa->complemento }}" />
-
-                                            </div>
-
+                                            <label>Código IBGE</label>
+                                            <input required placeholder="Código IBGE..." class="form-control"
+                                                type="number" id="ibge" name="ibge"
+                                                value="{{ $empresa->codigoIBGE }}" />
                                         </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Complemento</label>
+                                            <input placeholder="Complemento..." class="form-control" type="text"
+                                                id="complemento" name="complemento"
+                                                value="{{ $empresa->complemento }}" />
+                                        </div>
+
+                                    </div>
                                 </div>
-
 
                                 <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
@@ -228,7 +223,7 @@
                                         </div>
                                     </div>
 
-                                <div class="row">
+                                    <div class="row">
                                         <div class="col-md-6 col-xs-10">
                                             <label>Serie</label>
                                             <input required placeholder="Série..." class=form-control type="number"
@@ -251,7 +246,8 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label>Senha Certificado</label>
                                             <input placeholder="Senha Certificado..." class=form-control type="text"
-                                                name="senha" id="senha" value="{{ $empresa->senhaCertificado }}"/>
+                                                name="senha" id="senha"
+                                                value="{{ $empresa->senhaCertificado }}" />
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label>Id Token CSC</label>
@@ -269,17 +265,15 @@
                                             <input required placeholder="Csc..." class="form-control" type="text"
                                                 name="csc" id="csc" value="{{ $empresa->csc }}">
 
-
                                         </div>
-
 
                                     </div>
                                     <div class="row">
-                                    <div class="col-md-6 col-xs-10">
-                                        <label>Certificado</label><br> <!-- inserir arquivo pfx -->
-                                        <input placeholder="Certificado..." accept=".pfx" type="file"
-                                            name="certificado" id="certificado" class="file-upload-default"
-                                            value="{{ $empresa->certificado }}">
+                                        <div class="col-md-6 col-xs-10">
+                                            <label>Certificado</label><br> <!-- inserir arquivo pfx -->
+                                            <input placeholder="Certificado..." accept=".pfx" type="file"
+                                                name="certificado" id="certificado" class="file-upload-default"
+                                                value="{{ $empresa->certificado }}">
                                         </div>
                                     </div>
 
@@ -303,122 +297,118 @@
                                     <input required placeholder="Limite de MDFes..." class=form-control type="number"
                                         name="mdfes" id="mdfes" value="{{ $empresa->limMDFes }}" />
                                 </div>
-
-                                <br>
-                                <div>
-                                    <div class="col">
-                                        <button type="submit" class="btn btn-success form-control">Salvar
-                                            Empresa</button>
-                                    </div>
-                                </div>
                             </div>
 
-
-                        </div>
-                    </form>
+                            <div class="text-center mt-3">
+                                <button class="btn btn-outline-success w-25" type="submit">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>
-    </div>
-    <form>
-        </div>
-    @endsection
+@endsection
 
-    @section('js')
-        <script>
-            function formatarCpfCnpj(valor) {
-                // Remove qualquer caracter que não seja número
-                valor = valor.replace(/\D/g, '');
+@section('css')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+@endsection
 
-                // Verifica se é CPF (11 dígitos)
-                if (valor.length === 11) {
-                    // Formata o CPF ###.###.###-##
-                    return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-                }
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script>
+        function formatarCpfCnpj(valor) {
+            // Remove qualquer caracter que não seja número
+            valor = valor.replace(/\D/g, '');
 
-                // Verifica se é CNPJ (14 dígitos)
-                else if (valor.length === 14) {
-                    // Formata o CNPJ ##.###.###/####-##
-                    return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-                }
-
-                // Não é CPF nem CNPJ
-                else {
-                    return valor;
-                }
+            // Verifica se é CPF (11 dígitos)
+            if (valor.length === 11) {
+                // Formata o CPF ###.###.###-##
+                return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
             }
 
-            function somenteNumeros(valor) {
-                var numeros = valor.replace(/\D/g, "");
-                return numeros;
+            // Verifica se é CNPJ (14 dígitos)
+            else if (valor.length === 14) {
+                // Formata o CNPJ ##.###.###/####-##
+                return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
             }
 
-            document.getElementById("cep_button").addEventListener("click", function(event) {
+            // Não é CPF nem CNPJ
+            else {
+                return valor;
+            }
+        }
 
-                event.preventDefault();
-                const cep = document.getElementById('cep').value;
-                $.ajax({
+        function somenteNumeros(valor) {
+            var numeros = valor.replace(/\D/g, "");
+            return numeros;
+        }
 
-                    url: "https://viacep.com.br/ws/" + somenteNumeros(cep) + "/json/",
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        document.getElementById("cep").value = data.cep;
-                        document.getElementById("ibge").value = data.ibge;
-                        document.getElementById("rua").value = data.logradouro;
-                        document.getElementById("bairro").value = data.bairro;
-                        document.getElementById("uf").value = data.uf;
-                        document.getElementById("cidade").value = data.localidade;
-                    },
-                });
+        document.getElementById("cep_button").addEventListener("click", function(event) {
+
+            event.preventDefault();
+            const cep = document.getElementById('cep').value;
+            $.ajax({
+
+                url: "https://viacep.com.br/ws/" + somenteNumeros(cep) + "/json/",
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    document.getElementById("cep").value = data.cep;
+                    document.getElementById("ibge").value = data.ibge;
+                    document.getElementById("rua").value = data.logradouro;
+                    document.getElementById("bairro").value = data.bairro;
+                    document.getElementById("uf").value = data.uf;
+                    document.getElementById("cidade").value = data.localidade;
+                },
             });
+        });
 
-            document.getElementById("cnpj_button").addEventListener("click", function(event) {
-                event.preventDefault();
+        document.getElementById("cnpj_button").addEventListener("click", function(event) {
+            event.preventDefault();
 
-                const cnpj = document.getElementById('cpf_cnpj').value;
+            const cnpj = document.getElementById('cpf_cnpj').value;
 
-                $.ajax({
-                    type: "POST",
-                    url: "/clientes/cnpj",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        cnpj: somenteNumeros(cnpj),
-                    },
-                    success: function(resultado) {
-                        if (resultado != 0) {
-                            document.getElementById('nome').value = resultado.nome;
-                            document.getElementById('fantasia').value = resultado.fantasia;
-                            document.getElementById("bairro").value = resultado.bairro;
-                            document.getElementById("cidade").value = resultado.municipio;
-                            document.getElementById("rua").value = resultado.logradouro;
-                            document.getElementById("uf").value = resultado.uf;
-                            document.getElementById("cep").value = resultado.cep;
-                            document.getElementById("numero").value = resultado.numero;
-                        } else {
-                            alert("Cnpj não encontrado!");
-                        }
+            $.ajax({
+                type: "POST",
+                url: "/clientes/cnpj",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    cnpj: somenteNumeros(cnpj),
+                },
+                success: function(resultado) {
+                    if (resultado != 0) {
+                        document.getElementById('nome').value = resultado.nome;
+                        document.getElementById('fantasia').value = resultado.fantasia;
+                        document.getElementById("bairro").value = resultado.bairro;
+                        document.getElementById("cidade").value = resultado.municipio;
+                        document.getElementById("rua").value = resultado.logradouro;
+                        document.getElementById("uf").value = resultado.uf;
+                        document.getElementById("cep").value = resultado.cep;
+                        document.getElementById("numero").value = resultado.numero;
+                    } else {
+                        alert("Cnpj não encontrado!");
                     }
-                });
+                }
             });
+        });
 
-            const handlePhone = (event) => {
-                let input = event.target
-                input.value = phoneMask(input.value)
-            }
+        const handlePhone = (event) => {
+            let input = event.target
+            input.value = phoneMask(input.value)
+        }
 
-            const phoneMask = (value) => {
-                if (!value) return ""
-                value = value.replace(/\D/g, '')
-                value = value.replace(/(\d{2})(\d)/, "($1) $2")
-                value = value.replace(/(\d)(\d{4})$/, "$1-$2")
-                return value
-            }
-        </script>
-    @stop
+        const phoneMask = (value) => {
+            if (!value) return ""
+            value = value.replace(/\D/g, '')
+            value = value.replace(/(\d{2})(\d)/, "($1) $2")
+            value = value.replace(/(\d)(\d{4})$/, "$1-$2")
+            return value
+        }
+    </script>
+@endsection
