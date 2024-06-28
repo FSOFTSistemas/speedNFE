@@ -159,22 +159,28 @@
                                         </div>
 
                                         <div class="col-md-6 col-xs-10">
-                                            <div class="input-group has-validation mb-2">
-                                                <div class="form-floating">
-                                                    <select name="empresa" id="empresa" class="form-select" required>
-                                                        <option value="">Selecione uma Empresa</option>
-                                                        @foreach ($empresas as $empresa)
-                                                            <option value="{{ $empresa->id }}"
-                                                                @if (old('empresa') == $empresa->id) selected @endif>
-                                                                {{ $empresa->razao }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <label for="empresa">Empresa</label>
-                                                    <div class="invalid-feedback">
-                                                        Informe uma empresa válida.
+                                            @if ($user->cargo == 'master')
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select name="empresa" id="empresa" class="form-select"
+                                                            required>
+                                                            <option value="">Selecione uma Empresa</option>
+                                                            @foreach ($empresas as $empresa)
+                                                                <option value="{{ $empresa->id }}"
+                                                                    @if (old('empresa') == $empresa->id) selected @endif>
+                                                                    {{ $empresa->razao }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <label for="empresa">Empresa</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma empresa válida.
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            @else
+                                                <input type="text" name="empresa" id="empresa"
+                                                    value="{{ $user->empresa_id }}">
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

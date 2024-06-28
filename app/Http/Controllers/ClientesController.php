@@ -42,16 +42,12 @@ class ClientesController extends Controller
         }
     }
 
-    public function new ()
+    public function new()
     {
         try {
             $user = Auth::user();
-            if ($user->empresa_id == 1) {
-                $empresas = $this->empresaServices->todas();
-            } else {
-                $empresas = $this->empresaServices->minhaEmpresa($user->empresa_id);
-            }
-            return view('clientes.cadastrar', ['empresas' => $empresas]);
+            $empresas = $this->empresaServices->todas();
+            return view('clientes.cadastrar', ['empresas' => $empresas, 'user' => $user]);
         } catch (Exception $e) {
             return back();
         }
@@ -226,5 +222,4 @@ class ClientesController extends Controller
             return back();
         }
     }
-
 }
