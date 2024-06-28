@@ -162,7 +162,7 @@ class NFCeService
                 $std = new \stdClass();
                 $std->item = $index + 1;
                 $std->cProd = $item->produto->id;
-                $std->cEAN = $item->produto->codigo != "SEM GTIN" ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
+                $std->cEAN = $item->produto->codigo != "SEM GTIN" && strlen($item->produto->codigo) >= 8 ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
                 $std->xProd = FormatationUtil::retiraAcentos($item->produto->produto);
                 $std->NCM = FormatationUtil::retiraPontuacoes($item->produto->ncm);
                 $std->EXTIPI = '';
@@ -172,7 +172,7 @@ class NFCeService
                 $std->vUnCom = FormatationUtil::format($item->unitario);
                 $vProd = FormatationUtil::format($item->qtde * $item->unitario);
                 $std->vProd = $vProd;
-                $std->cEANTrib = $item->produto->codigo != "SEM GTIN" ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
+                $std->cEANTrib = $item->produto->codigo != "SEM GTIN" && strlen($item->produto->codigo) >= 8 ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
                 $std->uTrib = $item->produto->un;
                 $std->qTrib = $item->qtde;
                 $std->vUnTrib = FormatationUtil::format($item->unitario);
