@@ -63,6 +63,7 @@ class CupomService
     {
         $coupon->gerado_nfce = true;
         $coupon->contingencia = true;
+        $coupon->situacao = SituacaoEnum::ATIVO;
         $coupon->save();
     }
 }

@@ -178,7 +178,7 @@
                                                     </div>
                                                 </div>
                                             @else
-                                                <input type="text" name="empresa" id="empresa"
+                                                <input type="hidden" name="empresa" id="empresa"
                                                     value="{{ $user->empresa_id }}">
                                             @endif
                                         </div>
