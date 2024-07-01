@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Congigurações')
+@section('title', 'Editar Configurações')
 
 @section('content_header')
     <div class="text-center">
@@ -11,8 +11,12 @@
 @section('content')
     <div class="row mb-3">
         <div class="col">
-            <a class="btn btn-info text-light" href="{{ route('empresa.show') }}">Empresas</a>
-            <a class="btn btn-info text-light" href="{{ route('index_usuario') }}">Usuários</a>
+            @can('master')
+                <a class="btn btn-info text-light" href="{{ route('empresa.show') }}">Empresas</a>
+            @endcan
+            @if (auth()->user()->can('master') || auth()->user()->can('admin'))
+                <a class="btn btn-info text-light" href="{{ route('index_usuario') }}">Usuários</a>
+            @endif
         </div>
     </div>
 
@@ -32,10 +36,12 @@
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
                                     aria-controls="profile" aria-selected="false"><b>Endereço</b></a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="fiscal-tab" data-toggle="pill" href="#fiscal" role="tab"
-                                    aria-controls="fiscal" aria-selected="false"><b>Fiscal</b></a>
-                            </li>
+                            @if (auth()->user()->can('master') || auth()->user()->can('admin'))
+                                <li class="nav-item">
+                                    <a class="nav-link" id="fiscal-tab" data-toggle="pill" href="#fiscal" role="tab"
+                                        aria-controls="fiscal" aria-selected="false"><b>Fiscal</b></a>
+                                </li>
+                            @endif
                             @can('master')
                                 <li class="nav-item">
                                     <a class="nav-link" id="limite-tab" data-toggle="pill" href="#limite" role="tab"
@@ -337,7 +343,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-3 col-4">
+                                        <div class="col-md-2 col-4">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Série..." class=form-control
@@ -351,7 +357,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-8">
+                                        <div class="col-md-3 col-8">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <select required class="form-select" name="ambiente" id="ambiente">
@@ -364,6 +370,20 @@
                                                     <label>Ambiente</label>
                                                     <div class="invalid-feedback">
                                                         Informe o ambiente válido.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input placeholder=" " class=form-control
+                                                        type="email" name="contador" id="contador"
+                                                        value="{{ $empresa->contador }}" />
+                                                    <label>Contador</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe o contador.
                                                     </div>
                                                 </div>
                                             </div>

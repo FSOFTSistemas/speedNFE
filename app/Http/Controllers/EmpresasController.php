@@ -107,8 +107,9 @@ class EmpresasController extends Controller
                 'nfe' => 'required|numeric',
                 'nfce' => 'required|numeric',
                 'mdfe' => 'required|numeric',
+                'contador' => 'required|email',
                 'serie' => 'required',
-                'senha' => '',
+                'senha' => 'nullable',
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required|numeric',
@@ -116,8 +117,13 @@ class EmpresasController extends Controller
                 'produtos' => 'required|numeric',
                 'nfes' => 'required|numeric',
                 'mdfes' => 'required|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attribute deve conter no máximo :max caracteres!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
+                'email' => 'O campo :attribute deve ser um email'
             ]);
-
+            DB::beginTransaction();
             $empresa = $this->empresaServices->atualizar($id, $request);
             $this->enderecoServices->editar(
                 $empresa->endereco_id,
@@ -130,9 +136,17 @@ class EmpresasController extends Controller
                 $request->cep,
                 $request->complemento,
             );
+            DB::commit();
             return redirect()->route('editar_empresa', [$empresa->id])->with('success', 'Empresa foi atualizada com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e);
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 

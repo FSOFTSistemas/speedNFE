@@ -11,64 +11,95 @@
 @stop
 
 @section('content')
+    <div class="row mb-3">
+        <div class="col">
+            <a class="btn btn-primary" href="/empresa/cadastro">&nbsp;+ Empresa &nbsp;</a>
+            <a class="btn btn-info text-light" href="/usuarios">&nbsp;Usuários&nbsp;</a>
+        </div>
 
-        <a class="btn btn-info" style="margin-bottom: 2%" href="/empresa/cadastro">&nbsp; + Empresa &nbsp;</a>
-        <a class="btn btn-info" style="margin-bottom: 2%" href="/usuarios">&nbsp; Usuários &nbsp;</a>
+        <div class="col text-right">
+            <a class="btn btn-secondary" href="{{ route('empresa.index') }}">Voltar</a>
+        </div>
+    </div>
 
-        <table class="table table-hover" id="empresas">
-            <thead class="table-primary">
-                <th>ID</th>
-                <th>RAZÃO SOCIAL</th>
-                <th>CPF OU CNPJ</th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </thead>
-            <tbody>
-                @foreach ($empresas as $empresa)
-                    <tr>
-                        <td><b>#{{ $empresa->id }}</b></td>
-                        <td>{{ $empresa->fantasia }}</td>
-                        <td>{{ $empresa->cpf_cnpj }}</td>
-                        @if ($empresa->status == 1)
-                            <td><a class="text-danger"
-                                    href="{{ route('desativarReativar_empresa', ['id' => $empresa->id]) }}"><i
-                                        class="fas fa-ban"></i></a></td>
-                        @else
-                            <td><a class="text-success"
-                                    href="{{ route('desativarReativar_empresa', ['id' => $empresa->id]) }}"><i
-                                        class="fas fa-check"></i></a></td>
-                        @endif
-                        <td>
-                            <a href="{{ route('editar_empresa', ['id' => $empresa->id]) }}"><i class="fa fa-edit"></i></a>
-                        </td>
-                        <td>
-                            <a href="{{ route('empresa.view', [$empresa->id]) }}"><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    @component('components.dataTable', [
+        'responsive' => [
+            [
+                'responsivePriority' => 1,
+                'targets' => 0,
+            ],
+            [
+                'responsivePriority' => 2,
+                'targets' => 1,
+            ],
+            [
+                'responsivePriority' => 3,
+                'targets' => 2,
+            ],
+            [
+                'responsivePriority' => 4,
+                'targets' => -1,
+            ],
+        ],
+        'searching' => true,
+        'lengthChange' => true,
+        'pageLength' => 10,
+        'ordering' => true,
+    ])
+        <thead class="table-primary">
+            <th>ID</th>
+            <th>RAZÃO SOCIAL</th>
+            <th>CPF OU CNPJ</th>
+            <th></th>
+        </thead>
+        <tbody>
+            @foreach ($empresas as $empresa)
+                <tr>
+                    <td><b>#{{ $empresa->id }}</b></td>
+                    <td>{{ $empresa->fantasia }}</td>
+                    <td>{{ $empresa->cpf_cnpj }}</td>
+                    <td>
+                        <div class="row">
+                            @if ($empresa->status == 1)
+                                <div class="col">
+                                    <a class="text-danger"
+                                        href="{{ route('desativarReativar_empresa', ['id' => $empresa->id]) }}"><i
+                                            class="fas fa-ban"></i></a>
+                                </div>
+                            @else
+                                <div class="col">
+                                    <a class="text-success"
+                                        href="{{ route('desativarReativar_empresa', ['id' => $empresa->id]) }}"><i
+                                            class="fas fa-check"></i></a>
+                                </div>
+                            @endif
+                            <div class="col">
+                                <a href="{{ route('editar_empresa', ['id' => $empresa->id]) }}"><i class="far fa-edit text-teal"></i></a>
+                            </div>
 
+                            <div class="col">
+                                <a href="{{ route('empresa.view', [$empresa->id]) }}"><i class="far fa-eye"></i></a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    @endcomponent
+@endsection
+
+@section('css')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 @endsection
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    </script>
     <script>
         function setaDadosModal(idCliente) {
             document.getElementById('idCliente').value = idCliente;
         }
-
-        $(document).ready(function() {
-            $('#empresas').DataTable({
-                responsive: true,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json',
-                },
-            });
-        });
     </script>
 @stop

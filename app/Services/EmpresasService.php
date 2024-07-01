@@ -13,12 +13,7 @@ class EmpresasService
     {
         $empresa = Empresa::find($id);
         if ($request->hasFile('certificado')) {
-            // Storage::delete('public/certificados/'. $request->nome . '.pfx');
             $path = $request->certificado->storeAs('public/certificados', $request->nome . '.pfx');
-            // $content = file_get_contents('storage/'.$request->nome.'.pfx');
-            // $ctx = Certificate::readPfx($content, $request->senha);
-            // $request->merge(['certificado' => $]);
-
             if ($request->senha != '') {
                 $empresa->update([
                     'razao' => $request->nome,
@@ -28,6 +23,7 @@ class EmpresasService
                     'ultimaNFe' => $request->nfe,
                     'ultimaNFCe' => $request->nfce,
                     'ultimaMDFe' => $request->mdfe,
+                    'contador' => $request->contador,
                     'serie' => $request->serie,
                     'senhaCertificado' => $request->senha,
                     'ambiente' => $request->ambiente,
@@ -48,6 +44,7 @@ class EmpresasService
                     'ultimaNFe' => $request->nfe,
                     'ultimaNFCe' => $request->nfce,
                     'ultimaMDFe' => $request->mdfe,
+                    'contador' => $request->contador,
                     'serie' => $request->serie,
                     'ambiente' => $request->ambiente,
                     'certificado' => $path,
@@ -60,7 +57,6 @@ class EmpresasService
                 ]);
             }
         }
-
         if ($request->senha != '') {
             $empresa->update([
                 'razao' => $request->nome,
@@ -70,6 +66,7 @@ class EmpresasService
                 'ultimaNFe' => $request->nfe,
                 'ultimaNFCe' => $request->nfce,
                 'ultimaMDFe' => $request->mdfe,
+                'contador' => $request->contador,
                 'serie' => $request->serie,
                 'senhaCertificado' => $request->senha,
                 'ambiente' => $request->ambiente,
@@ -89,6 +86,7 @@ class EmpresasService
                 'ultimaNFe' => $request->nfe,
                 'ultimaNFCe' => $request->nfce,
                 'ultimaMDFe' => $request->mdfe,
+                'contador' => $request->contador,
                 'ambiente' => $request->ambiente,
                 'csc' => $request->csc,
                 'idCsc' => $request->idCsc,
@@ -128,8 +126,19 @@ class EmpresasService
 
     public function buscarEmpresa($id)
     {
-        return Empresa::select('empresas.*', 'users.name', 'users.email', 'enderecos.rua', 'enderecos.bairro', 'enderecos.numero', 'enderecos.cidade',
-            'enderecos.complemento', 'enderecos.uf', 'enderecos.cep', 'enderecos.codigoIBGE')
+        return Empresa::select(
+            'empresas.*',
+            'users.name',
+            'users.email',
+            'enderecos.rua',
+            'enderecos.bairro',
+            'enderecos.numero',
+            'enderecos.cidade',
+            'enderecos.complemento',
+            'enderecos.uf',
+            'enderecos.cep',
+            'enderecos.codigoIBGE'
+        )
             ->join('users', 'users.empresa_id', 'empresas.id')
             ->join('enderecos', 'enderecos.id', 'empresas.endereco_id')
             ->where('empresas.id', $id)
@@ -176,5 +185,4 @@ class EmpresasService
         $company->ultimaNFCe = $company->ultimaNFCe + 1;
         $company->save();
     }
-
 }
