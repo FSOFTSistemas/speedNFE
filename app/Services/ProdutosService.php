@@ -208,7 +208,7 @@ class ProdutosService
             ->select('produtos.*', 'empresas.fantasia', 'categorias.descricao')
             ->join('categorias', 'categorias.id', '=', 'produtos.categoria_id')
             ->join('empresas', 'empresas.id', '=', 'produtos.empresa_id')
-            ->where('produtos.empresa_id', $id)
+            ->where('produtos.empresa_id', 'like', $id)
             ->get();
     }
 

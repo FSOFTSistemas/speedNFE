@@ -40,7 +40,6 @@ class NFCe extends Component
 
     public $formas = [];
     public $customers = [];
-    public $products = [];
 
     public $showPaymentArea = 'none';
     public $editProd = false;
@@ -51,7 +50,6 @@ class NFCe extends Component
     {
         try {
             $this->customers = $clienteService->todos(Auth::user()->empresa_id);
-            $this->products = $produtoService->todos(Auth::user()->empresa_id);
             $this->formas = FormaPagamentoEnum::cases();
             $this->cliente = ['id' => null, 'nome' => 'Consumidor Final'];
         } catch (\Exception $e) {

@@ -52,7 +52,7 @@ class UsersController extends Controller
     {
         $sUsers = new UsersService();
         $empresa = $sUsers->getEmpresa(Auth::id());
-        return view('users.todos', ['users' => $sUsers->todos($empresa->empresa_id), 'logged' => $sUsers->logged(Auth::id())]);
+        return view('users.index', ['users' => $sUsers->todos($empresa->empresa_id), 'logged' => $sUsers->logged(Auth::id())]);
     }
 
     public function new ()

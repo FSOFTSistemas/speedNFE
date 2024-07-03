@@ -64,13 +64,19 @@ class UsersService
     public function todos($id)
     {
         if ($id == 1) {
-            $id = '%';
-        }
-        return DB::table('users')
+            $users = DB::table('users')
             ->select('users.*', 'empresas.fantasia')
             ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
-            ->where('users.empresa_id', 'like', $id)
+            ->where('users.empresa_id', 'like', '%')
             ->get();
+        } else {
+            $users = DB::table('users')
+            ->select('users.*', 'empresas.fantasia')
+            ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
+            ->where('users.empresa_id', $id)
+            ->get();
+        }
+        return $users;
     }
 
     public function logged($id)
