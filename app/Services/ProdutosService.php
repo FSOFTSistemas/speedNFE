@@ -208,7 +208,7 @@ class ProdutosService
             ->select('produtos.*', 'empresas.fantasia', 'categorias.descricao')
             ->join('categorias', 'categorias.id', '=', 'produtos.categoria_id')
             ->join('empresas', 'empresas.id', '=', 'produtos.empresa_id')
-            ->where('produtos.empresa_id', 'like', $id)
+            ->where('produtos.empresa_id', $id)
             ->get();
     }
 
@@ -236,10 +236,10 @@ class ProdutosService
             ->count();
     }
 
-    public function searchProdByFilter($filter)
+    public function searchProdByFilter($filter, $companyId)
     {
         $filter = empty($filter) ? '' : '%' . $filter . '%';
-        return Produto::where('produto', 'like', $filter)->get();
+        return Produto::where('produto', 'like', $filter)->whereEmpresaId($companyId)->get();
     }
 
 }
