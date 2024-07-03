@@ -469,7 +469,7 @@ class NFeService
             sleep(3);
             $xml = Complements::toAuthorize($signXml, $protocolo);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
@@ -495,7 +495,7 @@ class NFeService
             if ($std->infInut->cStat == 102 || $std->infInut->cStat == 563) {
                 $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
                 if (!File::exists(public_path($caminho . '/'))) {
-                    File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                    File::makeDirectory(public_path($caminho . '/'), 777, true, true);
                 }
                 file_put_contents(public_path($caminho . '/') . $std->infInut->attributes->Id . '.xml', $xml);
 
@@ -526,7 +526,7 @@ class NFeService
                 if ($cStat == '135' || $cStat == '136') {
                     $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
                     if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                        File::makeDirectory(public_path($caminho . '/'), 777, true, true);
                     }
                     file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
 
@@ -565,7 +565,7 @@ class NFeService
                 if ($cStat == '101' || $cStat == '135' || $cStat == '155') {
                     $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
                     if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                        File::makeDirectory(public_path($caminho . '/'), 777, true, true);
                     }
                     file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
 
