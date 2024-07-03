@@ -40,14 +40,18 @@ class EmpresasController extends Controller
 
     public function cadastrar()
     {
-        return view('empresas.cadastrar');
+        try {
+            return view('empresas.create');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function desativarReativar($id)
     {
         try {
             $this->empresaServices->reativarDesativar($id);
-            return redirect()->route('empresa.index')->with('success', 'Status da empresa atualizado com sucesso');
+            return redirect()->route('empresa.show')->with('success', 'Status da empresa atualizado com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Não foi possível atualizar o status da empresa');
         }
@@ -57,24 +61,19 @@ class EmpresasController extends Controller
     {
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
-            return view('empresas.empresa', ['empresa' => $empresa, 'user' => Auth::user()]);
+            return view('empresas.edit', ['empresa' => $empresa, 'user' => Auth::user()]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
     public function show()
     {
         try {
-            $empresa = $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id);
-            if ($empresa->id != 1) {
-                return redirect('/empresa/editar/' . $empresa->id);
-            } else {
-                $empresa = $this->empresaServices->todas();
-                return view('empresas.index', ['empresas' => $empresa]);
-            }
+            $empresa = $this->empresaServices->todas();
+            return view('empresas.index', ['empresas' => $empresa]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
@@ -84,7 +83,7 @@ class EmpresasController extends Controller
             $empresa = $this->empresaServices->buscarEmpresa($id);
             return view('empresas.view', ['empresa' => $empresa]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
@@ -161,7 +160,7 @@ class EmpresasController extends Controller
                 'telefone' => 'required',
                 'rua' => 'required',
                 'numero' => 'required',
-                'contador' => 'required|email',
+                'contador' => 'nullable|email',
                 'bairro' => 'required',
                 'cep' => 'required',
                 'cidade' => 'required',

@@ -101,7 +101,7 @@ class EmpresasService
 
     public function todas()
     {
-        return Empresa::all();
+        return Empresa::where('id', '!=', 1)->get();
     }
 
     public function reativarDesativar($id)

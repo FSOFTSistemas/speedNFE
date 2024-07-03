@@ -13,8 +13,8 @@
 @section('content')
     <div class="row mb-3">
         <div class="col">
-            <a class="btn btn-primary" href="/empresa/cadastro">&nbsp;+ Empresa &nbsp;</a>
-            <a class="btn btn-info text-light" href="/usuarios">&nbsp;Usuários&nbsp;</a>
+            <a class="btn btn-primary mb-1" href="{{ route('empresa.create') }}">&nbsp;+ Empresa &nbsp;</a>
+            <a class="btn btn-info text-light mb-1" href="{{ route('index_usuario') }}">&nbsp;Usuários&nbsp;</a>
         </div>
 
         <div class="col text-right">
@@ -62,23 +62,23 @@
                         <div class="row">
                             @if ($empresa->status == 1)
                                 <div class="col">
-                                    <a class="text-danger"
+                                    <a title="Desativar" class="text-danger"
                                         href="{{ route('desativarReativar_empresa', ['id' => $empresa->id]) }}"><i
                                             class="fas fa-ban"></i></a>
                                 </div>
                             @else
                                 <div class="col">
-                                    <a class="text-success"
+                                    <a title="Ativar" class="text-success"
                                         href="{{ route('desativarReativar_empresa', ['id' => $empresa->id]) }}"><i
                                             class="fas fa-check"></i></a>
                                 </div>
                             @endif
                             <div class="col">
-                                <a href="{{ route('editar_empresa', ['id' => $empresa->id]) }}"><i class="far fa-edit text-teal"></i></a>
+                                <a title="Editar" href="{{ route('editar_empresa', [$empresa->id]) }}"><i class="far fa-edit text-teal"></i></a>
                             </div>
 
                             <div class="col">
-                                <a href="{{ route('empresa.view', [$empresa->id]) }}"><i class="far fa-eye"></i></a>
+                                <a title="Visualizar" href="{{ route('empresa.view', [$empresa->id]) }}"><i class="far fa-eye"></i></a>
                             </div>
                         </div>
                     </td>
