@@ -172,6 +172,7 @@ class EmpresasController extends Controller
                 'mdfe' => 'required',
                 'serie' => 'required',
                 'senha' => 'required',
+                'certificado' => 'required|file',
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required',
@@ -190,7 +191,8 @@ class EmpresasController extends Controller
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max',
                 'email' => 'Email inválido!',
-                'unique' => 'O CPF/CNPJ já foi utilizado antes!'
+                'unique' => 'O CPF/CNPJ já foi utilizado antes!',
+                'file' => 'O certificado deve ser um arquivo!',
             ]);
             DB::beginTransaction();
             $endereco = $this->enderecoServices->salvar(
@@ -238,18 +240,17 @@ class EmpresasController extends Controller
                 $request->name
             );
             DB::commit();
-            return redirect()->route('empresa.index')->with('success', 'Empresa foi criada com sucesso!');
+            return redirect()->route('empresa.show')->with('success', 'Empresa foi criada com sucesso!');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
+                $errors[] = implode("<br>", $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+            return back()->with('warning', implode("<br>", $errors))->withInput();
         } catch (CertificateException $e) {
             DB::rollBack();
             return back()->with('warning', $e->getMessage() . ' - Senha incorreta, informe uma senha válida')->withInput();
         } catch (Exception $e) {
-            dd($e);
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
         }

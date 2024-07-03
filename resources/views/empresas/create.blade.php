@@ -47,7 +47,7 @@
                             </li>
                         </ul>
                     </div>
-                    <form class="row g-3 needs-validation" novalidate action="{{ route('salvar_empresa') }}" method="post"
+                    <form class="row g-3 needs-validation" novalidate action="{{ route('salvar_empresa') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="card-body">
@@ -62,7 +62,7 @@
                                                     <input required placeholder="CPF/CNPJ..." class="form-control"
                                                         type="text" id="cpf_cnpj" name="cpf_cnpj"
                                                         onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14"
-                                                        required />
+                                                        value="{{ old('cpf_cnpj') }}" required />
                                                     <label for="cpf_cnpj">CPF ou CNPJ</label>
                                                     <div class="invalid-feedback">
                                                         Informe um CPF/CNPJ válido.
@@ -81,7 +81,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="RG/IE..." class="form-control"
-                                                        type="text" id="rg_ie" name="rg_ie" />
+                                                        type="text" id="rg_ie" name="rg_ie"
+                                                        value="{{ old('rg_ie') }}" />
                                                     <label>RG ou IE</label>
                                                     <div class="invalid-feedback">
                                                         Informe um RG/IE válido.
@@ -95,7 +96,7 @@
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class="form-control" type="text"
                                                         id="telefone" name="telefone" maxlength="15"
-                                                        onkeyup="handlePhone(event)" />
+                                                        value="{{ old('telefone') }}" onkeyup="handlePhone(event)" />
                                                     <label>Celular</label>
                                                     <div class="invalid-feedback">
                                                         Informe um celular válido.
@@ -110,7 +111,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Razão Social..." class="form-control"
-                                                        type="text" id="nome" name="nome" />
+                                                        type="text" id="nome" name="nome"
+                                                        value="{{ old('nome') }}" />
                                                     <label>Razão Social</label>
                                                     <div class="invalid-feedback">
                                                         Informe uma razão social válida.
@@ -122,8 +124,8 @@
                                         <div class="col-md-6 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <input required placeholder="Nome Fantasia..." class="form-control"
-                                                        type="text" id="fantasia" name="fantasia" />
+                                                    <input required placeholder=" " class="form-control" type="text"
+                                                        id="fantasia" name="fantasia" value="{{ old('fantasia') }}" />
                                                     <label>Nome Fantasia</label>
                                                     <div class="invalid-feedback">
                                                         Informe um nome fantasia válido.
@@ -140,8 +142,8 @@
                                         <div class="col-md-4 col-7">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <input required placeholder="Cep..." class="form-control"
-                                                        type="text" id="cep" name="cep" />
+                                                    <input required placeholder=" " class="form-control" type="text"
+                                                        id="cep" name="cep" value="{{ old('cep') }}" />
                                                     <label for="cep">CEP</label>
                                                     <div class="invalid-feedback">
                                                         Informe um CEP válido.
@@ -158,7 +160,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Nº..." class="form-control"
-                                                        type="text" id="numero" name="numero" />
+                                                        type="text" id="numero" name="numero"
+                                                        value="{{ old('numero') }}" />
                                                     <label>Número</label>
                                                     <div class="invalid-feedback">
                                                         Informe um número válido.
@@ -172,33 +175,60 @@
                                                 <div class="form-floating">
                                                     <select class="form-select" id="uf" name="uf" required>
                                                         <option value="">Selecione um Estado</option>
-                                                        <option value='RO'>RO</option>
-                                                        <option value='AC'>AC</option>
-                                                        <option value='AM'>AM</option>
-                                                        <option value='RR'>RR</option>
-                                                        <option value='PA'>PA</option>
-                                                        <option value='AP'>AP</option>
-                                                        <option value='TO'>TO</option>
-                                                        <option value='MA'>MA</option>
-                                                        <option value='PI'>PI</option>
-                                                        <option value='CE'>CE</option>
-                                                        <option value='RN'>RN</option>
-                                                        <option value='PB'>PB</option>
-                                                        <option value='PE'>PE</option>
-                                                        <option value='AL'>AL</option>
-                                                        <option value='SE'>SE</option>
-                                                        <option value='BA'>BA</option>
-                                                        <option value='MG'>MG</option>
-                                                        <option value='ES'>ES</option>
-                                                        <option value='RJ'>RJ</option>
-                                                        <option value='SP'>SP</option>
-                                                        <option value='PR'>PR</option>
-                                                        <option value='SC'>SC</option>
-                                                        <option value='RS'>RS</option>
-                                                        <option value='MS'>MS</option>
-                                                        <option value='MT'>MT</option>
-                                                        <option value='GO'>GO</option>
-                                                        <option value='DF'>DF</option>
+                                                        <option value='RO'
+                                                            @if (old('uf') == 'RO') selected @endif>RO</option>
+                                                        <option value='AC'
+                                                            @if (old('uf') == 'AC') selected @endif>AC</option>
+                                                        <option value='AM'
+                                                            @if (old('uf') == 'AM') selected @endif>AM</option>
+                                                        <option value='RR'
+                                                            @if (old('uf') == 'RR') selected @endif>RR</option>
+                                                        <option value='PA'
+                                                            @if (old('uf') == 'PA') selected @endif>PA</option>
+                                                        <option value='AP'
+                                                            @if (old('uf') == 'AP') selected @endif>AP</option>
+                                                        <option value='TO'
+                                                            @if (old('uf') == 'TO') selected @endif>TO</option>
+                                                        <option value='MA'
+                                                            @if (old('uf') == 'MA') selected @endif>MA</option>
+                                                        <option value='PI'
+                                                            @if (old('uf') == 'PI') selected @endif>PI</option>
+                                                        <option value='CE'
+                                                            @if (old('uf') == 'CE') selected @endif>CE</option>
+                                                        <option value='RN'
+                                                            @if (old('uf') == 'RN') selected @endif>RN</option>
+                                                        <option value='PB'
+                                                            @if (old('uf') == 'PB') selected @endif>PB</option>
+                                                        <option value='PE'
+                                                            @if (old('uf') == 'PE') selected @endif>PE</option>
+                                                        <option value='AL'
+                                                            @if (old('uf') == 'AL') selected @endif>AL</option>
+                                                        <option value='SE'
+                                                            @if (old('uf') == 'SE') selected @endif>SE</option>
+                                                        <option value='BA'
+                                                            @if (old('uf') == 'BA') selected @endif>BA</option>
+                                                        <option value='MG'
+                                                            @if (old('uf') == 'MG') selected @endif>MG</option>
+                                                        <option value='ES'
+                                                            @if (old('uf') == 'ES') selected @endif>ES</option>
+                                                        <option value='RJ'
+                                                            @if (old('uf') == 'RJ') selected @endif>RJ</option>
+                                                        <option value='SP'
+                                                            @if (old('uf') == 'SP') selected @endif>SP</option>
+                                                        <option value='PR'
+                                                            @if (old('uf') == 'PR') selected @endif>PR</option>
+                                                        <option value='SC'
+                                                            @if (old('uf') == 'SC') selected @endif>SC</option>
+                                                        <option value='RS'
+                                                            @if (old('uf') == 'RS') selected @endif>RS</option>
+                                                        <option value='MS'
+                                                            @if (old('uf') == 'MS') selected @endif>MS</option>
+                                                        <option value='MT'
+                                                            @if (old('uf') == 'MT') selected @endif>MT</option>
+                                                        <option value='GO'
+                                                            @if (old('uf') == 'GO') selected @endif>GO</option>
+                                                        <option value='DF'
+                                                            @if (old('uf') == 'DF') selected @endif>DF</option>
                                                     </select>
                                                     <label>UF</label>
                                                     <div class="invalid-feedback">
@@ -212,7 +242,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Código IBGE..." class="form-control"
-                                                        type="number" id="ibge" name="ibge" />
+                                                        type="number" id="ibge" name="ibge"
+                                                        value="{{ old('ibge') }}" />
                                                     <label>Código IBGE</label>
                                                     <div class="invalid-feedback">
                                                         Informe um código IBGE válido.
@@ -227,7 +258,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Rua..." class="form-control"
-                                                        type="text" id="rua" name="rua" />
+                                                        type="text" id="rua" name="rua"
+                                                        value="{{ old('rua') }}" />
                                                     <label>Rua</label>
                                                     <div class="invalid-feedback">
                                                         Informe uma rua válida.
@@ -242,7 +274,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Bairro..." class="form-control"
-                                                        type="text" id="bairro" name="bairro" />
+                                                        type="text" id="bairro" name="bairro"
+                                                        value="{{ old('bairro') }}" />
                                                     <label>Bairro</label>
                                                     <div class="invalid-feedback">
                                                         Informe um bairro válido.
@@ -255,7 +288,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="cidade"
-                                                        id="cidade" placeholder=" " required>
+                                                        id="cidade" placeholder=" " required
+                                                        value="{{ old('cidade') }}">
                                                     <label>Cidade</label>
                                                     <div class="invalid-feedback">
                                                         Informe uma cidade válida.
@@ -269,7 +303,7 @@
                                         <div class="col-md-12 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <textarea class="form-control" placeholder=" " name="complemento" id="complemento" style="height: 100px;"></textarea>
+                                                    <textarea class="form-control" placeholder=" " name="complemento" id="complemento" style="height: 100px;">{{ old('complemento') }}</textarea>
                                                     <label>Complemento</label>
                                                     <div class="invalid-feedback">
                                                         Informe um complemento válido.
@@ -287,7 +321,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Nº Última NFe..." class=form-control
-                                                        type="number" name="nfe" id="nfe" />
+                                                        type="number" name="nfe" id="nfe"
+                                                        value="{{ old('nfe') }}" />
                                                     <label>Nº da Última NFe</label>
                                                     <div class="invalid-feedback">
                                                         Informe o nº da última NFe.
@@ -300,7 +335,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Nº Última MDFe..." class=form-control
-                                                        type="number" name="mdfe" id="mdfe" />
+                                                        type="number" name="mdfe" id="mdfe"
+                                                        value="{{ old('mdfe') }}" />
                                                     <label>Nº da Última MDFe</label>
                                                     <div class="invalid-feedback">
                                                         Informe o nº da última MDFe.
@@ -313,7 +349,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Nº Última NFCe..." class=form-control
-                                                        type="number" name="nfce" id="nfce" />
+                                                        type="number" name="nfce" id="nfce"
+                                                        value="{{ old('nfce') }}" />
                                                     <label>Nº da Última NFCe</label>
                                                     <div class="invalid-feedback">
                                                         Informe o nº da última NFCe.
@@ -328,7 +365,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="Série..." class=form-control
-                                                        type="number" name="serie" id="serie" />
+                                                        type="number" name="serie" id="serie"
+                                                        value="{{ old('serie') }}" />
                                                     <label>Série</label>
                                                     <div class="invalid-feedback">
                                                         Informe uma série válida.
@@ -342,8 +380,12 @@
                                                 <div class="form-floating">
                                                     <select required class="form-select" name="ambiente" id="ambiente">
                                                         <option value="">Selecione o Ambiente</option>
-                                                        <option value="1">Produção</option>
-                                                        <option value="2">Homologação</option>
+                                                        <option value="1"
+                                                            @if (old('ambiente') == '1') selected @endif>Produção
+                                                        </option>
+                                                        <option value="2"
+                                                            @if (old('ambiente') == '2') selected @endif>Homologação
+                                                        </option>
                                                     </select>
                                                     <label>Ambiente</label>
                                                     <div class="invalid-feedback">
@@ -357,7 +399,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input placeholder=" " class=form-control type="email"
-                                                        name="contador" id="contador" />
+                                                        name="contador" id="contador" value="{{ old('email') }}" />
                                                     <label>Contador</label>
                                                     <div class="invalid-feedback">
                                                         Informe o contador.
@@ -371,8 +413,9 @@
                                         <div class="col-md-3 col-5">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <input placeholder="Senha Certificado..." class=form-control
-                                                        type="text" name="senha" id="senha" required/>
+                                                    <input placeholder=" " class=form-control type="text"
+                                                        name="senha" id="senha" required
+                                                        value="{{ old('senha') }}" />
                                                     <label>Senha Cert.</label>
                                                     <div class="invalid-feedback">
                                                         Informe uma senha válida.
@@ -401,7 +444,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class="form-control" type="text"
-                                                        name="csc" id="csc">
+                                                        name="csc" id="csc" value="{{ old('csc') }}">
                                                     <label>CSC</label>
                                                     <div class="invalid-feedback">
                                                         Informe um CSC.
@@ -414,7 +457,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class="form-control" type="text"
-                                                        name="idCsc" id="idCsc">
+                                                        value="{{ old('idCsc') }}" name="idCsc" id="idCsc">
                                                     <label>Id Token CSC</label>
                                                     <div class="invalid-feedback">
                                                         Informe um id token CSC.
@@ -431,7 +474,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder="" class=form-control type="number"
-                                                        name="clientes" id="clientes" />
+                                                        name="clientes" id="clientes" value="{{ old('clientes') }}" />
                                                     <label>Lim. de Clientes</label>
                                                     <div class="invalid-feedback">
                                                         Informe o limite de clientes.
@@ -444,7 +487,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class="form-control" type="number"
-                                                        name="produtos" id="produtos" />
+                                                        name="produtos" id="produtos" value="{{ old('produtos') }}" />
                                                     <label>Lim. de Produtos</label>
                                                     <div class="invalid-feedback">
                                                         Informe o limite de produtos.
@@ -459,7 +502,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class="form-control" type="number"
-                                                        name="nfes" id="nfes" />
+                                                        name="nfes" id="nfes" value="{{ old('nfes') }}" />
                                                     <label>Limite de notas (NFe)</label>
                                                     <div class="invalid-feedback">
                                                         Informe o limite de notas (NFe).
@@ -472,7 +515,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class="form-control" type="number"
-                                                        name="nfces" id="nfces" />
+                                                        name="nfces" id="nfces" value="{{ old('nfces') }}" />
                                                     <label>Limite de notas (NFCe)</label>
                                                     <div class="invalid-feedback">
                                                         Informe o limite de notas (NFCe).
@@ -484,8 +527,8 @@
                                         <div class="col-md-4 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <input required placeholder="Limite de MDFes..." class="form-control"
-                                                        type="number" name="mdfes" id="mdfes" />
+                                                    <input required placeholder=" " class="form-control" type="number"
+                                                        name="mdfes" id="mdfes" value="{{ old('mdfes') }}" />
                                                     <label>Limite de notas (MDFe)</label>
                                                     <div class="invalid-feedback">
                                                         Informe o limite de notas (MDFe).
@@ -502,7 +545,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class=form-control type="text" name="name"
-                                                        placeholder=" " id="name" required/>
+                                                        placeholder=" " id="name" required
+                                                        value="{{ old('name') }}" />
                                                     <label>Nome</label>
                                                     <div class="invalid-feedback">
                                                         Informe um nome.
@@ -517,7 +561,8 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class=form-control type="email" name="email"
-                                                        placeholder=" " id="email" required/>
+                                                        placeholder=" " id="email" required
+                                                        value="{{ old('email') }}" />
                                                     <label>Email</label>
                                                     <div class="invalid-feedback">
                                                         Informe um email.
@@ -529,12 +574,12 @@
                                         <div class="col-md-6 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <input required placeholder="Confirmação Email..." class=form-control
-                                                        type="text" name="confirm_email" id="confirm_email"
+                                                    <input required placeholder=" " class=form-control type="text"
+                                                        name="confirm_email" id="confirm_email"
                                                         value="{{ old('confirm_email') }}" />
-                                                    <label>Conf. de Email</label>
+                                                    <label>Confirmação de Email</label>
                                                     <div class="invalid-feedback">
-                                                        Informe a confirmação email.
+                                                        Informe a confirmação email válido.
                                                     </div>
                                                 </div>
                                             </div>
@@ -542,7 +587,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4 col-6">
+                                        <div class="col-md-4 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input required placeholder=" " class=form-control type="password"
@@ -555,13 +600,13 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 col-6">
+                                        <div class="col-md-4 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <input required placeholder="Confirmação Senha..." class=form-control
-                                                        type="text" name="confirm_password" id="confirm_password"
+                                                    <input required placeholder=" " class=form-control type="password"
+                                                        name="confirm_password" id="confirm_password"
                                                         value="{{ old('confirm_password') }}" />
-                                                    <label>Conf. de Senha</label>
+                                                    <label>Confirmação de Senha</label>
                                                     <div class="invalid-feedback">
                                                         Informe a confirmação de senha.
                                                     </div>
