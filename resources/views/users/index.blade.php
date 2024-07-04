@@ -11,7 +11,7 @@
 
     <div class="row">
         <div class="col">
-            <a href="{{ route('cadastrar_usuario') }}" class='btn btn-info text-light'>&nbsp;+ Usuário&nbsp;</a>
+            <a href="{{ route('usuario.create') }}" class='btn btn-primary'>&nbsp;+ Usuário&nbsp;</a>
         </div>
         <div class="col text-right">
             <a href="{{ route('empresa.index') }}" class="btn btn-secondary">Voltar</a>
@@ -90,7 +90,7 @@
         <form action="{{ route('excluir_usuario') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('DELETE')
-            
+
             <div class="row" style="text-align: center">
                 <div class="col">
                     <input type="hidden" name="userId" id="userId" required>

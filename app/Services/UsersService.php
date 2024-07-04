@@ -11,7 +11,6 @@ class UsersService
 {
     public function __construct()
     {
-
     }
 
     public function buscaId($id)
@@ -23,17 +22,13 @@ class UsersService
         }
     }
 
-    public function editar($id, $name, $cargo)
+    public function editar($userId, $name, $cargo)
     {
-        try {
-            $user = User::find($id);
-            return $user->update([
-                'name' => $name,
-                'cargo' => $cargo,
-            ]);
-        } catch (Exception $e) {
-            return 0;
-        }
+        $user = User::find($userId);
+        return $user->update([
+            'name' => $name,
+            'cargo' => $cargo,
+        ]);
     }
 
     public function destroy($id)
@@ -65,16 +60,16 @@ class UsersService
     {
         if ($id == 1) {
             $users = DB::table('users')
-            ->select('users.*', 'empresas.fantasia')
-            ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
-            ->where('users.empresa_id', 'like', '%')
-            ->get();
+                ->select('users.*', 'empresas.fantasia')
+                ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
+                ->where('users.empresa_id', 'like', '%')
+                ->get();
         } else {
             $users = DB::table('users')
-            ->select('users.*', 'empresas.fantasia')
-            ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
-            ->where('users.empresa_id', $id)
-            ->get();
+                ->select('users.*', 'empresas.fantasia')
+                ->join('empresas', 'empresas.id', '=', 'users.empresa_id')
+                ->where('users.empresa_id', $id)
+                ->get();
         }
         return $users;
     }
