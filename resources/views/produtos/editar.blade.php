@@ -1,19 +1,23 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Editar Produto')
 
 @section('content_header')
-    {{-- <div class="row" style="text-align: center">
-        <div class="col-md-6 col-xs-10">
-            <h5 class="m-0 text-dark">Editar produto</h5>
+    <div class="row text-center">
+        <div class="col">
+            <h3 class="m-0">Edição de Produto</h3>
         </div>
-    </div> --}}
-    <br>
+    </div>
 @stop
 
 @section('content')
+    <div class="row text-right">
+        <div class="col">
+            <a class="btn btn-secondary mb-3" href="{{ route('produto.index') }}">Voltar</a>
+        </div>
+    </div>
+
     <div class="content">
-        <a class="btn btn-secondary" style="margin-bottom: 2%" href="{{ route('produto.index') }}">Voltar</a>
         <div class="container-fluid">
             <div class="col-xs-12 col-sm-12" style="width: 100%">
 
@@ -36,141 +40,255 @@
                         </ul>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('update_produto', ['id' => $produto->id]) }}">
+                        <form class="needs-validation" novalidate method="POST"
+                            action="{{ route('update_produto', [$produto->id]) }}">
                             @csrf
                             @method('PUT')
+
                             <div class="tab-content" id="tabContent">
                                 <div class="tab-pane fade show active" id="home" role="tabpanel"
                                     aria-labelledby="home-tab">
 
-
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
-                                            <label>Empresa</label>
-                                            <select class="form-control" name="empresa" id="empresa" disabled>
-                                                <option>
-                                                    {{ $produto->fantasia }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label>Categoria</label>
-                                            <select class="form-control" name="categoria" id="categoria" required>
-                                                <option value="{{ $produto->categoria_id }}">
-                                                    {{ $produto->descricao }}</option>
-                                                @foreach ($categorias as $categoria)
-                                                    <option value="{{ $categoria->id }}">
-                                                        {{ $categoria->descricao }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="codigo">Código de Barras</label>
-                                            <input class="form-control" type="text" name="codigo" id="codigo"
-                                                value="{{ $produto->codigo }}" oninput="this.value = this.value.toUpperCase()">
-                                        </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="produto">Produto</label>
-                                            <input class="form-control" type="text" name="produto" id="produto"
-                                                value="{{ $produto->produto }}" required placeholder="Produto..." oninput="this.value = this.value.toUpperCase()">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="ncm">NCM</label>
-                                            <input class="form-control" type="text" name="ncm" id="ncm"
-                                                value="{{ $produto->ncm }}" required placeholder="Ncm...">
-                                        </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="precocusto">Preço Custo</label>
-                                            <input class="form-control" type="number" name="precocusto" id="precocusto"
-                                                value="{{ $produto->precocusto }}" required placeholder="Preço Custo...">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-5 col-xs-10">
-                                            <label for="precovenda">Preço de Venda</label>
-                                            <div class="row">
-                                                <input class="form-control" type="number" name="precovenda" id="precovenda"
-                                                    value="{{ $produto->precovenda }}" required
-                                                    placeholder="Preço Venda...">
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="empresa" id="empresa" disabled>
+                                                        <option>
+                                                            {{ $produto->fantasia }}
+                                                        </option>
+                                                    </select>
+                                                    <label>Empresa</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe uma empresa.
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-5 col-xs-10">
-                                            <label for="un">Unidade</label>
-                                            <select name="un" id="un" class="form-control" required>
-                                                <option value="un" @if ($produto->un == "un") selected @endif>UN</option>
-                                                <option value="cx" @if ($produto->un == "cx") selected @endif>CX</option>
-                                                <option value="kg" @if ($produto->un == "kg") selected @endif>KG</option>
-                                                <option value="l" @if ($produto->un == "l") selected @endif>L</option>
-                                                <option value="ml" @if ($produto->un == "ml") selected @endif>ML</option>
-                                                <option value="m" @if ($produto->un == "m") selected @endif>M</option>
-                                                <option value="cm" @if ($produto->un == "cm") selected @endif>CM</option>
-                                            </select>
+
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="categoria" id="categoria" required>
+                                                        <option value="{{ $produto->categoria_id }}">
+                                                            {{ $produto->descricao }}</option>
+                                                        @foreach ($categorias as $categoria)
+                                                            <option value="{{ $categoria->id }}">
+                                                                {{ $categoria->descricao }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <label>Categoria</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe uma categoria.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2 col-xs-2">
-                                            <label for="veic">Veículo?</label>
-                                            <br>
-                                            <input type="checkbox" disabled name="tpProd" id="tpProd"
-                                                @if ($produto->tpProd) checked @endif>
-                                                <input type="hidden" name="tpProd" id="tpProd" value="{{ $produto->tpProd ? 1 : 0 }}">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-3 col-8">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" name="codigo" id="codigo"
+                                                        value="{{ $produto->codigo }}"
+                                                        oninput="this.value = this.value.toUpperCase()">
+                                                    <label for="codigo">Código de Barras</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um código de barras.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-7 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" name="produto" id="produto"
+                                                        value="{{ $produto->produto }}" required placeholder="Produto..."
+                                                        oninput="this.value = this.value.toUpperCase()">
+                                                    <label for="produto">Produto</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um nome de produto.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" name="ncm"
+                                                        id="ncm" value="{{ $produto->ncm }}" required
+                                                        placeholder=" ">
+                                                    <label for="ncm">NCM</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um ncm.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="number" name="precocusto"
+                                                        id="precocusto" value="{{ $produto->precocusto }}" required
+                                                        placeholder=" ">
+                                                    <label for="precocusto">Preço Custo</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um preço de custo.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-5 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="number" name="precovenda"
+                                                        id="precovenda" value="{{ $produto->precovenda }}" required
+                                                        placeholder=" ">
+                                                    <label for="precovenda">Preço de Venda</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um preço de venda.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5 col-6">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select name="un" id="un" class="form-select" required>
+                                                        <option value="un"
+                                                            @if ($produto->un == 'un') selected @endif>UN
+                                                        </option>
+                                                        <option value="cx"
+                                                            @if ($produto->un == 'cx') selected @endif>CX
+                                                        </option>
+                                                        <option value="kg"
+                                                            @if ($produto->un == 'kg') selected @endif>KG
+                                                        </option>
+                                                        <option value="l"
+                                                            @if ($produto->un == 'l') selected @endif>L
+                                                        </option>
+                                                        <option value="ml"
+                                                            @if ($produto->un == 'ml') selected @endif>ML
+                                                        </option>
+                                                        <option value="m"
+                                                            @if ($produto->un == 'm') selected @endif>M
+                                                        </option>
+                                                        <option value="cm"
+                                                            @if ($produto->un == 'cm') selected @endif>CM
+                                                        </option>
+                                                    </select>
+                                                    <label for="un">Unidade</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe uma unidade.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2 col-6">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-check p-3">
+                                                    <input type="checkbox" disabled name="tpProd" id="tpProd"
+                                                        @if ($produto->tpProd) checked @endif>
+                                                    <input type="hidden" name="tpProd" id="tpProd"
+                                                        value="{{ $produto->tpProd ? 1 : 0 }}">
+                                                    <label class="form-check-label text-bold" for="veic">
+                                                        Veículo?
+                                                    </label>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Informe se é veículo.
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cfopinterno">CFOP Interno</label>
-                                            <select class="form-control" style="width: 100%" name="cfopinterno"
-                                                id="cfopinterno" required>
-                                                <option value="">--Selecione o CFOP Interno--</option>
-                                                @foreach ($cfops as $cfop)
-                                                    <option value="{{ $cfop->cfop }}"
-                                                        @if ($produto->cfop_interno == $cfop->cfop) selected @endif>
-                                                        {{ $cfop->cfop }} -
-                                                        {{ $cfop->natureza }}</option>
-                                                @endforeach
-                                            </select>
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="cfopinterno"
+                                                    id="cfopinterno" required>
+                                                    <option value="">Selecione o CFOP Interno</option>
+                                                    @foreach ($cfops as $cfop)
+                                                        <option value="{{ $cfop->cfop }}"
+                                                            @if ($produto->cfop_interno == $cfop->cfop) selected @endif>
+                                                            {{ $cfop->cfop }} -
+                                                            {{ $cfop->natureza }}</option>
+                                                    @endforeach
+                                                </select>
+                                                    <label for="cfopinterno">CFOP Interno</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um CFOP interno válido.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cfopexterno">CFOP Externo</label>
-                                            <select class="form-control" style="width: 100%" name="cfopexterno"
-                                                id="cfopexterno" required>
-                                                <option value="">--Selecione o CFOP Externo--</option>
-                                                @foreach ($cfops as $cfop)
-                                                    <option value="{{ $cfop->cfop }}"
-                                                        @if ($produto->cfop_externo == $cfop->cfop) selected @endif>
-                                                        {{ $cfop->cfop }} -
-                                                        {{ $cfop->natureza }}</option>
-                                                @endforeach
-                                            </select>
+
+                                        <div class="col-md-6 col-12">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-control" style="width: 100%" name="cfopexterno"
+                                                    id="cfopexterno" required>
+                                                    <option value="">Selecione o CFOP Externo</option>
+                                                    @foreach ($cfops as $cfop)
+                                                        <option value="{{ $cfop->cfop }}"
+                                                            @if ($produto->cfop_externo == $cfop->cfop) selected @endif>
+                                                            {{ $cfop->cfop }} -
+                                                            {{ $cfop->natureza }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <label for="cfopexterno">CFOP Externo</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um CFOP externo válido.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cst">CST</label>
                                             <select class="form-control" name="cst" id="cst" required>
                                                 <option value="">--Selecione o CST--</option>
-                                                <option value="00" @if ($produto->cst == '00') selected @endif>00
+                                                <option value="00" @if ($produto->cst == '00') selected @endif>
+                                                    00
                                                     - Tributação integral</option>
-                                                <option value="10" @if ($produto->cst == '10') selected @endif>10
+                                                <option value="10" @if ($produto->cst == '10') selected @endif>
+                                                    10
                                                     - Tributação com ICMS e acréscimo de ST</option>
-                                                <option value="20" @if ($produto->cst == '20') selected @endif>20
+                                                <option value="20" @if ($produto->cst == '20') selected @endif>
+                                                    20
                                                     - Tributação com ICMS e acréscimo de ST com
                                                     direito a crédito</option>
-                                                <option value="30" @if ($produto->cst == '30') selected @endif>30
+                                                <option value="30" @if ($produto->cst == '30') selected @endif>
+                                                    30
                                                     - Tributação simplificada (sem direito a crédito)
                                                 </option>
-                                                <option value="40" @if ($produto->cst == '40') selected @endif>40
+                                                <option value="40" @if ($produto->cst == '40') selected @endif>
+                                                    40
                                                     - Tributação simplificada com acréscimo de ST
                                                 </option>
-                                                <option value="41" @if ($produto->cst == '41') selected @endif>41
+                                                <option value="41" @if ($produto->cst == '41') selected @endif>
+                                                    41
                                                     - Tributação com ICMS e acréscimo de ST por
                                                     Substituição Tributária</option>
-                                                <option value="50" @if ($produto->cst == '50') selected @endif>50
+                                                <option value="50" @if ($produto->cst == '50') selected @endif>
+                                                    50
                                                     - Tributação com ICMS e acréscimo de ST por
                                                     Substituição Tributária com direito a crédito</option>
                                                 <option value="51" @if ($produto->cst == '51') selected @endif>
@@ -389,9 +507,8 @@
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cofins">COFINS</label>
                                             <div class="row">
-                                                    <input class="form-control" type="text" name="cofins"
-                                                        id="cofins" value="{{ $produto->cofins }}" required
-                                                        placeholder="Cofins...">
+                                                <input class="form-control" type="text" name="cofins" id="cofins"
+                                                    value="{{ $produto->cofins }}" required placeholder="Cofins...">
                                             </div>
                                         </div>
                                     </div>
@@ -399,8 +516,8 @@
 
                                         <div class="col-md-6 col-xs-10">
                                             <label for="icms">ICMS</label>
-                                            <input class="form-control" type="number" name="icms" id="icms" step="0.01"
-                                                value="{{ $produto->icms }}" required placeholder=" ">
+                                            <input class="form-control" type="number" name="icms" id="icms"
+                                                step="0.01" value="{{ $produto->icms }}" required placeholder=" ">
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cst_csosn">CST/CSOSN</label>
@@ -589,7 +706,8 @@
                                                     Motor</label>
                                                 <input type="text" class="form-control" id="nMotorVeic" required
                                                     name="nMotorVeic" value="{{ $produto->nMotorVeic }}"
-                                                    placeholder="Número do Motor..." oninput="this.value = this.value.toUpperCase()">
+                                                    placeholder="Número do Motor..."
+                                                    oninput="this.value = this.value.toUpperCase()">
                                             </div>
                                         </div>
 
@@ -818,9 +936,9 @@
                                 </div>
                             </div>
 
-                            <div class="row" style="text-align: center; margin-top: 2%;">
+                            <div class="row text-center mt-3">
                                 <div class="col">
-                                    <button class="btn btn-success form-control" type="submit">Salvar Produto</button>
+                                    <button class="btn btn-outline-success w-25" type="submit">Salvar</button>
                                 </div>
                             </div>
                         </form>
@@ -833,4 +951,33 @@
         </div>
 
     </div>
+@endsection
+
+@section('css')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+@endsection
+
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    </script>
+    <script>
+        (() => {
+            'use strict'
+
+            const forms = document.querySelectorAll('.needs-validation')
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
 @endsection

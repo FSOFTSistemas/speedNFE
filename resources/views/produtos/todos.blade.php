@@ -5,18 +5,18 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h5 class="m-0 text-dark">Produtos</h5>
+            <h3 class="m-0 text-dark">Produtos</h3>
         </div>
     </div>
 @stop
 
 @section('content')
 
-    <div class="row">
+    <div class="row mb-2">
         <div class="col">
-            <a class="btn btn-info text-light" style="margin-bottom: 2%" href="{{ route('categoria.index') }}">&nbsp;Categorias&nbsp;</a>
-            <a class="btn btn-primary" style="margin-bottom: 2%" href="/produto/cadastro">&nbsp;+ Produto&nbsp;</a>
-            <a class="btn btn-info text-light" style="margin-bottom: 2%"
+            <a class="btn btn-info text-light mb-1" href="{{ route('categoria.index') }}">&nbsp;Categorias&nbsp;</a>
+            <a class="btn btn-primary mb-1" href="/produto/cadastro">&nbsp;+ Produto&nbsp;</a>
+            <a class="btn btn-info text-light mb-1"
                 href="{{ route('entradas.index') }}">&nbsp;Importações&nbsp;</a>
         </div>
     </div>
@@ -85,18 +85,18 @@
                     <td>
                         <div class="row">
                             <div class="col">
-                                <a class="text-warning" title="Editar"
-                                    href="{{ route('editar_produto', ['id' => $produto->id]) }}"><i class="fa fa-edit"></i></a>
+                                <a class="text-teal" title="Editar"
+                                    href="{{ route('editar_produto', ['id' => $produto->id]) }}"><i class="far fa-edit"></i></a>
                             </div>
 
                             <div class="col">
                                 <a class="text-danger" title="Excluir" onclick="setaDadosModal({{ $produto->id }})"><i
-                                        data-toggle="modal" data-target=".bd-delete-modal-lg" class="fa fa-trash"></i></a>
+                                        data-toggle="modal" data-target=".bd-delete-modal-lg" class="far fa-trash-alt"></i></a>
                             </div>
 
                             <div class="col">
                                 <a class="text-primary" title="Visualizar" href="{{ route('ver_produto', [$produto->id]) }}"><i
-                                        class="fa fa-eye"></i></a>
+                                        class="far fa-eye"></i></a>
                             </div>
                         </div>
                     </td>

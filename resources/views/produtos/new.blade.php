@@ -52,7 +52,7 @@
                                             </select>
                                             <label>Empresa</label>
                                             <div class="invalid-feedback">
-                                                Informe uma tipo válida.
+                                                Informe um tipo válido.
                                             </div>
                                         </div>
                                     </div>
@@ -157,7 +157,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-5 col-xs-10">
+                            <div class="col-md-5 col-12">
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <input class="form-control" type="number" name="precovenda" step="0.01"
@@ -171,7 +171,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-5 col-xs-10">
+                            <div class="col-md-5 col-6">
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select name="un" id="un" class="form-select" required>
@@ -199,7 +199,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2 col-xs-2">
+                            <div class="col-md-2 col-6">
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-check p-3">
                                         <input type="checkbox" name="tpProd" id="tpProd" onclick="checkVeic(this)"
@@ -217,8 +217,9 @@
                     </div>
 
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
                         <div class="row">
-                            <div class="col-md-6 col-xs-10">
+                            <div class="col-md-6 col-12">
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="cfopinterno" id="cfopinterno" required>
@@ -238,7 +239,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-xs-10">
+                            <div class="col-md-6 col-12">
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="cfopexterno" id="cfopexterno" required>
@@ -624,6 +625,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="tpVeic" id="tpVeic">
+                                            <option value="">Selecione um Tipo de Veículo</option>
                                             <option value="02" @if (old('tpVeic') == '02') selected @endif>02
                                                 - CICLOMOTOR
                                             </option>
@@ -785,6 +787,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="combVeic" id="combVeic">
+                                            <option value="">Selecione um Combustível</option>
                                             <option value="1" @if (old('combVeic') == '1') selected @endif>
                                                 ÁLCOOL</option>
                                             <option value="2" @if (old('combVeic') == '2') selected @endif>
@@ -896,6 +899,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="cCorVeic" id="cCorVeic">
+                                            <option value="">Selecione um Código de Cor</option>
                                             <option value="01" @if (old('cCorVeic') == '01') selected @endif>01
                                                 - AMARELO
                                             </option>
@@ -983,6 +987,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="condVeic" id="condVeic">
+                                            <option value="">Selecione uma Condição</option>
                                             <option value="1" @if (old('condVeic') == '1') selected @endif>
                                                 ACABADO</option>
                                             <option value="2" @if (old('condVeic') == '2') selected @endif>
@@ -1005,6 +1010,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="espVeic" id="espVeic">
+                                            <option value="">Selecione uma Especificação</option>
                                             <option value="1" @if (old('espVeic') == '1') selected @endif>
                                                 PASSAGEIRO
                                             </option>
@@ -1032,6 +1038,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="vinVeic" id="vinVeic">
+                                            <option value="">Selecione o VIN</option>
                                             <option value="N" @if (old('vinVeic') == 'N') selected @endif>
                                                 NORMAL</option>
                                             <option value="R" @if (old('vinVeic') == 'R') selected @endif>
@@ -1064,6 +1071,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="restriVeic" id="restriVeic">
+                                            <option value="">Selecione uma Restrição</option>
                                             <option value="0" @if (old('restriVeic') == '0') selected @endif>
                                                 NÃO HÁ</option>
                                             <option value="1" @if (old('restriVeic') == '1') selected @endif>
@@ -1107,6 +1115,7 @@
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
                                         <select class="form-select" name="operVeic" id="operVeic">
+                                            <option value="">Selecione um Tipo de Operação</option>
                                             <option value="1" @if (old('operVeic') == '1') selected @endif>
                                                 VENDA
                                                 CONCERSSIONÁRIA</option>
