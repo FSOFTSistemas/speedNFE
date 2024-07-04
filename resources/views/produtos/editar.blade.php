@@ -399,8 +399,8 @@
 
                                         <div class="col-md-6 col-xs-10">
                                             <label for="icms">ICMS</label>
-                                            <input class="form-control" type="text" name="icms" id="icms"
-                                                value="{{ $produto->icms }}" required placeholder="Icms...">
+                                            <input class="form-control" type="number" name="icms" id="icms" step="0.01"
+                                                value="{{ $produto->icms }}" required placeholder=" ">
                                         </div>
                                         <div class="col-md-6 col-xs-10">
                                             <label for="cst_csosn">CST/CSOSN</label>

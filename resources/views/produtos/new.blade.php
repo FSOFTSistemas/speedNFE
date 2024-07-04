@@ -567,7 +567,7 @@
                             <div class="col-md-3 col-6">
                                 <div class="input-group has-validation mb-2">
                                     <div class="form-floating">
-                                        <input class="form-control" type="text" name="icms" id="icms"
+                                        <input class="form-control" type="number" name="icms" id="icms"
                                             value="{{ old('icms') ?? 20.5 }}" required placeholder="Icms...">
                                         <label for="icms">ICMS</label>
                                         <div class="invalid-feedback">
