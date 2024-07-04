@@ -106,9 +106,9 @@ class ClientesController extends Controller
                     $endereco->id
                 );
             } else {
-                return redirect()->route('index')->with('warning', 'Limite de clientes atingido');
+                return redirect()->route('cliente.index')->with('warning', 'Limite de clientes atingido');
             }
-            return redirect()->route('index')->with('success', 'Cliente cadastrado com sucesso');
+            return redirect()->route('cliente.index')->with('success', 'Cliente cadastrado com sucesso');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
@@ -126,7 +126,7 @@ class ClientesController extends Controller
                 'idCliente' => 'required'
             ]);
             $this->clienteServices->excluir($request->idCliente);
-            return redirect()->route('index')->with('success', 'Cliente excluído com sucesso');
+            return redirect()->route('cliente.index')->with('success', 'Cliente excluído com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
@@ -195,7 +195,7 @@ class ClientesController extends Controller
                 $request->cep,
                 $request->complemento
             );
-            return redirect()->route('index')->with('success', 'Cliente atualizado com sucesso');
+            return redirect()->route('cliente.index')->with('success', 'Cliente atualizado com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }

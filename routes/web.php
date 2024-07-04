@@ -72,8 +72,8 @@ Route::prefix('empresa')->group(function () {
 });
 
 //CLIENTE
-Route::get('/cliente', [ClientesController::class, 'show'])->name('index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
-Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::get('/cliente', [ClientesController::class, 'show'])->name('cliente.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->name('cliente.create')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 Route::get('/cliente/ver/{id}', [ClientesController::class, 'view'])->name('cliente.view')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
 Route::get('/cliente/edit/{id}', [ClientesController::class, 'editar'])->name('editar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);

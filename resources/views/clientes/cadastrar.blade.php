@@ -5,14 +5,14 @@
 @section('content_header')
     <div class="row" style="text-align: center">
         <div class="col">
-            <h3 class="m-0 text-dark">Cadastro de Clientes</h3>
+            <h3 class="m-0 text-dark">Cadastro de Cliente</h3>
         </div>
     </div>
 @stop
 
 @section('content')
     <div class="text-right mb-3">
-        <a class="btn btn-secondary" href="{{ route('index') }}">Voltar</a>
+        <a class="btn btn-secondary" href="{{ route('cliente.index') }}">Voltar</a>
     </div>
 
     <div class="content">
@@ -42,7 +42,7 @@
                                     aria-labelledby="home-tab">
 
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-4 col-8">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <select class="form-select" name="tipo" id="tipo" required>
@@ -62,7 +62,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-5 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input type="text" class="form-control" id="cpf_cnpj"
@@ -83,7 +83,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-7 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="nome" id="nome"
@@ -97,7 +97,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-5 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="apelido" id="apelido"
@@ -113,7 +113,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-3 col-6">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="limite"
@@ -127,7 +127,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-4 col-6">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="rg_ie"
@@ -143,7 +143,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-4 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input type="text" id="telefone" name="telefone"
@@ -158,7 +158,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-6 col-12">
                                             @if ($user->cargo == 'master')
                                                 <div class="input-group has-validation mb-2">
                                                     <div class="form-floating">
@@ -195,7 +195,7 @@
 
                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-4 col-7">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input placeholder="Cep..." class="form-control" type="text"
@@ -212,7 +212,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-xs-10">
+                                        <div class="col-md-4 col-5">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input placeholder="Código IBGE..." class="form-control"
@@ -228,7 +228,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-9 col-xs-10">
+                                        <div class="col-md-9 col-9">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="rua"
@@ -241,12 +241,12 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 col-xs-10">
+                                        <div class="col-md-3 col-3">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="numero"
                                                         id="numero" value="{{ old('numero') }}" placeholder="Nº...">
-                                                    <label for="numero">Número</label>
+                                                    <label for="numero">Nº</label>
                                                     <div class="invalid-feedback">
                                                         Informe um nº válido.
                                                     </div>
@@ -256,7 +256,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-4 col-xs-10">
+                                        <div class="col-md-5 col-8">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="bairro"
@@ -270,7 +270,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 col-xs-10">
+                                        <div class="col-md-5 col-8">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="cidade"
@@ -284,7 +284,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 col-xs-10">
+                                        <div class="col-md-2 col-4">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <select name="uf" id="uf" class="form-select">

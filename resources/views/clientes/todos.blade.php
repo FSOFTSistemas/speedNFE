@@ -12,7 +12,11 @@
 @stop
 
 @section('content')
-    <a class="btn btn-primary" style="margin-bottom: 2%" href='/cliente/cadastro'>&nbsp; + Cliente &nbsp;</a>
+    <div class="row mb-3">
+        <div class="col">
+            <a class="btn btn-primary" href="{{ route('cliente.create') }}">&nbsp; + Cliente &nbsp;</a>
+        </div>
+    </div>
 
     @component('components.dataTable', [
         'responsive' => [
@@ -36,7 +40,7 @@
         'searching' => true,
         'lengthChange' => true,
         'pageLength' => 10,
-        'ordering' => true
+        'ordering' => true,
     ])
         <thead class="table-primary">
             <tr>
@@ -62,17 +66,18 @@
                             <div class="row">
                                 <div class="col">
                                     <a title="Editar" href='{{ route('editar_cliente', ['id' => $cliente->id]) }}'
-                                        class='text-warning'><i class="fa fa-edit"></i></a>
+                                        class='text-teal'><i class="far fa-edit"></i></a>
                                 </div>
 
                                 <div class="col">
                                     <a title="Excluir" onclick="setaDadosModal({{ $cliente->id }})" class='text-danger'><i
-                                            class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
+                                            class="far fa-trash-alt" data-toggle="modal"
+                                            data-target=".bd-delete-modal-lg"></i></a>
                                 </div>
 
                                 <div class="col">
                                     <a title="Visualizar" href='{{ route('cliente.view', ['id' => $cliente->id]) }}'
-                                        class='text-primary'><i class="fa fa-eye"></i></a>
+                                        class='text-primary'><i class="far fa-eye"></i></a>
                                 </div>
                             </div>
                         </td>
@@ -114,7 +119,7 @@
                             </div>
 
                             <div class="text-center">
-                                <button type="submit" style="width: 50%;" class="btn btn-danger">EXCLUIR</button>
+                                <button type="submit" class="btn btn-outline-warning w-25">EXCLUIR</button>
                             </div>
                             <br>
                         </form>
@@ -130,9 +135,6 @@
         </div>
     </div>
 @endsection
-
-
-
 
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">
