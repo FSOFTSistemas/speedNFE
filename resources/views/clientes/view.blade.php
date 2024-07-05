@@ -72,10 +72,6 @@
                                                     Informe um cpf/cnpj válido.
                                                 </div>
                                             </div>
-                                            <div class="input-group-append">
-                                                <button id="cnpj_button" type="button" class="btn btn-dark"><i
-                                                        class="fa fa-search"></i></button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -185,10 +181,6 @@
                                                 <div class="invalid-feedback">
                                                     Informe um cep.
                                                 </div>
-                                            </div>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-dark" type="button" id="cep_button"><i
-                                                        class="fa fa-search"></i></button>
                                             </div>
                                         </div>
                                     </div>

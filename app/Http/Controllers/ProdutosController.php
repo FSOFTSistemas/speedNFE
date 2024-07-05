@@ -290,7 +290,8 @@ class ProdutosController extends Controller
     {
         try {
             $produto = $this->produtoServices->um($id);
-            return view('produtos.view', ['produto' => $produto]);
+            $cfops = $this->pedidoServices->cfopAll();
+            return view('produtos.view', ['produto' => $produto, 'cfops' => $cfops]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }

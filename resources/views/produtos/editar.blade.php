@@ -101,7 +101,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-7 col-12">
+                                        <div class="col-md-9 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="text" name="produto" id="produto"
@@ -128,6 +128,8 @@
                                                         Informe um ncm.
                                                     </div>
                                                 </div>
+                                                <button title="Buscar Ncm" class="btn btn-dark" type="button" data-toggle="modal"
+                                                data-target="#NcmModal"><i class="fa fa-search"></i></button>
                                             </div>
                                         </div>
 
@@ -220,16 +222,16 @@
                                         <div class="col-md-6 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <select class="form-select" name="cfopinterno"
-                                                    id="cfopinterno" required>
-                                                    <option value="">Selecione o CFOP Interno</option>
-                                                    @foreach ($cfops as $cfop)
-                                                        <option value="{{ $cfop->cfop }}"
-                                                            @if ($produto->cfop_interno == $cfop->cfop) selected @endif>
-                                                            {{ $cfop->cfop }} -
-                                                            {{ $cfop->natureza }}</option>
-                                                    @endforeach
-                                                </select>
+                                                    <select class="form-select" name="cfopinterno" id="cfopinterno"
+                                                        required>
+                                                        <option value="">Selecione o CFOP Interno</option>
+                                                        @foreach ($cfops as $cfop)
+                                                            <option value="{{ $cfop->cfop }}"
+                                                                @if ($produto->cfop_interno == $cfop->cfop) selected @endif>
+                                                                {{ $cfop->cfop }} -
+                                                                {{ $cfop->natureza }}</option>
+                                                        @endforeach
+                                                    </select>
                                                     <label for="cfopinterno">CFOP Interno</label>
                                                     <div class="invalid-feedback">
                                                         Informe um CFOP interno válido.
@@ -241,17 +243,17 @@
                                         <div class="col-md-6 col-12">
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
-                                                    <select class="form-control" style="width: 100%" name="cfopexterno"
-                                                    id="cfopexterno" required>
-                                                    <option value="">Selecione o CFOP Externo</option>
-                                                    @foreach ($cfops as $cfop)
-                                                        <option value="{{ $cfop->cfop }}"
-                                                            @if ($produto->cfop_externo == $cfop->cfop) selected @endif>
-                                                            {{ $cfop->cfop }} -
-                                                            {{ $cfop->natureza }}</option>
-                                                    @endforeach
-                                                </select>
-                                                <label for="cfopexterno">CFOP Externo</label>
+                                                    <select class="form-select" name="cfopexterno" id="cfopexterno"
+                                                        required>
+                                                        <option value="">Selecione o CFOP Externo</option>
+                                                        @foreach ($cfops as $cfop)
+                                                            <option value="{{ $cfop->cfop }}"
+                                                                @if ($produto->cfop_externo == $cfop->cfop) selected @endif>
+                                                                {{ $cfop->cfop }} -
+                                                                {{ $cfop->natureza }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <label for="cfopexterno">CFOP Externo</label>
                                                     <div class="invalid-feedback">
                                                         Informe um CFOP externo válido.
                                                     </div>
@@ -261,696 +263,1104 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cst">CST</label>
-                                            <select class="form-control" name="cst" id="cst" required>
-                                                <option value="">--Selecione o CST--</option>
-                                                <option value="00" @if ($produto->cst == '00') selected @endif>
-                                                    00
-                                                    - Tributação integral</option>
-                                                <option value="10" @if ($produto->cst == '10') selected @endif>
-                                                    10
-                                                    - Tributação com ICMS e acréscimo de ST</option>
-                                                <option value="20" @if ($produto->cst == '20') selected @endif>
-                                                    20
-                                                    - Tributação com ICMS e acréscimo de ST com
-                                                    direito a crédito</option>
-                                                <option value="30" @if ($produto->cst == '30') selected @endif>
-                                                    30
-                                                    - Tributação simplificada (sem direito a crédito)
-                                                </option>
-                                                <option value="40" @if ($produto->cst == '40') selected @endif>
-                                                    40
-                                                    - Tributação simplificada com acréscimo de ST
-                                                </option>
-                                                <option value="41" @if ($produto->cst == '41') selected @endif>
-                                                    41
-                                                    - Tributação com ICMS e acréscimo de ST por
-                                                    Substituição Tributária</option>
-                                                <option value="50" @if ($produto->cst == '50') selected @endif>
-                                                    50
-                                                    - Tributação com ICMS e acréscimo de ST por
-                                                    Substituição Tributária com direito a crédito</option>
-                                                <option value="51" @if ($produto->cst == '51') selected @endif>
-                                                    51 - Tributação com ICMS e acréscimo de ST por
-                                                    Substituição Tributária sem direito a crédito</option>
-                                                <option value="60" @if ($produto->cst == '60') selected @endif>
-                                                    60 - Tributação com ICMS e acréscimo de ST por
-                                                    Substituição Tributária com acréscimo</option>
-                                                <option value="70" @if ($produto->cst == '70') selected @endif>
-                                                    70 - Redução de base de cálculo e cobrança do ICMS
-                                                    por substituição tributária</option>
-                                                <option value="90" @if ($produto->cst == '90') selected @endif>
-                                                    90 - Outras operações</option>
-                                            </select>
+                                        <div class="col-md-6 col-10">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="cst" id="cst" required>
+                                                        <option value="00"
+                                                            @if ($produto->cst == '00') selected @endif>
+                                                            00
+                                                            - Tributação integral</option>
+                                                        <option value="10"
+                                                            @if ($produto->cst == '10') selected @endif>
+                                                            10
+                                                            - Tributação com ICMS e acréscimo de ST</option>
+                                                        <option value="20"
+                                                            @if ($produto->cst == '20') selected @endif>
+                                                            20
+                                                            - Tributação com ICMS e acréscimo de ST com
+                                                            direito a crédito</option>
+                                                        <option value="30"
+                                                            @if ($produto->cst == '30') selected @endif>
+                                                            30
+                                                            - Tributação simplificada (sem direito a crédito)
+                                                        </option>
+                                                        <option value="40"
+                                                            @if ($produto->cst == '40') selected @endif>
+                                                            40
+                                                            - Tributação simplificada com acréscimo de ST
+                                                        </option>
+                                                        <option value="41"
+                                                            @if ($produto->cst == '41') selected @endif>
+                                                            41
+                                                            - Tributação com ICMS e acréscimo de ST por
+                                                            Substituição Tributária</option>
+                                                        <option value="50"
+                                                            @if ($produto->cst == '50') selected @endif>
+                                                            50
+                                                            - Tributação com ICMS e acréscimo de ST por
+                                                            Substituição Tributária com direito a crédito</option>
+                                                        <option value="51"
+                                                            @if ($produto->cst == '51') selected @endif>
+                                                            51 - Tributação com ICMS e acréscimo de ST por
+                                                            Substituição Tributária sem direito a crédito</option>
+                                                        <option value="60"
+                                                            @if ($produto->cst == '60') selected @endif>
+                                                            60 - Tributação com ICMS e acréscimo de ST por
+                                                            Substituição Tributária com acréscimo</option>
+                                                        <option value="70"
+                                                            @if ($produto->cst == '70') selected @endif>
+                                                            70 - Redução de base de cálculo e cobrança do ICMS
+                                                            por substituição tributária</option>
+                                                        <option value="90"
+                                                            @if ($produto->cst == '90') selected @endif>
+                                                            90 - Outras operações</option>
+                                                    </select>
+                                                    <label for="cst">CST</label>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Informe o cst.
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cst_pis">CST/PIS</label>
-                                            <select class="form-control" name="cst_pis" id="cst_pis" required>
-                                                <option value="">--Selecione o CST/PIS--</option>
-                                                <option value="1" @if ($produto->cst_pis == '1') selected @endif>
-                                                    1 - Operação Tributável com Alíquota Básica</option>
-                                                <option value="2" @if ($produto->cst_pis == '2') selected @endif>
-                                                    2 - Operação Tributável com Alíquota Diferenciada
-                                                </option>
-                                                <option value="3" @if ($produto->cst_pis == '3') selected @endif>
-                                                    3 - Operação Tributável com Alíquota por Unidade de
-                                                    Medida de Produto</option>
-                                                <option value="4" @if ($produto->cst_pis == '4') selected @endif>
-                                                    4 - Operação Tributável Monofásica – Revenda a
-                                                    Alíquota Zero</option>
-                                                <option value="5" @if ($produto->cst_pis == '5') selected @endif>
-                                                    5 - Operação Tributável por Substituição Tributária
-                                                </option>
-                                                <option value="6" @if ($produto->cst_pis == '6') selected @endif>
-                                                    6 - Operação Tributável a Alíquota Zero</option>
-                                                <option value="7" @if ($produto->cst_pis == '7') selected @endif>
-                                                    7 - Operação Isenta da Contribuição</option>
-                                                <option value="8" @if ($produto->cst_pis == '8') selected @endif>
-                                                    8 - Operação sem Incidência da Contribuição</option>
-                                                <option value="9" @if ($produto->cst_pis == '9') selected @endif>
-                                                    9 - Operação com Suspensão da Contribuição</option>
-                                                <option value="49" @if ($produto->cst_pis == '49') selected @endif>
-                                                    49 - Outras Operações de Saída</option>
-                                                <option value="50" @if ($produto->cst_pis == '50') selected @endif>
-                                                    50 - Operação com Direito a Crédito – Vinculada
-                                                    Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                                <option value="51" @if ($produto->cst_pis == '51') selected @endif>
-                                                    51 - Operação com Direito a Crédito – Vinculada
-                                                    Exclusivamente a Receita Não-Tributada no Mercado Interno</option>
-                                                <option value="52" @if ($produto->cst_pis == '52') selected @endif>
-                                                    52 - Operação com Direito a Crédito – Vinculada
-                                                    Exclusivamente a Receita de Exportação</option>
-                                                <option value="53" @if ($produto->cst_pis == '53') selected @endif>
-                                                    53 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
-                                                <option value="54" @if ($produto->cst_pis == '54') selected @endif>
-                                                    54 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Tributadas no Mercado Interno e de Exportação</option>
-                                                <option value="55" @if ($produto->cst_pis == '55') selected @endif>
-                                                    55 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Não Tributadas no Mercado Interno e de Exportação</option>
-                                                <option value="56" @if ($produto->cst_pis == '56') selected @endif>
-                                                    56 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação
-                                                </option>
-                                                <option value="60" @if ($produto->cst_pis == '60') selected @endif>
-                                                    60 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                                <option value="61" @if ($produto->cst_pis == '61') selected @endif>
-                                                    61 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno
-                                                </option>
-                                                <option value="62" @if ($produto->cst_pis == '62') selected @endif>
-                                                    62 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada Exclusivamente a Receita de Exportação</option>
-                                                <option value="63" @if ($produto->cst_pis == '63') selected @endif>
-                                                    63 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno
-                                                </option>
-                                                <option value="64" @if ($produto->cst_pis == '64') selected @endif>
-                                                    64 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Tributadas no Mercado Interno e de Exportação
-                                                </option>
-                                                <option value="65" @if ($produto->cst_pis == '65') selected @endif>
-                                                    65 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Não-Tributadas no Mercado Interno and de Exportação
-                                                </option>
-                                                <option value="66" @if ($produto->cst_pis == '66') selected @endif>
-                                                    66 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno and
-                                                    de Exportação</option>
-                                                <option value="67" @if ($produto->cst_pis == '67') selected @endif>
-                                                    67 - Crédito Presumido – Outras Operações</option>
-                                                <option value="70" @if ($produto->cst_pis == '70') selected @endif>
-                                                    70 - Operação de Aquisição sem Direito a Crédito
-                                                </option>
-                                                <option value="71" @if ($produto->cst_pis == '71') selected @endif>
-                                                    71 - Operação de Aquisição com Isenção</option>
-                                                <option value="72" @if ($produto->cst_pis == '72') selected @endif>
-                                                    72 - Operação de Aquisição com Suspensão</option>
-                                                <option value="73" @if ($produto->cst_pis == '73') selected @endif>
-                                                    73 - Operação de Aquisição a Alíquota Zero</option>
-                                                <option value="74" @if ($produto->cst_pis == '74') selected @endif>
-                                                    74 - Operação de Aquisição sem Incidência da
-                                                    Contribuição</option>
-                                                <option value="75" @if ($produto->cst_pis == '75') selected @endif>
-                                                    75 - Operação de Aquisição por Substituição
-                                                    Tributária</option>
-                                                <option value="98" @if ($produto->cst_pis == '98') selected @endif>
-                                                    98 - Outras Operações de Entrada</option>
-                                                <option value="99" @if ($produto->cst_pis == '99') selected @endif>
-                                                    99 - Outras Operações</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cst_cofins">CST/COFINS</label>
-                                            <select class="form-control" name="cst_cofins" id="cst_cofins" required>
-                                                <option value="">--Selecione o CST/COFINS--</option>
-                                                <option value="1" @if ($produto->cst_cofins == '1') selected @endif>
-                                                    1 - Operação Tributável com Alíquota Básica</option>
-                                                <option value="2" @if ($produto->cst_cofins == '2') selected @endif>
-                                                    2 - Operação Tributável com Alíquota Diferenciada
-                                                </option>
-                                                <option value="3" @if ($produto->cst_cofins == '3') selected @endif>
-                                                    3 - Operação Tributável com Alíquota por Unidade de
-                                                    Medida de Produto</option>
-                                                <option value="4" @if ($produto->cst_cofins == '4') selected @endif>
-                                                    4 - Operação Tributável Monofásica – Revenda a
-                                                    Alíquota Zero</option>
-                                                <option value="5" @if ($produto->cst_cofins == '5') selected @endif>
-                                                    5 - Operação Tributável por Substituição Tributária
-                                                </option>
-                                                <option value="6" @if ($produto->cst_cofins == '6') selected @endif>
-                                                    6 - Operação Tributável a Alíquota Zero</option>
-                                                <option value="7" @if ($produto->cst_cofins == '7') selected @endif>
-                                                    7 - Operação Isenta da Contribuição</option>
-                                                <option value="8" @if ($produto->cst_cofins == '8') selected @endif>
-                                                    8 - Operação sem Incidência da Contribuição</option>
-                                                <option value="9" @if ($produto->cst_cofins == '9') selected @endif>
-                                                    9 - Operação com Suspensão da Contribuição</option>
-                                                <option value="49" @if ($produto->cst_cofins == '49') selected @endif>
-                                                    49 - Outras Operações de Saída</option>
-                                                <option value="50" @if ($produto->cst_cofins == '50') selected @endif>
-                                                    50 - Operação com Direito a Crédito – Vinculada
-                                                    Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                                <option value="51" @if ($produto->cst_cofins == '51') selected @endif>
-                                                    51 - Operação com Direito a Crédito – Vinculada
-                                                    Exclusivamente a Receita Não-Tributada no Mercado Interno</option>
-                                                <option value="52" @if ($produto->cst_cofins == '52') selected @endif>
-                                                    52 - Operação com Direito a Crédito – Vinculada
-                                                    Exclusivamente a Receita de Exportação</option>
-                                                <option value="53" @if ($produto->cst_cofins == '53') selected @endif>
-                                                    53 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
-                                                <option value="54" @if ($produto->cst_cofins == '54') selected @endif>
-                                                    54 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Tributadas no Mercado Interno e de Exportação</option>
-                                                <option value="55" @if ($produto->cst_cofins == '55') selected @endif>
-                                                    55 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Não Tributadas no Mercado Interno e de Exportação</option>
-                                                <option value="56" @if ($produto->cst_cofins == '56') selected @endif>
-                                                    56 - Operação com Direito a Crédito – Vinculada a
-                                                    Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação
-                                                </option>
-                                                <option value="60" @if ($produto->cst_cofins == '60') selected @endif>
-                                                    60 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                                <option value="61" @if ($produto->cst_cofins == '61') selected @endif>
-                                                    61 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno
-                                                </option>
-                                                <option value="62" @if ($produto->cst_cofins == '62') selected @endif>
-                                                    62 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada Exclusivamente a Receita de Exportação</option>
-                                                <option value="63" @if ($produto->cst_cofins == '63') selected @endif>
-                                                    63 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno
-                                                </option>
-                                                <option value="64" @if ($produto->cst_cofins == '64') selected @endif>
-                                                    64 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Tributadas no Mercado Interno e de Exportação
-                                                </option>
-                                                <option value="65" @if ($produto->cst_cofins == '65') selected @endif>
-                                                    65 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Não-Tributadas no Mercado Interno and de Exportação
-                                                </option>
-                                                <option value="66" @if ($produto->cst_cofins == '66') selected @endif>
-                                                    66 - Crédito Presumido – Operação de Aquisição
-                                                    Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno and
-                                                    de Exportação</option>
-                                                <option value="67" @if ($produto->cst_cofins == '67') selected @endif>
-                                                    67 - Crédito Presumido – Outras Operações</option>
-                                                <option value="70" @if ($produto->cst_cofins == '70') selected @endif>
-                                                    70 - Operação de Aquisição sem Direito a Crédito
-                                                </option>
-                                                <option value="71" @if ($produto->cst_cofins == '71') selected @endif>
-                                                    71 - Operação de Aquisição com Isenção</option>
-                                                <option value="72" @if ($produto->cst_cofins == '72') selected @endif>
-                                                    72 - Operação de Aquisição com Suspensão</option>
-                                                <option value="73" @if ($produto->cst_cofins == '73') selected @endif>
-                                                    73 - Operação de Aquisição a Alíquota Zero</option>
-                                                <option value="74" @if ($produto->cst_cofins == '74') selected @endif>
-                                                    74 - Operação de Aquisição sem Incidência da
-                                                    Contribuição</option>
-                                                <option value="75" @if ($produto->cst_cofins == '75') selected @endif>
-                                                    75 - Operação de Aquisição por Substituição
-                                                    Tributária</option>
-                                                <option value="98" @if ($produto->cst_cofins == '98') selected @endif>
-                                                    98 - Outras Operações de Entrada</option>
-                                                <option value="99" @if ($produto->cst_cofins == '99') selected @endif>
-                                                    99 - Outras Operações</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cofins">COFINS</label>
-                                            <div class="row">
-                                                <input class="form-control" type="text" name="cofins" id="cofins"
-                                                    value="{{ $produto->cofins }}" required placeholder="Cofins...">
+
+                                        <div class="col-md-6 col-10">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="cst_pis" id="cst_pis" required>
+                                                        <option value="">--Selecione o CST/PIS--</option>
+                                                        <option value="1"
+                                                            @if ($produto->cst_pis == '1') selected @endif>
+                                                            1 - Operação Tributável com Alíquota Básica</option>
+                                                        <option value="2"
+                                                            @if ($produto->cst_pis == '2') selected @endif>
+                                                            2 - Operação Tributável com Alíquota Diferenciada
+                                                        </option>
+                                                        <option value="3"
+                                                            @if ($produto->cst_pis == '3') selected @endif>
+                                                            3 - Operação Tributável com Alíquota por Unidade de
+                                                            Medida de Produto</option>
+                                                        <option value="4"
+                                                            @if ($produto->cst_pis == '4') selected @endif>
+                                                            4 - Operação Tributável Monofásica – Revenda a
+                                                            Alíquota Zero</option>
+                                                        <option value="5"
+                                                            @if ($produto->cst_pis == '5') selected @endif>
+                                                            5 - Operação Tributável por Substituição Tributária
+                                                        </option>
+                                                        <option value="6"
+                                                            @if ($produto->cst_pis == '6') selected @endif>
+                                                            6 - Operação Tributável a Alíquota Zero</option>
+                                                        <option value="7"
+                                                            @if ($produto->cst_pis == '7') selected @endif>
+                                                            7 - Operação Isenta da Contribuição</option>
+                                                        <option value="8"
+                                                            @if ($produto->cst_pis == '8') selected @endif>
+                                                            8 - Operação sem Incidência da Contribuição</option>
+                                                        <option value="9"
+                                                            @if ($produto->cst_pis == '9') selected @endif>
+                                                            9 - Operação com Suspensão da Contribuição</option>
+                                                        <option value="49"
+                                                            @if ($produto->cst_pis == '49') selected @endif>
+                                                            49 - Outras Operações de Saída</option>
+                                                        <option value="50"
+                                                            @if ($produto->cst_pis == '50') selected @endif>
+                                                            50 - Operação com Direito a Crédito – Vinculada
+                                                            Exclusivamente a Receita Tributada no Mercado Interno</option>
+                                                        <option value="51"
+                                                            @if ($produto->cst_pis == '51') selected @endif>
+                                                            51 - Operação com Direito a Crédito – Vinculada
+                                                            Exclusivamente a Receita Não-Tributada no Mercado Interno
+                                                        </option>
+                                                        <option value="52"
+                                                            @if ($produto->cst_pis == '52') selected @endif>
+                                                            52 - Operação com Direito a Crédito – Vinculada
+                                                            Exclusivamente a Receita de Exportação</option>
+                                                        <option value="53"
+                                                            @if ($produto->cst_pis == '53') selected @endif>
+                                                            53 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
+                                                        <option value="54"
+                                                            @if ($produto->cst_pis == '54') selected @endif>
+                                                            54 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Tributadas no Mercado Interno e de Exportação</option>
+                                                        <option value="55"
+                                                            @if ($produto->cst_pis == '55') selected @endif>
+                                                            55 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Não Tributadas no Mercado Interno e de Exportação
+                                                        </option>
+                                                        <option value="56"
+                                                            @if ($produto->cst_pis == '56') selected @endif>
+                                                            56 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Tributadas e Não-Tributadas no Mercado Interno e de
+                                                            Exportação
+                                                        </option>
+                                                        <option value="60"
+                                                            @if ($produto->cst_pis == '60') selected @endif>
+                                                            60 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada Exclusivamente a Receita Tributada no Mercado Interno
+                                                        </option>
+                                                        <option value="61"
+                                                            @if ($produto->cst_pis == '61') selected @endif>
+                                                            61 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada Exclusivamente a Receita Não-Tributada no Mercado
+                                                            Interno
+                                                        </option>
+                                                        <option value="62"
+                                                            @if ($produto->cst_pis == '62') selected @endif>
+                                                            62 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada Exclusivamente a Receita de Exportação</option>
+                                                        <option value="63"
+                                                            @if ($produto->cst_pis == '63') selected @endif>
+                                                            63 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Tributadas e Não-Tributadas no Mercado
+                                                            Interno
+                                                        </option>
+                                                        <option value="64"
+                                                            @if ($produto->cst_pis == '64') selected @endif>
+                                                            64 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Tributadas no Mercado Interno e de
+                                                            Exportação
+                                                        </option>
+                                                        <option value="65"
+                                                            @if ($produto->cst_pis == '65') selected @endif>
+                                                            65 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Não-Tributadas no Mercado Interno and de
+                                                            Exportação
+                                                        </option>
+                                                        <option value="66"
+                                                            @if ($produto->cst_pis == '66') selected @endif>
+                                                            66 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Tributadas e Não-Tributadas no Mercado
+                                                            Interno and
+                                                            de Exportação</option>
+                                                        <option value="67"
+                                                            @if ($produto->cst_pis == '67') selected @endif>
+                                                            67 - Crédito Presumido – Outras Operações</option>
+                                                        <option value="70"
+                                                            @if ($produto->cst_pis == '70') selected @endif>
+                                                            70 - Operação de Aquisição sem Direito a Crédito
+                                                        </option>
+                                                        <option value="71"
+                                                            @if ($produto->cst_pis == '71') selected @endif>
+                                                            71 - Operação de Aquisição com Isenção</option>
+                                                        <option value="72"
+                                                            @if ($produto->cst_pis == '72') selected @endif>
+                                                            72 - Operação de Aquisição com Suspensão</option>
+                                                        <option value="73"
+                                                            @if ($produto->cst_pis == '73') selected @endif>
+                                                            73 - Operação de Aquisição a Alíquota Zero</option>
+                                                        <option value="74"
+                                                            @if ($produto->cst_pis == '74') selected @endif>
+                                                            74 - Operação de Aquisição sem Incidência da
+                                                            Contribuição</option>
+                                                        <option value="75"
+                                                            @if ($produto->cst_pis == '75') selected @endif>
+                                                            75 - Operação de Aquisição por Substituição
+                                                            Tributária</option>
+                                                        <option value="98"
+                                                            @if ($produto->cst_pis == '98') selected @endif>
+                                                            98 - Outras Operações de Entrada</option>
+                                                        <option value="99"
+                                                            @if ($produto->cst_pis == '99') selected @endif>
+                                                            99 - Outras Operações</option>
+                                                    </select>
+                                                    <label for="cst_pis">CST/PIS</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um cst/pis.
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
 
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="icms">ICMS</label>
-                                            <input class="form-control" type="number" name="icms" id="icms"
-                                                step="0.01" value="{{ $produto->icms }}" required placeholder=" ">
+                                    <div class="row">
+                                        <div class="col-md-6 col-10">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="cst_cofins" id="cst_cofins"
+                                                        required>
+                                                        <option value="">--Selecione o CST/COFINS--</option>
+                                                        <option value="1"
+                                                            @if ($produto->cst_cofins == '1') selected @endif>
+                                                            1 - Operação Tributável com Alíquota Básica</option>
+                                                        <option value="2"
+                                                            @if ($produto->cst_cofins == '2') selected @endif>
+                                                            2 - Operação Tributável com Alíquota Diferenciada
+                                                        </option>
+                                                        <option value="3"
+                                                            @if ($produto->cst_cofins == '3') selected @endif>
+                                                            3 - Operação Tributável com Alíquota por Unidade de
+                                                            Medida de Produto</option>
+                                                        <option value="4"
+                                                            @if ($produto->cst_cofins == '4') selected @endif>
+                                                            4 - Operação Tributável Monofásica – Revenda a
+                                                            Alíquota Zero</option>
+                                                        <option value="5"
+                                                            @if ($produto->cst_cofins == '5') selected @endif>
+                                                            5 - Operação Tributável por Substituição Tributária
+                                                        </option>
+                                                        <option value="6"
+                                                            @if ($produto->cst_cofins == '6') selected @endif>
+                                                            6 - Operação Tributável a Alíquota Zero</option>
+                                                        <option value="7"
+                                                            @if ($produto->cst_cofins == '7') selected @endif>
+                                                            7 - Operação Isenta da Contribuição</option>
+                                                        <option value="8"
+                                                            @if ($produto->cst_cofins == '8') selected @endif>
+                                                            8 - Operação sem Incidência da Contribuição</option>
+                                                        <option value="9"
+                                                            @if ($produto->cst_cofins == '9') selected @endif>
+                                                            9 - Operação com Suspensão da Contribuição</option>
+                                                        <option value="49"
+                                                            @if ($produto->cst_cofins == '49') selected @endif>
+                                                            49 - Outras Operações de Saída</option>
+                                                        <option value="50"
+                                                            @if ($produto->cst_cofins == '50') selected @endif>
+                                                            50 - Operação com Direito a Crédito – Vinculada
+                                                            Exclusivamente a Receita Tributada no Mercado Interno</option>
+                                                        <option value="51"
+                                                            @if ($produto->cst_cofins == '51') selected @endif>
+                                                            51 - Operação com Direito a Crédito – Vinculada
+                                                            Exclusivamente a Receita Não-Tributada no Mercado Interno
+                                                        </option>
+                                                        <option value="52"
+                                                            @if ($produto->cst_cofins == '52') selected @endif>
+                                                            52 - Operação com Direito a Crédito – Vinculada
+                                                            Exclusivamente a Receita de Exportação</option>
+                                                        <option value="53"
+                                                            @if ($produto->cst_cofins == '53') selected @endif>
+                                                            53 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
+                                                        <option value="54"
+                                                            @if ($produto->cst_cofins == '54') selected @endif>
+                                                            54 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Tributadas no Mercado Interno e de Exportação</option>
+                                                        <option value="55"
+                                                            @if ($produto->cst_cofins == '55') selected @endif>
+                                                            55 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Não Tributadas no Mercado Interno e de Exportação
+                                                        </option>
+                                                        <option value="56"
+                                                            @if ($produto->cst_cofins == '56') selected @endif>
+                                                            56 - Operação com Direito a Crédito – Vinculada a
+                                                            Receitas Tributadas e Não-Tributadas no Mercado Interno e de
+                                                            Exportação
+                                                        </option>
+                                                        <option value="60"
+                                                            @if ($produto->cst_cofins == '60') selected @endif>
+                                                            60 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada Exclusivamente a Receita Tributada no Mercado Interno
+                                                        </option>
+                                                        <option value="61"
+                                                            @if ($produto->cst_cofins == '61') selected @endif>
+                                                            61 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada Exclusivamente a Receita Não-Tributada no Mercado
+                                                            Interno
+                                                        </option>
+                                                        <option value="62"
+                                                            @if ($produto->cst_cofins == '62') selected @endif>
+                                                            62 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada Exclusivamente a Receita de Exportação</option>
+                                                        <option value="63"
+                                                            @if ($produto->cst_cofins == '63') selected @endif>
+                                                            63 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Tributadas e Não-Tributadas no Mercado
+                                                            Interno
+                                                        </option>
+                                                        <option value="64"
+                                                            @if ($produto->cst_cofins == '64') selected @endif>
+                                                            64 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Tributadas no Mercado Interno e de
+                                                            Exportação
+                                                        </option>
+                                                        <option value="65"
+                                                            @if ($produto->cst_cofins == '65') selected @endif>
+                                                            65 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Não-Tributadas no Mercado Interno and de
+                                                            Exportação
+                                                        </option>
+                                                        <option value="66"
+                                                            @if ($produto->cst_cofins == '66') selected @endif>
+                                                            66 - Crédito Presumido – Operação de Aquisição
+                                                            Vinculada a Receitas Tributadas e Não-Tributadas no Mercado
+                                                            Interno and
+                                                            de Exportação</option>
+                                                        <option value="67"
+                                                            @if ($produto->cst_cofins == '67') selected @endif>
+                                                            67 - Crédito Presumido – Outras Operações</option>
+                                                        <option value="70"
+                                                            @if ($produto->cst_cofins == '70') selected @endif>
+                                                            70 - Operação de Aquisição sem Direito a Crédito
+                                                        </option>
+                                                        <option value="71"
+                                                            @if ($produto->cst_cofins == '71') selected @endif>
+                                                            71 - Operação de Aquisição com Isenção</option>
+                                                        <option value="72"
+                                                            @if ($produto->cst_cofins == '72') selected @endif>
+                                                            72 - Operação de Aquisição com Suspensão</option>
+                                                        <option value="73"
+                                                            @if ($produto->cst_cofins == '73') selected @endif>
+                                                            73 - Operação de Aquisição a Alíquota Zero</option>
+                                                        <option value="74"
+                                                            @if ($produto->cst_cofins == '74') selected @endif>
+                                                            74 - Operação de Aquisição sem Incidência da
+                                                            Contribuição</option>
+                                                        <option value="75"
+                                                            @if ($produto->cst_cofins == '75') selected @endif>
+                                                            75 - Operação de Aquisição por Substituição
+                                                            Tributária</option>
+                                                        <option value="98"
+                                                            @if ($produto->cst_cofins == '98') selected @endif>
+                                                            98 - Outras Operações de Entrada</option>
+                                                        <option value="99"
+                                                            @if ($produto->cst_cofins == '99') selected @endif>
+                                                            99 - Outras Operações</option>
+                                                    </select>
+                                                    <label for="cst_cofins">CST/COFINS</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um cst/cofins.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="cst_csosn">CST/CSOSN</label>
-                                            <select class="form-control" name="cst_csosn" id="cst_csosn" required>
-                                                <option value="">--Selecione o CST/CSOSN--</option>
-                                                <option value="101" @if ($produto->cst_csosn == '101') selected @endif>
-                                                    101 - Tributada pelo Simples Nacional com permissão
-                                                    de crédito</option>
-                                                <option value="102" @if ($produto->cst_csosn == '102') selected @endif>
-                                                    102 - Tributada pelo Simples Nacional sem permissão
-                                                    de crédito</option>
-                                                <option value="103" @if ($produto->cst_csosn == '103') selected @endif>
-                                                    103 - Isenção do ICMS no Simples Nacional para faixa
-                                                    de receita bruta</option>
-                                                <option value="201" @if ($produto->cst_csosn == '201') selected @endif>
-                                                    201 - Tributada pelo Simples Nacional com permissão
-                                                    de crédito e com cobrança do ICMS por substituição tributária</option>
-                                                <option value="202" @if ($produto->cst_csosn == '202') selected @endif>
-                                                    202 - Tributada pelo Simples Nacional sem permissão
-                                                    de crédito e com cobrança do ICMS por substituição tributária</option>
-                                                <option value="203" @if ($produto->cst_csosn == '203') selected @endif>
-                                                    203 - Isenção do ICMS no Simples Nacional para faixa
-                                                    de receita bruta e com cobrança do ICMS por substituição tributária
-                                                </option>
-                                                <option value="300" @if ($produto->cst_csosn == '300') selected @endif>
-                                                    300 - Imune</option>
-                                                <option value="400" @if ($produto->cst_csosn == '400') selected @endif>
-                                                    400 - Não tributada pelo Simples Nacional</option>
-                                                <option value="500" @if ($produto->cst_csosn == '500') selected @endif>
-                                                    500 - ICMS cobrado anteriormente por substituição
-                                                    tributária (substituído) ou por antecipação</option>
-                                                <option value="900" @if ($produto->cst_csosn == '900') selected @endif>
-                                                    900 - Outros</option>
-                                            </select>
+
+                                        <div class="col-md-6 col-10">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <select class="form-select" name="cst_csosn" id="cst_csosn" required>
+                                                        <option value="">--Selecione o CST/CSOSN--</option>
+                                                        <option value="101"
+                                                            @if ($produto->cst_csosn == '101') selected @endif>
+                                                            101 - Tributada pelo Simples Nacional com permissão
+                                                            de crédito</option>
+                                                        <option value="102"
+                                                            @if ($produto->cst_csosn == '102') selected @endif>
+                                                            102 - Tributada pelo Simples Nacional sem permissão
+                                                            de crédito</option>
+                                                        <option value="103"
+                                                            @if ($produto->cst_csosn == '103') selected @endif>
+                                                            103 - Isenção do ICMS no Simples Nacional para faixa
+                                                            de receita bruta</option>
+                                                        <option value="201"
+                                                            @if ($produto->cst_csosn == '201') selected @endif>
+                                                            201 - Tributada pelo Simples Nacional com permissão
+                                                            de crédito e com cobrança do ICMS por substituição tributária
+                                                        </option>
+                                                        <option value="202"
+                                                            @if ($produto->cst_csosn == '202') selected @endif>
+                                                            202 - Tributada pelo Simples Nacional sem permissão
+                                                            de crédito e com cobrança do ICMS por substituição tributária
+                                                        </option>
+                                                        <option value="203"
+                                                            @if ($produto->cst_csosn == '203') selected @endif>
+                                                            203 - Isenção do ICMS no Simples Nacional para faixa
+                                                            de receita bruta e com cobrança do ICMS por substituição
+                                                            tributária
+                                                        </option>
+                                                        <option value="300"
+                                                            @if ($produto->cst_csosn == '300') selected @endif>
+                                                            300 - Imune</option>
+                                                        <option value="400"
+                                                            @if ($produto->cst_csosn == '400') selected @endif>
+                                                            400 - Não tributada pelo Simples Nacional</option>
+                                                        <option value="500"
+                                                            @if ($produto->cst_csosn == '500') selected @endif>
+                                                            500 - ICMS cobrado anteriormente por substituição
+                                                            tributária (substituído) ou por antecipação</option>
+                                                        <option value="900"
+                                                            @if ($produto->cst_csosn == '900') selected @endif>
+                                                            900 - Outros</option>
+                                                    </select>
+                                                    <label for="cst_csosn">CST/CSOSN</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um icms.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row">
 
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="pis">PIS</label>
-                                            <input class="form-control" type="text" name="pis" id="pis"
-                                                value="{{ $produto->pis }}" required placeholder="Pis...">
+                                    <div class="row">
+                                        <div class="col-md-3 col-6">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="number" name="icms"
+                                                        id="icms" step="0.01" value="{{ $produto->icms }}"
+                                                        required placeholder=" ">
+                                                    <label for="icms">ICMS</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um icms.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6 col-xs-10">
-                                            <label for="ipi">IPI</label>
-                                            <input type="text" class="form-control" name="ipi" id="ipi"
-                                                value="{{ $produto->ipi }}" required placeholder="Ipi...">
+
+                                        <div class="col-md-3 col-6">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" name="cofins"
+                                                        id="cofins" value="{{ $produto->cofins }}" required
+                                                        placeholder="Cofins...">
+                                                    <label for="cofins">COFINS</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um confins.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 col-6">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" name="pis"
+                                                        id="pis" value="{{ $produto->pis }}" required
+                                                        placeholder=" ">
+                                                    <label for="pis">PIS</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um pis.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 col-6">
+                                            <div class="input-group has-validation mb-2">
+                                                <div class="form-floating">
+                                                    <input type="text" class="form-control" name="ipi"
+                                                        id="ipi" value="{{ $produto->ipi }}" required
+                                                        placeholder=" ">
+                                                    <label for="ipi">IPI</label>
+                                                    <div class="invalid-feedback">
+                                                        Informe um pis.
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
                                     @if ($produto->tpProd)
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="tpVeic" class="col-sm-6 col-form-label">Tipo de
-                                                    Veículo</label>
-                                                <select class="form-control" name="tpVeic" id="tpVeic" required>
-                                                    <option value="02"
-                                                        {{ $produto->tpVeic == '02' ? 'selected' : '' }}>
-                                                        CICLOMOTOR</option>
-                                                    <option value="03"
-                                                        {{ $produto->tpVeic == '03' ? 'selected' : '' }}>
-                                                        MOTONETA</option>
-                                                    <option value="04"
-                                                        {{ $produto->tpVeic == '04' ? 'selected' : '' }}>
-                                                        MOTOCICLO</option>
-                                                    <option value="05"
-                                                        {{ $produto->tpVeic == '05' ? 'selected' : '' }}>
-                                                        TRICICLO</option>
-                                                    <option value="06"
-                                                        {{ $produto->tpVeic == '06' ? 'selected' : '' }}>
-                                                        AUTOMÓVEL</option>
-                                                    <option value="07"
-                                                        {{ $produto->tpVeic == '07' ? 'selected' : '' }}>
-                                                        MICROÔNIBUS</option>
-                                                    <option value="08"
-                                                        {{ $produto->tpVeic == '08' ? 'selected' : '' }}>
-                                                        ÔNIBUS</option>
-                                                    <option value="10"
-                                                        {{ $produto->tpVeic == '10' ? 'selected' : '' }}>
-                                                        REBOQUE</option>
-                                                    <option value="11"
-                                                        {{ $produto->tpVeic == '11' ? 'selected' : '' }}>
-                                                        SEMIREBOQUE</option>
-                                                    <option value="13"
-                                                        {{ $produto->tpVeic == '13' ? 'selected' : '' }}>
-                                                        CAMINHONETA</option>
-                                                    <option value="14"
-                                                        {{ $produto->tpVeic == '14' ? 'selected' : '' }}>
-                                                        CAMINHÃO</option>
-                                                    <option value="17"
-                                                        {{ $produto->tpVeic == '17' ? 'selected' : '' }}>
-                                                        C.TRATOR</option>
-                                                    <option value="22"
-                                                        {{ $produto->tpVeic == '22' ? 'selected' : '' }}>
-                                                        ESP/ÔNIBUS</option>
-                                                    <option value="23"
-                                                        {{ $produto->tpVeic == '23' ? 'selected' : '' }}>
-                                                        MISTO/CAM</option>
-                                                    <option value="24"
-                                                        {{ $produto->tpVeic == '24' ? 'selected' : '' }}>
-                                                        CARGA/CAM</option>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-4 col-12">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="tpVeic" id="tpVeic"
+                                                            required>
+                                                            <option value="02"
+                                                                {{ $produto->tpVeic == '02' ? 'selected' : '' }}>
+                                                                CICLOMOTOR</option>
+                                                            <option value="03"
+                                                                {{ $produto->tpVeic == '03' ? 'selected' : '' }}>
+                                                                MOTONETA</option>
+                                                            <option value="04"
+                                                                {{ $produto->tpVeic == '04' ? 'selected' : '' }}>
+                                                                MOTOCICLO</option>
+                                                            <option value="05"
+                                                                {{ $produto->tpVeic == '05' ? 'selected' : '' }}>
+                                                                TRICICLO</option>
+                                                            <option value="06"
+                                                                {{ $produto->tpVeic == '06' ? 'selected' : '' }}>
+                                                                AUTOMÓVEL</option>
+                                                            <option value="07"
+                                                                {{ $produto->tpVeic == '07' ? 'selected' : '' }}>
+                                                                MICROÔNIBUS</option>
+                                                            <option value="08"
+                                                                {{ $produto->tpVeic == '08' ? 'selected' : '' }}>
+                                                                ÔNIBUS</option>
+                                                            <option value="10"
+                                                                {{ $produto->tpVeic == '10' ? 'selected' : '' }}>
+                                                                REBOQUE</option>
+                                                            <option value="11"
+                                                                {{ $produto->tpVeic == '11' ? 'selected' : '' }}>
+                                                                SEMIREBOQUE</option>
+                                                            <option value="13"
+                                                                {{ $produto->tpVeic == '13' ? 'selected' : '' }}>
+                                                                CAMINHONETA</option>
+                                                            <option value="14"
+                                                                {{ $produto->tpVeic == '14' ? 'selected' : '' }}>
+                                                                CAMINHÃO</option>
+                                                            <option value="17"
+                                                                {{ $produto->tpVeic == '17' ? 'selected' : '' }}>
+                                                                C.TRATOR</option>
+                                                            <option value="22"
+                                                                {{ $produto->tpVeic == '22' ? 'selected' : '' }}>
+                                                                ESP/ÔNIBUS</option>
+                                                            <option value="23"
+                                                                {{ $produto->tpVeic == '23' ? 'selected' : '' }}>
+                                                                MISTO/CAM</option>
+                                                            <option value="24"
+                                                                {{ $produto->tpVeic == '24' ? 'selected' : '' }}>
+                                                                CARGA/CAM</option>
+                                                        </select>
+                                                        <label for="tpVeic">Tp Veículo</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um tipo de veículo válido.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-8">
-                                                <label for="chassiVeic" class="col-sm-2 col-form-label">Chassi</label>
-                                                <input type="text" class="form-control" id="chassiVeic" required
-                                                    name="chassiVeic" oninput="this.value = this.value.toUpperCase()"
-                                                    value="{{ $produto->chassiVeic }}" placeholder="Chassi...">
+
+                                            <div class="col-md-8 col-12">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="chassiVeic"
+                                                            required name="chassiVeic"
+                                                            oninput="this.value = this.value.toUpperCase()"
+                                                            value="{{ $produto->chassiVeic }}" placeholder="Chassi...">
+                                                        <label for="chassiVeic">Chassi</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um chassi.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="renavanVeic" class="col-sm-4 col-form-label">Renavan</label>
-                                                <input type="text" class="form-control" id="renavanVeic" required
-                                                    name="renavanVeic" value="{{ $produto->renavanVeic }}"
-                                                    placeholder="Renavan...">
+                                        <div class="row">
+                                            <div class="col-md-4 col-12">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="renavanVeic"
+                                                            required name="renavanVeic"
+                                                            value="{{ $produto->renavanVeic }}" placeholder=" ">
+                                                        <label for="renavanVeic">Renavan</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um renavan.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="anoFabVeic" class="col-sm-6 col-form-label">Ano de
-                                                    Fabricação</label>
-                                                <input type="number" class="form-control" id="anoFabVeic" required
-                                                    name="anoFabVeic" min="1950" max="{{ date('Y') }}"
-                                                    value="{{ $produto->anoFabVeic }}"
-                                                    placeholder="Ano de Fabricação...">
+
+                                            <div class="col-md-4 col-6">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" class="form-control" id="anoFabVeic"
+                                                            required name="anoFabVeic" min="1950"
+                                                            max="{{ date('Y') }}" value="{{ $produto->anoFabVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="anoFabVeic">Ano de
+                                                            Fabricação</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um ano de fabricação.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="anoModVeic" class="col-sm-6 col-form-label">Ano de
-                                                    Modelo</label>
-                                                <input type="number" class="form-control" id="anoModVeic" required
-                                                    name="anoModVeic" min="1950" max="{{ date('Y') + 1 }}"
-                                                    value="{{ $produto->anoModVeic }}" placeholder="Ano de Modelo...">
+
+                                            <div class="col-md-4 col-6">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" class="form-control" id="anoModVeic"
+                                                            required name="anoModVeic" min="1950"
+                                                            max="{{ date('Y') + 1 }}" value="{{ $produto->anoModVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="anoModVeic">Ano de
+                                                            Modelo</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um ano de modelo.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="pesoLVeic" class="col-sm-4 col-form-label">Peso
-                                                    Líquido</label>
-                                                <input type="number" class="form-control" step="0.01" id="pesoLVeic"
-                                                    required name="pesoLVeic" value="{{ $produto->pesoLVeic }}"
-                                                    placeholder="Peso Líquido...">
+                                        <div class="row">
+                                            <div class="col-md-4 col-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" class="form-control" step="0.01"
+                                                            id="pesoLVeic" required name="pesoLVeic"
+                                                            value="{{ $produto->pesoLVeic }}" placeholder=" ">
+                                                        <label for="pesoLVeic">Peso
+                                                            Líqui.</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um peso líquido.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="pesoBVeic" class="col-sm-4 col-form-label">Peso Bruto</label>
-                                                <input type="number" class="form-control" id="pesoBVeic" required
-                                                    name="pesoBVeic" value="{{ $produto->pesoBVeic }}"
-                                                    placeholder="Peso Bruto...">
+
+                                            <div class="col-md-4 col-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" class="form-control" id="pesoBVeic"
+                                                            required name="pesoBVeic" value="{{ $produto->pesoBVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="pesoBVeic">Peso Bruto</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um peso bruto.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <label for="distVeic" class="col-sm-4 col-form-label">Distância</label>
-                                                <input type="text" class="form-control" id="distVeic" required
-                                                    name="distVeic" value="{{ $produto->distVeic }}"
-                                                    placeholder="Distância...">
+
+                                            <div class="col-md-4 col-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="distVeic"
+                                                            required name="distVeic" value="{{ $produto->distVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="distVeic">Distância</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma distância.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div class="form-group row">
+                                        <div class="row">
+                                            <div class="col-md-5 col-12">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="combVeic" id="combVeic"
+                                                            required>
+                                                            <option value="1"
+                                                                {{ $produto->combVeic == '1' ? 'selected' : '' }}>
+                                                                ÁLCOOL</option>
+                                                            <option value="2"
+                                                                {{ $produto->combVeic == '2' ? 'selected' : '' }}>
+                                                                GASOLINA</option>
+                                                            <option value="3"
+                                                                {{ $produto->combVeic == '3' ? 'selected' : '' }}>
+                                                                DIESEL</option>
+                                                            <option value="16"
+                                                                {{ $produto->combVeic == '16' ? 'selected' : '' }}>
+                                                                ÁLCOOL/GASOLINA</option>
+                                                            <option value="17"
+                                                                {{ $produto->combVeic == '17' ? 'selected' : '' }}>
+                                                                GASOLINA/ÁLCOOL/GNV</option>
+                                                            <option value="18"
+                                                                {{ $produto->combVeic == '18' ? 'selected' : '' }}>
+                                                                GASOLINA/ELÉTRICO</option>
+                                                        </select>
+                                                        <label for="combVeic">Combustível</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um tipo de combustível.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-7 col-12">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="nMotorVeic"
+                                                            required name="nMotorVeic" value="{{ $produto->nMotorVeic }}"
+                                                            placeholder=" "
+                                                            oninput="this.value = this.value.toUpperCase()">
+                                                        <label for="nMotorVeic">Nº do
+                                                            Motor</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um nº de motor.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" step="0.01" class="form-control"
+                                                            id="cvVeic" required name="cvVeic"
+                                                            value="{{ $produto->cvVeic }}" placeholder=" ">
+                                                        <label for="cvVeic">Potência</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma potência.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" step="0.01" class="form-control"
+                                                            id="cm3Veic" required name="cm3Veic"
+                                                            value="{{ $produto->cm3Veic }}" placeholder=" ">
+                                                        <label for="cm3Veic">Cilindradas</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma cilindrada.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="serieVeic"
+                                                            required name="serieVeic" value="{{ $produto->serieVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="serieVeic">Série</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma série.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="tpPVeic"
+                                                            required name="tpPVeic" value="{{ $produto->tpPVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="tpPVeic">Tipo de
+                                                            Pintura</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um tipo de pintura.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="corVeic"
+                                                            required name="corVeic" value="{{ $produto->corVeic }}"
+                                                            oninput="this.value = this.value.toUpperCase()"
+                                                            placeholder=" ">
+                                                        <label for="corVeic">Cor</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma cor.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="cCorVeic" id="cCorVeic"
+                                                            required>
+                                                            <option value="01"
+                                                                {{ $produto->cCorVeic == '01' ? 'selected' : '' }}>
+                                                                AMARELO</option>
+                                                            <option value="02"
+                                                                {{ $produto->cCorVeic == '02' ? 'selected' : '' }}>
+                                                                AZUL</option>
+                                                            <option value="03"
+                                                                {{ $produto->cCorVeic == '03' ? 'selected' : '' }}>
+                                                                BEGE</option>
+                                                            <option value="04"
+                                                                {{ $produto->cCorVeic == '04' ? 'selected' : '' }}>
+                                                                BRANCA</option>
+                                                            <option value="05"
+                                                                {{ $produto->cCorVeic == '05' ? 'selected' : '' }}>
+                                                                CINZA</option>
+                                                            <option value="06"
+                                                                {{ $produto->cCorVeic == '06' ? 'selected' : '' }}>
+                                                                DOURADA</option>
+                                                            <option value="07"
+                                                                {{ $produto->cCorVeic == '07' ? 'selected' : '' }}>
+                                                                GRENAR</option>
+                                                            <option value="08"
+                                                                {{ $produto->cCorVeic == '08' ? 'selected' : '' }}>
+                                                                LARANJA</option>
+                                                            <option value="09"
+                                                                {{ $produto->cCorVeic == '09' ? 'selected' : '' }}>
+                                                                MARROM</option>
+                                                            <option value="10"
+                                                                {{ $produto->cCorVeic == '10' ? 'selected' : '' }}>
+                                                                PRATA</option>
+                                                            <option value="11"
+                                                                {{ $produto->cCorVeic == '11' ? 'selected' : '' }}>
+                                                                PRETA</option>
+                                                            <option value="12"
+                                                                {{ $produto->cCorVeic == '12' ? 'selected' : '' }}>
+                                                                ROSA</option>
+                                                            <option value="13"
+                                                                {{ $produto->cCorVeic == '13' ? 'selected' : '' }}>
+                                                                ROXA</option>
+                                                            <option value="14"
+                                                                {{ $produto->cCorVeic == '14' ? 'selected' : '' }}>
+                                                                VERDE</option>
+                                                            <option value="15"
+                                                                {{ $produto->cCorVeic == '15' ? 'selected' : '' }}>
+                                                                VERMELHA</option>
+                                                            <option value="16"
+                                                                {{ $produto->cCorVeic == '16' ? 'selected' : '' }}>
+                                                                FANTASIA</option>
+                                                        </select>
+                                                        <label for="cCorVeic">Código de
+                                                            Cor</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um código de cor.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 col-6">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="cCorMontVeic"
+                                                            required name="cCorMontVeic"
+                                                            value="{{ $produto->cCorMontVeic }}" placeholder=" ">
+                                                        <label for="cCorMontVeic">Cód. de Cor
+                                                            Mont.</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um código de cor montadora.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 col-6">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="cMarcaVeic"
+                                                            required name="cMarcaVeic" value="{{ $produto->cMarcaVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="cMarcaVeic">Código da
+                                                            Marca</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um código de marca.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 col-12">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="condVeic" id="condVeic"
+                                                            required>
+                                                            <option value="1"
+                                                                {{ $produto->condVeic == '1' ? 'selected' : '' }}>
+                                                                ACABADO</option>
+                                                            <option value="2"
+                                                                {{ $produto->condVeic == '2' ? 'selected' : '' }}>
+                                                                INACABADO</option>
+                                                            <option value="3"
+                                                                {{ $produto->condVeic == '3' ? 'selected' : '' }}>
+                                                                SEMIACABO</option>
+                                                        </select>
+                                                        <label for="condVeic">Condição do
+                                                            Veículo</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma condição de veículo.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="espVeic" id="espVeic"
+                                                            required>
+                                                            <option value="1"
+                                                                {{ $produto->espVeic == '1' ? 'selected' : '' }}>
+                                                                PASSAGEIRO</option>
+                                                            <option value="2"
+                                                                {{ $produto->espVeic == '2' ? 'selected' : '' }}>
+                                                                CARGA</option>
+                                                            <option value="3"
+                                                                {{ $produto->espVeic == '3' ? 'selected' : '' }}>
+                                                                MISTO</option>
+                                                            <option value="4"
+                                                                {{ $produto->espVeic == '4' ? 'selected' : '' }}>
+                                                                CORRIDA</option>
+                                                            <option value="5"
+                                                                {{ $produto->espVeic == '5' ? 'selected' : '' }}>
+                                                                TRAÇÃO</option>
+                                                            <option value="6"
+                                                                {{ $produto->espVeic == '6' ? 'selected' : '' }}>
+                                                                ESPECIAL</option>
+                                                        </select>
+                                                        <label for="espVeic">Especificação do
+                                                            Veículo</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma especificação de veículo.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="vinVeic" id="vinVeic"
+                                                            required>
+                                                            <option value="N"
+                                                                {{ $produto->vinVeic == 'N' ? 'selected' : '' }}>
+                                                                NORMAL</option>
+                                                            <option value="R"
+                                                                {{ $produto->vinVeic == 'R' ? 'selected' : '' }}>
+                                                                REMARCADO</option>
+                                                        </select>
+                                                        <label for="vinVeic">VIN do
+                                                            Veículo</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe um vin de veículo.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="text" class="form-control" id="lotVeic"
+                                                            required name="lotVeic" value="{{ $produto->lotVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="lotVeic">Lotação
+                                                            Máxima</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma lotação máxima.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-md-5">
-                                                <label for="combVeic" class="col-sm-4 col-form-label">Combustível</label>
-                                                <select class="form-control" name="combVeic" id="combVeic" required>
-                                                    <option value="1"
-                                                        {{ $produto->combVeic == '1' ? 'selected' : '' }}>
-                                                        ÁLCOOL</option>
-                                                    <option value="2"
-                                                        {{ $produto->combVeic == '2' ? 'selected' : '' }}>
-                                                        GASOLINA</option>
-                                                    <option value="3"
-                                                        {{ $produto->combVeic == '3' ? 'selected' : '' }}>
-                                                        DIESEL</option>
-                                                    <option value="16"
-                                                        {{ $produto->combVeic == '16' ? 'selected' : '' }}>
-                                                        ÁLCOOL/GASOLINA</option>
-                                                    <option value="17"
-                                                        {{ $produto->combVeic == '17' ? 'selected' : '' }}>
-                                                        GASOLINA/ÁLCOOL/GNV</option>
-                                                    <option value="18"
-                                                        {{ $produto->combVeic == '18' ? 'selected' : '' }}>
-                                                        GASOLINA/ELÉTRICO</option>
-                                                </select>
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="restriVeic" id="restriVeic"
+                                                            required>
+                                                            <option value="0"
+                                                                {{ $produto->restriVeic == '0' ? 'selected' : '' }}>NÃO HÁ
+                                                            </option>
+                                                            <option value="1"
+                                                                {{ $produto->restriVeic == '1' ? 'selected' : '' }}>
+                                                                ALIENAÇÃO
+                                                                FIDUNCIÁRIA</option>
+                                                            <option value="2"
+                                                                {{ $produto->restriVeic == '2' ? 'selected' : '' }}>
+                                                                ARRENDAMENTO
+                                                                MERCANTIL</option>
+                                                            <option value="3"
+                                                                {{ $produto->restriVeic == '3' ? 'selected' : '' }}>RESERVA
+                                                                DE
+                                                                DOMÍNIO
+                                                            </option>
+                                                            <option value="4"
+                                                                {{ $produto->restriVeic == '4' ? 'selected' : '' }}>PENHOR
+                                                                DE
+                                                                VEÍCULOS
+                                                            </option>
+                                                            <option value="9"
+                                                                {{ $produto->restriVeic == '9 ' ? 'selected' : '' }}>OUTRAS
+                                                            </option>
+                                                        </select>
+                                                        <label for="restriVeic">Restrição do
+                                                            Veículo</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma restrição do veículo.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-7">
-                                                <label for="nMotorVeic" class="col-sm-4 col-form-label">Número do
-                                                    Motor</label>
-                                                <input type="text" class="form-control" id="nMotorVeic" required
-                                                    name="nMotorVeic" value="{{ $produto->nMotorVeic }}"
-                                                    placeholder="Número do Motor..."
-                                                    oninput="this.value = this.value.toUpperCase()">
-                                            </div>
-                                        </div>
 
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="cvVeic" class="col-sm-4 col-form-label">Potência</label>
-                                                <input type="number" step="0.01" class="form-control" id="cvVeic"
-                                                    required name="cvVeic" value="{{ $produto->cvVeic }}"
-                                                    placeholder="Potência...">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="cm3Veic" class="col-sm-6 col-form-label">Cilindradas</label>
-                                                <input type="number" step="0.01" class="form-control" id="cm3Veic"
-                                                    required name="cm3Veic" value="{{ $produto->cm3Veic }}"
-                                                    placeholder="Cilindradas...">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="serieVeic" class="col-sm-4 col-form-label">Série</label>
-                                                <input type="text" class="form-control" id="serieVeic" required
-                                                    name="serieVeic" value="{{ $produto->serieVeic }}"
-                                                    placeholder="Série...">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="tpPVeic" class="col-sm-6 col-form-label">Tipo de
-                                                    Pintura</label>
-                                                <input type="text" class="form-control" id="tpPVeic" required
-                                                    name="tpPVeic" value="{{ $produto->tpPVeic }}"
-                                                    placeholder="Tipo de Pintura...">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="corVeic" class="col-sm-2 col-form-label">Cor</label>
-                                                <input type="text" class="form-control" id="corVeic" required
-                                                    name="corVeic" value="{{ $produto->corVeic }}"
-                                                    oninput="this.value = this.value.toUpperCase()" placeholder="Cor...">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="cCorVeic" class="col-sm-6 col-form-label">Código de
-                                                    Cor</label>
-                                                <select class="form-control" name="cCorVeic" id="cCorVeic" required>
-                                                    <option value="01"
-                                                        {{ $produto->cCorVeic == '01' ? 'selected' : '' }}>
-                                                        AMARELO</option>
-                                                    <option value="02"
-                                                        {{ $produto->cCorVeic == '02' ? 'selected' : '' }}>
-                                                        AZUL</option>
-                                                    <option value="03"
-                                                        {{ $produto->cCorVeic == '03' ? 'selected' : '' }}>
-                                                        BEGE</option>
-                                                    <option value="04"
-                                                        {{ $produto->cCorVeic == '04' ? 'selected' : '' }}>
-                                                        BRANCA</option>
-                                                    <option value="05"
-                                                        {{ $produto->cCorVeic == '05' ? 'selected' : '' }}>
-                                                        CINZA</option>
-                                                    <option value="06"
-                                                        {{ $produto->cCorVeic == '06' ? 'selected' : '' }}>
-                                                        DOURADA</option>
-                                                    <option value="07"
-                                                        {{ $produto->cCorVeic == '07' ? 'selected' : '' }}>
-                                                        GRENAR</option>
-                                                    <option value="08"
-                                                        {{ $produto->cCorVeic == '08' ? 'selected' : '' }}>
-                                                        LARANJA</option>
-                                                    <option value="09"
-                                                        {{ $produto->cCorVeic == '09' ? 'selected' : '' }}>
-                                                        MARROM</option>
-                                                    <option value="10"
-                                                        {{ $produto->cCorVeic == '10' ? 'selected' : '' }}>
-                                                        PRATA</option>
-                                                    <option value="11"
-                                                        {{ $produto->cCorVeic == '11' ? 'selected' : '' }}>
-                                                        PRETA</option>
-                                                    <option value="12"
-                                                        {{ $produto->cCorVeic == '12' ? 'selected' : '' }}>
-                                                        ROSA</option>
-                                                    <option value="13"
-                                                        {{ $produto->cCorVeic == '13' ? 'selected' : '' }}>
-                                                        ROXA</option>
-                                                    <option value="14"
-                                                        {{ $produto->cCorVeic == '14' ? 'selected' : '' }}>
-                                                        VERDE</option>
-                                                    <option value="15"
-                                                        {{ $produto->cCorVeic == '15' ? 'selected' : '' }}>
-                                                        VERMELHA</option>
-                                                    <option value="16"
-                                                        {{ $produto->cCorVeic == '16' ? 'selected' : '' }}>
-                                                        FANTASIA</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="cCorMontVeic" class="col-sm-8 col-form-label">Código de Cor
-                                                    Montadora</label>
-                                                <input type="text" class="form-control" id="cCorMontVeic" required
-                                                    name="cCorMontVeic" value="{{ $produto->cCorMontVeic }}"
-                                                    placeholder="Código de Cor Montadora...">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="cMarcaVeic" class="col-sm-8 col-form-label">Código da
-                                                    Marca</label>
-                                                <input type="text" class="form-control" id="cMarcaVeic" required
-                                                    name="cMarcaVeic" value="{{ $produto->cMarcaVeic }}"
-                                                    placeholder="Código da Marca...">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="condVeic" class="col-sm-8 col-form-label">Condição do
-                                                    Veículo</label>
-                                                <select class="form-control" name="condVeic" id="condVeic" required>
-                                                    <option value="1"
-                                                        {{ $produto->condVeic == '1' ? 'selected' : '' }}>
-                                                        ACABADO</option>
-                                                    <option value="2"
-                                                        {{ $produto->condVeic == '2' ? 'selected' : '' }}>
-                                                        INACABADO</option>
-                                                    <option value="3"
-                                                        {{ $produto->condVeic == '3' ? 'selected' : '' }}>
-                                                        SEMIACABO</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <div class="col-md-4">
-                                                <label for="espVeic" class="col-sm-8 col-form-label">Especificação do
-                                                    Veículo</label>
-                                                <select class="form-control" name="espVeic" id="espVeic" required>
-                                                    <option value="1"
-                                                        {{ $produto->espVeic == '1' ? 'selected' : '' }}>
-                                                        PASSAGEIRO</option>
-                                                    <option value="2"
-                                                        {{ $produto->espVeic == '2' ? 'selected' : '' }}>
-                                                        CARGA</option>
-                                                    <option value="3"
-                                                        {{ $produto->espVeic == '3' ? 'selected' : '' }}>
-                                                        MISTO</option>
-                                                    <option value="4"
-                                                        {{ $produto->espVeic == '4' ? 'selected' : '' }}>
-                                                        CORRIDA</option>
-                                                    <option value="5"
-                                                        {{ $produto->espVeic == '5' ? 'selected' : '' }}>
-                                                        TRAÇÃO</option>
-                                                    <option value="6"
-                                                        {{ $produto->espVeic == '6' ? 'selected' : '' }}>
-                                                        ESPECIAL</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="vinVeic" class="col-sm-6 col-form-label">VIN do
-                                                    Veículo</label>
-                                                <select class="form-control" name="vinVeic" id="vinVeic" required>
-                                                    <option value="N"
-                                                        {{ $produto->vinVeic == 'N' ? 'selected' : '' }}>
-                                                        NORMAL</option>
-                                                    <option value="R"
-                                                        {{ $produto->vinVeic == 'R' ? 'selected' : '' }}>
-                                                        REMARCADO</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="lotVeic" class="col-sm-6 col-form-label">Lotação
-                                                    Máxima</label>
-                                                <input type="text" class="form-control" id="lotVeic" required
-                                                    name="lotVeic" value="{{ $produto->lotVeic }}"
-                                                    placeholder="Lotação Máxima...">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row">
-                                            <div class="col-md-5">
-                                                <label for="restriVeic" class="col-sm-6 col-form-label">Restrição do
-                                                    Veículo</label>
-                                                <select class="form-control" name="restriVeic" id="restriVeic" required>
-                                                    <option value="0"
-                                                        {{ $produto->restriVeic == '0' ? 'selected' : '' }}>NÃO HÁ</option>
-                                                    <option value="1"
-                                                        {{ $produto->restriVeic == '1' ? 'selected' : '' }}>ALIENAÇÃO
-                                                        FIDUNCIÁRIA</option>
-                                                    <option value="2"
-                                                        {{ $produto->restriVeic == '2' ? 'selected' : '' }}>ARRENDAMENTO
-                                                        MERCANTIL</option>
-                                                    <option value="3"
-                                                        {{ $produto->restriVeic == '3' ? 'selected' : '' }}>RESERVA DE
-                                                        DOMÍNIO
-                                                    </option>
-                                                    <option value="4"
-                                                        {{ $produto->restriVeic == '4' ? 'selected' : '' }}>PENHOR DE
-                                                        VEÍCULOS
-                                                    </option>
-                                                    <option value="9"
-                                                        {{ $produto->restriVeic == '9 ' ? 'selected' : '' }}>OUTRAS
-                                                    </option>
-                                                </select>
-                                            </div>
                                             <div class="col-md-2">
-                                                <label for="cargaVeic" class="col-sm-12 col-form-label">Carga
-                                                    Máxima</label>
-                                                <input type="number" class="form-control" id="cargaVeic" required
-                                                    name="cargaVeic" value="{{ $produto->cargaVeic }}"
-                                                    placeholder="Carga Máxima...">
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <input type="number" class="form-control" id="cargaVeic"
+                                                            required name="cargaVeic" value="{{ $produto->cargaVeic }}"
+                                                            placeholder=" ">
+                                                        <label for="cargaVeic">Carga
+                                                            Máxima</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma carga máxima.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+
                                             <div class="col-md-5">
-                                                <label for="operVeic" class="col-sm-8 col-form-label">Tipo de
-                                                    Operação</label>
-                                                <select class="form-control" name="operVeic" id="operVeic" required>
-                                                    <option value="1"
-                                                        {{ $produto->operVeic == '1' ? 'selected' : '' }}>
-                                                        VENDA CONCERSSIONÁRIA</option>
-                                                    <option value="2"
-                                                        {{ $produto->operVeic == '2' ? 'selected' : '' }}>
-                                                        FATURAMENTO DIRETO PARA CONSUMIDOR FINAL</option>
-                                                    <option value="3"
-                                                        {{ $produto->operVeic == '3' ? 'selected' : '' }}>
-                                                        VENDA DIRETO PARA GRANDES CONSUMIDORES</option>
-                                                    <option value="0"
-                                                        {{ $produto->operVeic == '0' ? 'selected' : '' }}>
-                                                        OUTRAS</option>
-                                                </select>
+                                                <div class="input-group has-validation mb-2">
+                                                    <div class="form-floating">
+                                                        <select class="form-select" name="operVeic" id="operVeic"
+                                                            required>
+                                                            <option value="1"
+                                                                {{ $produto->operVeic == '1' ? 'selected' : '' }}>
+                                                                VENDA CONCERSSIONÁRIA</option>
+                                                            <option value="2"
+                                                                {{ $produto->operVeic == '2' ? 'selected' : '' }}>
+                                                                FATURAMENTO DIRETO PARA CONSUMIDOR FINAL</option>
+                                                            <option value="3"
+                                                                {{ $produto->operVeic == '3' ? 'selected' : '' }}>
+                                                                VENDA DIRETO PARA GRANDES CONSUMIDORES</option>
+                                                            <option value="0"
+                                                                {{ $produto->operVeic == '0' ? 'selected' : '' }}>
+                                                                OUTRAS</option>
+                                                        </select>
+                                                        <label for="operVeic">Tipo de
+                                                            Operação</label>
+                                                        <div class="invalid-feedback">
+                                                            Informe uma carga máxima.
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     @endif
                                 </div>
                             </div>
 
-                            <div class="row text-center mt-3">
-                                <div class="col">
-                                    <button class="btn btn-outline-success w-25" type="submit">Salvar</button>
-                                </div>
+                            <div class="text-center mt-2">
+                                <button class="btn btn-outline-success w-25" type="submit">Salvar</button>
                             </div>
                         </form>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
+
+    @component('components.modal', [
+        'modalId' => 'NcmModal',
+        'modalTitle' => 'Selecione NCM',
+        'sizeModal' => 'modal-lg',
+    ])
+        @component('components.dataTable', [
+            'responsive' => [
+                [
+                    'responsivePriority' => 1,
+                    'targets' => 0,
+                ],
+                [
+                    'responsivePriority' => 2,
+                    'targets' => 1,
+                ],
+            ],
+            'searching' => true,
+            'lengthChange' => true,
+            'pageLength' => 10,
+            'ordering' => true,
+        ])
+            <thead class="table-primary">
+                <tr>
+                    <th>NCM</th>
+                    <th>Descrição</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach ($ncms as $ncm)
+                    <tr ondblclick="setaNcm('{{ $ncm->ncm }}')">
+                        <td>{{ $ncm->ncm }}</td>
+                        <td>{{ $ncm->descricao }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        @endcomponent
+    @endcomponent
 @endsection
 
 @section('css')
@@ -979,5 +1389,13 @@
                 }, false)
             })
         })()
+
+        function setaNcm(ncm) {
+            document.getElementById('ncm').value = ncm;
+            var closeBtn = document.querySelector('[data-dismiss="modal"]');
+            if (closeBtn) {
+                closeBtn.click();
+            }
+        }
     </script>
 @endsection
