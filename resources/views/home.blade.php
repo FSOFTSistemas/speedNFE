@@ -78,14 +78,14 @@
         <div class="mt-5">
             <canvas id="nfe-chart"></canvas>
         </div>
-{{-- 
+
         <div class="mt-5">
             <canvas id="nfce-chart"></canvas>
-        </div> --}}
+        </div>
 
-        {{-- <div class="mt-5">
+        <div class="mt-5">
             <canvas id="mdfe-chart"></canvas>
-        </div> --}}
+        </div>
 
         <script>
             var meses = ['', 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
@@ -94,6 +94,9 @@
                 fetch('/total-mes-nfes')
                     .then(response => response.json())
                     .then(data => {
+                        if (data.length === 0) {
+                            return false
+                        }
                         const ctx = document.getElementById('nfe-chart').getContext('2d');
                         var indicesSelecionados = data.map(item => item.mes);
                         var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
@@ -121,68 +124,75 @@
                     .catch(error => console.error('Erro:', error));
             });
 
-            // document.addEventListener('DOMContentLoaded', function() {
-            //     fetch('/total-mes-nfces')
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             const ctx = document.getElementById('nfce-chart').getContext('2d');
-            //             var indicesSelecionados = data.map(item => item.mes);
-            //             var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
-            //             new Chart(ctx, {
-            //                 type: 'bar',
-            //                 data: {
-            //                     labels: mesesSelecionados,
-            //                     datasets: [{
-            //                         label: 'Total de Vendas por Mês (NFCe)',
-            //                         data: data.map(item => item.total),
-            //                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            //                         borderColor: 'rgba(54, 162, 235, 1)',
-            //                         borderWidth: 1
-            //                     }]
-            //                 },
-            //                 options: {
-            //                     scales: {
-            //                         y: {
-            //                             beginAtZero: true
-            //                         }
-            //                     }
-            //                 }
-            //             });
-            //         })
-            //         .catch(error => console.error('Erro:', error));
-            // });
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('nfce/total-mes-nfces')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            return false
+                        }
+                        const ctx2 = document.getElementById('nfce-chart').getContext('2d');
+                        var indicesSelecionados = data.map(item => item.mes);
+                        var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
+                        new Chart(ctx2, {
+                            type: 'bar',
+                            data: {
+                                labels: mesesSelecionados,
+                                datasets: [{
+                                    label: 'Total de Vendas por Mês (NFCe)',
+                                    data: data.map(item => item.total_vendas),
+                                    backgroundColor: 'rgba(235, 54, 54, 0.2)',
+                                    borderColor: 'rgba(180, 0, 0, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Erro:', error));
+            });
 
-            // document.addEventListener('DOMContentLoaded', function() {
-            //     fetch('/total-mes-mdfes')
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             const ctx = document.getElementById('mdfe-chart').getContext('2d');
-            //             var indicesSelecionados = data.map(item => item.mes);
-            //             var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
-            //             new Chart(ctx, {
-            //                 type: 'bar',
-            //                 data: {
-            //                     labels: mesesSelecionados,
-            //                     datasets: [{
-            //                         label: 'Total de Vendas por Mês (MDFe)',
-            //                         data: data.map(item => item.total),
-            //                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            //                         borderColor: 'rgba(54, 162, 235, 1)',
-            //                         borderWidth: 1
-            //                     }]
-            //                 },
-            //                 options: {
-            //                     scales: {
-            //                         y: {
-            //                             beginAtZero: true
-            //                         }
-            //                     }
-            //                 }
-            //             });
-            //         })
-            //         .catch(error => console.error('Erro:', error));
-            // });
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('mdfes/total-mes-mdfes')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            return false
+                        }
+                        const ctx3 = document.getElementById('mdfe-chart').getContext('2d');
+                        var indicesSelecionados = data.map(item => item.mes);
+                        var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
+                        new Chart(ctx3, {
+                            type: 'bar',
+                            data: {
+                                labels: mesesSelecionados,
+                                datasets: [{
+                                    label: 'Total de Vendas por Mês (MDFe)',
+                                    data: data.map(item => item.total_vendas),
+                                    backgroundColor: 'rgba(72, 235, 54, 0.2)',
+                                    borderColor: 'rgba(18, 176, 0, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Erro:', error));
+            });
         </script>
+
         <script>
             function toggleExtraInfo(color) {
                 var extraInfo = document.getElementById('extra-info-' + color);

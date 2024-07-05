@@ -268,7 +268,7 @@ class NFCeController extends Controller
             $results = NFCeService::getTotalNFCePerMonth(Auth::user()->empresa_id);
             return response()->json($results);
         } catch (Exception $e) {
-            return response()->json('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+            return response()->json('error: Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage(), $e->getCode());
         }
     }
 

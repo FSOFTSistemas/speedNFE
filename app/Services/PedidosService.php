@@ -113,12 +113,18 @@ class PedidosService
     {
         if ($companyId == 1) {
             $companyId = '%';
+            $result = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+                ->where('empresa_id', 'like', $companyId)
+                ->where('estado', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
+        } else {
+            $result = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+                ->where('empresa_id', $companyId)
+                ->where('estado', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
         }
-        $results = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
-            ->where('empresa_id', 'like', $companyId)
-            ->where('estado', 'Autorizado')
-            ->groupBy('mes')
-            ->get();
-        return $results;
+        return $result;
     }
 }

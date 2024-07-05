@@ -44,13 +44,20 @@ class NFCeService
     {
         if ($companyId == 1) {
             $companyId = '%';
+            $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
+                ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
+                ->where('n_f_ces.empresa_id', 'like', $companyId)
+                ->where('n_f_ces.situacao', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
+        } else {
+            $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
+                ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
+                ->where('n_f_ces.empresa_id', $companyId)
+                ->where('n_f_ces.situacao', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
         }
-        $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
-            ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
-            ->where('n_f_ces.empresa_id', $companyId)
-            ->where('n_f_ces.situacao', $companyId == 1 ? 'like' : null, 'Autorizado')
-            ->groupBy('n_f_ces.mes')
-            ->get();
         return $results;
     }
 

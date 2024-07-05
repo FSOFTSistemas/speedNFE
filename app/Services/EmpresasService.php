@@ -149,11 +149,17 @@ class EmpresasService
     {
         if ($empresa == 1) {
             $empresa = '%';
-        }
-        return DB::table('empresas')
+            $results = DB::table('empresas')
+                ->select('*')
+                ->where('id', 'like', $empresa)
+                ->get();
+        } else {
+            $results = DB::table('empresas')
             ->select('*')
-            ->where('id', 'like', $empresa)
+            ->where('id', $empresa)
             ->get();
+        }
+        return $results;
     }
 
     public function getEmpresa($id_empresa)

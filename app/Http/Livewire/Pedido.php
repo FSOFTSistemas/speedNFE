@@ -65,7 +65,7 @@ class Pedido extends Component
                 // $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
-                $this->empresas = $sEmpresas->todas();
+                $this->empresas = $sEmpresas->todos($user->empresa_id);
                 $this->clientes = $sClientes->todosClientes();
                 $this->produtos = $sProdutos->todosProdutos();
                 // $this->formas = $sFormas->todos();

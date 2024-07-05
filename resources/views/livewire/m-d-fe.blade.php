@@ -754,7 +754,7 @@
                                         <label for="">Cidade *</label>
                                         <select class="form-control" wire:model="cidade" required>
                                             @foreach (json_decode($cidadesDescarregamento) as $city)
-                                                <option value="{{ $city->cidade . '@' . $city->municipio }}">
+                                                <option value="{{ $city->cidade . '@' . $city->ibge }}">
                                                     {{ $city->cidade }}</option>
                                             @endforeach
                                         </select>
@@ -849,9 +849,10 @@
             option1.value = '';
             option1.text = 'Selecionar';
             select.add(option1);
+            console.value
             value.forEach(element => {
                 var option2 = document.createElement('option');
-                option2.value = element.cidade + '@' + element.municipio;
+                option2.value = element.cidade + '@' + element.ibge;
                 option2.text = element.cidade;
                 select.add(option2);
             });

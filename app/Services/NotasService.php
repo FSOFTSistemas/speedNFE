@@ -151,12 +151,18 @@ class NotasService
     {
         if ($companyId == 1) {
             $companyId = '%';
-        }
-        $results = MDFE::selectRaw('MONTH(data) as mes, SUM(valor_total) as total_vendas')
+            $results = MDFE::selectRaw('MONTH(data) as mes, SUM(valor_total) as total_vendas')
+                ->where('empresa_id', 'like', $companyId)
+                ->where('situacao', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
+        } else {
+            $results = MDFE::selectRaw('MONTH(data) as mes, SUM(valor_total) as total_vendas')
             ->where('empresa_id', $companyId)
-            ->where('situacao', $companyId == 1 ? 'like' : null, 'Autorizado')
+            ->where('situacao', 'Autorizado')
             ->groupBy('mes')
             ->get();
+        }
         return $results;
     }
 
