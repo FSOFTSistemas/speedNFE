@@ -40,6 +40,20 @@ class NFCeService
         return NFCe::select('xml', 'chave')->whereEmpresaId($companyId)->where('data', 'like', $month . '%')->get();
     }
 
+    public static function getTotalNFCePerMonth($companyId)
+    {
+        if ($companyId == 1) {
+            $companyId = '%';
+        }
+        $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
+            ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
+            ->where('n_f_ces.empresa_id', $companyId)
+            ->where('n_f_ces.situacao', $companyId == 1 ? 'like' : null, 'Autorizado')
+            ->groupBy('n_f_ces.mes')
+            ->get();
+        return $results;
+    }
+
     public static function createNFCe($body, $couponId, $company)
     {
         return NFCe::create([

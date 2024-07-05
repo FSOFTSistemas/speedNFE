@@ -262,4 +262,14 @@ class NFCeController extends Controller
         }
     }
 
+    public function totalMesNFCe()
+    {
+        try {
+            $results = NFCeService::getTotalNFCePerMonth(Auth::user()->empresa_id);
+            return response()->json($results);
+        } catch (Exception $e) {
+            return response()->json('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+        }
+    }
+
 }

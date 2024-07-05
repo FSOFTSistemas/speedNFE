@@ -157,7 +157,7 @@ Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'impri
 Route::post('/venda/cce', [PedidosController::class, 'cartaCorrecao'])->name('cartaCorrecao')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::get('/venda/cce/{id}', [PedidosController::class, 'imprimirCorrecao'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
-Route::get('/total-mes', [PedidosController::class, 'totalMes'])->name('totalMes');
+Route::get('/total-mes-nfes', [PedidosController::class, 'totalMesNFe'])->name('totalMesNFe');
 
 
 //NOTAS FISCAIS
@@ -195,6 +195,7 @@ Route::prefix('mdfes')->group(function () {
     Route::get('/{mdfeId}/encerrar-nota', [MDFEController::class, 'encerrarMDFe'])->name('mdfe.close')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
     Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
     Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
+    Route::get('/total-mes-mdfes', [MDFEController::class, 'totalMesMDFe'])->name('totalMesMDFe');
 });
 
 //MOTORISTAS
@@ -228,6 +229,7 @@ Route::prefix('nfce')->group(function () {
     Route::get('/xmls/download', [NFCeController::class, 'index'])->name('nfce.index')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::get('/download/xml/{nfceId}', [NFCeController::class, 'downloadXmlNFCe'])->name('nfce.downloadXml')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     Route::post('/enviar-xmls-contador', [NFCeController::class, 'sendXmlsToAccountant'])->name('nfce.sendXmlsToAccountant')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    Route::get('/total-mes-nfces', [NFCeController::class, 'totalMesNFCe'])->name('totalMesNFCe');
 });
 
 //CUPOM

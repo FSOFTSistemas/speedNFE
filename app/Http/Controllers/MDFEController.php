@@ -497,4 +497,14 @@ class MDFEController extends Controller
         }
     }
 
+    public function totalMesMDFe()
+    {
+        try {
+            $results = $this->notasService->getTotalMDFePerMonth(Auth::user()->empresa_id);
+            return response()->json($results);
+        } catch (Exception $e) {
+            return response()->json('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+        }
+    }
+
 }

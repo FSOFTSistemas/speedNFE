@@ -136,7 +136,6 @@ class PedidosController extends Controller
             } else {
                 return redirect('/venda')->with('error', $result['data']);
             }
-
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
@@ -465,19 +464,14 @@ class PedidosController extends Controller
         }
     }
 
-
-    public function totalMes()
+    public function totalMesNFe()
     {
-        $empresa = Auth::user()->empresa_id;
-        if ($empresa == 1) {
-            $empresa = '%';
+        try {
+            $results = $this->pedidoServices->getTotalNFePerMonth(Auth::user()->empresa_id);
+            return response()->json($results);
+        } catch (Exception $e) {
+            return response()->json('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
-        $vendasPorMes = Pedido::selectRaw('MONTH(created_at) as mes, SUM(total) as total')
-            ->where('empresa_id','like',$empresa)
-            ->groupBy('mes')
-            ->get();
-
-        return response()->json($vendasPorMes);
     }
 
 }

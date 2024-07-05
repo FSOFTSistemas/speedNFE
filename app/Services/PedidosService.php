@@ -109,16 +109,16 @@ class PedidosService
         return DB::table('cfops')->where('id', $id)->first();
     }
 
-
-
-    public function totalMes($empresa)
+    public function getTotalNFePerMonth($companyId)
     {
-        $resultados = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
-            ->where('empresa_id', $empresa)
+        if ($companyId == 1) {
+            $companyId = '%';
+        }
+        $results = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+            ->where('empresa_id', 'like', $companyId)
             ->where('estado', 'Autorizado')
             ->groupBy('mes')
             ->get();
-
-        return $resultados;
+        return $results;
     }
 }
