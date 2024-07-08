@@ -550,7 +550,7 @@
                                                             <label for="">Latitude e Longitude de Descarregamento</label>
                                                             <select class="form-control" wire:model="selectedLatLon" wire:change="descarregamento" required>
                                                                 @foreach ($cidadesDescarregamentoLatLon as $city)
-                                                                    <option value="{{ $city->lat . '@' . $city->lon }}" @if($city->lat == $latDescarregamento && $city->lon == $lonDescarregamento) selected @endif>{{ $city->municipio }}</option>
+                                                                    <option value="{{ $city->lat . '@' . $city->lon }}" @if($city->lat == $latDescarregamento && $city->lon == $lonDescarregamento) selected @endif>{{ $city->ibge }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -619,7 +619,7 @@
                                     <select class="form-control" wire:model="cidade" id="cidade" required>
                                         <option value="">Selecionar</option>
                                         @foreach ($cidadesDescarregamento as $city)
-                                            <option value="{{ $city->cidade . '@' . $city->municipio }}">{{ $city->cidade }}</option>
+                                            <option value="{{ $city->cidade . '@' . $city->ibge }}">{{ $city->cidade }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -758,7 +758,7 @@
                                         <label for="">Cidade *</label>
                                         <select class="form-control" wire:model="cidade" required>
                                             @foreach (json_decode($cidadesDescarregamento) as $city)
-                                                <option value="{{ $city->cidade . '@' . $city->municipio }}">
+                                                <option value="{{ $city->cidade . '@' . $city->ibge }}">
                                                     {{ $city->cidade }}</option>
                                             @endforeach
                                         </select>
@@ -845,7 +845,7 @@
             select.add(option1);
             value.forEach(element => {
                 var option2 = document.createElement('option');
-                option2.value = element.cidade + '@' + element.municipio;
+                option2.value = element.cidade + '@' + element.ibge;
                 option2.text = element.cidade;
                 select.add(option2);
             });

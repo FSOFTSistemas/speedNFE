@@ -322,7 +322,7 @@ class NFCe extends Component
             if (isset($this->formasSelecionadas[$method])) {
                 $value = $this->formasSelecionadas[$method];
             } else {
-                $value = 0;
+                $value = $this->aReceber;
             }
             return $value;
         } catch (\Exception $e) {
