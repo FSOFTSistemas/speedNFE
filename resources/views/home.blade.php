@@ -1,8 +1,13 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Dashboard')
 
 @section('content_header')
+    <div class="row text-center">
+        <div class="col">
+            <h3>Dashboard</h3>
+        </div>
+    </div>
 @stop
 
 @section('content')
@@ -19,18 +24,20 @@
 
     <body>
         <div class="row">
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{ $quantidadePedidosPorMes }}</h3>
-                        <p>Notas emitidas este mês</p>
+            @can('master')
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ $quantidadePedidosPorMes }}</h3>
+                            <p>Notas emitidas este mês</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-bag"></i>
+                        </div>
+                        <a href="/vendas/nova" class="small-box-footer">Emitir NFE <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-bag"></i>
-                    </div>
-                    <a href="/vendas/nova" class="small-box-footer">Emitir NFE <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
-            </div>
+            @endcan
 
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-success">
@@ -60,19 +67,21 @@
                 </div>
             </div>
 
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>R$ {{ $quantidadeValorPedido }}</h3>
-                        <p>Valor total das notas</p>
+            @can('master')
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>R$ {{ $quantidadeValorPedido }}</h3>
+                            <p>Valor total das notas</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-pie-graph"></i>
+                        </div>
+                        <a href="/relatorios" class="small-box-footer">Mais informaçôes <i
+                                class="fas fa-arrow-circle-right"></i></a>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-pie-graph"></i>
-                    </div>
-                    <a href="/relatorios" class="small-box-footer">Mais informaçôes <i
-                            class="fas fa-arrow-circle-right"></i></a>
                 </div>
-            </div>
+            @endcan
         </div>
 
         <div class="mt-5">
