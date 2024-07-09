@@ -2,197 +2,216 @@
     <form method="POST">
         @csrf
 
-            <div class="row" style="text-align: center">
-                <div class="col">
-                    <h5>Cabeçalho</h5>
-                </div>
+        <div class="row" style="text-align: center">
+            <div class="col">
+                <h5>Cabeçalho</h5>
             </div>
-            <div class="row">
-                <div class="col-md-12 col-xs-12">
-            <label>Empresa</label>
-            <select wire:change="atualizarArrays()" class="form-control" name="empresa" id="empresa" wire:model="empresa" required>
-                <option value="" disabled selected>--Escolha uma empresa--</option>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-8">
+                <label>Empresa</label>
+                <select wire:change="atualizarArrays()" class="form-control" name="empresa" id="empresa"
+                    wire:model="empresa" required>
+                    <option value="" disabled selected>--Escolha uma empresa--</option>
 
-                @foreach (json_decode($empresas) as $emp)
-                    <option value="{{ $emp->id }}">{{ $emp->fantasia }} | {{ $emp->cpf_cnpj }}</option>
-                @endforeach
-            </select>
-            </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-8 col-xs-12">
-                    <label>Cliente</label>
-                    <select class="form-control" name="cliente" id="cliente" required>
-                        <option value="" disabled selected>--Escolha um cliente--</option>
-                        @if ($empresaL != 1)
-                            @foreach (json_decode($clientes) as $cliente)
-                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj  }}
-                                </option>
-                            @endforeach
-                        @else
-                            @foreach ($clientes as $cli)
-                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-                <div class="col-md-1 col-xs-6">
-                    <label>CFOP</label>
-                    <input wire:change="buscaCfop()" class="form-control" wire:model="bcfop">
-                </div>
-                <div class="col-md-3 col-xs-6">
-                    <label>Descrição CFOP</label>
-                    <select wire:change="atualizarBCfop()" required class="form-control" name="cfop" id="cfop"
-                        wire:model="cfop">
-                        <option value='' disabled selected>--Selecione o CFOP da Nota--</option>
-                        @if ($empresaL != 1)
-                            @foreach (json_decode($cfops) as $cfop)
-                                <option value="{{ $cfop->id }}">{{ $cfop->cfop }} | {{ $cfop->natureza }}
-                                </option>
-                            @endforeach
-                        @else
-                            @foreach (json_decode($cfops) as $cfop)
-                                <option value="{{ $cfop->id }}">{{ $cfop->cfop }} | {{ $cfop->natureza }}
-                                </option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-            </div>
-            <br>
-            <hr color="black">
-
-
-            <div class="row" style="text-align: center">
-                <div class="col">
-                    <h5>Itens</h5>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 col-xs-6">
-                                    {{-- <label>Produto</label>
-                                <input type="text" wire:model="produto" class="form-control"> --}}
-                                    <label>Produto</label>
-                                    <select wire:change="atualizarProds()" class="form-control" wire:model="produto">
-                                        <option value="" disabled selected>--Escolha um produto--</option>
-                                        @if ($empresaL != 1)
-                                            @foreach (json_decode($produtos) as $produto)
-                                                <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
-                                            @endforeach
-                                        @else
-                                            @foreach ($produtos as $produto)
-                                                <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-
-                                <div class="col-md-1 col-xs-1">
-                                    <label>Qtd.</label>
-                                    <input class="form-control" type="number" min="1" wire:change="atualizarTot()"
-                                        wire:model="quantidade">
-                                </div>
-
-                                <div class="col-md-2 col-xs-2">
-                                    <label>Valor</label>
-                                    <input class="form-control" type="number" step="0.01"
-                                        wire:change="atualizarTot()" wire:model="preco">
-                                </div>
-
-                                <div class="col-md-1 col-xs-1">
-                                    <label>Dsct. (%)</label>
-                                    <input class="form-control" type="number" step="0.1"
-                                        wire:change="atualizarTot()" wire:model="desconto">
-                                </div>
-
-                                <div class="col-md-2 col-xs-2">
-                                    <label>Total</label>
-                                    <input class="form-control" type="number" step="0.01" wire:model="total">
-                                </div>
-
-                            </div>
-                            <div class="row" style="text-align: center; margin-top: 2%;">
-                                <div class="col">
-                                    <button wire:click.prevent="salvarProd()" class="btn btn-primary" style="width: 25%;">+ Adicionar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="overflow-auto" style="max-height: 30%">
-                                <table class="table table-hover">
-                                    <thead class="table-primary" style="text-align: center">
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Produto</th>
-                                            <th>Quantidade</th>
-                                            <th>Unitário</th>
-                                            <th>Desconto</th>
-                                            <th>Total</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="text-align: center">
-                                        @foreach ($vendaItens as $item)
-                                            <tr>
-                                                <td>#{{ $item['produto_id'] }}</td>
-                                                <td>{{ $item['descricao'] }}</td>
-                                                <td>{{ $item['quantidade'] }}</td>
-                                                <td>R$ {{ number_format($item['unitario'], 2) }}</td>
-                                                <td>R$ {{ number_format($item['desconto'], 2) }}</td>
-                                                <td>R$ {{ number_format($item['total'], 2) }}</td>
-                                                <td><a wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
-                                                        title="Remover Item" class="text-danger"><i
-                                                            class="fa fa-trash"></i></a></td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5 col-xs-6" style="text-align: center">
-                                    Soma produtos:
-                                </div>
-                                <div class="col-md-7 col-xs-6">
-                                    <b>R$ {{ number_format($subtotal, 2) }}</b>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    @foreach ($vendaItens as $index => $vendaItem)
-                        <input type="hidden" name="vendaItens[{{ $index }}][produto_id]"
-                            wire:model="vendaItens.{{ $index }}.produto_id">
-                        <input type="hidden" name="vendaItens[{{ $index }}][quantidade]"
-                            wire:model="vendaItens.{{ $index }}.quantidade">
-                        <input type="hidden" name="vendaItens[{{ $index }}][unitario]"
-                            wire:model="vendaItens.{{ $index }}.unitario">
-                        <input type="hidden" name="vendaItens[{{ $index }}][desconto]"
-                            wire:model="vendaItens.{{ $index }}.desconto" >
-                        <input type="hidden" name="vendaItens[{{ $index }}][total]"
-                            wire:model="vendaItens.{{ $index }}.total">
+                    @foreach (json_decode($empresas) as $emp)
+                        <option value="{{ $emp->id }}">{{ $emp->fantasia }} | {{ $emp->cpf_cnpj }}</option>
                     @endforeach
-
-                </div>
+                </select>
             </div>
 
-        <div class="row" style="margin-bottom: 2%;">
+            <div class="col-md-2 col-4">
+                <label>Finalidade</label>
+                <select class="form-control" name="finalidade" id="finalidade" wire:model="finalidade"
+                    wire:change="refNFeSection" required>
+                    <option value="1">Venda</option>
+                    <option value="4">Devolução</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-xs-12">
+                <label>Cliente</label>
+                <select class="form-control" name="cliente" id="cliente" required>
+                    <option value="" disabled selected>--Escolha um cliente--</option>
+                    @if ($empresaL != 1)
+                        @foreach (json_decode($clientes) as $cliente)
+                            <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }}
+                            </option>
+                        @endforeach
+                    @else
+                        @foreach ($clientes as $cli)
+                            <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }}</option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
+            <div class="col-md-1 col-xs-6">
+                <label>CFOP</label>
+                <input wire:change="buscaCfop()" class="form-control" wire:model="bcfop">
+            </div>
+            <div class="col-md-3 col-xs-6">
+                <label>Descrição CFOP</label>
+                <select wire:change="atualizarBCfop()" required class="form-control" name="cfop" id="cfop"
+                    wire:model="cfop">
+                    <option value='' disabled selected>--Selecione o CFOP da Nota--</option>
+                    @if ($empresaL != 1)
+                        @foreach (json_decode($cfops) as $cfop)
+                            <option value="{{ $cfop->id }}">{{ $cfop->cfop }} | {{ $cfop->natureza }}
+                            </option>
+                        @endforeach
+                    @else
+                        @foreach (json_decode($cfops) as $cfop)
+                            <option value="{{ $cfop->id }}">{{ $cfop->cfop }} | {{ $cfop->natureza }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
+        </div>
+        <br>
+        <hr color="black">
+
+
+        <div class="row" style="text-align: center">
+            <div class="col">
+                <h5>Itens</h5>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                {{-- <label>Produto</label>
+                                <input type="text" wire:model="produto" class="form-control"> --}}
+                                <label>Produto</label>
+                                <select wire:change="atualizarProds()" class="form-control" wire:model="produto">
+                                    <option value="" disabled selected>--Escolha um produto--</option>
+                                    @if ($empresaL != 1)
+                                        @foreach (json_decode($produtos) as $produto)
+                                            <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
+                                        @endforeach
+                                    @else
+                                        @foreach ($produtos as $produto)
+                                            <option value="{{ $produto->id }}">{{ $produto->produto }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div class="col-md-1 col-xs-1">
+                                <label>Qtd.</label>
+                                <input class="form-control" type="number" min="1" wire:change="atualizarTot()"
+                                    wire:model="quantidade">
+                            </div>
+
+                            <div class="col-md-2 col-xs-2">
+                                <label>Valor</label>
+                                <input class="form-control" type="number" step="0.01" wire:change="atualizarTot()"
+                                    wire:model="preco">
+                            </div>
+
+                            <div class="col-md-1 col-xs-1">
+                                <label>Dsct. (%)</label>
+                                <input class="form-control" type="number" step="0.1" wire:change="atualizarTot()"
+                                    wire:model="desconto">
+                            </div>
+
+                            <div class="col-md-2 col-xs-2">
+                                <label>Total</label>
+                                <input class="form-control" type="number" step="0.01" wire:model="total">
+                            </div>
+
+                        </div>
+                        <div class="row" style="text-align: center; margin-top: 2%;">
+                            <div class="col">
+                                <button wire:click.prevent="salvarProd()" class="btn btn-primary" style="width: 25%;">+
+                                    Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="overflow-auto" style="max-height: 30%">
+                            <table class="table table-hover">
+                                <thead class="table-primary" style="text-align: center">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Produto</th>
+                                        <th>Quantidade</th>
+                                        <th>Unitário</th>
+                                        <th>Desconto</th>
+                                        <th>Total</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align: center">
+                                    @foreach ($vendaItens as $item)
+                                        <tr>
+                                            <td>#{{ $item['produto_id'] }}</td>
+                                            <td>{{ $item['descricao'] }}</td>
+                                            <td>{{ $item['quantidade'] }}</td>
+                                            <td>R$ {{ number_format($item['unitario'], 2) }}</td>
+                                            <td>R$ {{ number_format($item['desconto'], 2) }}</td>
+                                            <td>R$ {{ number_format($item['total'], 2) }}</td>
+                                            <td><a wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
+                                                    title="Remover Item" class="text-danger"><i
+                                                        class="fa fa-trash"></i></a></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 col-xs-6" style="text-align: center">
+                                Soma produtos:
+                            </div>
+                            <div class="col-md-7 col-xs-6">
+                                <b>R$ {{ number_format($subtotal, 2) }}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @foreach ($vendaItens as $index => $vendaItem)
+                    <input type="hidden" name="vendaItens[{{ $index }}][produto_id]"
+                        wire:model="vendaItens.{{ $index }}.produto_id">
+                    <input type="hidden" name="vendaItens[{{ $index }}][quantidade]"
+                        wire:model="vendaItens.{{ $index }}.quantidade">
+                    <input type="hidden" name="vendaItens[{{ $index }}][unitario]"
+                        wire:model="vendaItens.{{ $index }}.unitario">
+                    <input type="hidden" name="vendaItens[{{ $index }}][desconto]"
+                        wire:model="vendaItens.{{ $index }}.desconto">
+                    <input type="hidden" name="vendaItens[{{ $index }}][total]"
+                        wire:model="vendaItens.{{ $index }}.total">
+                @endforeach
+
+            </div>
+        </div>
+
+        <div class="row mb-3" id="ref_nfe_section" style="display: none">
+            <div class="col">
+                <label for="">Referência NFe</label>
+                <input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44">
+            </div>
+        </div>
+
+        <div class="row mb-3">
             <div class="col">
                 <label for="">Informações Complementares</label>
-                <textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" cols="30" rows="9" placeholder="Opicional...">{{ old('info_complementares') }}</textarea>
+                <textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" cols="30"
+                    rows="9" placeholder="Opicional...">{{ old('info_complementares') }}</textarea>
             </div>
         </div>
 
@@ -203,15 +222,26 @@
         </div>
     </form>
 
-        <script>
-            $(document).ready(function() {
-                $(window).keydown(function(event) {
-                    if (event.keyCode == 13) {
-                        event.preventDefault();
-                        return false;
-                    }
-                });
+    <script>
+        $(document).ready(function() {
+            $(window).keydown(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
             });
-        </script>
+        });
+
+        document.addEventListener('livewire:load', function() {
+            Livewire.on('section_nfe', function(value) {
+                let section = document.getElementById('ref_nfe_section')
+                if (value == 4) {
+                    section.style.display = 'block'
+                } else {
+                    section.style.display = 'none'
+                }
+            });
+        });
+    </script>
 
 </div>

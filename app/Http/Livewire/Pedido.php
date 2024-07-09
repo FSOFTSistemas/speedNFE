@@ -25,6 +25,7 @@ class Pedido extends Component
     public $cfop = '';
     public $bcfop = '';
     public $forma = '';
+    public $finalidade = 1;
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -251,6 +252,11 @@ class Pedido extends Component
             }
         }
         return -1;
+    }
+
+    public function refNFeSection()
+    {
+        return $this->emit('section_nfe', $this->finalidade);
     }
 
     public function render()

@@ -45,7 +45,7 @@ class NFeService
         $stdIde->nNF = (int) $numeroNFe;
         $stdIde->dhEmi = date("Y-m-d\TH:i:sP");
         $stdIde->dhSaiEnt = date("Y-m-d\TH:i:sP");
-        $stdIde->tpNF = 1;
+        $stdIde->tpNF = $venda->tpNF;
 
         $stdIde->idDest = $emitente->endereco->uf != $venda->endereco_cliente->uf ? 2 : 1;
         $stdIde->cMunFG = $emitente->endereco->codigoIBGE;
@@ -53,7 +53,7 @@ class NFeService
         $stdIde->tpEmis = 1;
         $stdIde->cDV = 0;
         $stdIde->tpAmb = $emitente->ambiente;
-        $stdIde->finNFe = 1;
+        $stdIde->finNFe = $venda->finNF;
         $stdIde->indFinal = 1;
         $stdIde->indPres = 1;
         $stdIde->procEmi = '0';
