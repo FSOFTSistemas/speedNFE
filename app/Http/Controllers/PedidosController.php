@@ -134,12 +134,12 @@ class PedidosController extends Controller
             if (!isset($result['erro'])) {
                 return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
             } else {
-                return redirect('/venda')->with('error', $result['data']);
+                return redirect('/venda')->with('warning', $result['data']['retEvento']['infEvento']['xMotivo']);
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
     }
 
