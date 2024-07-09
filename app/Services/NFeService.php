@@ -45,8 +45,7 @@ class NFeService
         $stdIde->nNF = (int) $numeroNFe;
         $stdIde->dhEmi = date("Y-m-d\TH:i:sP");
         $stdIde->dhSaiEnt = date("Y-m-d\TH:i:sP");
-        // $stdIde->tpNF = $venda->tpNF;
-        $stdIde->tpNF = 1;
+        $stdIde->tpNF = $venda->tpNF;
 
         $stdIde->idDest = $emitente->endereco->uf != $venda->endereco_cliente->uf ? 2 : 1;
         $stdIde->cMunFG = $emitente->endereco->codigoIBGE;
@@ -54,13 +53,18 @@ class NFeService
         $stdIde->tpEmis = 1;
         $stdIde->cDV = 0;
         $stdIde->tpAmb = $emitente->ambiente;
-        $stdIde->finNFe = 1;
-        // $stdIde->finNFe = $venda->finNF;
+        $stdIde->finNFe = $venda->finNF;
         $stdIde->indFinal = 1;
         $stdIde->indPres = 1;
         $stdIde->procEmi = '0';
         $stdIde->verProc = '3.10.31';
         $tagide = $nfe->tagide($stdIde);
+
+        if ($venda->ref_nfe) {
+            $stdrefNFe = new \stdClass();
+            $stdrefNFe->refNFe = $venda->ref_nfe;
+            $nfe->tagrefNFe($stdrefNFe);
+        }
 
         //TAG EMITENTE
         $stdEmit = new \stdClass();
@@ -367,45 +371,51 @@ class NFeService
             $pag = $nfe->tagpag($stdPag);
 
             $stdDetPag = new \stdClass();
-            if ($fat->forma_pag->descricao == "Dinheiro") {
-                $stdDetPag->tPag = '01';
-            } else if ($fat->forma_pag->descricao == 'Cheque') {
-                $stdDetPag->tPag = '02';
-            } else if ($fat->forma_pag->descricao == 'Cartão de Crédito') {
-                $stdDetPag->tPag = '03';
-            } else if ($fat->forma_pag->descricao == 'Cartão de Débito') {
-                $stdDetPag->tPag = '04';
-            } else if ($fat->forma_pag->descricao == 'Crédito Loja') {
-                $stdDetPag->tPag = '05';
-            } else if ($fat->forma_pag->descricao == 'Vale Alimentação') {
-                $stdDetPag->tPag = '10';
-            } else if ($fat->forma_pag->descricao == 'Vale Refeição') {
-                $stdDetPag->tPag = '11';
-            } else if ($fat->forma_pag->descricao == 'Vale Presente') {
-                $stdDetPag->tPag = '12';
-            } else if ($fat->forma_pag->descricao == 'Vale Combustível') {
-                $stdDetPag->tPag = '13';
-            } else if ($fat->forma_pag->descricao == 'Duplicata Mercantil') {
-                $stdDetPag->tPag = '14';
-            } else if ($fat->forma_pag->descricao == 'Boleto Bancário') {
-                $stdDetPag->tPag = '15';
-            } else if ($fat->forma_pag->descricao == 'Depósito Bancário') {
-                $stdDetPag->tPag = '16';
-            } else if ($fat->forma_pag->descricao == 'Pagamento Instantâneo (PIX)') {
-                $stdDetPag->tPag = '17';
-            } else if ($fat->forma_pag->descricao == 'Sem pagamento') {
+            if ($venda->ref_nfe) {
                 $stdDetPag->tPag = '90';
-            } else if ($fat->forma_pag->descricao == 'Outros') {
-                $stdDetPag->tPag = '99';
-            }
-            $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem pagamento' ? FormatationUtil::format($fat->valor) : 0.00;
-            $stdDetPag->indPag = 1;
-            $stdDetPag->vTroco = 0;
-            if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
-                $stdDetPag->tpIntegra = '2';
+                $stdDetPag->vPag = 0;
+            } else {
+                if ($fat->forma_pag->descricao == "Dinheiro") {
+                    $stdDetPag->tPag = '01';
+                } else if ($fat->forma_pag->descricao == 'Cheque') {
+                    $stdDetPag->tPag = '02';
+                } else if ($fat->forma_pag->descricao == 'Cartão de Crédito') {
+                    $stdDetPag->tPag = '03';
+                } else if ($fat->forma_pag->descricao == 'Cartão de Débito') {
+                    $stdDetPag->tPag = '04';
+                } else if ($fat->forma_pag->descricao == 'Crédito Loja') {
+                    $stdDetPag->tPag = '05';
+                } else if ($fat->forma_pag->descricao == 'Vale Alimentação') {
+                    $stdDetPag->tPag = '10';
+                } else if ($fat->forma_pag->descricao == 'Vale Refeição') {
+                    $stdDetPag->tPag = '11';
+                } else if ($fat->forma_pag->descricao == 'Vale Presente') {
+                    $stdDetPag->tPag = '12';
+                } else if ($fat->forma_pag->descricao == 'Vale Combustível') {
+                    $stdDetPag->tPag = '13';
+                } else if ($fat->forma_pag->descricao == 'Duplicata Mercantil') {
+                    $stdDetPag->tPag = '14';
+                } else if ($fat->forma_pag->descricao == 'Boleto Bancário') {
+                    $stdDetPag->tPag = '15';
+                } else if ($fat->forma_pag->descricao == 'Depósito Bancário') {
+                    $stdDetPag->tPag = '16';
+                } else if ($fat->forma_pag->descricao == 'Pagamento Instantâneo (PIX)') {
+                    $stdDetPag->tPag = '17';
+                } else if ($fat->forma_pag->descricao == 'Sem pagamento') {
+                    $stdDetPag->tPag = '90';
+                } else if ($fat->forma_pag->descricao == 'Outros') {
+                    $stdDetPag->tPag = '99';
+                }
+                $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem pagamento' ? FormatationUtil::format($fat->valor) : 0.00;
+                $stdDetPag->indPag = 1;
+                $stdDetPag->vTroco = 0;
+                if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
+                    $stdDetPag->tpIntegra = '2';
+                }
             }
             $detPag = $nfe->tagdetPag($stdDetPag);
         }
+
 
         $stdInfCpl = new \stdClass();
         $stdInfCpl->infCpl = $venda->info_complementares;

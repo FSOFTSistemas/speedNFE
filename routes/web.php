@@ -151,7 +151,6 @@ Route::get('/editar/{pedido}', [PedidosController::class, 'edit'])->name('vendas
 Route::put('/atualizar/{id}', [PedidosController::class, 'update'])->name('vendas.atualizar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::get('/vendas/nova', [PedidosController::class, 'new'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::post('/vendas/nova', [PedidosController::class, 'store'])->name('salvar_venda')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
-Route::post('/vendas/devolucao', [PedidosController::class, 'devolution'])->name('devolucao_venda')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::get('/venda/envio/{id}', [PedidosController::class, 'enviarNFe'])->name('enviarXML')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::get('/venda/imprimir/{id}', [PedidosController::class, 'imprimir'])->name('imprimirXML')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
 Route::get('/venda/imprimirCancelamento/{id}', [PedidosController::class, 'imprimirCancelamento'])->name('imprimirCancelamentoXML')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);

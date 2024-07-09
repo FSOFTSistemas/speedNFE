@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class PedidosService
 {
 
-    public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $finalidade, $ref_nfe, $info_complementares)
+    public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $finalidade, $ref_nfe, $tipo, $info_complementares)
     {
         return Pedido::create([
             'user_id' => $user_id,
@@ -21,7 +21,7 @@ class PedidosService
             'desconto' => $desconto,
             'total' => $subtotal,
             'finNF' => $finalidade,
-            'tpNF' => $finalidade == 1 ? 1 : 0,
+            'tpNF' => $tipo,
             'empresa_id' => $empresa,
             'numero_nfe' => 0,
             'sequencia_evento' => 0,

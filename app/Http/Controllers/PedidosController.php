@@ -338,83 +338,13 @@ class PedidosController extends Controller
         }
     }
 
-    public function devolution(Request $request)
-    {
-        try {
-            $request->validate([
-                'empresa' => 'required|numeric',
-                'finalidade' => 'required|numeric',
-                'cliente' => 'required|numeric',
-                'cfop' => 'required|numeric',
-                'vendaItens' => 'required',
-                'info_complementares' => 'nullable|max:255'
-            ], [
-                'required' => 'O campo :attribute é obrigatório!',
-                'vendaItens.required' => 'Deve existir pelo menos um item no pedido!',
-                'numeric' => 'O campo :attribute deve ser um valor numérico!',
-                'max' => 'O campo :attribute deve conter no máximo :max caracteres'
-            ]);
-            DB::beginTransaction();
-            $subtotal = 0;
-            $desconto = 0;
-            //Se ainda não atingiu o limite de Notas ou é janaina que está fazendo, permito a criação de uma nova nota, caso contrário faço o bloqueio da ação
-            if ($this->pedidoServices->limiteDeNotas($request->empresa) < $this->empresaServices->buscarEmpresa($request->empresa)->limNFes || $request->empresa == 1) {
-                foreach ($request->vendaItens as $item) {
-                    $prod = $this->produtoServices->um($item['produto_id']);
-                    $desconto = $desconto + $item['desconto'];
-                    $subtotal = $subtotal + ($item['total']);
-                }
-                $pedido = $this->pedidoServices->create(
-                    Auth::id(),
-                    $request->cliente,
-                    $subtotal,
-                    $desconto,
-                    $request->empresa,
-                    $request->cfop,
-                    $request->finalidade,
-                    $request->ref_nfe,
-                    $request->info_complementares
-                );
-                foreach ($request->vendaItens as $item) {
-                    $prod = $this->produtoServices->um($item['produto_id']);
-                    $this->itemServices->create(
-                        $pedido->id,
-                        $prod,
-                        $item['quantidade'],
-                        $request->empresa,
-                        $item['desconto'],
-                        $item['unitario']
-                    );
-                }
-                $this->faturaServices->create(
-                    $subtotal,
-                    $pedido->id,
-                    $request->empresa
-                );
-                DB::commit();
-                return redirect()->route('vendas.index')->with('success', "Nota criada com sucesso");
-            } else {
-                DB::rollBack();
-                return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
-            }
-        } catch (ValidationException $e) {
-            foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
-            }
-            DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
-        }
-    }
-
     public function store(Request $request)
     {
         try {
             $request->validate([
                 'empresa' => 'required|numeric',
                 'finalidade' => 'required|numeric',
+                'tipo' => 'required|numeric',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
@@ -444,6 +374,7 @@ class PedidosController extends Controller
                     $request->cfop,
                     $request->finalidade,
                     $request->ref_nfe,
+                    $request->tipo,
                     $request->info_complementares
                 );
                 foreach ($request->vendaItens as $item) {

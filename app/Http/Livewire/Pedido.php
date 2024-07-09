@@ -26,6 +26,7 @@ class Pedido extends Component
     public $bcfop = '';
     public $forma = '';
     public $finalidade = 1;
+    public $tipo = 1;
 
     public $desconto = 0;
     public $subtotal = 0;

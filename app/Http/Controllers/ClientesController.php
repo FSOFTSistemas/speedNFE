@@ -46,7 +46,7 @@ class ClientesController extends Controller
     {
         try {
             $user = Auth::user();
-            $empresas = $this->empresaServices->todas();
+            $empresas = $this->empresaServices->todos(Auth::user()->empresa_id);
             return view('clientes.cadastrar', ['empresas' => $empresas, 'user' => $user]);
         } catch (Exception $e) {
             return back();

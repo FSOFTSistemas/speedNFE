@@ -124,14 +124,14 @@
                                         <a title="Carta de Correção" href="#">
                                             <button class="btn btn-warning form-control d-block d-sm-none"
                                                 style="margin-bottom: 1%" data-toggle="modal"
-                                                data-target="#cceModal">CCe</button>
+                                                data-target="#cceModal{{ $pedido->id }}">CCe</button>
                                             <i class="text-danger d-none d-sm-block" data-toggle="modal"
-                                                data-target="#cceModal"><b>CCe</b></i>
+                                                data-target="#cceModal{{ $pedido->id }}"><b>CCe</b></i>
                                         </a>
                                     </div>
 
                                     <!-- Modal -->
-                                    <div class="modal fade" id="cceModal" tabindex="-1" role="dialog"
+                                    <div class="modal fade" id="cceModal{{ $pedido->id }}" tabindex="-1" role="dialog"
                                         aria-labelledby="cceModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
@@ -174,14 +174,14 @@
                                 <div class="col-md-3 col-xs-6">
                                     <a title="Cancelar" href="#">
                                         <button class="btn btn-danger form-control d-block d-sm-none" data-toggle="modal"
-                                            data-target="#exampleModal">Cancelar</button>
-                                        <i data-toggle="modal" data-target="#exampleModal"
+                                            data-target="#exampleModal{{ $pedido->id }}">Cancelar</button>
+                                        <i data-toggle="modal" data-target="#exampleModal{{ $pedido->id }}"
                                             class="fa fa-ban text-danger d-none d-sm-block"></i>
                                     </a>
                                 </div>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                <div class="modal fade" id="exampleModal{{ $pedido->id }}" tabindex="-1" role="dialog"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">

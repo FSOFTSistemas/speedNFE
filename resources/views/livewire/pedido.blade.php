@@ -1,5 +1,5 @@
 <div>
-    <form method="POST">
+    <form method="POST" action="{{ route('salvar_venda') }}" enctype="multipart/form-data">
         @csrf
 
         <div class="row" style="text-align: center">
@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-10 col-8">
+            <div class="col-md-8 col-6">
                 <label>Empresa</label>
                 <select wire:change="atualizarArrays()" class="form-control" name="empresa" id="empresa"
                     wire:model="empresa" required>
@@ -20,12 +20,20 @@
                 </select>
             </div>
 
-            <div class="col-md-2 col-4">
+            <div class="col-md-2 col-3">
                 <label>Finalidade</label>
                 <select class="form-control" name="finalidade" id="finalidade" wire:model="finalidade"
                     wire:change="refNFeSection" required>
                     <option value="1">Venda</option>
                     <option value="4">Devolução</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 col-3" id="tp_nfe_section" style="display: none" wire:ignore>
+                <label>Tipo</label>
+                <select class="form-control" name="tipo" id="tipo" wire:model="tipo" required>
+                    <option value="1">Saída</option>
+                    <option value="0">Entrada</option>
                 </select>
             </div>
         </div>
@@ -200,10 +208,10 @@
             </div>
         </div>
 
-        <div class="row mb-3" id="ref_nfe_section" style="display: none">
+        <div class="row mb-3" id="ref_nfe_section" style="display: none" wire:ignore>
             <div class="col">
                 <label for="">Referência NFe</label>
-                <input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44">
+                <input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44" value="{{ old('ref_nfe') }}">
             </div>
         </div>
 
@@ -235,10 +243,13 @@
         document.addEventListener('livewire:load', function() {
             Livewire.on('section_nfe', function(value) {
                 let section = document.getElementById('ref_nfe_section')
+                let section2 = document.getElementById('tp_nfe_section')
                 if (value == 4) {
                     section.style.display = 'block'
+                    section2.style.display = 'block'
                 } else {
                     section.style.display = 'none'
+                    section2.style.display = 'block'
                 }
             });
         });
