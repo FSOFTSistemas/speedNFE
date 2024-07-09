@@ -407,7 +407,7 @@ class MDFeService
             sleep(2);
             $xml = Complements::toAuthorize($signXml, $protocolo);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 777, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
@@ -440,7 +440,7 @@ class MDFeService
             }
             $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 777, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
             return [
@@ -473,7 +473,7 @@ class MDFeService
             }
             $canceledXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 777, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $canceledXml);
             return [
