@@ -106,7 +106,7 @@ class EmpresasController extends Controller
                 'nfe' => 'required|numeric',
                 'nfce' => 'required|numeric',
                 'mdfe' => 'required|numeric',
-                'contador' => 'required|email',
+                'contador' => 'nullable|email',
                 'serie' => 'required',
                 'senha' => 'nullable',
                 'csc' => 'required',
