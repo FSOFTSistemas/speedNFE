@@ -42,12 +42,10 @@
                                 <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
                                     aria-controls="profile" aria-selected="false"><b>Endereço</b></a>
                             </li>
-                            @if (auth()->user()->can('master') || auth()->user()->can('admin'))
-                                <li class="nav-item">
-                                    <a class="nav-link" id="fiscal-tab" data-toggle="pill" href="#fiscal" role="tab"
-                                        aria-controls="fiscal" aria-selected="false"><b>Fiscal</b></a>
-                                </li>
-                            @endif
+                            <li class="nav-item">
+                                <a class="nav-link" id="fiscal-tab" data-toggle="pill" href="#fiscal" role="tab"
+                                    aria-controls="fiscal" aria-selected="false"><b>Fiscal</b></a>
+                            </li>
                             @can('master')
                                 <li class="nav-item">
                                     <a class="nav-link" id="limite-tab" data-toggle="pill" href="#limite" role="tab"

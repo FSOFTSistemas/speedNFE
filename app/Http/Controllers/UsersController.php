@@ -96,7 +96,7 @@ class UsersController extends Controller
     public function create()
     {
         try {
-            $empresas = $this->empresaService->todas();
+            $empresas = $this->empresaService->todos(Auth::user()->empresa_id);
             return view('users.create', ['empresas' => $empresas]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
