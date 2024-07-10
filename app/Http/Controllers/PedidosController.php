@@ -223,6 +223,7 @@ class PedidosController extends Controller
     public function enviarNFe($id)
     {
         try {
+            DB::beginTransaction();
             $venda = $this->pedidoServices->buscarPedido($id);
             $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $nfe_service = new NFeService([
@@ -252,25 +253,37 @@ class PedidosController extends Controller
                         $venda->numero_nfe = $result['nNf'];
                         $venda->save();
                         $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
-                        foreach ($venda->itens as $item) {
-                            $this->estoqueService->out($item->produto_id, $item->qtde);
+                        if ($venda->tpNF) {
+                            foreach ($venda->itens as $item) {
+                                $this->estoqueService->out($item->produto_id, $item->qtde);
+                            }
+                        } else {
+                            foreach ($venda->itens as $item) {
+                                $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
+                            }
                         }
+                        DB::commit();
                         return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
                     } else {
                         $venda->status = 3;
                         $venda->estado = 'Rejeitado';
                         $venda->save();
+                        DB::commit();
                         return redirect('/vendas')->with('warning', $resultado['erro']);
                     }
                 } else {
+                    DB::rollBack();
                     return redirect('/vendas')->with('error', $result['erros_xml']);
                 }
             } else {
+                DB::rollBack();
                 return redirect('/vendas')->with("error", 404);
             }
         } catch (ValidatorException $e) {
+            DB::rollBack();
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -316,10 +329,9 @@ class PedidosController extends Controller
                         $item['unitario']
                     );
                 }
-                $this->faturaServices->create(
+                $this->faturaServices->update(
                     $subtotal,
-                    $id,
-                    $venda->empresa_id
+                    $venda->fatura[0]->id,
                 );
                 $this->pedidoServices->update(
                     $venda->id,
@@ -345,6 +357,7 @@ class PedidosController extends Controller
                 'empresa' => 'required|numeric',
                 'finalidade' => 'required|numeric',
                 'tipo' => 'required|numeric',
+                'ref_nfe' => $request->finalidade == 1 ? 'nullable' : 'required',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
@@ -391,6 +404,7 @@ class PedidosController extends Controller
                 $this->faturaServices->create(
                     $subtotal,
                     $pedido->id,
+                    $pedido->finNF,
                     $request->empresa
                 );
                 DB::commit();

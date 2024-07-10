@@ -32,7 +32,8 @@ return new class extends Migration
             'PIX',
             'Carta de Crédito',
             'Permuta',
-            'Pagamento à Prazo'
+            'Pagamento à Prazo',
+            'Sem Pagamento'
         ];
         for ($i = 0; $i < 11; $i++) {
         FormaPag::create([

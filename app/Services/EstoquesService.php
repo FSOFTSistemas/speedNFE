@@ -33,7 +33,7 @@ class EstoquesService{
         $stock = Estoque::whereProdutoId($prodId)->first();
         return $stock->update([
             'estoque_atual' => $stock->estoque_anterior,
-            'estoque_anterior' => $stock->estoque_anterior == $stock->entradas ? 0 : $stock->estoque_anterior + $amount,
+            'estoque_anterior' => $stock->estoque_anterior == $stock->entradas ? 0 : $stock->estoque_atual + $amount,
             'saidas' => $stock->saidas - $amount
         ]);
     }

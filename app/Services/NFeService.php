@@ -371,47 +371,60 @@ class NFeService
             $pag = $nfe->tagpag($stdPag);
 
             $stdDetPag = new \stdClass();
-            if ($venda->ref_nfe) {
-                $stdDetPag->tPag = '90';
-                $stdDetPag->vPag = 0;
-            } else {
-                if ($fat->forma_pag->descricao == "Dinheiro") {
+            switch ($fat->forma_pag->descricao) {
+                case "Dinheiro":
                     $stdDetPag->tPag = '01';
-                } else if ($fat->forma_pag->descricao == 'Cheque') {
+                    break;
+                case "Cheque":
                     $stdDetPag->tPag = '02';
-                } else if ($fat->forma_pag->descricao == 'Cartão de Crédito') {
+                    break;
+                case "Cartão de Crédito":
                     $stdDetPag->tPag = '03';
-                } else if ($fat->forma_pag->descricao == 'Cartão de Débito') {
+                    break;
+                case "Cartão de Débito":
                     $stdDetPag->tPag = '04';
-                } else if ($fat->forma_pag->descricao == 'Crédito Loja') {
+                    break;
+                case "Crédito Loja":
                     $stdDetPag->tPag = '05';
-                } else if ($fat->forma_pag->descricao == 'Vale Alimentação') {
+                    break;
+                case "Vale Alimentação":
                     $stdDetPag->tPag = '10';
-                } else if ($fat->forma_pag->descricao == 'Vale Refeição') {
+                    break;
+                case "Vale Refeição":
                     $stdDetPag->tPag = '11';
-                } else if ($fat->forma_pag->descricao == 'Vale Presente') {
+                    break;
+                case "Vale Presente":
                     $stdDetPag->tPag = '12';
-                } else if ($fat->forma_pag->descricao == 'Vale Combustível') {
+                    break;
+                case "Vale Combustível":
                     $stdDetPag->tPag = '13';
-                } else if ($fat->forma_pag->descricao == 'Duplicata Mercantil') {
+                    break;
+                case "Duplicata Mercantil":
                     $stdDetPag->tPag = '14';
-                } else if ($fat->forma_pag->descricao == 'Boleto Bancário') {
+                    break;
+                case "Boleto Bancário":
                     $stdDetPag->tPag = '15';
-                } else if ($fat->forma_pag->descricao == 'Depósito Bancário') {
+                    break;
+                case "Depósito Bancário":
                     $stdDetPag->tPag = '16';
-                } else if ($fat->forma_pag->descricao == 'Pagamento Instantâneo (PIX)') {
+                    break;
+                case "PIX":
                     $stdDetPag->tPag = '17';
-                } else if ($fat->forma_pag->descricao == 'Sem pagamento') {
+                    break;
+                case "Sem Pagamento":
                     $stdDetPag->tPag = '90';
-                } else if ($fat->forma_pag->descricao == 'Outros') {
+                    break;
+                case "Outros":
                     $stdDetPag->tPag = '99';
-                }
-                $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem pagamento' ? FormatationUtil::format($fat->valor) : 0.00;
-                $stdDetPag->indPag = 1;
-                $stdDetPag->vTroco = 0;
-                if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
-                    $stdDetPag->tpIntegra = '2';
-                }
+                    break;
+                default:
+                    break;
+            }
+            $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem Pagamento' ? FormatationUtil::format($fat->valor) : 0;
+            $stdDetPag->indPag = 1;
+            $stdDetPag->vTroco = 0;
+            if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
+                $stdDetPag->tpIntegra = '2';
             }
             $detPag = $nfe->tagdetPag($stdDetPag);
         }

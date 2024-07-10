@@ -249,7 +249,7 @@
                     section2.style.display = 'block'
                 } else {
                     section.style.display = 'none'
-                    section2.style.display = 'block'
+                    section2.style.display = 'none'
                 }
             });
         });

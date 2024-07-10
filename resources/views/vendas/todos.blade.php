@@ -111,7 +111,6 @@
                             </div>
                         @elseif($pedido->estado == 'Autorizado')
                             <div class="row">
-                                @if ($pedido->sequencia_evento == 0)
                                     <div class="col-md-3 col-xs-6">
                                         <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Visualizar"
                                             class="text-primary">
@@ -160,7 +159,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                @else
+                                    @if ($pedido->sequencia_evento > 0)
                                     <div class="col-md-3 col-xs-6">
                                         <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}"
                                             class="text-dark">
