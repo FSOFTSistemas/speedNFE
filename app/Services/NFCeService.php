@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\EstadoEnum;
 use App\Exceptions\AlreadyExistException;
+use App\Exceptions\LimitExceededException;
 use App\Exceptions\MalformedXmlException;
 use App\Exceptions\TimeExceededException;
 use App\Models\NFCe;
@@ -78,6 +79,9 @@ class NFCeService
     public function generateXml($cupom, $emitente)
     {
         try {
+            if (count($emitente->nfces) >= $emitente->limNFCes && $emitente->id != 1) {
+                throw new LimitExceededException("O limite de notas NFCe foi atingido!");
+            }
             $make = new Make();
 
             $std = new \stdClass();

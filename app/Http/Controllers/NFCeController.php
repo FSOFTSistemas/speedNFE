@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AlreadyExistException;
+use App\Exceptions\LimitExceededException;
 use App\Exceptions\MalformedXmlException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\TimeExceededException;
@@ -85,7 +86,11 @@ class NFCeController extends Controller
             }
             DB::commit();
             return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
-        } catch (MalformedXmlException $e) {
+        } catch (LimitExceededException $e) {
+            DB::rollback();
+            $this->cupomService->rejectedCoupon($id);
+            return back()->with('warning', $e->getMessage());
+        }catch (MalformedXmlException $e) {
             DB::rollback();
             $this->cupomService->rejectedCoupon($id);
             return back()->with('warning', $e->getMessage());

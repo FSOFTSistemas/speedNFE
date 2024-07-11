@@ -118,4 +118,10 @@ class Empresa extends Model
 		];
 		return $ufs[$uf];
 	}
+
+    public function nfces()
+    {
+        return $this->hasMany(NFCe::class, 'empresa_id', 'id');
+    }
+
 }
