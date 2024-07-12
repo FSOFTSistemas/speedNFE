@@ -389,30 +389,29 @@ class MDFeService
         return $this->tools->signMDFe($xml);
     }
 
-    public function transmitir($signXml, $chave, $caminho)
+    public function transmitir($signedXml, $chave, $caminho)
     {
         try {
             $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
-            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote);
+            $resp = $this->tools->sefazEnviaLote([$signedXml], $idLote, 1);
             $st = new Standardize();
             $std = $st->toStd($resp);
             sleep(2);
-            if ($std->cStat != 103) {
+            if ($std->cStat != 103 && $std->cStat != 100) {
                 return [
                     'erro' => "[$std->cStat] - $std->xMotivo",
                 ];
             }
-            $recibo = $std->infRec->nRec;
-            $protocolo = $this->tools->sefazConsultaRecibo($recibo);
-            sleep(2);
-            $xml = Complements::toAuthorize($signXml, $protocolo);
+            dd($std, $std->protMDFe->infProt->nProt);
+            $nProt = $std->protMDFe->infProt->nProt;
+            $xml = Complements::toAuthorize($signedXml, $nProt);
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
-                'sucesso' => $recibo,
-                'nProt' => simplexml_load_string($xml)->protMDFe->infProt->nProt,
+                'sucesso' => true,
+                'nProt' => $nProt,
             ];
         } catch (\Exception $e) {
             return [
