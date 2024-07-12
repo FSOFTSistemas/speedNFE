@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+error_reporting(E_ALL);
+ini_set('display_errors', 'On');
+
 use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -11,8 +14,6 @@ use NFePHP\MDFe\Complements;
 use NFePHP\MDFe\Make;
 use NFePHP\MDFe\Tools;
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
 class MDFeService
 {
     private $tools;
@@ -392,7 +393,11 @@ class MDFeService
     public function transmitir($signedXml, $chave, $caminho)
     {
         try {
-            $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
+            // $resp = $this->tools->sefazConsultaChave('26240742879649000174580010000001701000000004');
+            // $st = new Standardize();
+            // $std = $st->toStd($resp);
+            // dd($std);
+            $idLote = rand(1, 10000);
             $resp = $this->tools->sefazEnviaLote([$signedXml], $idLote, 1);
             $st = new Standardize();
             $std = $st->toStd($resp);
@@ -402,16 +407,16 @@ class MDFeService
                     'erro' => "[$std->cStat] - $std->xMotivo",
                 ];
             }
-            dd($std, $std->protMDFe->infProt->nProt);
-            $nProt = $std->protMDFe->infProt->nProt;
-            $xml = Complements::toAuthorize($signedXml, $nProt);
+            // $resp = $this->tools->sefazConsultaRecibo($std->infRec->nRec);
+            // $std = $st->toStd($resp);
+            // $xml = Complements::toAuthorize($signedXml, $resp);
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
-            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $signedXml);
             return [
                 'sucesso' => true,
-                'nProt' => $nProt,
+                'nProt' => $std->protMDFe->infProt->nProt,
             ];
         } catch (\Exception $e) {
             return [
@@ -485,5 +490,4 @@ class MDFeService
             ];
         }
     }
-
 }

@@ -80,7 +80,8 @@
                                         @endforeach
 
                                         @foreach ($numeroNotas as $index => $nNotas)
-                                            <input type="hidden" name="numeroNotas.[{{ $index }}]" wire:model='numeroNotas.{{ $index }}'>
+                                            <input type="hidden" name="numeroNotas.[{{ $index }}]"
+                                                wire:model='numeroNotas.{{ $index }}'>
                                         @endforeach
 
                                     </div>
@@ -129,10 +130,12 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="">Motorista *</label>
-                                                <select class="form-control" wire:model="motorista" wire:change="addMotorista()">
+                                                <select class="form-control" wire:model="motorista"
+                                                    wire:change="addMotorista()">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($motoristasDisponiveis as $motorista)
-                                                        <option value="{{ $motorista->id . '/' . $motorista->nome}}">{{ $motorista->nome }}
+                                                        <option value="{{ $motorista->id . '/' . $motorista->nome }}">
+                                                            {{ $motorista->nome }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -144,7 +147,8 @@
                                                                     <b>{{ explode('/', $motorista)[1] }}</b>
                                                                 </div>
                                                                 <div class="col" style="text-align: center">
-                                                                    <i class="fa fa-trash" title="Remover" wire:click="removeMotorista({{ $index }})"></i>
+                                                                    <i class="fa fa-trash" title="Remover"
+                                                                        wire:click="removeMotorista({{ $index }})"></i>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -152,10 +156,10 @@
                                                 </ul>
                                             </div>
 
-                                        @foreach ($motoristas as $index => $mtr)
-                                            <input type="hidden" required name="motoristas[{{ $index }}]"
-                                                wire:model="motoristas.{{ $index }}">
-                                        @endforeach
+                                            @foreach ($motoristas as $index => $mtr)
+                                                <input type="hidden" required name="motoristas[{{ $index }}]"
+                                                    wire:model="motoristas.{{ $index }}">
+                                            @endforeach
 
                                         </div>
                                     </div>
@@ -164,10 +168,12 @@
                                         <div class="col-md-6 col-xs-6">
                                             <div class="form-group">
                                                 <label for="">Veículo de reboque</label>
-                                                <select class="form-control" wire:model="veiculoReboque" wire:change="addReboque()">
+                                                <select class="form-control" wire:model="veiculoReboque"
+                                                    wire:change="addReboque()">
                                                     <option value="">Selecionar</option>
                                                     @foreach ($veiculosReboqueDisponiveis as $veiculoR)
-                                                        <option value="{{ $veiculoR->id . '/' . $veiculoR->placa }}">{{ $veiculoR->placa }}
+                                                        <option value="{{ $veiculoR->id . '/' . $veiculoR->placa }}">
+                                                            {{ $veiculoR->placa }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -179,7 +185,8 @@
                                                                     <b>{{ explode('/', $rbq)[1] }}</b>
                                                                 </div>
                                                                 <div class="col" style="text-align: center">
-                                                                    <i class="fa fa-trash" title="Remover" wire:click="removeReboque({{ $index }})"></i>
+                                                                    <i class="fa fa-trash" title="Remover"
+                                                                        wire:click="removeReboque({{ $index }})"></i>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -264,15 +271,19 @@
                                             </select>
                                         </div>
                                         <div class="col-md-5 col-xs-4">
-                                            <select class="form-control" wire:model="carregamento" wire:change="carregamento()" required>
+                                            <select class="form-control" wire:model="carregamento"
+                                                wire:change="carregamento()" required>
                                                 @foreach ($cidadesCarregamento as $city)
                                                     <option value="{{ $city }}">{{ $city->cidade }}</option>
                                                 @endforeach
                                             </select>
 
-                                            <input class="form-control" type="hidden" name="codMunCarregamento" wire:model="codMunCarregamento" required placeholder="Cód. Município...">
+                                            <input class="form-control" type="hidden" name="codMunCarregamento"
+                                                wire:model="codMunCarregamento" required
+                                                placeholder="Cód. Município...">
 
-                                            <input class="form-control" type="hidden" name="municipio" wire:model="municipio" required>
+                                            <input class="form-control" type="hidden" name="municipio"
+                                                wire:model="municipio" required>
                                         </div>
                                     </div><br>
 
@@ -348,8 +359,9 @@
 
                                     <div class="row">
                                         <div class="col-md-5 col-xs-4">
-                                            <i class="fas fa-dollar-sign" style="margin-right: 2%; color:#193D55"></i><label
-                                                for=""><b> Valor total da Carga (R$):</b></label>
+                                            <i class="fas fa-dollar-sign"
+                                                style="margin-right: 2%; color:#193D55"></i><label for=""><b>
+                                                    Valor total da Carga (R$):</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
                                             <input class="form-control" type="number" name="valorTotal"
@@ -360,8 +372,9 @@
 
                                     <div class="row">
                                         <div class="col-md-4 col-xs-4">
-                                            <i class="fas fa-weight-hanging" style="margin-right: 2%; color:#193D55"></i><label
-                                                for=""><b> Peso total (Kg):</b></label>
+                                            <i class="fas fa-weight-hanging"
+                                                style="margin-right: 2%; color:#193D55"></i><label for=""><b>
+                                                    Peso total (Kg):</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
                                             <input class="form-control" type="number" name="pesoTotal"
@@ -369,10 +382,11 @@
                                         </div>
                                     </div><br>
 
-                                    <div class="row" >
+                                    <div class="row">
                                         <div class="col-md-6 col-xs-6">
-                                            <i class="fas fa-box-open" style="margin-right: 2%; color:#193D55"></i><label
-                                                for=""><b> Produto predominante:</b></label>
+                                            <i class="fas fa-box-open"
+                                                style="margin-right: 2%; color:#193D55"></i><label for=""><b>
+                                                    Produto predominante:</b></label>
                                         </div>
                                         <div class="col-md-5 col-xs-5">
                                             <input class="form-control" type="text" name="produtoPredominante"
@@ -384,8 +398,9 @@
 
                                     <div class="row">
                                         <div class="col-md-4 col-xs-4">
-                                            <i class="fas fa-box-open" style="margin-right: 2%; color:#193D55"></i><label
-                                                for=""><b> Tipo de carga:</b></label>
+                                            <i class="fas fa-box-open"
+                                                style="margin-right: 2%; color:#193D55"></i><label for=""><b>
+                                                    Tipo de carga:</b></label>
                                         </div>
                                         <div class="col-md-4 col-xs-4">
                                             <select class="form-control" name="tipoCarga" wire:model="tipoCarga"
@@ -416,155 +431,165 @@
             </div>
         </main>
 
-        @if($cidadesDescarregamentoLatLon)
-        @component('components.modal', [
-            'modalId' => 'modalMoreOptions',
-            'modalTitle' => 'Mais Opções',
-            'sizeModal' => 'modal-lg',
-        ])
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="content">
-                            <div class="container-fluid">
-                                <div class="col-xs-12 col-sm-12" style="width: 100%">
+        @if (!empty($notas))
+            @component('components.modal', [
+                'modalId' => 'modalMoreOptions',
+                'modalTitle' => 'Mais Opções',
+                'sizeModal' => 'modal-lg',
+            ])
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="content">
+                                <div class="container-fluid">
+                                    <div class="col-xs-12 col-sm-12" style="width: 100%">
 
-                                    <div class="card card-primary card-outline card-tabs">
+                                        <div class="card card-primary card-outline card-tabs">
 
-                                        <div class="card-header p-0 pt-1 border-bottom-0">
-                                            <ul class="nav nav-tabs" id="tab" role="tablist">
-                                                <li class="nav-item">
-                                                    <a class="nav-link" id="prod-tab" data-toggle="pill" href="#prod"
-                                                        role="tab" aria-controls="prod" aria-selected="false">Produto
-                                                        Predominante</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link active" id="home-tab" data-toggle="pill"
-                                                        href="#home" role="tab" aria-controls="home"
-                                                        aria-selected="true">Observações</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a class="nav-link" id="lacres-tab" data-toggle="pill"
-                                                        href="#lacres" role="tab" aria-controls="lacres"
-                                                        aria-selected="false">Lacres</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="tab-content" id="tabContent">
-                                                <div class="tab-pane fade show active" id="home" role="tabpanel"
-                                                    aria-labelledby="home-tab">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <h4>Informações Adicionais</h4>
+                                            <div class="card-header p-0 pt-1 border-bottom-0">
+                                                <ul class="nav nav-tabs" id="tab" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="prod-tab" data-toggle="pill"
+                                                            href="#prod" role="tab" aria-controls="prod"
+                                                            aria-selected="false">Produto
+                                                            Predominante</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="home-tab" data-toggle="pill"
+                                                            href="#home" role="tab" aria-controls="home"
+                                                            aria-selected="true">Observações</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="lacres-tab" data-toggle="pill"
+                                                            href="#lacres" role="tab" aria-controls="lacres"
+                                                            aria-selected="false">Lacres</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="tab-content" id="tabContent">
+                                                    <div class="tab-pane fade show active" id="home" role="tabpanel"
+                                                        aria-labelledby="home-tab">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h4>Informações Adicionais</h4>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <label for="">Informações de interesse ao
+                                                                    fisco</label>
+                                                                <textarea class="form-control" name="info_fisco" wire:model="info_fisco" maxlength="255" cols="10"
+                                                                    rows="5" placeholder="Informações ao fisco..."></textarea>
+                                                            </div>
+
+                                                            <div class="col">
+                                                                <label for="">Informações de interesse ao
+                                                                    contribuinte</label>
+                                                                <textarea class="form-control" name="info_contribuinte" wire:model="info_contribuinte" maxlength="255"
+                                                                    cols="10" rows="5" placeholder="Informações ao contribuinte..."></textarea>
+                                                            </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Informações de interesse ao
-                                                                fisco</label>
-                                                            <textarea class="form-control" name="info_fisco" wire:model="info_fisco" maxlength="255" cols="10" rows="5"
-                                                                placeholder="Informações ao fisco..."></textarea>
+                                                    <div class="tab-pane fade" id="lacres" role="tabpanel"
+                                                        aria-labelledby="lacres-tab">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h4>Lacres</h4>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="col">
-                                                            <label for="">Informações de interesse ao
-                                                                contribuinte</label>
-                                                            <textarea class="form-control" name="info_contribuinte" wire:model="info_contribuinte" maxlength="255" cols="10"
-                                                                rows="5" placeholder="Informações ao contribuinte..."></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="tab-pane fade" id="lacres" role="tabpanel"
-                                                    aria-labelledby="lacres-tab">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <h4>Lacres</h4>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <label for="">Número</label>
+                                                                <input class="form-control" type="text"
+                                                                    name="numeroLacre" wire:model="numeroLacre"
+                                                                    placeholder="Número do lacre...">
+                                                            </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Número</label>
-                                                            <input class="form-control" type="text" name="numeroLacre"
-                                                                wire:model="numeroLacre" placeholder="Número do lacre...">
+                                                    <div class="tab-pane fade" id="prod" role="tabpanel"
+                                                        aria-labelledby="prod-tab">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <h4>Produto Predominante</h4>
+                                                            </div>
                                                         </div>
+
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <label for="">Código GTIN</label>
+                                                                <input class="form-control" type="text"
+                                                                    name="codigo_gtin" wire:model="codGTIN"
+                                                                    placeholder="Código GTIN...">
+                                                            </div>
+
+                                                            <div class="col">
+                                                                <label for="">Código NCM</label>
+                                                                <input class="form-control" type="text" name="ncm"
+                                                                    wire:model="codNCM" placeholder="Ncm...">
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <label for="">Latitude local de
+                                                                    Carregamento</label>
+                                                                <input class="form-control" type="number"
+                                                                    name="lat_carregamento" required
+                                                                    wire:model="latCarregamento"
+                                                                    placeholder="Latitude do local de Carregamento...">
+                                                            </div>
+
+                                                            <div class="col">
+                                                                <label for="">Longitude local de
+                                                                    Carregamento</label>
+                                                                <input class="form-control" type="number"
+                                                                    name="lon_carregamento" required
+                                                                    wire:model="lonCarregamento"
+                                                                    placeholder="Longitude do local de Carregamento...">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <label for="">Latitude e Longitude de
+                                                                    Descarregamento</label>
+                                                                <select class="form-control" wire:model="selectedLatLon"
+                                                                    wire:change="descarregamento" required>
+                                                                    <option value="">Selecione um item</option>
+                                                                    @foreach ($cidadesDescarregamentoLatLon as $city)
+                                                                        <option
+                                                                            value="{{ $city->lat . '@' . $city->lon }}">
+                                                                            {{ $city->municipio }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <input type="hidden" name="lat_descarregamento"
+                                                            wire:model="latDescarregamento" required>
+                                                        <input type="hidden" name="lon_descarregamento"
+                                                            wire:model="lonDescarregamento" required>
+
                                                     </div>
-                                                </div>
-
-                                                <div class="tab-pane fade" id="prod" role="tabpanel"
-                                                    aria-labelledby="prod-tab">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <h4>Produto Predominante</h4>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Código GTIN</label>
-                                                            <input class="form-control" type="text" name="codigo_gtin"
-                                                                wire:model="codGTIN"
-                                                                placeholder="Código GTIN...">
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Código NCM</label>
-                                                            <input class="form-control" type="text" name="ncm"
-                                                                wire:model="codNCM"  placeholder="Ncm...">
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Latitude local de
-                                                                Carregamento</label>
-                                                            <input class="form-control" type="number"
-                                                                name="lat_carregamento" required wire:model="latCarregamento"
-                                                                placeholder="Latitude do local de Carregamento...">
-                                                        </div>
-
-                                                        <div class="col">
-                                                            <label for="">Longitude local de
-                                                                Carregamento</label>
-                                                            <input class="form-control" type="number"
-                                                                name="lon_carregamento" required wire:model="lonCarregamento"
-                                                                placeholder="Longitude do local de Carregamento...">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <label for="">Latitude e Longitude de Descarregamento</label>
-                                                            <select class="form-control" wire:model="selectedLatLon" wire:change="descarregamento" required>
-                                                                <option value="">Selecione um item</option>
-                                                                @foreach ($cidadesDescarregamentoLatLon as $city)
-                                                                    <option value="{{ $city->lat . '@' . $city->lon }}">{{ $city->municipio }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <input type="hidden" name="lat_descarregamento" wire:model="latDescarregamento" required>
-                                                    <input type="hidden" name="lon_descarregamento" wire:model="lonDescarregamento" required>
-
                                                 </div>
                                             </div>
+
                                         </div>
 
                                     </div>
 
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @endcomponent
+            @endcomponent
         @endif
 
     </form>
