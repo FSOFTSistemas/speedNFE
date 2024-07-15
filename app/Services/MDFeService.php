@@ -393,10 +393,6 @@ class MDFeService
     public function transmitir($signedXml, $chave, $caminho)
     {
         try {
-            // $resp = $this->tools->sefazConsultaChave('26240742879649000174580010000001701000000004');
-            // $st = new Standardize();
-            // $std = $st->toStd($resp);
-            // dd($std);
             $idLote = rand(1, 10000);
             $resp = $this->tools->sefazEnviaLote([$signedXml], $idLote, 1);
             $st = new Standardize();
@@ -407,13 +403,12 @@ class MDFeService
                     'erro' => "[$std->cStat] - $std->xMotivo",
                 ];
             }
-            // $resp = $this->tools->sefazConsultaRecibo($std->infRec->nRec);
-            // $std = $st->toStd($resp);
-            // $xml = Complements::toAuthorize($signedXml, $resp);
+            $resp = $this->tools->sefazConsultaChave($std->protMDFe->infProt->chMDFe);
+            $xml = Complements::toAuthorize($signedXml, $resp);
             if (!File::exists(public_path($caminho . '/'))) {
                 File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
-            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $signedXml);
+            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
                 'sucesso' => true,
                 'nProt' => $std->protMDFe->infProt->nProt,

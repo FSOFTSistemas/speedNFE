@@ -13,7 +13,7 @@
 @section('content')
     <div class="row" style="margin-bottom: 2%">
         <div class="col">
-            <a class="btn btn-info text-light" href="{{ route('mdfe.create') }}">+ Emitir MDFe</a>
+            <a class="btn btn-primary" href="{{ route('mdfe.create') }}">+ Emitir MDFe</a>
         </div>
     </div>
 
