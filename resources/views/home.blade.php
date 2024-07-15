@@ -24,7 +24,11 @@
 
     <body>
         <div class="row">
-            @can('master')
+            @if (
+                !auth()->user()->can('client-NFCe') ||
+                    !auth()->user()->can('client-MDFe') ||
+                    !auth()->user()->can('client-CTe') ||
+                    !auth()->user()->can('client-advanced3'))
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
@@ -34,24 +38,41 @@
                         <div class="icon">
                             <i class="ion ion-bag"></i>
                         </div>
-                        <a href="/vendas/nova" class="small-box-footer">Emitir NFE <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="/vendas/nova" class="small-box-footer">Emitir NFE <i
+                                class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
-            @endcan
+            @endif
 
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>{{ $quantidadeProduto }}</h3>
-                        <p>Produtos cadastrados</p>
+            @if (!auth()->user()->can('client-MDFe') || !auth()->user()->can('client-CTe') || !auth()->user()->can('client-advanced3'))
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-purple">
+                        <div class="inner">
+                            <h3>{{ $quantidadeProdutosEmEstoque }}</h3>
+                            <p>Produtos com estoque</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a href="{{ route('estoque.index') }}" class="small-box-footer">Mais informações <i
+                                class="fas fa-arrow-circle-right"></i></a>
                     </div>
-                    <div class="icon">
-                        <i class="ion ion-stats-bars"></i>
-                    </div>
-                    <a href="/produto" class="small-box-footer">Mais informações <i
-                            class="fas fa-arrow-circle-right"></i></a>
                 </div>
-            </div>
+
+                <div class="col-lg-3 col-6">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>{{ $quantidadeProduto }}</h3>
+                            <p>Produtos cadastrados</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-stats-bars"></i>
+                        </div>
+                        <a href="/produto" class="small-box-footer">Mais informações <i
+                                class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+            @endif
 
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-warning">
@@ -67,7 +88,11 @@
                 </div>
             </div>
 
-            @can('master')
+            @if (
+                !auth()->user()->can('client-NFCe') ||
+                    !auth()->user()->can('client-MDFe') ||
+                    !auth()->user()->can('client-CTe') ||
+                    !auth()->user()->can('client-advanced3'))
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-danger">
                         <div class="inner">
@@ -81,7 +106,7 @@
                                 class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
-            @endcan
+            @endif
         </div>
 
         <div class="mt-5">
