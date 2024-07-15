@@ -30,12 +30,13 @@
         ],
         'searching' => true,
         'lengthChange' => true,
-        'pageLength' => 25,
+        'pageLength' => 100,
         'ordering' => true
     ])
         <thead class="table-primary">
             <th>ID</th>
             <th>PRODUTO</th>
+            <th>STATUS</th>
             <th>ESTOQUE</th>
             <th></th>
         </thead>
@@ -45,6 +46,7 @@
                 <tr>
                     <td><b>#{{ $estoque->id }}</b></td>
                     <td>{{ $estoque->produto->produto }}</td>
+                    <td>@if ($estoque->estoque_atual > 0) DISPONÍVEL @else SEM ESTOQUE @endif</td>
                     <td>{{ $estoque->estoque_atual }}</td>
                     <td>
                         <div class="row">
