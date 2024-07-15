@@ -83,7 +83,9 @@
                     <td>{{ $mdfe->numero }}</td>
                     <td>{{ $mdfe->serie }}</td>
                     <td>{{ date('d/m/Y', strtotime($mdfe->data)) }}</td>
-                    <td>{{ $mdfe->situacao }}</td>
+                    <td>
+                        @if ($mdfe->situacao->name == 'CANCELADO') <span class="badge rounded-pill bg-danger">{{ $mdfe->situacao->name }}</span> @elseif ($mdfe->situacao->name == 'AUTORIZADO') <span class="badge rounded-pill bg-success">{{ $mdfe->situacao->name }}</span> @elseif ($mdfe->situacao->name == 'ENCERRADO') <span class="badge rounded-pill bg-primary">{{ $mdfe->situacao->name }}</span> @else <span class="badge rounded-pill bg-orange text-light">{{ $mdfe->situacao->name }}</span> @endif
+                    </td>
                     <td>{{ $mdfe->uf_inicio }}</td>
                     <td>{{ $mdfe->uf_termino }}</td>
                     <td>{{ $mdfe->uf_percurso }}</td>
@@ -95,15 +97,15 @@
                             @if ($mdfe->situacao->value === 'Pendente' || $mdfe->situacao->value === 'Rejeitado')
                                 <div class="col">
                                     <a title="Visualizar" target="_blank" href='{{ route('mdfe.view', [$mdfe->id]) }}'
-                                        class='text-primary'><i class="fa fa-eye"></i></a>
+                                        class='text-primary'><i class="far fa-eye"></i></a>
                                 </div>
                                 <div class="col">
-                                    <a title="Editar" href='{{ route('mdfe.edit', [$mdfe->id]) }}' class='text-warning'><i
-                                            class="fa fa-edit"></i></a>
+                                    <a title="Editar" href='{{ route('mdfe.edit', [$mdfe->id]) }}' class='text-teal'><i
+                                            class="far fa-edit"></i></a>
                                 </div>
                                 <div class="col">
                                     <a title="Excluir" onclick="setaDadosModalExcluir({{ $mdfe->id }})"
-                                        class='text-danger'><i class="fa fa-trash" data-toggle="modal"
+                                        class='text-danger'><i class="far fa-trash-alt" data-toggle="modal"
                                             data-target=".bd-delete-modal-lg"></i></a>
                                 </div>
                                 <div class="col">
@@ -118,20 +120,20 @@
                                 </div>
                                 <div class="col">
                                     <a title="Encerrar" onclick="loadPage()" href='{{ route('mdfe.close', [$mdfe->id]) }}'
-                                        class='text-info'><i class="fas fa-truck-loading"></i></a>
+                                        class='text-secondary'><i class="fa fa-truck-loading"></i></a>
                                 </div>
                                 <div class="col">
                                     <a title="Imprimir" target="_blank" href='{{ route('mdfe.print', [$mdfe->id, 0]) }}'
-                                        class='text-dark'><i class="fa fa-print"></i></a>
+                                        class='text-green'><i class="fa fa-print"></i></a>
                                 </div>
                                 <div class="col">
                                     <a title="Baixar" href="{{ route('mdfe.downloadXML', [$mdfe->id]) }}"
-                                        class="text-primary"><i class="fas fa-download"></i></a>
+                                        class="text-blue"><i class="fas fa-download"></i></a>
                                 </div>
                             @elseif ($mdfe->situacao->value === 'Encerrado')
                                 <div class="col">
                                     <a title="Imprimir Encerramento" target="_blank"
-                                        href='{{ route('mdfe.print', [$mdfe->id, 1]) }}' class='text-dark'><i
+                                        href='{{ route('mdfe.print', [$mdfe->id, 1]) }}' class='text-yellow'><i
                                             class="fa fa-print"></i></a>
                                 </div>
                                 <div class="col">
@@ -141,7 +143,7 @@
                             @else
                                 <div class="col">
                                     <a title="Imprimir Cancelamento" target="_blank"
-                                        href='{{ route('mdfe.print', [$mdfe->id, 2]) }}' class='text-dark'><i
+                                        href='{{ route('mdfe.print', [$mdfe->id, 2]) }}' class='text-orange'><i
                                             class="fa fa-print"></i></a>
                                 </div>
                                 <div class="col">
