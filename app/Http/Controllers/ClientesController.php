@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AlreadyExistException;
 use App\Http\Controllers\Controller;
 use App\Services\CidadeService;
 use App\Services\ClientesService;
@@ -12,6 +13,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ClientesController extends Controller
@@ -77,6 +79,7 @@ class ClientesController extends Controller
                 'required' => 'O campo :attribute é obrigatório!',
                 'max' => 'O campo ":attribute" deve conter no máximo :max caracteres!'
             ]);
+            DB::beginTransaction();
             $id_empresa = Auth::user()->id_empresa;
             if ($request->has('empresa')) {
                 $id_empresa = $request->empresa;
@@ -108,13 +111,19 @@ class ClientesController extends Controller
             } else {
                 return redirect()->route('cliente.index')->with('warning', 'Limite de clientes atingido');
             }
+            DB::commit();
             return redirect()->route('cliente.index')->with('success', 'Cliente cadastrado com sucesso');
+        } catch (AlreadyExistException $e) {
+            DB::rollBack();
+            return back()->with('warning', $e->getMessage());
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
+            DB::rollBack();
             return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
@@ -182,7 +191,8 @@ class ClientesController extends Controller
                 $request->rg_ie,
                 $request->telefone,
                 $request->telefone,
-                $request->limite
+                $request->limite,
+                Auth::user()->empresa_id
             );
             $this->enderecoServices->editar(
                 $cliente->endereco_id,
@@ -195,8 +205,13 @@ class ClientesController extends Controller
                 $request->cep,
                 $request->complemento
             );
+            DB::commit();
             return redirect()->route('cliente.index')->with('success', 'Cliente atualizado com sucesso');
+        } catch (AlreadyExistException $e) {
+            DB::rollBack();
+            return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
         }
     }
