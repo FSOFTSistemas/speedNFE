@@ -74,7 +74,7 @@ class ClientesService
     public function editar($id, $tipo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $limite, $empresa_id)
     {
         $cliente = Cliente::find($id);
-        if (Cliente::where('cpf_cnpj', $cpf_cnpj)->where('empresa_id', $empresa_id)->exists()) {
+        if (Cliente::where('cpf_cnpj', $cpf_cnpj)->where('empresa_id', $empresa_id)->where('id', '!=', $cliente->id)->exists()) {
             throw new AlreadyExistException("O CPF/CNPJ já está em uso!");
         }
         $cliente->update([

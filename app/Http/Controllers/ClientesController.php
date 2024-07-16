@@ -206,7 +206,7 @@ class ClientesController extends Controller
                 $request->complemento
             );
             DB::commit();
-            return redirect()->route('cliente.index')->with('success', 'Cliente atualizado com sucesso');
+            return redirect()->route('editar_cliente', [$cliente->id])->with('success', 'Cliente atualizado com sucesso');
         } catch (AlreadyExistException $e) {
             DB::rollBack();
             return back()->with('warning', $e->getMessage());
