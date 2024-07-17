@@ -97,7 +97,7 @@ class NotasFiscaisController extends Controller
 
             $zip->close();
 
-            return response()->download(public_path($company->razao . ' ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip'));
+            return response()->download(public_path($company->fantasia . ' ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip'));
         }
         return redirect('/notas')->with('alert', 'Não foram encontradas notas para o período solicitado.');
     }
