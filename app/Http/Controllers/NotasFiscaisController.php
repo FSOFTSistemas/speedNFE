@@ -64,7 +64,6 @@ class NotasFiscaisController extends Controller
         try {
             $estado = $request->estado == 'Autorizado' ? 'Autorizadas' : ($request->estado == 'Cancelado' ? 'Canceladas' : 'CCe');
             $xml = asset($request->empresa . '/' . date('Y', strtotime($request->data)) . '/' . date('m', strtotime($request->data)) . '/notas/' . $estado . '/' . $request->chave . '.xml');
-            // $xml = public_path('xml_nfe/') . $request . '.xml';
             return response()->download($xml);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
@@ -73,12 +72,13 @@ class NotasFiscaisController extends Controller
 
     public function zip(Request $request)
     {
-        $rootPath = realpath('FSOFT SISTEMAS/' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '/' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m'));
+        $company = Auth::user()->empresa;
+        $rootPath = realpath($company->razao . '/' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '/' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m'));
 
         if ($rootPath) {
 
             $zip = new ZipArchive;
-            $zip->open('FSOFT SISTEMAS ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            $zip->open($company->razao . ' ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
             /** @var SplFileInfo[] $files */
             $files = new RecursiveIteratorIterator(
@@ -97,7 +97,7 @@ class NotasFiscaisController extends Controller
 
             $zip->close();
 
-            return response()->download(public_path('FSOFT SISTEMAS ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip'));
+            return response()->download(public_path($company->fantasia . ' ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip'));
         }
         return redirect('/notas')->with('alert', 'Não foram encontradas notas para o período solicitado.');
     }
