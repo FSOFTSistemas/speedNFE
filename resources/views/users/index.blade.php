@@ -48,6 +48,7 @@
         'lengthChange' => true,
         'pageLength' => 10,
         'ordering' => true,
+        'showFooter' => false,
     ])
         <thead class="table-primary">
             <th>ID</th>

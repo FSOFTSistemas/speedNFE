@@ -52,8 +52,10 @@
         ],
         'searching' => true,
         'lengthChange' => true,
-        'pageLength' => 10,
-        'ordering' => true
+        'pageLength' => 100,
+        'ordering' => true,
+        'showFooter' => true,
+        'sumColumnIndex' => 4,
     ])
         <thead class="table-primary">
             <tr>
@@ -61,6 +63,7 @@
                 <th>Cupom</th>
                 <th>Cliente</th>
                 <th>Data</th>
+                <th>Valor</th>
                 <th>Situação</th>
                 {{-- <th>Série</th> --}}
                 {{-- <th>Chave</th> --}}
@@ -75,6 +78,7 @@
                     <td>{{ $cpm->nroCupom }}</td>
                     <td>{{ $cpm->cliente->nome ?? 'CONSUMIDOR FINAL' }}</td>
                     <td>{{ $cpm->data }}</td>
+                    <td>{{ $cpm->subtotal }}</td>
                     {{-- <td>{{ $cpm->nfce->serie ?? null }}</td> --}}
                     {{-- <td>{{ $cpm->nfce->chave ?? null }}</td> --}}
                     <td>@if ($cpm->situacao == 'CANCELADO') <span class="badge rounded-pill bg-danger">{{ $cpm->situacao }}</span> @elseif ($cpm->situacao == 'ATIVO') <span class="badge rounded-pill bg-success">{{ $cpm->situacao }}</span> @else <span class="badge rounded-pill bg-orange text-light">{{ $cpm->situacao }}</span> @endif</td>

@@ -4,7 +4,22 @@
 
 <table class="table table-hover" id="{{ $uniqueId }}" style="width: 100%">
     {{ $slot }}
+    @if ($showFooter)
+    <tfoot>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th class="text-end">Total</th>
+            <th id="total-sum"></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
+@endif
 </table>
+
+
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -22,7 +37,7 @@
 </script>
 
 <script>
-    $('#{{ $uniqueId }}').DataTable({
+    var table = $('#{{ $uniqueId }}').DataTable({
         lengthChange: {{ Js::from($lengthChange) }},
         searching: {{ Js::from($searching) }},
         pageLength: {{ Js::from($pageLength) }},
@@ -31,6 +46,18 @@
         columnDefs: {{ Js::from($responsive) }},
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json',
-        },
+        }
     });
+
+    // Soma da coluna especificada usando o índice variável
+    @if ($showFooter)
+        var sumColumnIndex = {{ Js::from($sumColumnIndex) }};
+        table.on('draw', function() {
+            var total = 0;
+            table.column(sumColumnIndex, { page: 'current' }).data().each(function(value) {
+                total += parseFloat(value) || 0;
+            });
+            $('#total-sum').html('R$' + total.toFixed(2));
+        });
+    @endif
 </script>

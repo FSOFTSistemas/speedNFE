@@ -442,7 +442,7 @@
                 [
                     'responsivePriority' => 1,
                     'targets' => 0,
-                ],
+                ],                                    
                 [
                     'responsivePriority' => 2,
                     'targets' => 1,
@@ -455,7 +455,8 @@
             'searching' => false,
             'lengthChange' => false,
             'pageLength' => 10,
-            'ordering' => true
+            'ordering' => true,
+            'showFooter' => false,
         ])
             <thead>
                 <tr>
@@ -497,7 +498,8 @@
             'searching' => true,
             'lengthChange' => true,
             'pageLength' => 10,
-            'ordering' => true
+            'ordering' => true,
+            'showFooter' => false,
         ])
             <thead>
                 <tr>
