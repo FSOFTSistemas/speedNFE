@@ -257,8 +257,16 @@ class Pedido extends Component
 
     public function refNFeSection()
     {
-        if ($this->finalidade == 1) {
-            $this->tipo = 1;
+        switch($this->finalidade) {
+            case 1:
+                $this->tipo = 1;
+                break;
+            case 0:
+                $this->tipo = 0;
+                break;
+            case 4:
+                $this->tipo = 1;
+                break;
         }
         return $this->emit('section_nfe', $this->finalidade);
     }

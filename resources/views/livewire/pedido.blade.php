@@ -26,6 +26,7 @@
                     wire:change="refNFeSection" required>
                     <option value="1">Venda</option>
                     <option value="4">Devolução</option>
+                    <option value="0">Compra</option>
                 </select>
             </div>
 
@@ -211,7 +212,8 @@
         <div class="row mb-3" id="ref_nfe_section" style="display: none" wire:ignore>
             <div class="col">
                 <label for="">Referência NFe</label>
-                <input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44" value="{{ old('ref_nfe') }}">
+                <input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44"
+                    value="{{ old('ref_nfe') }}">
             </div>
         </div>
 

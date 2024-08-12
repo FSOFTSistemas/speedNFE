@@ -385,7 +385,7 @@ class PedidosController extends Controller
                     $desconto,
                     $request->empresa,
                     $request->cfop,
-                    $request->finalidade,
+                    $request->finalidade == 4 ? 4 : 1,
                     $request->ref_nfe,
                     $request->tipo,
                     $request->info_complementares
