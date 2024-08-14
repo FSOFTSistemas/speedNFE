@@ -271,6 +271,8 @@ class ProdutosController extends Controller
                     $request->tpProd ? $request->operVeic : null
                 );
                 $this->estoqueService->create($request->estoque, $empresa, $produto->id);
+            } else {
+                return redirect()->route('produto.index')->with('warning', 'O limite de cadastro de produtos foi atingido, faça assinatura de um novo plano para conseguir mais cadastros!');
             }
             DB::commit();
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');
@@ -312,7 +314,7 @@ class ProdutosController extends Controller
     {
         try {
             $user = Auth::user();
-            $empresas = $this->empresaServices->todas();
+            $empresas = $this->empresaServices->todos($user->empresa_id);
             $categorias = Categoria::all();
             $cfops = $this->pedidoServices->cfopAll();
             $ncms = $this->pedidoServices->ncmAll();
