@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            dd('Ocorreu um erro interno, tente novamente em outro momento até que o problema seja solucionado!' . $e->getMessage());
         });
     }
 }
