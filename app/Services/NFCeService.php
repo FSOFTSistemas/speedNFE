@@ -95,7 +95,7 @@ class NFCeService
             $std->natOp = 'VENDA CONSUMIDOR';
             $std->mod = 65;
             $std->serie = $emitente->serie;
-            $std->nNF = $emitente->ultimaNFCe;
+            $std->nNF = $emitente->ultimaNFCe + 1;
             $std->dhEmi = date("Y-m-d\TH:i:sP");;
             $std->dhSaiEnt = date("Y-m-d\TH:i:sP");;
             $std->tpNF = 1;
