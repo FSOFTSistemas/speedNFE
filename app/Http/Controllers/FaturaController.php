@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class FaturaController extends Controller
 {
@@ -13,7 +13,10 @@ class FaturaController extends Controller
      */
     public function index()
     {
-        return view('faturas.signature');
+        $customerCpfCnpj = auth()->user()->empresa->cpf_cnpj;
+        $response = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj);
+        $body = json_decode($response->body());
+        return view('faturas.signature', ['signature' => $body]);
     }
 
     public function paymentHistory()

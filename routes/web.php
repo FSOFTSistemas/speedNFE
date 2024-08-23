@@ -237,13 +237,13 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/{id}/visualizar', [CupomController::class, 'showPreView'])->name('cupom.showPreView')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     });
+});
 
-    //FATURAS
-    Route::prefix('faturas')->group(function () {
-        Route::get('', [FaturaController::class, 'index'])->name('faturas.index');
-        Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
-        Route::get('/metodos-pagamentos', [FaturaController::class, 'paymentMethods'])->name('faturas.paymentMethods');
-    });
+//FATURAS
+Route::prefix('faturas')->group(function () {
+    Route::get('', [FaturaController::class, 'index'])->name('faturas.index');
+    Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
+    Route::get('/metodos-pagamentos', [FaturaController::class, 'paymentMethods'])->name('faturas.paymentMethods');
 });
 
 require __DIR__ . '/auth.php';
