@@ -22,7 +22,8 @@ class SignatureStatus
         $body = json_decode($response->body());
         if (isset($body->due) && $body->due->expires === true) {
             $message = 'Sua licença expirou em ' . date('d/m/Y', strtotime($body->due->expired_on)) . ', efetue o pagamento para liberação da plataforma!';
-            return redirect()->route('home')->with('warning', $message);
+            sweetalert($message, 'error');
+            return redirect()->route('home');
         }
         return $next($request);
     }
