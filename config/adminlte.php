@@ -410,7 +410,31 @@ return [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
-        ]
+        ],
+        [
+            'text'        => 'Faturas',
+            'icon'        => 'fas fa-file-invoice',
+            'submenu' => [
+                [
+                    'text'        => 'Assinatura',
+                    'url'         => 'mdfes/emitir',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Histórico de pagamentos',
+                    'url'         => 'mdfes',
+                    'icon'        => 'fas fa-history',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Formas de pagamentos',
+                    'url'         => 'mdfes',
+                    'icon'        => 'fas fa-money-check-alt',
+                    'shift' => 'ml-2'
+                ]
+            ],
+        ],
     ],
 
     /*
