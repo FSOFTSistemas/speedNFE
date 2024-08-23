@@ -417,19 +417,19 @@ return [
             'submenu' => [
                 [
                     'text'        => 'Assinatura',
-                    'url'         => 'mdfes/emitir',
+                    'url'         => '/faturas',
                     'icon'        => 'fas fa-file-contract',
                     'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Histórico de pagamentos',
-                    'url'         => 'mdfes',
+                    'url'         => '/faturas/historico-pagamentos',
                     'icon'        => 'fas fa-history',
                     'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Formas de pagamentos',
-                    'url'         => 'mdfes',
+                    'url'         => '/faturas/metodos-pagamentos',
                     'icon'        => 'fas fa-money-check-alt',
                     'shift' => 'ml-2'
                 ]

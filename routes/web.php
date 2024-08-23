@@ -14,6 +14,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\CupomController;
 use App\Http\Controllers\EntradaController;
+use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
@@ -235,6 +236,13 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('/salvar', [CupomController::class, 'store'])->name('cupom.store')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::get('/{id}/visualizar', [CupomController::class, 'showPreView'])->name('cupom.showPreView')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
+    });
+
+    //FATURAS
+    Route::prefix('faturas')->group(function () {
+        Route::get('', [FaturaController::class, 'index'])->name('faturas.index');
+        Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
+        Route::get('/metodos-pagamentos', [FaturaController::class, 'paymentMethods'])->name('faturas.paymentMethods');
     });
 });
 
