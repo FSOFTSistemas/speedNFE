@@ -357,7 +357,7 @@ class PedidosController extends Controller
                 'empresa' => 'required|numeric',
                 'finalidade' => 'required|numeric',
                 'tipo' => 'required|numeric',
-                'ref_nfe' => $request->finalidade == 1 ? 'nullable' : 'required',
+                'ref_nfe' => $request->finalidade == 4 ? 'required' : 'nullable',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
