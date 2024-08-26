@@ -21,7 +21,10 @@ class FaturaController extends Controller
 
     public function paymentHistory()
     {
-        return view('faturas.payment-history');
+        $customerCpfCnpj = auth()->user()->empresa->cpf_cnpj;
+        $response = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj . '/payment-history');
+        $body = json_decode($response->body());
+        return view('faturas.payment-history', ['response' => $body]);
     }
 
     public function paymentMethods()

@@ -44,7 +44,6 @@
                     ])
                         <thead class="table-primary">
                             <tr>
-                                <th>ID do pagamento</th>
                                 <th>ID da fatura</th>
                                 <th>Serviço</th>
                                 <th>Pago em</th>
@@ -53,13 +52,14 @@
                         </thead>
 
                         <tbody>
-                            <tr>
-                                <td>534534</td>
-                                <td>2543524</td>
-                                <td>Parcela do speed</td>
-                                <td>2024-08-14</td>
-                                <td>R$64.99</td>
-                            </tr>
+                            @foreach ($response->payments as $payment)
+                                <tr>
+                                    <td>{{ $payment->id }}</td>
+                                    <td>{{ $payment->descricao }}</td>
+                                    <td>{{ date('d-m-Y', strtotime($payment->data_recebimento)) }}</td>
+                                    <td>R${{ $payment->valor }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     @endcomponent
                 </div>
