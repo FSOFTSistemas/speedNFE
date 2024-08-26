@@ -427,12 +427,12 @@ return [
                     'icon'        => 'fas fa-history',
                     'shift' => 'ml-2'
                 ],
-                [
-                    'text'        => 'Formas de pagamentos',
-                    'url'         => '/faturas/metodos-pagamentos',
-                    'icon'        => 'fas fa-money-check-alt',
-                    'shift' => 'ml-2'
-                ]
+                // [
+                //     'text'        => 'Formas de pagamentos',
+                //     'url'         => '/faturas/metodos-pagamentos',
+                //     'icon'        => 'fas fa-money-check-alt',
+                //     'shift' => 'ml-2'
+                // ]
             ],
         ],
     ],

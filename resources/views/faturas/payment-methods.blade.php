@@ -9,5 +9,5 @@
 @stop
 
 @section('content')
-    <h1>Bro2, Are you gay?</h1>
+
 @endsection
