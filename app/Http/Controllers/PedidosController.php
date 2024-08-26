@@ -178,7 +178,7 @@ class PedidosController extends Controller
                 }
                 return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
             } else {
-                return redirect('/venda')->with('error', $nfe['data']);
+                return redirect('/venda')->with('error', $nfe['data']['retEvento']['infEvento']['xMotivo']);
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
