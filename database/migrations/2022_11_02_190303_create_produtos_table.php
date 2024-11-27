@@ -34,7 +34,6 @@ return new class extends Migration
             $table->integer('tpProd')->nullable();
             $table->string('tpVeic')->nullable();
             $table->string('chassiVeic')->nullable();
-            $table->string('cenavanVeic')->nullable();
             $table->integer('anoFabVeic')->nullable();
             $table->integer('anoModVeic')->nullable();
             $table->float('pesoLVeic')->nullable();

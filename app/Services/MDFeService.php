@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+error_reporting(E_ALL);
+ini_set('display_errors', 'On');
+
 use App\Utils\FormatationUtil;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -11,8 +14,6 @@ use NFePHP\MDFe\Complements;
 use NFePHP\MDFe\Make;
 use NFePHP\MDFe\Tools;
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
 class MDFeService
 {
     private $tools;
@@ -389,30 +390,28 @@ class MDFeService
         return $this->tools->signMDFe($xml);
     }
 
-    public function transmitir($signXml, $chave, $caminho)
+    public function transmitir($signedXml, $chave, $caminho)
     {
         try {
-            $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
-            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote);
+            $idLote = rand(1, 10000);
+            $resp = $this->tools->sefazEnviaLote([$signedXml], $idLote, 1);
             $st = new Standardize();
             $std = $st->toStd($resp);
             sleep(2);
-            if ($std->cStat != 103) {
+            if ($std->cStat != 103 && $std->cStat != 100) {
                 return [
                     'erro' => "[$std->cStat] - $std->xMotivo",
                 ];
             }
-            $recibo = $std->infRec->nRec;
-            $protocolo = $this->tools->sefazConsultaRecibo($recibo);
-            sleep(2);
-            $xml = Complements::toAuthorize($signXml, $protocolo);
+            $resp = $this->tools->sefazConsultaChave($std->protMDFe->infProt->chMDFe);
+            $xml = Complements::toAuthorize($signedXml, $resp);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
-                'sucesso' => $recibo,
-                'nProt' => simplexml_load_string($xml)->protMDFe->infProt->nProt,
+                'sucesso' => true,
+                'nProt' => $std->protMDFe->infProt->nProt,
             ];
         } catch (\Exception $e) {
             return [
@@ -440,7 +439,7 @@ class MDFeService
             }
             $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
             return [
@@ -473,7 +472,7 @@ class MDFeService
             }
             $canceledXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $canceledXml);
             return [
@@ -486,5 +485,4 @@ class MDFeService
             ];
         }
     }
-
 }

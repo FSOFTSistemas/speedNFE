@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categoria;
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
+use App\Services\EstoquesService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
 use Exception;
@@ -20,13 +21,15 @@ class ProdutosController extends Controller
     private CategoriasService $categoriaServices;
     private EmpresasService $empresaServices;
     private PedidosService $pedidoServices;
+    private EstoquesService $estoqueService;
 
-    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices, PedidosService $pedidoServices)
+    public function __construct(ProdutosService $produtoServices, CategoriasService $categoriaServices, EmpresasService $empresaServices, PedidosService $pedidoServices, EstoquesService $estoqueService)
     {
         $this->produtoServices = $produtoServices;
         $this->categoriaServices = $categoriaServices;
         $this->empresaServices = $empresaServices;
         $this->pedidoServices = $pedidoServices;
+        $this->estoqueService = $estoqueService;
     }
 
     public function update($id, Request $request)
@@ -87,8 +90,8 @@ class ProdutosController extends Controller
                 $request->categoria,
                 $request->codigo,
                 $request->produto,
-                $request->precocusto,
-                $request->precovenda,
+                doubleval($request->precocusto),
+                doubleval($request->precovenda),
                 $request->ncm,
                 $request->cfopinterno,
                 $request->cst_csosn,
@@ -99,8 +102,8 @@ class ProdutosController extends Controller
                 $request->tpProd ? $request->renavanVeic : null,
                 $request->tpProd ? $request->anoFabVeic : null,
                 $request->tpProd ? $request->anoModVeic : null,
-                $request->tpProd ? $request->pesoLVeic : null,
-                $request->tpProd ? $request->pesoBVeic : null,
+                $request->tpProd ? doubleval($request->pesoLVeic) : null,
+                $request->tpProd ? doubleval($request->pesoBVeic) : null,
                 $request->tpProd ? $request->distVeic : null,
                 $request->tpProd ? $request->combVeic : null,
                 $request->tpProd ? $request->nMotorVeic : null,
@@ -120,7 +123,7 @@ class ProdutosController extends Controller
                 $request->tpProd ? $request->cargaVeic : null,
                 $request->tpProd ? $request->operVeic : null,
                 $request->cst,
-                $request->icms,
+                doubleval($request->icms),
                 $request->pis,
                 $request->cofins,
                 $request->ipi,
@@ -131,13 +134,13 @@ class ProdutosController extends Controller
             return redirect()->route('editar_produto', [$produto->id])->with('success', 'Produto editado com sucesso');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
+                $errors[] = implode("<br>", $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors));
+            return back()->with('warning', implode("<br>", $errors));
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -150,7 +153,7 @@ class ProdutosController extends Controller
             $ncms = $this->pedidoServices->ncmAll();
             return view('produtos.editar', ['produto' => $produto, 'categorias' => $categorias, 'cfops' => $cfops, 'ncms' => $ncms]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -160,7 +163,7 @@ class ProdutosController extends Controller
             $this->produtoServices->destroy($request->idProduto);
             return redirect()->route('produto.index')->with('success', 'Produto excluído com sucesso');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -176,6 +179,7 @@ class ProdutosController extends Controller
                 'precocusto' => 'required',
                 'precovenda' => 'required',
                 'un' => 'required',
+                'estoque' => 'nullable|numeric',
                 'tpProd' => 'nullable',
                 'cfopinterno' => 'required',
                 'cfopexterno' => 'required',
@@ -220,20 +224,20 @@ class ProdutosController extends Controller
             DB::beginTransaction();
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             if ($this->produtoServices->contagemProdutos($empresa) < $this->empresaServices->buscarEmpresa($empresa)->limProdutos || $empresa == 1) {
-                $this->produtoServices->store(
+                $produto = $this->produtoServices->store(
                     $request->categoria,
                     $empresa,
                     $request->codigo,
                     $request->produto,
-                    $request->precocusto,
-                    $request->precovenda,
+                    doubleval($request->precocusto),
+                    doubleval($request->precovenda),
                     $request->ncm,
                     $request->cfopinterno,
                     $request->cst_csosn,
                     $request->cst_pis,
                     $request->cst_cofins,
                     $request->cst,
-                    $request->icms,
+                    doubleval($request->icms),
                     $request->pis,
                     $request->cofins,
                     $request->ipi,
@@ -245,8 +249,8 @@ class ProdutosController extends Controller
                     $request->tpProd ? $request->renavanVeic : null,
                     $request->tpProd ? $request->anoFabVeic : null,
                     $request->tpProd ? $request->anoModVeic : null,
-                    $request->tpProd ? $request->pesoLVeic : null,
-                    $request->tpProd ? $request->pesoBVeic : null,
+                    $request->tpProd ? doubleval($request->pesoLVeic) : null,
+                    $request->tpProd ? doubleval($request->pesoBVeic) : null,
                     $request->tpProd ? $request->distVeic : null,
                     $request->tpProd ? $request->combVeic : null,
                     $request->tpProd ? $request->nMotorVeic : null,
@@ -266,18 +270,21 @@ class ProdutosController extends Controller
                     $request->tpProd ? $request->cargaVeic : null,
                     $request->tpProd ? $request->operVeic : null
                 );
+                $this->estoqueService->create($request->estoque, $empresa, $produto->id);
+            } else {
+                return redirect()->route('produto.index')->with('warning', 'O limite de cadastro de produtos foi atingido, faça assinatura de um novo plano para conseguir mais cadastros!');
             }
             DB::commit();
             return redirect()->route('produto.index')->with('success', 'Produto cadastrado com sucesso');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
+                $errors[] = implode("<br>", $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+            return back()->with('warning', implode("<br>", $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -285,9 +292,10 @@ class ProdutosController extends Controller
     {
         try {
             $produto = $this->produtoServices->um($id);
-            return view('produtos.view', ['produto' => $produto]);
+            $cfops = $this->pedidoServices->cfopAll();
+            return view('produtos.view', ['produto' => $produto, 'cfops' => $cfops]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -298,7 +306,7 @@ class ProdutosController extends Controller
             $produtos = $this->produtoServices->todos($user->empresa_id);
             return view('produtos.todos', ['produtos' => $produtos, 'empresa' => $user->empresa_id]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -306,13 +314,13 @@ class ProdutosController extends Controller
     {
         try {
             $user = Auth::user();
-            $empresas = $this->empresaServices->todas();
+            $empresas = $this->empresaServices->todos($user->empresa_id);
             $categorias = Categoria::all();
             $cfops = $this->pedidoServices->cfopAll();
             $ncms = $this->pedidoServices->ncmAll();
             return view('produtos.new', ['user' => $user, 'empresas' => $empresas, 'categorias' => $categorias, 'cfops' => $cfops, 'ncms' => $ncms]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e->getMessage());
         }
     }
 

@@ -10,9 +10,9 @@
 
 <a href="{{ $dashboard_url }}"
     @if($layoutHelper->isLayoutTopnavEnabled())
-        class="navbar-brand {{ config('adminlte.classes_brand') }}"
+        class="navbar-brand {{ config('adminlte.classes_brand') }} text-decoration-none"
     @else
-        class="brand-link {{ config('adminlte.classes_brand') }}"
+        class="brand-link {{ config('adminlte.classes_brand') }} text-decoration-none"
     @endif>
 
     {{-- Small brand logo --}}

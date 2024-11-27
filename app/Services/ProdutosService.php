@@ -236,4 +236,10 @@ class ProdutosService
             ->count();
     }
 
+    public function searchProdByFilter($filter, $companyId)
+    {
+        $filter = empty($filter) ? '' : '%' . $filter . '%';
+        return Produto::where('produto', 'like', $filter)->whereEmpresaId($companyId)->get();
+    }
+
 }

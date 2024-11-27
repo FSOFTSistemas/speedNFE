@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
-use App\Services\CidadeService;
 use App\Services\EmpresasService;
 use App\Services\EnderecosService;
 use App\Services\UsersService;
@@ -29,16 +28,30 @@ class EmpresasController extends Controller
         $this->enderecoServices = $enderecoServices;
     }
 
+    public function index()
+    {
+        try {
+            $company = $this->empresaServices->minhaEmpresa(Auth::user()->empresa_id);
+            return view('empresas.edit', ['empresa' => $company]);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
+    }
+
     public function cadastrar()
     {
-        return view('empresas.cadastrar');
+        try {
+            return view('empresas.create');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function desativarReativar($id)
     {
         try {
             $this->empresaServices->reativarDesativar($id);
-            return redirect()->route('empresa.index')->with('success', 'Status da empresa atualizado com sucesso');
+            return redirect()->route('empresa.show')->with('success', 'Status da empresa atualizado com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Não foi possível atualizar o status da empresa');
         }
@@ -48,24 +61,19 @@ class EmpresasController extends Controller
     {
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
-            return view('empresas.empresa', ['empresa' => $empresa, 'user' => Auth::user()]);
+            return view('empresas.edit', ['empresa' => $empresa, 'user' => Auth::user()]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
     public function show()
     {
         try {
-            $empresa = $this->empresaServices->buscarEmpresa(Auth::user()->empresa_id);
-            if ($empresa->id != 1) {
-                return redirect('/empresa/editar/' . $empresa->id);
-            } else {
-                $empresa = $this->empresaServices->todas();
-                return view('empresas.todos', ['empresas' => $empresa]);
-            }
+            $empresa = $this->empresaServices->todas();
+            return view('empresas.index', ['empresas' => $empresa]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
@@ -75,7 +83,7 @@ class EmpresasController extends Controller
             $empresa = $this->empresaServices->buscarEmpresa($id);
             return view('empresas.view', ['empresa' => $empresa]);
         } catch (Exception $e) {
-            return back();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
@@ -96,9 +104,11 @@ class EmpresasController extends Controller
                 'complemento' => 'max:255',
                 'ibge' => 'required',
                 'nfe' => 'required|numeric',
+                'nfce' => 'required|numeric',
                 'mdfe' => 'required|numeric',
+                'contador' => 'nullable|email',
                 'serie' => 'required',
-                'senha' => '',
+                'senha' => 'nullable',
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required|numeric',
@@ -106,8 +116,13 @@ class EmpresasController extends Controller
                 'produtos' => 'required|numeric',
                 'nfes' => 'required|numeric',
                 'mdfes' => 'required|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'max' => 'O campo :attribute deve conter no máximo :max caracteres!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
+                'email' => 'O campo :attribute deve ser um email'
             ]);
-
+            DB::beginTransaction();
             $empresa = $this->empresaServices->atualizar($id, $request);
             $this->enderecoServices->editar(
                 $empresa->endereco_id,
@@ -120,9 +135,17 @@ class EmpresasController extends Controller
                 $request->cep,
                 $request->complemento,
             );
+            DB::commit();
             return redirect()->route('editar_empresa', [$empresa->id])->with('success', 'Empresa foi atualizada com sucesso!');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode(PHP_EOL, $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e);
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
     }
 
@@ -137,6 +160,7 @@ class EmpresasController extends Controller
                 'telefone' => 'required',
                 'rua' => 'required',
                 'numero' => 'required',
+                'contador' => 'nullable|email',
                 'bairro' => 'required',
                 'cep' => 'required',
                 'cidade' => 'required',
@@ -144,15 +168,18 @@ class EmpresasController extends Controller
                 'complemento' => 'nullable',
                 'ibge' => 'required',
                 'nfe' => 'required',
+                'nfce' => 'required',
                 'mdfe' => 'required',
                 'serie' => 'required',
                 'senha' => 'required',
+                'certificado' => 'required|file',
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required',
                 'clientes' => 'required',
                 'produtos' => 'required',
                 'nfes' => 'required|numeric',
+                'nfces' => 'required|numeric',
                 'mdfes' => 'required|numeric',
                 'name' => 'required|max:255',
                 'email' => 'required|email',
@@ -164,7 +191,8 @@ class EmpresasController extends Controller
                 'numeric' => 'O campo :attribute deve ter um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max',
                 'email' => 'Email inválido!',
-                'unique' => 'O CPF/CNPJ já foi utilizado antes!'
+                'unique' => 'O CPF/CNPJ já foi utilizado antes!',
+                'file' => 'O certificado deve ser um arquivo!',
             ]);
             DB::beginTransaction();
             $endereco = $this->enderecoServices->salvar(
@@ -188,7 +216,9 @@ class EmpresasController extends Controller
                 $endereco->id,
                 $request->rg_ie,
                 $request->telefone,
+                $request->contador,
                 $request->nfe,
+                $request->nfce,
                 $request->mdfe,
                 $request->serie,
                 $ctx,
@@ -198,6 +228,7 @@ class EmpresasController extends Controller
                 $request->idCsc,
                 $request->nfes,
                 $request->mdfes,
+                $request->nfces,
                 $request->clientes,
                 $request->produtos
             );
@@ -209,18 +240,17 @@ class EmpresasController extends Controller
                 $request->name
             );
             DB::commit();
-            return redirect()->route('empresa.index')->with('success', 'Empresa foi criada com sucesso!');
+            return redirect()->route('empresa.show')->with('success', 'Empresa foi criada com sucesso!');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
+                $errors[] = implode("<br>", $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+            return back()->with('warning', implode("<br>", $errors))->withInput();
         } catch (CertificateException $e) {
             DB::rollBack();
             return back()->with('warning', $e->getMessage() . ' - Senha incorreta, informe uma senha válida')->withInput();
         } catch (Exception $e) {
-            dd($e);
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
         }

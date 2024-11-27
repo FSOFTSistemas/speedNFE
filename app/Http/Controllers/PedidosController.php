@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Services\EmpresasService;
+use App\Services\EstoquesService;
 use App\Services\FaturaService;
 use App\Services\ItemService;
 use App\Services\NFeService;
@@ -28,14 +29,16 @@ class PedidosController extends Controller
     private FaturaService $faturaServices;
     private ItemService $itemServices;
     private ProdutosService $produtoServices;
+    private EstoquesService $estoqueService;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
         $this->itemServices = $itemServices;
         $this->faturaServices = $faturaServices;
         $this->produtoServices = $produtoServices;
+        $this->estoqueService = $estoqueService;
     }
 
     public function imprimirCorrecao($id)
@@ -57,7 +60,7 @@ class PedidosController extends Controller
     {
         try {
             $user = Auth::user();
-            return view('notas.inutilizar', ['empresa' => $user->empresa_id]);
+            return view('notas.inutilizar', ['empresa' => $user->empresa_id, 'mode' => 'nfe']);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -131,13 +134,12 @@ class PedidosController extends Controller
             if (!isset($result['erro'])) {
                 return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
             } else {
-                return redirect('/venda')->with('error', $result['data']);
+                return redirect('/venda')->with('warning', $result['data']['retEvento']['infEvento']['xMotivo']);
             }
-
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
     }
 
@@ -171,9 +173,12 @@ class PedidosController extends Controller
                 $venda->estado = 'Cancelado';
                 $venda->total = 0;
                 $venda->save();
+                foreach ($venda->itens as $item) {
+                    $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
+                }
                 return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
             } else {
-                return redirect('/venda')->with('error', $nfe['data']);
+                return redirect('/venda')->with('error', $nfe['data']['retEvento']['infEvento']['xMotivo']);
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
@@ -218,6 +223,7 @@ class PedidosController extends Controller
     public function enviarNFe($id)
     {
         try {
+            DB::beginTransaction();
             $venda = $this->pedidoServices->buscarPedido($id);
             $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $nfe_service = new NFeService([
@@ -247,22 +253,37 @@ class PedidosController extends Controller
                         $venda->numero_nfe = $result['nNf'];
                         $venda->save();
                         $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
+                        if ($venda->tpNF) {
+                            foreach ($venda->itens as $item) {
+                                $this->estoqueService->out($item->produto_id, $item->qtde);
+                            }
+                        } else {
+                            foreach ($venda->itens as $item) {
+                                $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
+                            }
+                        }
+                        DB::commit();
                         return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
                     } else {
                         $venda->status = 3;
                         $venda->estado = 'Rejeitado';
                         $venda->save();
+                        DB::commit();
                         return redirect('/vendas')->with('warning', $resultado['erro']);
                     }
                 } else {
+                    DB::rollBack();
                     return redirect('/vendas')->with('error', $result['erros_xml']);
                 }
             } else {
+                DB::rollBack();
                 return redirect('/vendas')->with("error", 404);
             }
         } catch (ValidatorException $e) {
+            DB::rollBack();
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
     }
@@ -308,10 +329,9 @@ class PedidosController extends Controller
                         $item['unitario']
                     );
                 }
-                $this->faturaServices->create(
+                $this->faturaServices->update(
                     $subtotal,
-                    $id,
-                    $venda->empresa_id
+                    $venda->fatura[0]->id,
                 );
                 $this->pedidoServices->update(
                     $venda->id,
@@ -335,6 +355,9 @@ class PedidosController extends Controller
         try {
             $request->validate([
                 'empresa' => 'required|numeric',
+                'finalidade' => 'required|numeric',
+                'tipo' => 'required|numeric',
+                'ref_nfe' => $request->finalidade == 4 ? 'required' : 'nullable',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
@@ -362,6 +385,9 @@ class PedidosController extends Controller
                     $desconto,
                     $request->empresa,
                     $request->cfop,
+                    $request->finalidade == 4 ? 4 : 1,
+                    $request->ref_nfe,
+                    $request->tipo,
                     $request->info_complementares
                 );
                 foreach ($request->vendaItens as $item) {
@@ -378,6 +404,7 @@ class PedidosController extends Controller
                 $this->faturaServices->create(
                     $subtotal,
                     $pedido->id,
+                    $pedido->finNF,
                     $request->empresa
                 );
                 DB::commit();
@@ -456,19 +483,14 @@ class PedidosController extends Controller
         }
     }
 
-
-    public function totalMes()
+    public function totalMesNFe()
     {
-        $empresa = Auth::user()->empresa_id;
-        if ($empresa == 1) {
-            $empresa = '%';
+        try {
+            $results = $this->pedidoServices->getTotalNFePerMonth(Auth::user()->empresa_id);
+            return response()->json($results);
+        } catch (Exception $e) {
+            return response()->json('error: Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage(), $e->getCode());
         }
-        $vendasPorMes = Pedido::selectRaw('MONTH(created_at) as mes, SUM(total) as total')
-            ->where('empresa_id','like',$empresa)
-            ->groupBy('mes')
-            ->get();
-
-        return response()->json($vendasPorMes);
     }
 
 }

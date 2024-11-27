@@ -13,12 +13,7 @@ class EmpresasService
     {
         $empresa = Empresa::find($id);
         if ($request->hasFile('certificado')) {
-            // Storage::delete('public/certificados/'. $request->nome . '.pfx');
             $path = $request->certificado->storeAs('public/certificados', $request->nome . '.pfx');
-            // $content = file_get_contents('storage/'.$request->nome.'.pfx');
-            // $ctx = Certificate::readPfx($content, $request->senha);
-            // $request->merge(['certificado' => $]);
-
             if ($request->senha != '') {
                 $empresa->update([
                     'razao' => $request->nome,
@@ -26,7 +21,9 @@ class EmpresasService
                     'rg_ie' => $request->rg_ie,
                     'celular' => $request->telefone,
                     'ultimaNFe' => $request->nfe,
+                    'ultimaNFCe' => $request->nfce,
                     'ultimaMDFe' => $request->mdfe,
+                    'contador' => $request->contador,
                     'serie' => $request->serie,
                     'senhaCertificado' => $request->senha,
                     'ambiente' => $request->ambiente,
@@ -45,7 +42,9 @@ class EmpresasService
                     'rg_ie' => $request->rg_ie,
                     'celular' => $request->telefone,
                     'ultimaNFe' => $request->nfe,
+                    'ultimaNFCe' => $request->nfce,
                     'ultimaMDFe' => $request->mdfe,
+                    'contador' => $request->contador,
                     'serie' => $request->serie,
                     'ambiente' => $request->ambiente,
                     'certificado' => $path,
@@ -58,7 +57,6 @@ class EmpresasService
                 ]);
             }
         }
-
         if ($request->senha != '') {
             $empresa->update([
                 'razao' => $request->nome,
@@ -66,7 +64,9 @@ class EmpresasService
                 'rg_ie' => $request->rg_ie,
                 'celular' => $request->telefone,
                 'ultimaNFe' => $request->nfe,
+                'ultimaNFCe' => $request->nfce,
                 'ultimaMDFe' => $request->mdfe,
+                'contador' => $request->contador,
                 'serie' => $request->serie,
                 'senhaCertificado' => $request->senha,
                 'ambiente' => $request->ambiente,
@@ -84,7 +84,9 @@ class EmpresasService
                 'rg_ie' => $request->rg_ie,
                 'celular' => $request->telefone,
                 'ultimaNFe' => $request->nfe,
+                'ultimaNFCe' => $request->nfce,
                 'ultimaMDFe' => $request->mdfe,
+                'contador' => $request->contador,
                 'ambiente' => $request->ambiente,
                 'csc' => $request->csc,
                 'idCsc' => $request->idCsc,
@@ -99,7 +101,7 @@ class EmpresasService
 
     public function todas()
     {
-        return Empresa::all();
+        return Empresa::where('id', '!=', 1)->get();
     }
 
     public function reativarDesativar($id)
@@ -119,15 +121,24 @@ class EmpresasService
 
     public function minhaEmpresa($id)
     {
-        return Empresa::select('empresas.*')
-            ->where('empresas.id', $id)
-            ->get();
+        return Empresa::find($id);
     }
 
     public function buscarEmpresa($id)
     {
-        return Empresa::select('empresas.*', 'users.name', 'users.email', 'enderecos.rua', 'enderecos.bairro', 'enderecos.numero', 'enderecos.cidade',
-            'enderecos.complemento', 'enderecos.uf', 'enderecos.cep', 'enderecos.codigoIBGE')
+        return Empresa::select(
+            'empresas.*',
+            'users.name',
+            'users.email',
+            'enderecos.rua',
+            'enderecos.bairro',
+            'enderecos.numero',
+            'enderecos.cidade',
+            'enderecos.complemento',
+            'enderecos.uf',
+            'enderecos.cep',
+            'enderecos.codigoIBGE'
+        )
             ->join('users', 'users.empresa_id', 'empresas.id')
             ->join('enderecos', 'enderecos.id', 'empresas.endereco_id')
             ->where('empresas.id', $id)
@@ -138,11 +149,17 @@ class EmpresasService
     {
         if ($empresa == 1) {
             $empresa = '%';
-        }
-        return DB::table('empresas')
+            $results = DB::table('empresas')
+                ->select('*')
+                ->where('id', 'like', $empresa)
+                ->get();
+        } else {
+            $results = DB::table('empresas')
             ->select('*')
-            ->where('id', 'like', $empresa)
+            ->where('id', $empresa)
             ->get();
+        }
+        return $results;
     }
 
     public function getEmpresa($id_empresa)
@@ -160,4 +177,18 @@ class EmpresasService
         return $path;
     }
 
+    public function incrementCupomSequence($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->sequenciaCupom = $company->sequenciaCupom + 1;
+        $company->save();
+        return $company->sequenciaCupom;
+    }
+
+    public function incrementLastNFCe($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->ultimaNFCe = $company->ultimaNFCe + 1;
+        $company->save();
+    }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class PedidosService
 {
 
-    public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $info_complementares)
+    public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $finalidade, $ref_nfe, $tipo, $info_complementares)
     {
         return Pedido::create([
             'user_id' => $user_id,
@@ -20,13 +20,16 @@ class PedidosService
             'subtotal' => $subtotal,
             'desconto' => $desconto,
             'total' => $subtotal,
+            'finNF' => $finalidade,
+            'tpNF' => $tipo,
             'empresa_id' => $empresa,
             'numero_nfe' => 0,
             'sequencia_evento' => 0,
             'chave' => '',
             'estado' => EstadoEnum::PENDENTE,
             'cfop' => $cfop,
-            'info_complementares' => $info_complementares,
+            'ref_nfe' => $ref_nfe,
+            'info_complementares' => $info_complementares
         ]);
     }
 
@@ -55,7 +58,8 @@ class PedidosService
             ->join('empresas', 'empresas.id', '=', 'pedidos.empresa_id')
             ->join('clientes', 'clientes.id', '=', 'pedidos.cliente_id')
             ->where('pedidos.empresa_id', 'like', $idEmpresa)
-            ->orderByDesc('pedidos.created_at')
+            ->orderByDesc('pedidos.status')
+            ->orderByDesc('pedidos.updated_at')
             ->get();
     }
 
@@ -108,26 +112,22 @@ class PedidosService
         return DB::table('cfops')->where('id', $id)->first();
     }
 
-
-
-    public function totalMes($empresa)
+    public function getTotalNFePerMonth($companyId)
     {
-        try {
-            $resultados = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
-                ->where('empresa_id', $empresa)
+        if ($companyId == 1) {
+            $companyId = '%';
+            $result = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+                ->where('empresa_id', 'like', $companyId)
                 ->where('estado', 'Autorizado')
                 ->groupBy('mes')
                 ->get();
-    
-            return $resultados;
-        } catch (Exception $e) {
-            // Trate o erro aqui se necessário
-            return [];
+        } else {
+            $result = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+                ->where('empresa_id', $companyId)
+                ->where('estado', 'Autorizado')
+                ->groupBy('mes')
+                ->get();
         }
+        return $result;
     }
-    
-
-
 }
-
-

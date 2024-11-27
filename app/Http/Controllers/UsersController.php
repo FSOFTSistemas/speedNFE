@@ -13,55 +13,94 @@ use Illuminate\Validation\ValidationException;
 
 class UsersController extends Controller
 {
+    private $userService;
+    private $empresaService;
+
+    public function __construct(UsersService $userService, EmpresasService $empresaService)
+    {
+        $this->userService = $userService;
+        $this->empresaService = $empresaService;
+    }
+
     public function update($id, Request $request)
     {
-        $sUsers = new UsersService();
-        $resp = $sUsers->editar($id, $request->name, $request->cargo);
-
-        if ($resp == 1) {
-            return redirect('/usuarios')->with('success', 'Usuário atualizado com sucesso');
+        try {
+            $request->validate([
+                'name' => 'required|max:255',
+                'cargo' => 'required',
+                'empresa' => 'required|numeric'
+            ], [
+                'required' => 'O campo :attribute deve ser obrigatório!',
+                'max' => 'O campo :attribute deve conter no máximo :max caracteres!',
+                'numeric' => 'O campo ::attribute deve ser um valor numérico!'
+            ]);
+            $this->userService->editar($id, $request->name, $request->cargo);
+            return redirect()->route('index_usuario')->with('success', 'Usuário atualizado com sucesso');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode("<br>", $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode("<br>", $errors))->withInput();
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
-        return $resp;
     }
 
     public function editar($id)
     {
-        $sUsers = new UsersService();
-        $user = $sUsers->buscaId($id);
-        $empresa = $sUsers->getEmpresa(Auth::id());
-
-        $sEmpresas = new EmpresasService();
-        $empresas = $sEmpresas->todas();
-
-        return view('users.editar', ['user' => $user, 'empresas' => $empresas, 'empresa' => $empresa->empresa_id]);
+        try {
+            $user = $this->userService->buscaId($id);
+            $companies = $this->empresaService->todas();
+            return view('users.edit', ['user' => $user, 'empresas' => $companies]);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Request $request)
     {
-        $sUsers = new UsersService();
-        $resp = $sUsers->destroy($request->userId);
-
-        if ($resp == 1) {
+        try {
+            $request->validate([
+                'userId' => 'required|numeric'
+            ], [
+                'required' => 'O campo :attribute é obrigatório!',
+                'numeric' => 'O campo :attribute deve ser um valor numérico!'
+            ]);
+            DB::beginTransaction();
+            $this->userService->destroy($request->userId);
+            DB::commit();
             return redirect('/usuarios')->with('success', 'Usuário excluído com sucesso');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $error) {
+                $errors[] = implode("<br>", $error);
+            }
+            DB::rollBack();
+            return back()->with('warning', implode("<br>", $errors));
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
-
-        return redirect('/usuarios')->with('error', 'Não foi possível excluir o usuário');
     }
 
     public function show()
     {
-        $sUsers = new UsersService();
-        $empresa = $sUsers->getEmpresa(Auth::id());
-        return view('users.todos', ['users' => $sUsers->todos($empresa->empresa_id), 'logged' => $sUsers->logged(Auth::id())]);
+        try {
+            $users = $this->userService->todos(Auth::user()->empresa_id);
+            return view('users.index', ['users' => $users, 'logged' => Auth::user()]);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
-    public function new ()
+    public function create()
     {
-        $sUsers = new UsersService();
-        $empresa = $sUsers->getEmpresa(Auth::id());
-        $sEmpresas = new EmpresasService();
-        $empresas = $sEmpresas->todas();
-        return view('users.new', ['empresa' => $empresa->empresa_id, 'empresas' => $empresas]);
+        try {
+            $empresas = $this->empresaService->todos(Auth::user()->empresa_id);
+            return view('users.create', ['empresas' => $empresas]);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+        }
     }
 
     public function store(Request $request)
@@ -70,26 +109,26 @@ class UsersController extends Controller
             $request->validate([
                 'name' => 'required',
                 'email' => 'email|required',
-                'senha' => 'required'
+                'senha' => 'required|min:4'
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
-                'email' => 'O email deve ser válido!'
+                'email' => 'O email deve ser válido!',
+                'min' => 'A senha deve conter no mínimo :min caracteres!'
             ]);
             DB::beginTransaction();
             $sUsers = new UsersService();
             $sUsers->store($request->email, $request->senha, $request->cargo, $request->empresa, $request->name);
             DB::commit();
-            return redirect()->route('index_usuario')->with('Success, Usuário inserido com sucesso !');
+            return redirect()->route('index_usuario')->with('success, Usuário inserido com sucesso !');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
+                $errors[] = implode("<br>", $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+            return back()->with('warning', implode("<br>", $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('erro: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'erro: ' . $e->getMessage());
         }
     }
-
 }

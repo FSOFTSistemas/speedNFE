@@ -25,6 +25,8 @@ class Pedido extends Component
     public $cfop = '';
     public $bcfop = '';
     public $forma = '';
+    public $finalidade = 1;
+    public $tipo = 1;
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -65,7 +67,7 @@ class Pedido extends Component
                 // $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
-                $this->empresas = $sEmpresas->todas();
+                $this->empresas = $sEmpresas->todos($user->empresa_id);
                 $this->clientes = $sClientes->todosClientes();
                 $this->produtos = $sProdutos->todosProdutos();
                 // $this->formas = $sFormas->todos();
@@ -251,6 +253,22 @@ class Pedido extends Component
             }
         }
         return -1;
+    }
+
+    public function refNFeSection()
+    {
+        switch($this->finalidade) {
+            case 1:
+                $this->tipo = 1;
+                break;
+            case 0:
+                $this->tipo = 0;
+                break;
+            case 4:
+                $this->tipo = 1;
+                break;
+        }
+        return $this->emit('section_nfe', $this->finalidade);
     }
 
     public function render()

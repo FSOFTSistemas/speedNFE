@@ -10,12 +10,36 @@
 
     <div class="row" style="padding-top: 1%">
         <div class="col">
-            <a class="btn btn-info" style="margin-bottom: 1%" href="{{ route('motorista.create') }}">&nbsp;+ Novo
+            <a class="btn btn-primary" style="margin-bottom: 1%" href="{{ route('motorista.create') }}">&nbsp;+ Novo
                 motorista&nbsp;</a>
         </div>
     </div>
 
-    <table class="table table-hover" id="motoristas_table">
+    @component('components.dataTable', [
+        'responsive' => [
+            [
+                'responsivePriority' => 1,
+                'targets' => 0,
+            ],
+            [
+                'responsivePriority' => 2,
+                'targets' => 1,
+            ],
+            [
+                'responsivePriority' => 3,
+                'targets' => 2,
+            ],
+            [
+                'responsivePriority' => 4,
+                'targets' => -1,
+            ]
+        ],
+        'searching' => true,
+        'lengthChange' => true,
+        'pageLength' => 10,
+        'ordering' => true,
+        'showFooter' => false,
+    ])
         <thead class="table-primary" style="text-align: center">
             <tr>
                 <th>Nome</th>
@@ -50,8 +74,7 @@
                 </tr>
             @endforeach
         </tbody>
-    </table>
-
+    @endcomponent
 
     <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
@@ -109,22 +132,9 @@
 @stop
 
 @section('js')
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script>
         function setaDadosModal(motoristaId) {
             document.getElementById('motoristaId').value = motoristaId;
         }
-
-        $(document).ready(function() {
-            $('#motoristas_table').DataTable({
-                responsive: true,
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json',
-                },
-            });
-        });
     </script>
 @stop

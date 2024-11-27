@@ -13,9 +13,12 @@ class Cupom extends Model
         'nroCupom',
         'data',
         'situacao',
+        'gerado_nfce',
+        'contingencia',
         'total',
         'desconto',
         'acrescimo',
+        'troco',
         'subtotal',
         'cliente_id',
         'empresa_id'
@@ -29,6 +32,21 @@ class Cupom extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
+
+    public function itens()
+    {
+        return $this->hasMany(ItemCupom::class, 'cupom_id');
+    }
+
+    public function formasPagamento()
+    {
+        return $this->hasMany(CupomForma::class, 'cupom_id');
+    }
+
+    public function nfce()
+    {
+        return $this->hasOne(NFCe::class, 'cupom_id');
     }
 
 }

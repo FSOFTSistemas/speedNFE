@@ -18,7 +18,10 @@ class Empresa extends Model
 		'endereco_id',
 		'rg_ie',
 		'celular',
+        'contador',
+        'sequenciaCupom',
 		'ultimaNFe',
+        'ultimaNFCe',
 		'ultimaMDFe',
 		'serie',
 		'certificado',
@@ -30,6 +33,7 @@ class Empresa extends Model
 		'limClientes',
 		'limProdutos',
 		'limNFes',
+        'limNFCes',
 		'limMDFes'
 	];
 
@@ -46,7 +50,7 @@ class Empresa extends Model
         return $empresa->ultimoNumeroNFe + 1;
     }
 
-    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $nfe, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $clientes, $produtos){
+    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $contador, $nfe, $nfce, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $limNFCes, $clientes, $produtos){
         $response = Empresa::create([
             'razao' => $nome,
             'fantasia' => $fantasia,
@@ -54,7 +58,10 @@ class Empresa extends Model
             'endereco_id' => $endereco_id,
             'rg_ie' => $rg_ie,
             'celular' => $telefone,
+            'contador' => $contador,
+            'sequenciaCupom' => 1,
             'ultimaNFe' => $nfe,
+            'ultimaNFCe' => $nfce,
             'ultimaMDFe' => $mdfe,
             'serie' => $serie,
             'certificado' => $certificado,
@@ -66,6 +73,7 @@ class Empresa extends Model
             'limClientes' => $clientes,
             'limProdutos' => $produtos,
             'limNFes' => $limNFes,
+            'limNFCes' => $limNFCes,
             'limMDFes' => $limMDFes
         ]);
         return $response;
@@ -110,4 +118,10 @@ class Empresa extends Model
 		];
 		return $ufs[$uf];
 	}
+
+    public function nfces()
+    {
+        return $this->hasMany(NFCe::class, 'empresa_id', 'id');
+    }
+
 }

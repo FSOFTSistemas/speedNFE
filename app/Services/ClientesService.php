@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\AlreadyExistException;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +44,9 @@ class ClientesService
         if ($rg_ie) {
             $contribuinte = 1;
         }
+        if (Cliente::where('cpf_cnpj', $cpf_cnpj)->where('empresa_id', $empresa)->exists()) {
+            throw new AlreadyExistException("O CPF/CNPJ já está em uso!");
+        }
         return Cliente::create([
             'codigo' => $codigo,
             'nome' => $nome,
@@ -67,9 +71,12 @@ class ClientesService
         return $cliente->delete();
     }
 
-    public function editar($id, $tipo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $limite)
+    public function editar($id, $tipo, $nome, $apelido, $cpf_cnpj, $rg_ie, $telefone, $celular, $limite, $empresa_id)
     {
         $cliente = Cliente::find($id);
+        if (Cliente::where('cpf_cnpj', $cpf_cnpj)->where('empresa_id', $empresa_id)->where('id', '!=', $cliente->id)->exists()) {
+            throw new AlreadyExistException("O CPF/CNPJ já está em uso!");
+        }
         $cliente->update([
             'tipo' => $tipo,
             'nome' => $nome,

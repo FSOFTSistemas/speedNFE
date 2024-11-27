@@ -5,7 +5,7 @@
 @section('content_header')
     <div class="row" style="text-align: end">
         <div class="col">
-            <a class="btn btn-secondary" href="{{ route('nfce.index') }}">Voltar</a>
+            <a class="btn btn-secondary" href="{{ route('cupom.index') }}">Voltar</a>
         </div>
     </div>
 @stop

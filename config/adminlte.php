@@ -308,6 +308,12 @@ return [
             'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
         ],
         [
+            'text'        => 'Estoque',
+            'url'         => '/estoque',
+            'icon'        => 'fas fa-boxes',
+            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+        ],
+        [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
             'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
@@ -316,21 +322,25 @@ return [
                     'text'        => 'Emitir NFe',
                     'url'         => '/vendas/nova',
                     'icon'        => 'fas fa-upload',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Notas Emitidas (NFe)',
                     'url'         => '/vendas',
                     'icon'        => 'fas fa-list-ul',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Baixar XML (NFe)',
                     'url'         => '/notas',
                     'icon'        => 'fas fa-download',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Relatórios (NFe)',
                     'url'         => '/relatorios',
                     'icon'        => 'fas fa-chart-area',
+                    'shift' => 'ml-2'
                 ],
             ],
         ],
@@ -341,13 +351,21 @@ return [
             'submenu' => [
                 [
                     'text'        => 'Emitir NFCe',
-                    'url'         => '/nfce/criar',
+                    'url'         => '/cupom/criar',
                     'icon'        => 'fas fa-upload',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Notas Emitidas (NFCe)',
-                    'url'         => '/nfce',
+                    'url'         => '/cupom',
                     'icon'        => 'fas fa-list-ul',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Baixar XML (NFCe)',
+                    'url'         => 'nfce/xmls/download',
+                    'icon'        => 'fas fa-download',
+                    'shift' => 'ml-2'
                 ]
             ]
         ],
@@ -360,26 +378,31 @@ return [
                     'text'        => 'Emitir MDFe',
                     'url'         => 'mdfes/emitir',
                     'icon'        => 'fas fa-upload',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Notas Emitidas (MDFe)',
                     'url'         => 'mdfes',
                     'icon'        => 'fas fa-list-ul',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Relatórios (MDFe)',
                     'url'         => 'relatorios/mdfe',
                     'icon'        => 'fas fa-chart-area',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Veículos',
                     'url'         => 'veiculos',
                     'icon'        => 'fa fa-car',
+                    'shift' => 'ml-2'
                 ],
                 [
                     'text'        => 'Motoristas',
                     'url'         => 'motoristas',
                     'icon'        => 'far fa-address-card',
+                    'shift' => 'ml-2'
                 ],
             ],
         ],
@@ -387,7 +410,32 @@ return [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
-        ]
+        ],
+        [
+            'text'        => 'Faturas',
+            'icon'        => 'fas fa-file-invoice',
+            'can'         => ['master'],
+            'submenu' => [
+                [
+                    'text'        => 'Assinatura',
+                    'url'         => '/faturas',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Histórico de pagamentos',
+                    'url'         => '/faturas/historico-pagamentos',
+                    'icon'        => 'fas fa-history',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Formas de pagamentos',
+                    'url'         => '/faturas/metodos-pagamentos',
+                    'icon'        => 'fas fa-money-check-alt',
+                    'shift' => 'ml-2'
+                ]
+            ],
+        ],
     ],
 
     /*

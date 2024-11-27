@@ -45,7 +45,7 @@ class NFeService
         $stdIde->nNF = (int) $numeroNFe;
         $stdIde->dhEmi = date("Y-m-d\TH:i:sP");
         $stdIde->dhSaiEnt = date("Y-m-d\TH:i:sP");
-        $stdIde->tpNF = 1;
+        $stdIde->tpNF = $venda->tpNF;
 
         $stdIde->idDest = $emitente->endereco->uf != $venda->endereco_cliente->uf ? 2 : 1;
         $stdIde->cMunFG = $emitente->endereco->codigoIBGE;
@@ -53,12 +53,18 @@ class NFeService
         $stdIde->tpEmis = 1;
         $stdIde->cDV = 0;
         $stdIde->tpAmb = $emitente->ambiente;
-        $stdIde->finNFe = 1;
+        $stdIde->finNFe = $venda->finNF;
         $stdIde->indFinal = 1;
         $stdIde->indPres = 1;
         $stdIde->procEmi = '0';
         $stdIde->verProc = '3.10.31';
         $tagide = $nfe->tagide($stdIde);
+
+        if ($venda->ref_nfe) {
+            $stdrefNFe = new \stdClass();
+            $stdrefNFe->refNFe = $venda->ref_nfe;
+            $nfe->tagrefNFe($stdrefNFe);
+        }
 
         //TAG EMITENTE
         $stdEmit = new \stdClass();
@@ -365,38 +371,56 @@ class NFeService
             $pag = $nfe->tagpag($stdPag);
 
             $stdDetPag = new \stdClass();
-            if ($fat->forma_pag->descricao == "Dinheiro") {
-                $stdDetPag->tPag = '01';
-            } else if ($fat->forma_pag->descricao == 'Cheque') {
-                $stdDetPag->tPag = '02';
-            } else if ($fat->forma_pag->descricao == 'Cartão de Crédito') {
-                $stdDetPag->tPag = '03';
-            } else if ($fat->forma_pag->descricao == 'Cartão de Débito') {
-                $stdDetPag->tPag = '04';
-            } else if ($fat->forma_pag->descricao == 'Crédito Loja') {
-                $stdDetPag->tPag = '05';
-            } else if ($fat->forma_pag->descricao == 'Vale Alimentação') {
-                $stdDetPag->tPag = '10';
-            } else if ($fat->forma_pag->descricao == 'Vale Refeição') {
-                $stdDetPag->tPag = '11';
-            } else if ($fat->forma_pag->descricao == 'Vale Presente') {
-                $stdDetPag->tPag = '12';
-            } else if ($fat->forma_pag->descricao == 'Vale Combustível') {
-                $stdDetPag->tPag = '13';
-            } else if ($fat->forma_pag->descricao == 'Duplicata Mercantil') {
-                $stdDetPag->tPag = '14';
-            } else if ($fat->forma_pag->descricao == 'Boleto Bancário') {
-                $stdDetPag->tPag = '15';
-            } else if ($fat->forma_pag->descricao == 'Depósito Bancário') {
-                $stdDetPag->tPag = '16';
-            } else if ($fat->forma_pag->descricao == 'Pagamento Instantâneo (PIX)') {
-                $stdDetPag->tPag = '17';
-            } else if ($fat->forma_pag->descricao == 'Sem pagamento') {
-                $stdDetPag->tPag = '90';
-            } else if ($fat->forma_pag->descricao == 'Outros') {
-                $stdDetPag->tPag = '99';
+            switch ($fat->forma_pag->descricao) {
+                case "Dinheiro":
+                    $stdDetPag->tPag = '01';
+                    break;
+                case "Cheque":
+                    $stdDetPag->tPag = '02';
+                    break;
+                case "Cartão de Crédito":
+                    $stdDetPag->tPag = '03';
+                    break;
+                case "Cartão de Débito":
+                    $stdDetPag->tPag = '04';
+                    break;
+                case "Crédito Loja":
+                    $stdDetPag->tPag = '05';
+                    break;
+                case "Vale Alimentação":
+                    $stdDetPag->tPag = '10';
+                    break;
+                case "Vale Refeição":
+                    $stdDetPag->tPag = '11';
+                    break;
+                case "Vale Presente":
+                    $stdDetPag->tPag = '12';
+                    break;
+                case "Vale Combustível":
+                    $stdDetPag->tPag = '13';
+                    break;
+                case "Duplicata Mercantil":
+                    $stdDetPag->tPag = '14';
+                    break;
+                case "Boleto Bancário":
+                    $stdDetPag->tPag = '15';
+                    break;
+                case "Depósito Bancário":
+                    $stdDetPag->tPag = '16';
+                    break;
+                case "PIX":
+                    $stdDetPag->tPag = '17';
+                    break;
+                case "Sem Pagamento":
+                    $stdDetPag->tPag = '90';
+                    break;
+                case "Outros":
+                    $stdDetPag->tPag = '99';
+                    break;
+                default:
+                    break;
             }
-            $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem pagamento' ? FormatationUtil::format($fat->valor) : 0.00;
+            $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem Pagamento' ? FormatationUtil::format($fat->valor) : 0;
             $stdDetPag->indPag = 1;
             $stdDetPag->vTroco = 0;
             if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
@@ -404,6 +428,7 @@ class NFeService
             }
             $detPag = $nfe->tagdetPag($stdDetPag);
         }
+
 
         $stdInfCpl = new \stdClass();
         $stdInfCpl->infCpl = $venda->info_complementares;
@@ -469,7 +494,7 @@ class NFeService
             sleep(3);
             $xml = Complements::toAuthorize($signXml, $protocolo);
             if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
             }
             file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
             return [
@@ -495,7 +520,7 @@ class NFeService
             if ($std->infInut->cStat == 102 || $std->infInut->cStat == 563) {
                 $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
                 if (!File::exists(public_path($caminho . '/'))) {
-                    File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                    File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
                 }
                 file_put_contents(public_path($caminho . '/') . $std->infInut->attributes->Id . '.xml', $xml);
 
@@ -526,7 +551,7 @@ class NFeService
                 if ($cStat == '135' || $cStat == '136') {
                     $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
                     if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                        File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
                     }
                     file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
 
@@ -565,7 +590,7 @@ class NFeService
                 if ($cStat == '101' || $cStat == '135' || $cStat == '155') {
                     $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
                     if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 755, true, true);
+                        File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
                     }
                     file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
 
