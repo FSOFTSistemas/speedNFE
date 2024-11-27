@@ -21,6 +21,7 @@ use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\RelatoriosController;
+use App\Http\Controllers\TransactionLogController;
 use App\Http\Controllers\VeiculoController;
 
 /*
@@ -245,5 +246,7 @@ Route::prefix('faturas')->group(function () {
     Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
     Route::get('/metodos-pagamentos', [FaturaController::class, 'paymentMethods'])->name('faturas.paymentMethods');
 });
+
+Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
 
 require __DIR__ . '/auth.php';

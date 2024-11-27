@@ -407,6 +407,11 @@ return [
             ],
         ],
         [
+            'text'  => 'Log',
+            'url'   => '/log',
+            'icon'  => 'fas fa-clipboard-list',
+        ],        
+        [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
