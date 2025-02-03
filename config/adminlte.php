@@ -412,6 +412,11 @@ return [
             'icon'  => 'fas fa-clipboard-list',
         ],        
         [
+            'text'  => 'Fluxo de Caixa',
+            'url'   => '/fluxo-caixa',
+            'icon'  => 'fas fa-cash-register',
+        ],
+        [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',

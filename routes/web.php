@@ -15,11 +15,13 @@ use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\CupomController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\FaturaController;
+use App\Http\Controllers\FluxoDeCaixaController;
 use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
+use App\Http\Controllers\PlanoDeContaController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\TransactionLogController;
 use App\Http\Controllers\VeiculoController;
@@ -238,6 +240,9 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/{id}/visualizar', [CupomController::class, 'showPreView'])->name('cupom.showPreView')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     });
+
+    Route::resource('contas', PlanoDeContaController::class);
+    Route::resource('fluxo-caixa', FluxoDeCaixaController::class);
 });
 
 //FATURAS
