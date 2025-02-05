@@ -114,20 +114,17 @@ class PedidosService
 
     public function getTotalNFePerMonth($companyId)
     {
-        if ($companyId == 1) {
-            $companyId = '%';
-            $result = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
-                ->where('empresa_id', 'like', $companyId)
-                ->where('estado', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
-        } else {
-            $result = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
-                ->where('empresa_id', $companyId)
-                ->where('estado', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
+        $query = Pedido::selectRaw('MONTH(data) as mes, SUM(total) as total_vendas')
+            ->where('estado', 'Autorizado')
+            ->whereYear('data', date('Y')) // Filtra apenas o ano atual
+            ->groupBy('mes')
+            ->orderBy('mes', 'asc'); // Ordena corretamente os meses
+
+        // Se não for a empresa "1", aplica o filtro por empresa
+        if ($companyId != 1) {
+            $query->where('empresa_id', $companyId);
         }
-        return $result;
+
+        return $query->get();
     }
 }
