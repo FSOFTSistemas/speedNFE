@@ -43,23 +43,19 @@ class NFCeService
 
     public static function getTotalNFCePerMonth($companyId)
     {
-        if ($companyId == 1) {
-            $companyId = '%';
-            $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
-                ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
-                ->where('n_f_ces.empresa_id', 'like', $companyId)
-                ->where('n_f_ces.situacao', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
-        } else {
-            $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
-                ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
-                ->where('n_f_ces.empresa_id', $companyId)
-                ->where('n_f_ces.situacao', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
+        $query = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
+            ->join('cupoms', 'n_f_ces.cupom_id', '=', 'cupoms.id')
+            ->where('n_f_ces.situacao', 'Autorizado')
+            ->whereYear('n_f_ces.data', date('Y')) // Filtra apenas o ano corrente
+            ->groupBy('mes')
+            ->orderBy('mes', 'asc'); // Garante que os meses venham ordenados
+
+        // Se não for a empresa "1", aplica o filtro por empresa
+        if ($companyId != 1) {
+            $query->where('n_f_ces.empresa_id', $companyId);
         }
-        return $results;
+
+        return $query->get();
     }
 
     public static function createNFCe($body, $couponId, $company)
@@ -181,7 +177,6 @@ class NFCeService
                 $std->xPais = 'Brasil';
                 $std->fone = FormatationUtil::retiraPontuacoes($cliente->celular);
                 $make->tagenderdest($std);
-                
             }
 
             foreach ($cupom->itens as $index => $item) {
