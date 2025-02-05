@@ -11,7 +11,7 @@ class FluxoDeCaixaController extends Controller
 {
     public function index()
     {
-        $lancamentos = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)->orderBy('data', 'desc')->get();
+        $lancamentos = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)->orderBy('data', 'asc')->get();
         $planosDeContas = PlanoDeConta::where('empresa_id', Auth::user()->empresa_id)->get();
         return view('fluxodecaixa.index', compact('lancamentos', 'planosDeContas'));
     }
@@ -31,6 +31,7 @@ class FluxoDeCaixaController extends Controller
                 'descricao' => $request->descricao,
                 'valor' => $request->valor,
                 'data' => $request->data,
+                'tipo' => $request->tipo,
                 'plano_de_contas_id' => $request->plano_de_contas_id,
                 'empresa_id' => Auth::user()->empresa_id,
             ]);

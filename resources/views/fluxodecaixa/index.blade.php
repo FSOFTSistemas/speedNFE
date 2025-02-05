@@ -32,15 +32,15 @@
         ],
         'searching' => true,
         'lengthChange' => true,
-        'pageLength' => 10,
-        'ordering' => true,
+        'pageLength' => 25,
+        'ordering' => false,
         'showFooter' => false,
+        'sumColumnIndex' => 2,
     ])
         <thead class="table-primary" style="width: 100%">
             <tr>
-                <th>ID</th>
-                <th>Plano de Contas</th>
                 <th>Descrição</th>
+                <th>Plano de Contas</th>
                 <th>Valor</th>
                 <th>Tipo</th>
                 <th>Data</th>
@@ -51,11 +51,18 @@
         <tbody>
             @foreach ($lancamentos as $lancamento)
                 <tr>
-                    <td>#{{ $lancamento->id }}</td>
-                    <td>{{ $lancamento->planoDeContas->descricao ?? 'Não informado' }}</td>
                     <td>{{ $lancamento->descricao }}</td>
+                    <td>{{ $lancamento->planoDeContas->descricao ?? 'Não informado' }}</td>
                     <td>R$ {{ number_format($lancamento->valor, 2, ',', '.') }}</td>
-                    <td>{{ $lancamento->tipo }}</td>
+                    <td>
+                        @if ($lancamento->tipo == 'Entrada')
+                            <span class="badge badge-success">Entrada</span>
+                        @elseif ($lancamento->tipo == 'Saída')
+                            <span class="badge badge-danger">Saída</span>
+                        @else
+                            <span class="badge badge-secondary">{{ ucfirst($lancamento->tipo) }}</span>
+                        @endif
+                    </td>
                     <td>{{ \Carbon\Carbon::parse($lancamento->data)->format('d/m/Y') }}</td>
                     <td>
                         <div class="row">
@@ -137,7 +144,7 @@
                             <label for="tipo">Tipo</label>
                             <select class="form-control" id="tipo" name="tipo">
                                 <option value="Entrada">Entrada</option>
-                                <option value="Saída">Saída</option>
+                                <option value="Saida">Saída</option>
                             </select>
                         </div>
                         <div class="form-group">

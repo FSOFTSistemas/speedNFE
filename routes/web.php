@@ -13,6 +13,7 @@ use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\CupomController;
+use App\Http\Controllers\DRE;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\FluxoDeCaixaController;
@@ -241,8 +242,11 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     });
 
-    Route::resource('contas', PlanoDeContaController::class);
-    Route::resource('fluxo-caixa', FluxoDeCaixaController::class);
+    Route::resource('contas', PlanoDeContaController::class)->middleware(['auth']);
+    Route::resource('fluxo-caixa', FluxoDeCaixaController::class)->middleware(['auth']);
+    Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth']);
+    Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
+    Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
 });
 
 //FATURAS

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class SignatureStatus
@@ -17,7 +18,7 @@ class SignatureStatus
      */
     public function handle(Request $request, Closure $next)
     {
-        $customerCnpjCpf = auth()->user()->empresa->cpf_cnpj;
+        $customerCnpjCpf = Auth::user()->empresa->cpf_cnpj;
         $response = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCnpjCpf);
         $body = json_decode($response->body());
         if (isset($body->due) && $body->due->expires === true) {

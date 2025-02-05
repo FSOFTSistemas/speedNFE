@@ -410,11 +410,30 @@ return [
             'text'  => 'Log',
             'url'   => '/log',
             'icon'  => 'fas fa-clipboard-list',
-        ],        
+        ],
         [
             'text'  => 'Fluxo de Caixa',
-            'url'   => '/fluxo-caixa',
             'icon'  => 'fas fa-cash-register',
+            'submenu' => [
+                [
+                    'text'        => 'Caixa',
+                    'url'         => '/fluxo-caixa',
+                    'icon'        => 'fas fa-cash-register',
+                    'shift'       => 'ml-2'
+                ],
+                [
+                    'text'        => 'Relatórios',
+                    'url'         => '#',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift'       => 'ml-2'
+                ],
+                [
+                    'text'        => 'DRE',
+                    'url'         => '/dre',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift'       => 'ml-2'
+                ],
+            ],
         ],
         [
             'text'        => 'Configurações',
