@@ -8,8 +8,27 @@ use App\Models\MDFeNota;
 class NotasService
 {
 
-    public function save($numero, $serie, $data, $uf_inicio, $uf_termino, $codMunCarregamento, $municipioCarregamento, $percursos, $valor_total,
-        $peso, $tipo_carga, $nNFe, $nMDFe, $nCTe, $empresa, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte) {
+    public function save(
+        $numero,
+        $serie,
+        $data,
+        $uf_inicio,
+        $uf_termino,
+        $codMunCarregamento,
+        $municipioCarregamento,
+        $percursos,
+        $valor_total,
+        $peso,
+        $tipo_carga,
+        $nNFe,
+        $nMDFe,
+        $nCTe,
+        $empresa,
+        $veicTracao,
+        $numeroLacre,
+        $info_fisco,
+        $info_contribuinte
+    ) {
         if ($this->qtdeEmitMDFe($empresa->id) < $empresa->limMDFes || $empresa->id == 1) {
             return MDFE::create([
                 'numero' => $numero,
@@ -38,8 +57,27 @@ class NotasService
         }
     }
 
-    public function update($numero, $serie, $data, $uf_inicio, $uf_termino, $codMunCarregamento, $municipioCarregamento, $percursos, $valor_total,
-        $peso, $tipo_carga, $nNFe, $nMDFe, $nCTe, $veicTracao, $numeroLacre, $info_fisco, $info_contribuinte, $mdfeId) {
+    public function update(
+        $numero,
+        $serie,
+        $data,
+        $uf_inicio,
+        $uf_termino,
+        $codMunCarregamento,
+        $municipioCarregamento,
+        $percursos,
+        $valor_total,
+        $peso,
+        $tipo_carga,
+        $nNFe,
+        $nMDFe,
+        $nCTe,
+        $veicTracao,
+        $numeroLacre,
+        $info_fisco,
+        $info_contribuinte,
+        $mdfeId
+    ) {
         $mdfe = MDFE::find($mdfeId);
         return $mdfe->update([
             'numero' => $numero,
@@ -149,21 +187,17 @@ class NotasService
 
     public static function getTotalMDFePerMonth($companyId)
     {
-        if ($companyId == 1) {
-            $companyId = '%';
-            $results = MDFE::selectRaw('MONTH(data) as mes, SUM(valor_total) as total_vendas')
-                ->where('empresa_id', 'like', $companyId)
-                ->where('situacao', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
-        } else {
-            $results = MDFE::selectRaw('MONTH(data) as mes, SUM(valor_total) as total_vendas')
-            ->where('empresa_id', $companyId)
+        $query = MDFE::selectRaw('MONTH(data) as mes, SUM(valor_total) as total_vendas')
             ->where('situacao', 'Autorizado')
+            ->whereYear('data', date('Y')) // Filtra apenas o ano corrente
             ->groupBy('mes')
-            ->get();
-        }
-        return $results;
-    }
+            ->orderBy('mes', 'asc'); // Garante a ordenação correta dos meses
 
+        // Se não for a empresa "1", aplica o filtro por empresa
+        if ($companyId != 1) {
+            $query->where('empresa_id', $companyId);
+        }
+
+        return $query->get();
+    }
 }
