@@ -137,7 +137,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="number" name="precocusto"
-                                                        id="precocusto" value="{{ $produto->precocusto }}" required
+                                                        id="precocusto" value="{{ $produto->precocusto }}" step="0.01" required
                                                         placeholder=" ">
                                                     <label for="precocusto">Preço Custo</label>
                                                     <div class="invalid-feedback">
@@ -153,7 +153,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="number" name="precovenda"
-                                                        id="precovenda" value="{{ $produto->precovenda }}" required
+                                                        id="precovenda" value="{{ $produto->precovenda }}" step="0.01" required
                                                         placeholder=" ">
                                                     <label for="precovenda">Preço de Venda</label>
                                                     <div class="invalid-feedback">
