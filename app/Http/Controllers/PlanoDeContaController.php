@@ -32,26 +32,28 @@ class PlanoDeContaController extends Controller
 
             $request['empresa_id'] = Auth::user()->empresa_id;
             PlanoDeConta::create($request->all());
-            return redirect()->route('contas.index')->with('success','Plano de contas cadastrado com sucesso');
+            return redirect()->route('contas.index')->with('success', 'Plano de contas cadastrado com sucesso');
         } catch (QueryException $e) {
-            return redirect()->back()->withInput()->with('error', 'Erro no banco de dados'.$e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Erro no banco de dados' . $e->getMessage());
         } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Erro no banco de dados'.$e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Erro no banco de dados' . $e->getMessage());
         }
     }
 
-   
-    public function update(Request $request, PlanoDeConta $planoConta)
+
+    public function update(Request $request, $id)
     {
         try {
-            $request->validate([
-                'codigo' => "required|unique:plano_de_contas,codigo,{$planoConta->id}",
+            $planoConta = PlanoDeConta::findOrFail($id);
+
+            $dadosValidados = $request->validate([
+                'codigo' => "required|unique:plano_de_contas,codigo,{$id}",
                 'descricao' => 'required',
                 'tipo' => 'required|in:Receita,Despesa,Ativo,Passivo',
                 'conta_pai_id' => 'nullable|exists:plano_contas,id',
             ]);
 
-            $planoConta->update($request->all());
+            $planoConta->update($dadosValidados);
             return redirect()->route('contas.index');
         } catch (QueryException $e) {
             return redirect()->back()->withInput();
