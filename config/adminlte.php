@@ -423,7 +423,7 @@ return [
                 ],
                 [
                     'text'        => 'Relatórios',
-                    'url'         => '#',
+                    'url'         => '/rel/fluxo-caixa',
                     'icon'        => 'fas fa-file-contract',
                     'shift'       => 'ml-2'
                 ],

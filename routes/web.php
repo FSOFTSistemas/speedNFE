@@ -244,6 +244,8 @@ Route::middleware(['check.subscription'])->group(function () {
 
     Route::resource('contas', PlanoDeContaController::class)->middleware(['auth']);
     Route::resource('fluxo-caixa', FluxoDeCaixaController::class)->middleware(['auth']);
+    Route::get('/rel/fluxo-caixa', [FluxoDeCaixaController::class, 'telaRrelatorio'])->name('rel');
+    Route::get('/relatorio/fluxo-caixa', [FluxoDeCaixaController::class, 'gerarRelatorio'])->name('fluxo_caixa.gerarRelatorio');
     Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth']);
     Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
     Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
