@@ -6,19 +6,37 @@
 @stop
 
 @section('content')
-    <div class="row" style="padding-top: 1%; text-align: right;">
-        <div class="col">
-            <!-- Botão de Novo Lançamento -->
-            <button class="btn btn-primary" style="margin-bottom: 1%;" data-toggle="modal" data-target="#createModal">
-                <i class="fas fa-plus"></i>&nbsp;Novo Lançamento
-            </button>
-
-            <!-- Botão CRUD Plano de Contas com link para a rota contas.index -->
-            <a href="{{ route('contas.index') }}" class="btn btn-secondary" style="margin-bottom: 1%; margin-left: 10px;">
-                <i class="fas fa-list-alt"></i>&nbsp;Plano de Contas
-            </a>
-        </div>
+<div class="row" style="padding-top: 1%;">
+    <!-- Filtro de Datas à Esquerda -->
+    <div class="col-md-6">
+        <form action="{{ route('fluxo-caixa.index') }}" method="GET" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="data_inicio" class="mr-2">Data Início:</label>
+                <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                    value="{{ request()->get('data_inicio', $dataInicio->format('Y-m-d')) }}">
+            </div>
+            <div class="form-group mx-sm-3">
+                <label for="data_fim" class="mr-2">Data Fim:</label>
+                <input type="date" class="form-control" id="data_fim" name="data_fim"
+                    value="{{ request()->get('data_fim', $dataFim->format('Y-m-d')) }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
     </div>
+
+    <!-- Botões à Direita -->
+    <div class="col-md-6 text-right">
+        <!-- Botão de Novo Lançamento -->
+        <button class="btn btn-primary" style="margin-bottom: 1%;" data-toggle="modal" data-target="#createModal">
+            <i class="fas fa-plus"></i>&nbsp;Novo Lançamento
+        </button>
+
+        <!-- Botão CRUD Plano de Contas com link para a rota contas.index -->
+        <a href="{{ route('contas.index') }}" class="btn btn-secondary" style="margin-bottom: 1%; margin-left: 10px;">
+            <i class="fas fa-list-alt"></i>&nbsp;Plano de Contas
+        </a>
+    </div>
+</div>
 
     @component('components.dataTable', [
         'responsive' => [
@@ -27,15 +45,14 @@
             ['responsivePriority' => 3, 'targets' => 2],
             ['responsivePriority' => 4, 'targets' => 3],
             ['responsivePriority' => 5, 'targets' => 4],
-            ['responsivePriority' => 6, 'targets' => 5],
-            ['responsivePriority' => 7, 'targets' => -1],
+            ['responsivePriority' => 6, 'targets' => -1],
         ],
         'searching' => true,
         'lengthChange' => true,
         'pageLength' => 25,
         'ordering' => false,
-        'showFooter' => true,
-        'sumColumnIndex' => 2,
+        'showFooter' => false,
+        'sumColumnIndex' => 3,
     ])
         <thead class="table-primary" style="width: 100%">
             <tr>

@@ -51,30 +51,37 @@
                     <tr class="table-success">
                         <td><strong>Total de receitas</strong></td>
                         <td><strong>R$ {{ number_format($receitas, 2, ',', '.') }}</strong></td>
-                        @foreach ($receita_plano as $rPlanos)
-                    <tr>
-                        @if ($rPlanos->tipo == 'Entrada')
-                            <td><strong>{{ $rPlanos->descricao }}</strong></td>
-                            <td><strong>R$ {{ number_format($rPlanos->total, 2, ',', '.') }}</strong></td>
-                        @endif
                     </tr>
+                    @foreach ($receita_plano as $rPlanos)
+                        <tr>
+                            @if ($rPlanos->tipo == 'Entrada')
+                                <td><strong>{{ $rPlanos->descricao }}</strong></td>
+                                <td><strong>R$ {{ number_format($rPlanos->total, 2, ',', '.') }}</strong></td>
+                            @endif
+                        </tr>
                     @endforeach
-                    </tr>
                     <tr class="table-danger">
                         <td><strong>Total de despesas</strong></td>
                         <td><strong>R$ {{ number_format($despesas, 2, ',', '.') }}</strong></td>
-                        @foreach ($receita_plano as $rPlanos)
-                    <tr>
-                        @if ($rPlanos->tipo == 'Saída')
-                            <td><strong>{{ $rPlanos->descricao }}</strong></td>
-                            <td><strong>R$ {{ number_format($rPlanos->total, 2, ',', '.') }}</strong></td>
-                        @endif
                     </tr>
+                    @foreach ($receita_plano as $rPlanos)
+                        <tr>
+                            @if ($rPlanos->tipo == 'Saída')
+                                <td><strong>{{ $rPlanos->descricao }}</strong></td>
+                                <td><strong>R$ {{ number_format($rPlanos->total, 2, ',', '.') }}</strong></td>
+                            @endif
+                        </tr>
                     @endforeach
-                    </tr>
                     <tr class="{{ $lucro < 0 ? 'table-warning' : 'table-info' }}">
                         <td><strong>Lucro Líquido</strong></td>
-                        <td><strong>R$ {{ number_format($lucro, 2, ',', '.') }}</strong></td>
+                        <td>
+                            <strong>R$ {{ number_format($lucro, 2, ',', '.') }}          </strong>
+                            @if ($receitas > 0)
+                                <span class="badge badge-{{ $lucro < 0 ? 'danger' : 'warning' }} center-badge" style="font-size: 15px;">
+                                    ({{ number_format(($lucro / $receitas) * 100, 2, ',', '.') }}%)
+                                </span>
+                            @endif
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -89,3 +96,6 @@
         </a>
     </div>
 @stop
+
+
+

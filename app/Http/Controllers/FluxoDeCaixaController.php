@@ -10,12 +10,34 @@ use Illuminate\Support\Facades\Auth;
 
 class FluxoDeCaixaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $lancamentos = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)->orderBy('data', 'asc')->get();
+        $query = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id);
+
+        // Define as datas de início e fim com a data de hoje
+        $dataInicio = \Carbon\Carbon::today()->startOfDay(); // Início do dia atual
+        $dataFim = \Carbon\Carbon::today()->endOfDay(); // Fim do dia atual
+
+        // Verifica se as datas de filtro estão presentes e aplica o filtro de data
+        if ($request->has('data_inicio') && $request->has('data_fim')) {
+            $dataInicio = \Carbon\Carbon::parse($request->data_inicio)->startOfDay();
+            $dataFim = \Carbon\Carbon::parse($request->data_fim)->endOfDay();
+        }
+
+        // Aplica o filtro de data
+        $query->whereBetween('data', [$dataInicio, $dataFim]);
+
+        // Obtém os lançamentos filtrados ou todos, caso o filtro não seja aplicado
+        $lancamentos = $query->orderBy('data', 'asc')->get();
+
+        // Obtém os planos de contas
         $planosDeContas = PlanoDeConta::where('empresa_id', Auth::user()->empresa_id)->get();
-        return view('fluxodecaixa.index', compact('lancamentos', 'planosDeContas'));
+
+        // Retorna a view com os dados e as datas
+        return view('fluxodecaixa.index', compact('lancamentos', 'planosDeContas', 'dataInicio', 'dataFim'));
     }
+
+
 
     public function store(Request $request)
     {
@@ -100,7 +122,7 @@ class FluxoDeCaixaController extends Controller
                 break;
             case 'receitas_despesas':
                 $dados = $query->selectRaw("tipo, SUM(valor) as total")->groupBy('tipo')->get();
-               
+
                 break;
             case 'categoria':
                 $dados = $query->selectRaw("plano_de_contas_id, SUM(valor) as total")
