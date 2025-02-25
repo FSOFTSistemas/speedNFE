@@ -43,6 +43,7 @@ class RelatoriosController extends Controller
 
     public function relatorio(Request $request)
     {
+
         try {
             $dataI = date('Y-m-d h:m:s', strtotime($request->inicio));
             $dataF = date('Y-m-t h:m:s', strtotime($request->fim));

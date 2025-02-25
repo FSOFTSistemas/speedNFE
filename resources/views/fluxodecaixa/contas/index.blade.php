@@ -55,25 +55,23 @@
                         <div class="row">
                             <div class="col">
                                 <a class="text-warning" title="Editar"
-                                    onclick="setaDadosModalEdit({{ $conta->id }}, '{{ $conta->codigo }}', '{{ $conta->descricao }}', '{{ $conta->tipo }}', {{ $conta->conta_pai_id ?? 'null' }})"
-                                    data-toggle="modal" data-target="#modalEdit">
+                                    data-toggle="modal" data-target="#modalEdit{{$conta->id}}">
                                     <i class="far fa-edit"></i>
                                 </a>
                             </div>
 
                             <div class="col">
                                 <a class="text-danger" title="Excluir"
-                                    onclick="setaDadosModalDelete({{ $conta->id }})"
-                                    data-toggle="modal" data-target="#modalDelete">
+                                    data-toggle="modal" data-target="#modalDelete{{$conta->id}}">
                                     <i class="far fa-trash-alt"></i>
                                 </a>
                             </div>
                         </div>
                     </td>
+                    @include('fluxodecaixa.contas.modals.edit')
+                    @include('fluxodecaixa.contas.modals.delete')
                 </tr>
-                @include('fluxodecaixa.contas.modals.edit')
-                @include('fluxodecaixa.contas.modals.delete')
-            @endforeach
+                @endforeach
         </tbody>
     @endcomponent
 
@@ -83,19 +81,5 @@
 @endsection
 
 @section('js')
-    <script>
-        // Função para preencher os campos do modal de edição
-        function setaDadosModalEdit(id, codigo, descricao, tipo, contaPai) {
-            $('#edit-id').val(id);
-            $('#edit-codigo').val(codigo);
-            $('#edit-descricao').val(descricao);
-            $('#edit-tipo').val(tipo);
-            $('#edit-conta-pai').val(contaPai);
-        }
 
-        // Função para preencher os dados do modal de exclusão
-        function setaDadosModalDelete(id) {
-            $('#delete-id').val(id);
-        }
-    </script>
 @stop

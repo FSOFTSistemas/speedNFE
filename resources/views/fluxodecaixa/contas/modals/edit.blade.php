@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
+<div class="modal fade" id="modalEdit{{$conta->id}}" tabindex="-1" aria-labelledby="modalEditLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form action="{{ route('contas.update', $conta->id) }}" method="POST">
             @csrf

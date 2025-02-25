@@ -43,8 +43,11 @@ class PlanoDeContaController extends Controller
 
     public function update(Request $request, $id)
     {
+
         try {
             $planoConta = PlanoDeConta::findOrFail($id);
+
+    
 
             $dadosValidados = $request->validate([
                 'codigo' => "required|unique:plano_de_contas,codigo,{$id}",
@@ -70,8 +73,9 @@ class PlanoDeContaController extends Controller
         try {
             $planoConta = PlanoDeConta::find($id);
             $planoConta->delete();
-            return redirect()->route('contas.index');
+            return redirect()->route('contas.index')->with('success', 'Deletado com sucesso !');
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()->withInput();
         }
     }

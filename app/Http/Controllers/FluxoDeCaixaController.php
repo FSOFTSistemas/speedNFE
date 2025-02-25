@@ -100,6 +100,7 @@ class FluxoDeCaixaController extends Controller
                 break;
             case 'receitas_despesas':
                 $dados = $query->selectRaw("tipo, SUM(valor) as total")->groupBy('tipo')->get();
+               
                 break;
             case 'categoria':
                 $dados = $query->selectRaw("plano_de_contas_id, SUM(valor) as total")

@@ -34,7 +34,7 @@
         'lengthChange' => true,
         'pageLength' => 25,
         'ordering' => false,
-        'showFooter' => false,
+        'showFooter' => true,
         'sumColumnIndex' => 2,
     ])
         <thead class="table-primary" style="width: 100%">
@@ -53,7 +53,7 @@
                 <tr>
                     <td>{{ $lancamento->descricao }}</td>
                     <td>{{ $lancamento->planoDeContas->descricao ?? 'Não informado' }}</td>
-                    <td>R$ {{ number_format($lancamento->valor, 2, ',', '.') }}</td>
+                    <td>{{ number_format($lancamento->valor, 2, ',', '.') }}</td>
                     <td>
                         @if ($lancamento->tipo == 'Entrada')
                             <span class="badge badge-success">Entrada</span>

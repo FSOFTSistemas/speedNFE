@@ -12,7 +12,7 @@
             <h3 class="card-title">Filtrar Relatório</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('fluxo_caixa.gerarRelatorio') }}" method="GET">
+            <form action="{{ route('fluxo_caixa.gerarRelatorio') }}" target="_blank" method="GET">
                 @csrf
                 <div class="row">
                     <!-- Data Início -->
