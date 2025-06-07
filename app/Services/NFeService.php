@@ -27,6 +27,7 @@ class NFeService
 
     public function gerarXml($venda, $emitente)
     {
+        // dd($venda);
         $nfe = new Make();
         $stdInNFe = new \stdClass();
         $stdInNFe->versao = '4.00';
@@ -239,6 +240,9 @@ class NFeService
             $stdProd->qCom = $i->qtde;
             $stdProd->vUnCom = FormatationUtil::format($i->unitario);
             $stdProd->vProd = FormatationUtil::format(($i->qtde * $i->unitario));
+            if ($i->desconto > 0) {
+                $stdProd->vDesc = FormatationUtil::format($i->desconto);
+            }
             $stdProd->uTrib = $i->produto->un;
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
@@ -339,7 +343,9 @@ class NFeService
         $stdICMSTot->vST = 0.00;
         $stdICMSTot->vFrete = 0.00;
         $stdICMSTot->vSeg = 0.00;
-        $stdICMSTot->vDesc = FormatationUtil::format($venda->desconto);
+        if ($venda->desconto > 0) {
+            $stdICMSTot->vDesc = FormatationUtil::format($venda->desconto);
+        }
         $stdICMSTot->vII = 0.00;
         $stdICMSTot->vIPI = 0.00;
         $stdICMSTot->vPIS = 0.00;
@@ -353,7 +359,7 @@ class NFeService
         $stdFat->nFat = (int) $numeroNFe;
         $stdFat->vOrig = FormatationUtil::format($venda->subtotal);
         $stdFat->vDesc = FormatationUtil::format($venda->desconto);
-        $stdFat->vLiq = FormatationUtil::format($venda->total);
+        $stdFat->vLiq = FormatationUtil::format($venda->subtotal - $venda->desconto);
         if ($venda->tipo_pagamento != '90') {
             $fatura = $nfe->tagfat($stdFat);
         }

@@ -188,6 +188,12 @@
                                                         <option value="cm"
                                                             @if ($produto->un == 'cm') selected @endif>CM
                                                         </option>
+                                                        <option value="fd"
+                                                            @if ($produto->un == 'fd') selected @endif>FD
+                                                        </option>
+                                                        <option value="mil"
+                                                            @if ($produto->un == 'mil') selected @endif>MIL
+                                                        </option>
                                                     </select>
                                                     <label for="un">Unidade</label>
                                                     <div class="invalid-feedback">

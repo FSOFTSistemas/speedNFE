@@ -376,7 +376,7 @@ class PedidosController extends Controller
                 foreach ($request->vendaItens as $item) {
                     $prod = $this->produtoServices->um($item['produto_id']);
                     $desconto = $desconto + $item['desconto'];
-                    $subtotal = $subtotal + ($item['total']);
+                    $subtotal = $subtotal + ($item['quantidade'] * $item['unitario'] );
                 }
                 $pedido = $this->pedidoServices->create(
                     Auth::id(),
@@ -402,7 +402,7 @@ class PedidosController extends Controller
                     );
                 }
                 $this->faturaServices->create(
-                    $subtotal,
+                    $subtotal - $desconto,
                     $pedido->id,
                     $pedido->finNF,
                     $request->empresa
