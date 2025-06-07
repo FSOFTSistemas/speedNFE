@@ -75,7 +75,8 @@ class Pedido extends Component
                 $this->clientes = $sClientes->todos($user->empresa_id);
                 $this->produtos = $sProdutos->todos($user->empresa_id);
 
-                $this->produtosModal = $sProdutos->todos($user->empresa_id);
+                $this->produtosModal = $sProdutos->todos($user->empresa_id)->toarray();
+                $this->clientesModal = $sClientes->todos($user->empresa_id)->toarray();
 
                 // $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
@@ -84,10 +85,12 @@ class Pedido extends Component
                 $this->clientes = $sClientes->todosClientes();
                 $this->produtos = $sProdutos->todosProdutos();
 
-                $this->produtosModal = $sProdutos->todosProdutos();
+                $this->produtosModal = $sProdutos->todosProdutos()->toarray();
+                $this->clientesModal = $sClientes->todosClientes()->toarray();
                 // $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             }
+            // dd($this->clientesModal);
             $this->cfop = '';
             $this->vendaItens = [];
             $this->formasVenda = [];
@@ -308,7 +311,7 @@ class Pedido extends Component
         $this->clientesModal = Cliente::where('nome', 'like', $termo)
             ->orWhere('cpf_cnpj', 'like', $termo)
             ->get()
-            ->toArray();
+            ->toarray();
     }
 
     public function selecionarCliente($id)
@@ -332,7 +335,8 @@ class Pedido extends Component
         $termo = '%' . $this->buscaProduto . '%';
         $this->produtosModal = Produto::where('produto', 'like', $termo)
         ->where('empresa_id', $this->empresa)
-        ->get();
+        ->get()
+        ->toarray();
     }
 
     public function selecionarProduto($id)

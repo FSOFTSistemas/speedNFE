@@ -267,13 +267,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($clientes as $cliente)
+                            @foreach ($clientesModal as $cliente)
+                            
                                 <tr>
-                                    <td>{{ $cliente['cpf_cnpj'] }}</td>
-                                    <td>{{ $cliente['nome'] }}</td>
+                                    <td>{{ is_object($cliente) ? $cliente->cpf_cnpj : $cliente['cpf_cnpj'] }}</td>
+                                    <td>{{ is_object($cliente) ? $cliente->nome : $cliente['nome'] }}</td>
                                     <td>
                                         <button class="btn btn-sm btn-primary"
-                                            wire:click="selecionarCliente({{ $cliente['id'] }})">
+                                            wire:click="selecionarCliente({{ is_object($cliente) ? $cliente->id : $cliente['id'] }})">
                                             Selecionar
                                         </button>
                                     </td>
@@ -286,6 +287,8 @@
             </div>
         </div>
     </div>
+    
+
 
     <div wire:ignore.self class="modal fade" id="modalProdutos" tabindex="-1" role="dialog"
         aria-labelledby="modalProdutosLabel" aria-hidden="true">
@@ -309,9 +312,9 @@
                         </thead>
                         <tbody>
                             @foreach ($produtosModal as $produto)
-                                <tr ondblclick="Livewire.emit('selecionarProduto', {{ $produto['id'] }})">
-                                    <td>{{ $produto['produto'] }}</td>
-                                    <td>R$ {{ number_format($produto['precovenda'], 2, ',', '.') }}</td>
+                                <tr ondblclick="Livewire.emit('selecionarProduto', {{ is_object($produto) ? $produto->id : $produto['id'] }})">
+                                    <td>{{ is_object($produto) ? $produto->produto : $produto['produto'] }}</td>
+                                    <td>R$ {{ number_format(is_object($produto) ? $produto->precovenda : $produto['precovenda'], 2, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
