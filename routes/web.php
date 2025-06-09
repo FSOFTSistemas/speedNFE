@@ -118,6 +118,8 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/criar', [EntradaController::class, 'create'])->name('entradas.create')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::post('/salvar', [EntradaController::class, 'store'])->name('entradas.store')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+        Route::get('/manual', [EntradaController::class, 'entradaManual'])->name('entradas.manual')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+        Route::delete('/entradas/{id}', [EntradaController::class, 'destroy'])->name('entradas.destroy')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
     //ITENS ENTRADAS

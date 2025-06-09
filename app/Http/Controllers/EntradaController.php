@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\AlreadyExistException;
+use App\Models\Entrada;
+use App\Models\Estoque;
 use App\Services\EmpresasService;
 use App\Services\EntradaService;
 use App\Services\EstoquesService;
@@ -32,10 +34,18 @@ class EntradaController extends Controller
         $this->estoqueService = $estoqueService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $entradas = $this->entradaService->getEntradas(Auth::user()->empresa_id);
+
+            $empresaId = Auth::user()->empresa_id;
+            $entradas = $this->entradaService->getEntradas($empresaId);
+
+            if ($request->filled('data_inicio') && $request->filled('data_fim')) {
+                $dataInicio = $request->input('data_inicio');
+                $dataFim = $request->input('data_fim');
+                $entradas = $entradas->whereBetween('dataEntrada', [$dataInicio, $dataFim]);
+            }
             return view('nfeEntrada.entradas', ['entradas' => $entradas]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
@@ -73,7 +83,7 @@ class EntradaController extends Controller
                 'prods' => 'required|array'
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
-                'unique' => 'Nota ('. $request->chNFe .') já foi importada anteriormente!',
+                'unique' => 'Nota (' . $request->chNFe . ') já foi importada anteriormente!',
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
                 'array' => 'O campo :attribute deve ser uma lista de produtos!'
             ]);
@@ -98,7 +108,7 @@ class EntradaController extends Controller
         }
     }
 
-    public function importProducts (Request $request)
+    public function importProducts(Request $request)
     {
         try {
             $request->validate([
@@ -135,6 +145,40 @@ class EntradaController extends Controller
             return back()->with('warning', $e->getMessage());
         } catch (\Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente em outro momento!, Erro: ' . $e);
+        }
+    }
+
+    public function entradaManual()
+    {
+        return view('nfeEntrada.nfeEntradamanual');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $entrada = Entrada::findOrFail($id);
+
+            // Atualizar o estoque revertendo as quantidades (opcional)
+            foreach ($entrada->itensEntradas as $item) {
+                $estoque = Estoque::where('produto_id', $item->produto_id)
+                    ->where('empresa_id', $entrada->empresa_id)
+                    ->first();
+
+                if ($estoque) {
+                    $qtdeRemover = $item->qtde;
+                    $estoqueAnterior = $estoque->estoque_atual ?? 0;
+                    $estoque->estoque_atual = max(0, $estoqueAnterior - $qtdeRemover);
+                    $estoque->saidas = ($estoque->saidas ?? 0) + min($estoqueAnterior, $qtdeRemover);
+                    $estoque->save();
+                }
+            }
+
+            // Deletar a entrada
+            $entrada->delete();
+
+            return redirect()->route('entradas.index')->with('success', 'Entrada deletada com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()->route('entradas.index')->with('error', 'Erro ao deletar entrada: ' . $e->getMessage());
         }
     }
 }
