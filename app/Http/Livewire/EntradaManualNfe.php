@@ -27,7 +27,7 @@ class EntradaManualNfe extends Component
 
     public function mount()
     {
-        $this->produtos = Produto::all();
+        $this->produtos = Produto::where('empresa_id', Auth::user()->empresa_id)->get();
         $this->dataEmissao = now()->toDateString();
         $this->dataEntrada = now()->toDateString();
         $this->empresa_id = Auth::user()->empresa_id;
