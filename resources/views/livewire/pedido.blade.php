@@ -42,19 +42,27 @@
         <div class="row">
             <div class="col-md-8 col-xs-12">
                 <label>Cliente</label>
-                <select class="form-control" name="cliente" id="cliente" required>
-                    <option value="" disabled selected>--Escolha um cliente--</option>
-                    @if ($empresaL != 1)
-                        @foreach (json_decode($clientes) as $cliente)
-                            <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }}
-                            </option>
-                        @endforeach
-                    @else
-                        @foreach ($clientes as $cli)
-                            <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }}</option>
-                        @endforeach
-                    @endif
-                </select>
+                <div class="input-group">
+                    <select class="form-control" name="cliente" id="cliente" wire:model="cliente" required>
+                        <option value="" disabled selected>--Escolha um cliente--</option>
+                        @if ($empresaL != 1)
+                            @foreach (json_decode($clientes) as $cliente)
+                                <option value="{{ $cliente->id }}">{{ $cliente->nome }} | {{ $cliente->cpf_cnpj }}
+                                </option>
+                            @endforeach
+                        @else
+                            @foreach ($clientes as $cli)
+                                <option value="{{ $cli->id }}">{{ $cli->nome }} | {{ $cli->cpf_cnpj }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary"
+                            wire:click="$emit('abrirModalClientes')">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="col-md-1 col-xs-6">
                 <label>CFOP</label>
@@ -94,10 +102,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6 col-xs-6">
-                                {{-- <label>Produto</label>
-                                <input type="text" wire:model="produto" class="form-control"> --}}
-                                <label>Produto</label>
+                            <div class="input-group">
                                 <select wire:change="atualizarProds()" class="form-control" wire:model="produto">
                                     <option value="" disabled selected>--Escolha um produto--</option>
                                     @if ($empresaL != 1)
@@ -110,27 +115,33 @@
                                         @endforeach
                                     @endif
                                 </select>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        wire:click="$emit('abrirModalProdutos')">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
                             </div>
 
-                            <div class="col-md-1 col-xs-1">
+                            <div class="col-md-2 col-xs-2">
                                 <label>Qtd.</label>
                                 <input class="form-control" type="number" min="1" wire:change="atualizarTot()"
                                     wire:model="quantidade">
                             </div>
 
-                            <div class="col-md-2 col-xs-2">
+                            <div class="col-md-4 col-xs-3">
                                 <label>Valor</label>
                                 <input class="form-control" type="number" step="0.01" wire:change="atualizarTot()"
                                     wire:model="preco">
                             </div>
 
-                            <div class="col-md-1 col-xs-1">
-                                <label>Dsct. (%)</label>
+                            <div class="col-md-2 col-xs-2">
+                                <label>Dsct. (R$)</label>
                                 <input class="form-control" type="number" step="0.1" wire:change="atualizarTot()"
                                     wire:model="desconto">
                             </div>
 
-                            <div class="col-md-2 col-xs-2">
+                            <div class="col-md-4 col-xs-3">
                                 <label>Total</label>
                                 <input class="form-control" type="number" step="0.01" wire:model="total">
                             </div>
@@ -138,7 +149,8 @@
                         </div>
                         <div class="row" style="text-align: center; margin-top: 2%;">
                             <div class="col">
-                                <button wire:click.prevent="salvarProd()" class="btn btn-primary" style="width: 25%;">+
+                                <button wire:click.prevent="salvarProd()" class="btn btn-primary"
+                                    style="width: 25%;">+
                                     Adicionar</button>
                             </div>
                         </div>
@@ -232,6 +244,86 @@
         </div>
     </form>
 
+    <div wire:ignore.self class="modal fade" id="modalClientes" tabindex="-1" role="dialog"
+        aria-labelledby="modalClientesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buscar Cliente</h5>
+                    <button type="button" class="close" wire:click="$emit('fecharModalClientes')">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-3" placeholder="Nome ou CPF/CNPJ"
+                        wire:model.debounce.500ms="buscaCliente">
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CPF/CNPJ</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($clientesModal as $cliente)
+                            
+                                <tr>
+                                    <td>{{ is_object($cliente) ? $cliente->cpf_cnpj : $cliente['cpf_cnpj'] }}</td>
+                                    <td>{{ is_object($cliente) ? $cliente->nome : $cliente['nome'] }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary"
+                                            wire:click="selecionarCliente({{ is_object($cliente) ? $cliente->id : $cliente['id'] }})">
+                                            Selecionar
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <div wire:ignore.self class="modal fade" id="modalProdutos" tabindex="-1" role="dialog"
+        aria-labelledby="modalProdutosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buscar Produto</h5>
+                    <button type="button" class="close" wire:click="$emit('fecharModalProdutos')">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-3" placeholder="Nome do produto"
+                        wire:model.debounce.500ms="buscaProduto">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($produtosModal as $produto)
+                                <tr ondblclick="Livewire.emit('selecionarProduto', {{ is_object($produto) ? $produto->id : $produto['id'] }})">
+                                    <td>{{ is_object($produto) ? $produto->produto : $produto['produto'] }}</td>
+                                    <td>R$ {{ number_format(is_object($produto) ? $produto->precovenda : $produto['precovenda'], 2, ',', '.') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -258,5 +350,23 @@
             });
         });
     </script>
+    <script>
+        window.addEventListener('abrirModalClientes', () => {
+            $('#modalClientes').modal('show');
+        });
+
+        window.addEventListener('fecharModalClientes', () => {
+            $('#modalClientes').modal('hide');
+        });
+
+        window.addEventListener('abrirModalProdutos', () => {
+            $('#modalProdutos').modal('show');
+        });
+
+        window.addEventListener('fecharModalProdutos', () => {
+            $('#modalProdutos').modal('hide');
+        });
+    </script>
+
 
 </div>

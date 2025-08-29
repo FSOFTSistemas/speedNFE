@@ -2,238 +2,322 @@
 
 @section('title', 'Dashboard')
 
+{{-- Adiciona os estilos customizados para a página --}}
+@push('css')
+<style>
+    /* Importa a fonte Poppins para consistência com a tela de login */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    /* Variáveis de cor para fácil manutenção */
+    :root {
+        --primary-color: #0a2540;
+        --accent-blue: #3498db;
+        --accent-purple: #8e44ad;
+        --accent-green: #2ecc71;
+        --accent-yellow: #f1c40f;
+        --accent-red: #e74c3c;
+        --card-bg: #ffffff;
+        --text-light: #f8f9fa;
+        --text-dark: #343a40;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+    }
+
+    /* Estilo base da página */
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Estilo do novo card de estatísticas */
+    .stat-card {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        padding: 25px;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Conteúdo interno do card */
+    .stat-card .inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .stat-card h3 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-dark);
+    }
+
+    .stat-card p {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    /* Ícone decorativo no fundo */
+    .stat-card .icon {
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        font-size: 80px;
+        color: rgba(0, 0, 0, 0.07);
+        z-index: 1;
+        transition: transform 0.4s ease, color 0.4s ease;
+    }
+
+    .stat-card:hover .icon {
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Rodapé do card com o link */
+    .stat-card-footer {
+        display: block;
+        padding: 10px 0 0 0;
+        margin-top: 15px;
+        border-top: 1px solid #eee;
+        text-align: center;
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 500;
+        z-index: 2;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+    /* Variações de cor para cada card */
+    .stat-card.blue { border-left: 5px solid var(--accent-blue); }
+    .stat-card.purple { border-left: 5px solid var(--accent-purple); }
+    .stat-card.green { border-left: 5px solid var(--accent-green); }
+    .stat-card.yellow { border-left: 5px solid var(--accent-yellow); }
+    .stat-card.red { border-left: 5px solid var(--accent-red); }
+
+    .stat-card.blue .stat-card-footer:hover { color: var(--accent-blue); }
+    .stat-card.purple .stat-card-footer:hover { color: var(--accent-purple); }
+    .stat-card.green .stat-card-footer:hover { color: var(--accent-green); }
+    .stat-card.yellow .stat-card-footer:hover { color: var(--accent-yellow); }
+    .stat-card.red .stat-card-footer:hover { color: var(--accent-red); }
+    
+    /* Container dos gráficos */
+    .chart-container {
+        background: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+    }
+
+</style>
+@endpush
+
+{{-- Adiciona a biblioteca Chart.js --}}
+@push('js')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endpush
+
+
 @section('content_header')
-    <div class="row text-center">
+    <div class="row">
         <div class="col">
-            <h3>Dashboard</h3>
+            <h1 class="m-0 text-dark" style="font-weight: 600;">Dashboard</h1>
         </div>
     </div>
 @stop
 
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="{{ asset('css/Telas_Internas/home.css') }}">
-    </head>
-
-    <body>
-        <div class="row">
-            @if (
-                !auth()->user()->can('client-NFCe') ||
-                    !auth()->user()->can('client-MDFe') ||
-                    !auth()->user()->can('client-CTe') ||
-                    !auth()->user()->can('client-advanced3'))
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>{{ $quantidadePedidosPorMes }}</h3>
-                            <p>Notas emitidas este mês</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="/vendas/nova" class="small-box-footer">Emitir NFE <i
-                                class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-            @endif
-
-            @if (!auth()->user()->can('client-MDFe') || !auth()->user()->can('client-CTe') || !auth()->user()->can('client-advanced3'))
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-purple">
-                        <div class="inner">
-                            <h3>{{ $quantidadeProdutosEmEstoque }}</h3>
-                            <p>Produtos com estoque</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="{{ route('estoque.index') }}" class="small-box-footer">Mais informações <i
-                                class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3>{{ $quantidadeProduto }}</h3>
-                            <p>Produtos cadastrados</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                        </div>
-                        <a href="/produto" class="small-box-footer">Mais informações <i
-                                class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-            @endif
-
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
+    <div class="row">
+        {{-- Card: Notas Emitidas --}}
+        @if (!auth()->user()->can('client-NFCe') || !auth()->user()->can('client-MDFe') || !auth()->user()->can('client-CTe') || !auth()->user()->can('client-advanced3'))
+            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                <div class="stat-card blue">
                     <div class="inner">
-                        <h3>{{ $quantidadeCliente }}</h3>
-                        <p>Clientes cadastrados</p>
+                        <h3>{{ $quantidadePedidosPorMes }}</h3>
+                        <p>Notas emitidas este mês</p>
                     </div>
                     <div class="icon">
-                        <i class="ion ion-person-add"></i>
+                        <i class="fas fa-file-invoice-dollar"></i>
                     </div>
-                    <a href="/cliente" class="small-box-footer">Mais informações <i
-                            class="fas fa-arrow-circle-right"></i></a>
+                    <a href="/vendas/nova" class="stat-card-footer">
+                        Emitir NFE <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        @endif
+
+        {{-- Card: Produtos com Estoque --}}
+        @if (!auth()->user()->can('client-MDFe') || !auth()->user()->can('client-CTe') || !auth()->user()->can('client-advanced3'))
+            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                <div class="stat-card purple">
+                    <div class="inner">
+                        <h3>{{ $quantidadeProdutosEmEstoque }}</h3>
+                        <p>Produtos com estoque</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <a href="{{ route('estoque.index') }}" class="stat-card-footer">
+                        Mais informações <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </a>
                 </div>
             </div>
 
-            @if (
-                !auth()->user()->can('client-NFCe') ||
-                    !auth()->user()->can('client-MDFe') ||
-                    !auth()->user()->can('client-CTe') ||
-                    !auth()->user()->can('client-advanced3'))
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h3>R$ {{ $quantidadeValorPedido }}</h3>
-                            <p>Valor total das notas</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-pie-graph"></i>
-                        </div>
-                        <a href="/relatorios" class="small-box-footer">Mais informaçôes <i
-                                class="fas fa-arrow-circle-right"></i></a>
+            {{-- Card: Produtos Cadastrados --}}
+            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                <div class="stat-card green">
+                    <div class="inner">
+                        <h3>{{ $quantidadeProduto }}</h3>
+                        <p>Produtos cadastrados</p>
                     </div>
+                    <div class="icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <a href="/produto" class="stat-card-footer">
+                        Mais informações <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </a>
                 </div>
-            @endif
+            </div>
+        @endif
+
+        {{-- Card: Clientes Cadastrados --}}
+        <div class="col-lg-3 col-md-6 col-12 mb-4">
+            <div class="stat-card yellow">
+                <div class="inner">
+                    <h3>{{ $quantidadeCliente }}</h3>
+                    <p>Clientes cadastrados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <a href="/cliente" class="stat-card-footer">
+                    Mais informações <i class="fas fa-arrow-circle-right ml-1"></i>
+                </a>
+            </div>
         </div>
 
-        <div class="mt-5">
-            <canvas id="nfe-chart"></canvas>
+        {{-- Card: Valor Total das Notas --}}
+        @if (!auth()->user()->can('client-NFCe') || !auth()->user()->can('client-MDFe') || !auth()->user()->can('client-CTe') || !auth()->user()->can('client-advanced3'))
+            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                <div class="stat-card red">
+                    <div class="inner">
+                        <h3>R$ {{ $quantidadeValorPedido }}</h3>
+                        <p>Valor total das notas</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <a href="/relatorios" class="stat-card-footer">
+                        Mais informações <i class="fas fa-arrow-circle-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    {{-- Seção de Gráficos --}}
+    <div class="row">
+        <div class="col-12">
+            <div class="chart-container mb-4">
+                <canvas id="nfe-chart"></canvas>
+            </div>
+            <div class="chart-container mb-4">
+                <canvas id="nfce-chart"></canvas>
+            </div>
+            <div class="chart-container mb-4">
+                <canvas id="mdfe-chart"></canvas>
+            </div>
         </div>
+    </div>
 
-        <div class="mt-5">
-            <canvas id="nfce-chart"></canvas>
-        </div>
+    <script>
+        // Lógica para renderizar os gráficos permanece a mesma
+        var meses = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-        <div class="mt-5">
-            <canvas id="mdfe-chart"></canvas>
-        </div>
-
-        <script>
-            var meses = ['', 'Jan', 'Feb', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-
-            document.addEventListener('DOMContentLoaded', function() {
-                fetch('/total-mes-nfes')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            return false
-                        }
-                        const ctx = document.getElementById('nfe-chart').getContext('2d');
-                        var indicesSelecionados = data.map(item => item.mes);
-                        var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: mesesSelecionados,
-                                datasets: [{
-                                    label: 'Total de Vendas por Mês (NFe)',
-                                    data: data.map(item => item.total_vendas),
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    borderWidth: 1
-                                }]
+        // Função auxiliar para criar gráficos e evitar repetição de código
+        function createChart(elementId, fetchUrl, label, backgroundColor, borderColor) {
+            fetch(fetchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        document.getElementById(elementId).parentElement.style.display = 'none';
+                        return;
+                    }
+                    const ctx = document.getElementById(elementId).getContext('2d');
+                    const mesesSelecionados = data.map(item => meses[item.mes]);
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: mesesSelecionados,
+                            datasets: [{
+                                label: label,
+                                data: data.map(item => item.total_vendas),
+                                backgroundColor: backgroundColor,
+                                borderColor: borderColor,
+                                borderWidth: 1,
+                                borderRadius: 5,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
                             },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: label,
+                                    font: {
+                                        size: 16
                                     }
                                 }
                             }
-                        });
-                    })
-                    .catch(error => console.error('Erro:', error));
-            });
-
-            document.addEventListener('DOMContentLoaded', function() {
-                fetch('nfce/total-mes-nfces')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            return false
                         }
-                        const ctx2 = document.getElementById('nfce-chart').getContext('2d');
-                        var indicesSelecionados = data.map(item => item.mes);
-                        var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
-                        new Chart(ctx2, {
-                            type: 'bar',
-                            data: {
-                                labels: mesesSelecionados,
-                                datasets: [{
-                                    label: 'Total de Vendas por Mês (NFCe)',
-                                    data: data.map(item => item.total_vendas),
-                                    backgroundColor: 'rgba(235, 54, 54, 0.2)',
-                                    borderColor: 'rgba(180, 0, 0, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    })
-                    .catch(error => console.error('Erro:', error));
-            });
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar dados do gráfico:', error);
+                    document.getElementById(elementId).parentElement.style.display = 'none';
+                });
+        }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                fetch('mdfes/total-mes-mdfes')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            return false
-                        }
-                        const ctx3 = document.getElementById('mdfe-chart').getContext('2d');
-                        var indicesSelecionados = data.map(item => item.mes);
-                        var mesesSelecionados = indicesSelecionados.map(index => meses[index]);
-                        new Chart(ctx3, {
-                            type: 'bar',
-                            data: {
-                                labels: mesesSelecionados,
-                                datasets: [{
-                                    label: 'Total de Vendas por Mês (MDFe)',
-                                    data: data.map(item => item.total_vendas),
-                                    backgroundColor: 'rgba(72, 235, 54, 0.2)',
-                                    borderColor: 'rgba(18, 176, 0, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    })
-                    .catch(error => console.error('Erro:', error));
-            });
-        </script>
-
-        <script>
-            function toggleExtraInfo(color) {
-                var extraInfo = document.getElementById('extra-info-' + color);
-                extraInfo.style.display = extraInfo.style.display === 'none' ? 'block' : 'none';
-            }
-        </script>
-    </body>
-
-    </html>
+        document.addEventListener('DOMContentLoaded', function() {
+            createChart(
+                'nfe-chart', 
+                '/total-mes-nfes', 
+                'Total de Vendas por Mês (NFe)', 
+                'rgba(52, 152, 219, 0.5)', 
+                'rgba(52, 152, 219, 1)'
+            );
+            createChart(
+                'nfce-chart', 
+                '/nfce/total-mes-nfces', 
+                'Total de Vendas por Mês (NFCe)', 
+                'rgba(231, 76, 60, 0.5)', 
+                'rgba(231, 76, 60, 1)'
+            );
+            createChart(
+                'mdfe-chart', 
+                '/mdfes/total-mes-mdfes', 
+                'Total de Vendas por Mês (MDFe)', 
+                'rgba(46, 204, 113, 0.5)', 
+                'rgba(46, 204, 113, 1)'
+            );
+        });
+    </script>
 @stop

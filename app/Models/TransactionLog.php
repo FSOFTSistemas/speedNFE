@@ -17,4 +17,10 @@ class TransactionLog extends Model
         'usuario_id',
     ];
 
+    // TransactionLog.php
+public function usuario()
+{
+    return $this->belongsTo(User::class, 'usuario_id');
+}
+
 }

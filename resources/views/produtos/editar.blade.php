@@ -137,7 +137,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="number" name="precocusto"
-                                                        id="precocusto" value="{{ $produto->precocusto }}" required
+                                                        id="precocusto" value="{{ $produto->precocusto }}" step="0.01" required
                                                         placeholder=" ">
                                                     <label for="precocusto">Preço Custo</label>
                                                     <div class="invalid-feedback">
@@ -153,7 +153,7 @@
                                             <div class="input-group has-validation mb-2">
                                                 <div class="form-floating">
                                                     <input class="form-control" type="number" name="precovenda"
-                                                        id="precovenda" value="{{ $produto->precovenda }}" required
+                                                        id="precovenda" value="{{ $produto->precovenda }}" step="0.01" required
                                                         placeholder=" ">
                                                     <label for="precovenda">Preço de Venda</label>
                                                     <div class="invalid-feedback">
@@ -187,6 +187,15 @@
                                                         </option>
                                                         <option value="cm"
                                                             @if ($produto->un == 'cm') selected @endif>CM
+                                                        </option>
+                                                        <option value="fd"
+                                                            @if ($produto->un == 'fd') selected @endif>FD
+                                                        </option>
+                                                        <option value="mil"
+                                                            @if ($produto->un == 'mil') selected @endif>MIL
+                                                        </option>
+                                                        <option value="SC"
+                                                            @if ($produto->un == 'SC') selected @endif>SC
                                                         </option>
                                                     </select>
                                                     <label for="un">Unidade</label>
@@ -917,13 +926,13 @@
                                                     <div class="form-floating">
                                                         <select class="form-select" name="combVeic" id="combVeic"
                                                             required>
-                                                            <option value="1"
+                                                            <option value="01"
                                                                 {{ $produto->combVeic == '1' ? 'selected' : '' }}>
                                                                 ÁLCOOL</option>
-                                                            <option value="2"
+                                                            <option value="02"
                                                                 {{ $produto->combVeic == '2' ? 'selected' : '' }}>
                                                                 GASOLINA</option>
-                                                            <option value="3"
+                                                            <option value="03"
                                                                 {{ $produto->combVeic == '3' ? 'selected' : '' }}>
                                                                 DIESEL</option>
                                                             <option value="16"

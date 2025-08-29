@@ -13,13 +13,18 @@ use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\CupomController;
+use App\Http\Controllers\DRE;
 use App\Http\Controllers\EntradaController;
+use App\Http\Controllers\FaturaController;
+use App\Http\Controllers\FluxoDeCaixaController;
 use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
+use App\Http\Controllers\PlanoDeContaController;
 use App\Http\Controllers\RelatoriosController;
+use App\Http\Controllers\TransactionLogController;
 use App\Http\Controllers\VeiculoController;
 
 /*
@@ -113,6 +118,8 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/criar', [EntradaController::class, 'create'])->name('entradas.create')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::post('/salvar', [EntradaController::class, 'store'])->name('entradas.store')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::post('/importar-produtos', [EntradaController::class, 'importProducts'])->name('importar_produtos')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+        Route::get('/manual', [EntradaController::class, 'entradaManual'])->name('entradas.manual')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
+        Route::delete('/entradas/{id}', [EntradaController::class, 'destroy'])->name('entradas.destroy')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
     //ITENS ENTRADAS
@@ -236,6 +243,23 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/{id}/visualizar', [CupomController::class, 'showPreView'])->name('cupom.showPreView')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     });
+
+    Route::resource('contas', PlanoDeContaController::class)->middleware(['auth']);
+    Route::resource('fluxo-caixa', FluxoDeCaixaController::class)->middleware(['auth']);
+    Route::get('/rel/fluxo-caixa', [FluxoDeCaixaController::class, 'telaRrelatorio'])->name('rel');
+    Route::get('/relatorio/fluxo-caixa', [FluxoDeCaixaController::class, 'gerarRelatorio'])->name('fluxo_caixa.gerarRelatorio');
+    Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth']);
+    Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
+    Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
 });
+
+//FATURAS
+Route::prefix('faturas')->group(function () {
+    Route::get('', [FaturaController::class, 'index'])->name('faturas.index');
+    Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
+    Route::get('/metodos-pagamentos', [FaturaController::class, 'paymentMethods'])->name('faturas.paymentMethods');
+});
+
+Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
 
 require __DIR__ . '/auth.php';

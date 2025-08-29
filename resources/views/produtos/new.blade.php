@@ -190,6 +190,12 @@
                                             </option>
                                             <option value="cm" @if (old('un') == 'cm') selected @endif>CM
                                             </option>
+                                             <option value="fd" @if (old('un') == 'fd') selected @endif>FD
+                                            </option>
+                                             <option value="mil" @if (old('un') == 'mil') selected @endif>MIL
+                                            </option>
+                                            <option value="sc" @if (old('un') == 'sc') selected @endif>SC
+                                            </option>
                                         </select>
                                         <label for="un">Unidade</label>
                                         <div class="invalid-feedback">
@@ -788,11 +794,11 @@
                                     <div class="form-floating">
                                         <select class="form-select" name="combVeic" id="combVeic">
                                             <option value="">Selecione um Combustível</option>
-                                            <option value="1" @if (old('combVeic') == '1') selected @endif>
+                                            <option value="01" @if (old('combVeic') == '1') selected @endif>
                                                 ÁLCOOL</option>
-                                            <option value="2" @if (old('combVeic') == '2') selected @endif>
+                                            <option value="02" @if (old('combVeic') == '2') selected @endif>
                                                 GASOLINA</option>
-                                            <option value="3" @if (old('combVeic') == '3') selected @endif>
+                                            <option value="03" @if (old('combVeic') == '3') selected @endif>
                                                 DIESEL</option>
                                             <option value="16" @if (old('combVeic') == '16') selected @endif>
                                                 ÁLCOOL/GASOLINA

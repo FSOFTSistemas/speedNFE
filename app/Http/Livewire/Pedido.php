@@ -43,6 +43,16 @@ class Pedido extends Component
     public $formas = [];
     public $cfops = [];
 
+    public $buscaCliente = '';
+    public $clientesModal = [];
+    public $cliente;
+
+    public $buscaProduto = '';
+    public $produtosModal = [];
+
+    protected $listeners = ['abrirModalClientes', 'fecharModalClientes', 'abrirModalProdutos', 'fecharModalProdutos', 'selecionarProduto'];
+
+
     public function mount()
     {
         //declaração dos services para recuperar dados
@@ -64,15 +74,23 @@ class Pedido extends Component
                 $this->empresas = $sEmpresas->todos($user->empresa_id);
                 $this->clientes = $sClientes->todos($user->empresa_id);
                 $this->produtos = $sProdutos->todos($user->empresa_id);
+
+                $this->produtosModal = $sProdutos->todos($user->empresa_id)->toarray();
+                $this->clientesModal = $sClientes->todos($user->empresa_id)->toarray();
+
                 // $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             } else { //empresa fsoft carrega apenas a lista de empresas, para que seja selecionada uma
                 $this->empresas = $sEmpresas->todos($user->empresa_id);
                 $this->clientes = $sClientes->todosClientes();
                 $this->produtos = $sProdutos->todosProdutos();
+
+                $this->produtosModal = $sProdutos->todosProdutos()->toarray();
+                $this->clientesModal = $sClientes->todosClientes()->toarray();
                 // $this->formas = $sFormas->todos();
                 $this->cfops = $sPedidos->cfopAll();
             }
+            // dd($this->clientesModal);
             $this->cfop = '';
             $this->vendaItens = [];
             $this->formasVenda = [];
@@ -112,7 +130,8 @@ class Pedido extends Component
     {
         try {
             $total = $this->quantidade * $this->preco;
-            $desconto = $total * $this->desconto / 100;
+            // $desconto = $total * $this->desconto / 100;
+            $desconto = $this->desconto;
             $this->total = $total - $desconto;
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
@@ -126,7 +145,7 @@ class Pedido extends Component
                 if ($this->containsProd($this->vendaItens, $this->produto) == -1) {
                     $prod = Produto::find($this->produto);
                     $total = $this->quantidade * $this->preco;
-                    $desconto = $total * $this->desconto / 100;
+                    $desconto =  $this->desconto;
                     $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
                     $subtotal = 0;
                     foreach ($this->vendaItens as $item) {
@@ -257,7 +276,7 @@ class Pedido extends Component
 
     public function refNFeSection()
     {
-        switch($this->finalidade) {
+        switch ($this->finalidade) {
             case 1:
                 $this->tipo = 1;
                 break;
@@ -274,5 +293,56 @@ class Pedido extends Component
     public function render()
     {
         return view('livewire.pedido');
+    }
+
+    public function abrirModalClientes()
+    {
+        $this->dispatchBrowserEvent('abrirModalClientes');
+    }
+
+    public function fecharModalClientes()
+    {
+        $this->dispatchBrowserEvent('fecharModalClientes');
+    }
+
+    public function updatedBuscaCliente()
+    {
+        $termo = '%' . $this->buscaCliente . '%';
+        $this->clientesModal = Cliente::where('nome', 'like', $termo)
+            ->orWhere('cpf_cnpj', 'like', $termo)
+            ->get()
+            ->toarray();
+    }
+
+    public function selecionarCliente($id)
+    {
+        $this->cliente = $id;
+        $this->dispatchBrowserEvent('fecharModalClientes');
+    }
+
+    public function abrirModalProdutos()
+    {
+        $this->dispatchBrowserEvent('abrirModalProdutos');
+    }
+
+    public function fecharModalProdutos()
+    {
+        $this->dispatchBrowserEvent('fecharModalProdutos');
+    }
+
+    public function updatedBuscaProduto()
+    {
+        $termo = '%' . $this->buscaProduto . '%';
+        $this->produtosModal = Produto::where('produto', 'like', $termo)
+        ->where('empresa_id', $this->empresa)
+        ->get()
+        ->toarray();
+    }
+
+    public function selecionarProduto($id)
+    {
+        $this->produto = $id;
+        $this->atualizarProds();
+        $this->dispatchBrowserEvent('fecharModalProdutos');
     }
 }

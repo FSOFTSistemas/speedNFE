@@ -41,7 +41,7 @@
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="dhSaiEnt" name="dhSaiEnt"
                                         placeholder="Data de saída/entrada"
-                                        value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'])) }}" readonly
+                                        value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'] ?? '1970-01-01 00:00:00')) }}" readonly
                                         required>
                                     <label for="dhSaiEnt">Data Saída/Entrada</label>
                                     <div class="invalid-feedback">

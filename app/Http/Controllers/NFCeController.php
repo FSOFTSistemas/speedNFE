@@ -231,6 +231,7 @@ class NFCeController extends Controller
             DB::beginTransaction();
             $outstandingCoupons = $this->cupomService->getOutstandingCouponsOfTheDay(Auth::user()->empresa_id, $request->day);
             $nfceService = $this->makeNFCeService(Auth::user()->empresa);
+
             foreach ($outstandingCoupons as $coupon) {
                 try {
                     $this->empresaServices->incrementLastNFCe($coupon->empresa_id);

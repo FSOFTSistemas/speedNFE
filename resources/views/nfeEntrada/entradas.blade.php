@@ -13,7 +13,34 @@
             <a class="btn btn-primary" data-toggle="modal" data-target="#modalImportarNFe">Importar NFe</a>
         </div>
         <div class="col" style="text-align: end">
+            <a href="{{ route('entradas.manual') }}" class="btn btn-success mr-2">Nova Entrada</a>
             <a href="{{ route('produto.index') }}" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card card-outline card-primary">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filtrar por Período</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('entradas.index') }}" method="GET" class="form-inline">
+                        <div class="form-group mr-2 mb-2">
+                            <label for="data_inicio" class="mr-2">De:</label>
+                            <input type="date" name="data_inicio" id="data_inicio" class="form-control"
+                                value="{{ request('data_inicio') }}">
+                        </div>
+                        <div class="form-group mr-2 mb-2">
+                            <label for="data_fim" class="mr-2">Até:</label>
+                            <input type="date" name="data_fim" id="data_fim" class="form-control"
+                                value="{{ request('data_fim') }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Filtrar</button>
+                        <a href="{{ route('entradas.index') }}" class="btn btn-outline-secondary mb-2 ml-2"
+                            title="Limpar os filtros aplicados" data-toggle="tooltip">Limpar Filtro</a>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 @stop
@@ -52,7 +79,8 @@
                 'lengthChange' => false,
                 'pageLength' => 10,
                 'ordering' => true,
-                'showFooter' => false,
+                'showFooter' => true,
+                'sumColumnIndex' => 5,
             ])
                 <thead class="table-primary">
                     <tr>
@@ -74,10 +102,20 @@
                             <td>{{ $etd->numeroNota }}</td>
                             <td>{{ $etd->fornecedor }}</td>
                             <td>{{ $etd->chave }}</td>
-                            <td>R$ {{ number_format($etd->valor, 2) }}</td>
+                            <td>{{ number_format($etd->valor, 2) }}</td>
                             <td>
-                                <a title="Visualizar" href="{{ route('itens-entradas.show', [$etd->id]) }}"><i
+                                <a title="Visualizar" href="{{ route('itens-entradas.show', [$etd->id]) }}" class="btn btn-info btn-sm"><i
                                         class="fa fa-eye"></i></a>
+
+                                <form action="{{ route('entradas.destroy', $etd->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('Confirma a exclusão da entrada?')"
+                                        class="btn btn-danger btn-sm">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -135,4 +173,8 @@
         }
         return document.querySelector('#nota').type = 'text'
     }
+
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
 </script>

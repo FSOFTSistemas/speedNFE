@@ -27,6 +27,7 @@ class NFeService
 
     public function gerarXml($venda, $emitente)
     {
+        // dd($venda);
         $nfe = new Make();
         $stdInNFe = new \stdClass();
         $stdInNFe->versao = '4.00';
@@ -239,6 +240,9 @@ class NFeService
             $stdProd->qCom = $i->qtde;
             $stdProd->vUnCom = FormatationUtil::format($i->unitario);
             $stdProd->vProd = FormatationUtil::format(($i->qtde * $i->unitario));
+            if ($i->desconto > 0) {
+                $stdProd->vDesc = FormatationUtil::format($i->desconto);
+            }
             $stdProd->uTrib = $i->produto->un;
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
@@ -339,7 +343,9 @@ class NFeService
         $stdICMSTot->vST = 0.00;
         $stdICMSTot->vFrete = 0.00;
         $stdICMSTot->vSeg = 0.00;
-        $stdICMSTot->vDesc = FormatationUtil::format($venda->desconto);
+        if ($venda->desconto > 0) {
+            $stdICMSTot->vDesc = FormatationUtil::format($venda->desconto);
+        }
         $stdICMSTot->vII = 0.00;
         $stdICMSTot->vIPI = 0.00;
         $stdICMSTot->vPIS = 0.00;
@@ -353,7 +359,7 @@ class NFeService
         $stdFat->nFat = (int) $numeroNFe;
         $stdFat->vOrig = FormatationUtil::format($venda->subtotal);
         $stdFat->vDesc = FormatationUtil::format($venda->desconto);
-        $stdFat->vLiq = FormatationUtil::format($venda->total);
+        $stdFat->vLiq = FormatationUtil::format($venda->subtotal - $venda->desconto);
         if ($venda->tipo_pagamento != '90') {
             $fatura = $nfe->tagfat($stdFat);
         }
@@ -474,32 +480,77 @@ class NFeService
         return $this->tools->signNFe($xml);
     }
 
+    // public function transmitir($signXml, $chave, $caminho)
+    // {
+    //     try {
+    //         $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
+    //         $resp = $this->tools->sefazEnviaLote([$signXml], $idLote);
+
+    //         $st = new Standardize();
+    //         $std = $st->toStd($resp);
+    //         sleep(2);
+    //         if ($std->cStat != 103) {
+
+    //             return [
+    //                 'erro' => "[$std->cStat] - $std->xMotivo",
+    //             ];
+    //         }
+    //         $recibo = $std->infRec->nRec;
+    //         $protocolo = $this->tools->sefazConsultaRecibo($recibo);
+    //         sleep(3);
+    //         $xml = Complements::toAuthorize($signXml, $protocolo);
+    //         if (!File::exists(public_path($caminho . '/'))) {
+    //             File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
+    //         }
+    //         file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+    //         return [
+    //             'sucesso' => $recibo,
+    //         ];
+    //     } catch (\Exception $e) {
+    //         return [
+    //             'erro' => $e->getMessage(),
+    //         ];
+    //     }
+    // }
+    
     public function transmitir($signXml, $chave, $caminho)
     {
         try {
+            // Define idLote com 15 dígitos numéricos
             $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
-            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote);
-
+    
+            // Envia em modo síncrono
+            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote, 1);
+    
             $st = new Standardize();
             $std = $st->toStd($resp);
-            sleep(2);
-            if ($std->cStat != 103) {
-
+    
+            if ($std->cStat == 104) {
+                $infProt = $std->protNFe->infProt;
+    
+                if ($infProt->cStat == 100) {
+                    $xml = Complements::toAuthorize($signXml, $resp);
+    
+                    if (!File::exists(public_path($caminho . '/'))) {
+                        File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
+                    }
+    
+                    file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+    
+                    return [
+                        'sucesso' => $infProt->nProt,
+                    ];
+                } else {
+                    return [
+                        'erro' => "Erro na autorização: [{$infProt->cStat}] - {$infProt->xMotivo}",
+                    ];
+                }
+            } else {
                 return [
-                    'erro' => "[$std->cStat] - $std->xMotivo",
+                    'erro' => "Erro no processamento do lote: [{$std->cStat}] - {$std->xMotivo}",
                 ];
             }
-            $recibo = $std->infRec->nRec;
-            $protocolo = $this->tools->sefazConsultaRecibo($recibo);
-            sleep(3);
-            $xml = Complements::toAuthorize($signXml, $protocolo);
-            if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
-            }
-            file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
-            return [
-                'sucesso' => $recibo,
-            ];
+    
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),

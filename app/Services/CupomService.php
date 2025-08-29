@@ -61,6 +61,7 @@ class CupomService
 
     public function updateCoupon($coupon)
     {
+        
         $coupon->gerado_nfce = true;
         $coupon->contingencia = true;
         $coupon->situacao = SituacaoEnum::ATIVO;

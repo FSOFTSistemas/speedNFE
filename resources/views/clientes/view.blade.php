@@ -2,315 +2,201 @@
 
 @section('title', 'Visualizar Cliente')
 
+@push('css')
+<style>
+    /* Estilos importados para consistência */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    :root {
+        --primary-color: #00033a;
+        --card-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --border-color: #dee2e6;
+        --text-dark: #343a40;
+        --text-light: #6c757d;
+        --label-color: #495057;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .card-main {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        padding: 30px;
+    }
+    .custom-btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+    .custom-btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    .custom-btn-edit {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+     .custom-btn-edit:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    
+    /* Estilo para a visualização dos dados */
+    .data-item {
+        margin-bottom: 1.5rem;
+    }
+    .data-label {
+        font-weight: 600;
+        color: var(--label-color);
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+    }
+    .data-value {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        word-wrap: break-word;
+    }
+
+    /* Abas customizadas */
+    .nav-tabs .nav-link {
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--text-light);
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+        color: var(--primary-color);
+        border-bottom: 3px solid var(--primary-color);
+        background-color: transparent;
+    }
+</style>
+@endpush
+
 @section('content_header')
-    <div class="row text-center">
-        <div class="col">
-            <h3 class="m-0">Visualização de Cliente</h3>
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="m-0 text-dark" style="font-weight: 600;">Visualizar Cliente</h1>
+        </div>
+        <div class="col-md-4 text-md-right mt-2 mt-md-0">
+            <a href="{{ route('editar_cliente', ['id' => $cliente->id]) }}" class="btn custom-btn-edit mr-2">
+                <i class="far fa-edit mr-1"></i> Editar
+            </a>
+            <a href="{{ route('cliente.index') }}" class="btn custom-btn-secondary">Voltar</a>
         </div>
     </div>
 @stop
 
 @section('content')
-    <div class="row mb-3">
-        <div class="col text-right">
-            <a class="btn btn-secondary" href="{{ route('cliente.index') }}">Voltar</a>
-        </div>
-    </div>
-
-    <div class="content">
-        <div class="container-fluid">
-            <div class="col-xs-12 col-sm-12" style="width: 100%">
-
-                <div class="card card-primary card-outline card-tabs">
-
-                    <div class="card-header p-0 pt-1 border-bottom-0">
-                        <ul class="nav nav-tabs" id="tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                                    aria-controls="home" aria-selected="true"><b>Informações do Cliente</b></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
-                                    aria-controls="profile" aria-selected="false"><b>Endereço</b></a>
-                            </li>
-                        </ul>
+    <div class="card card-main">
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
+                        aria-controls="home" aria-selected="true"><b>Informações do Cliente</b></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
+                        aria-controls="profile" aria-selected="false"><b>Endereço</b></a>
+                </li>
+            </ul>
+            <div class="tab-content mt-4" id="tabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="row">
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">Tipo</span>
+                            <p class="data-value">{{ $cliente->tipo == '1' ? 'Pessoa Física' : 'Pessoa Jurídica' }}</p>
+                        </div>
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">CPF/CNPJ</span>
+                            <p class="data-value">{{ $cliente->cpf_cnpj }}</p>
+                        </div>
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">RG / Inscrição Estadual</span>
+                            <p class="data-value">{{ $cliente->rg_ie }}</p>
+                        </div>
                     </div>
+                     <div class="row">
+                        <div class="col-md-7 data-item">
+                            <span class="data-label">Nome / Razão Social</span>
+                            <p class="data-value">{{ $cliente->nome }}</p>
+                        </div>
+                        <div class="col-md-5 data-item">
+                            <span class="data-label">Apelido / Nome Fantasia</span>
+                            <p class="data-value">{{ $cliente->apelido }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">Telefone</span>
+                            <p class="data-value">{{ $cliente->telefone }}</p>
+                        </div>
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">Limite de Crédito</span>
+                            <p class="data-value">R$ {{ number_format($cliente->limite, 2, ',', '.') }}</p>
+                        </div>
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">Empresa</span>
+                            <p class="data-value">{{ $cliente->razao }}</p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="card-body">
-                        <div class="tab-content" id="tabContent">
-                            <div class="tab-pane fade show active" id="home" role="tabpanel"
-                                aria-labelledby="home-tab">
-
-                                <div class="row">
-                                    <div class="col-md-4 col-8">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <select class="form-select" name="tipo" id="tipo" required>
-                                                    <option value="{{ $cliente->tipo }}">
-                                                        {{ $cliente->tipo == '1' ? 'Pessoa Física' : 'Pessoa Jurídica' }}
-                                                    </option>
-                                                    <option value="2">Pessoa Jurídica</option>
-                                                    <option value="1">Pessoa Física</option>
-                                                </select>
-                                                <label for="tipo">Tipo</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um tipo.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-5 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder="CPF/CNPJ..." class="form-control"
-                                                    type="text" id="cpf_cnpj" name="cpf_cnpj"
-                                                    onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14"
-                                                    value="{{ $cliente->cpf_cnpj }}" />
-                                                <label for="cpf_cnpj">CPF/CNPJ</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um cpf/cnpj válido.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-7 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="nome" id="nome"
-                                                    required placeholder="Nome de cliente..." value="{{ $cliente->nome }}">
-                                                <label for="nome">Nome</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um nome.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-5 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="apelido" id="apelido"
-                                                    required placeholder="Apelido de cliente..."
-                                                    value="{{ $cliente->apelido }}">
-                                                <label for="apelido">Apelido/Fantasia</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um apelido/fantasia.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-3 col-6">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="limite" id="limite"
-                                                    required placeholder="Limite..." value="{{ $cliente->limite }}">
-                                                <label for="limite">Limite</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um limite.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-6">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="rg_ie" id="rg_ie"
-                                                    required placeholder=" " value="{{ $cliente->rg_ie }}">
-                                                <label for="rg_ie">RG ou IE</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um rg/ie.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-4 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input type="text" id="telefone" name="telefone"
-                                                    class="form-control" placeholder=" " maxlength="15"
-                                                    onkeyup="handlePhone(event)" value="{{ $cliente->telefone }}"
-                                                    required>
-                                                <label for="telefone">Telefone</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um telefone.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <select name="empresa" id="empresa" class="form-select" required>
-                                                    <option value="{{ $cliente->empresa_id }}">{{ $cliente->razao }}
-                                                    </option>
-                                                </select>
-                                                <label for="empresa">Empresa</label>
-                                                <div class="invalid-feedback">
-                                                    Informe uma empresa.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input class="form-control" type="text" name="codigo" id="codigo" required
-                                value="{{ $cliente->codigo }}" value="0" hidden>
-
-                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-
-                                <div class="row">
-                                    <div class="col-md-4 col-7">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input placeholder="Cep..." class="form-control" type="text"
-                                                    id="cep" name="cep" value="{{ $cliente->cep }}" />
-                                                <label for="cep">CEP</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um cep.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 col-5">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input placeholder="Código IBGE..." class="form-control" type="number"
-                                                    id="ibge" name="ibge" value="{{ $cliente->codigoIBGE }}" />
-                                                <label for="cod_ibge">Cód. IBGE</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um código IBGE.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-9 col-9">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="rua" id="rua"
-                                                    placeholder="Rua..." value="{{ $cliente->rua }}" required>
-                                                <label for="rua">Rua</label>
-                                                <div class="invalid-feedback">
-                                                    Informe uma rua.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3 col-3">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="numero" id="numero"
-                                                    placeholder=" " value="{{ $cliente->numero }}" required>
-                                                <label for="numero">Nº</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um número.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-5 col-8">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="bairro" id="bairro"
-                                                    placeholder=" " value="{{ $cliente->bairro }}" required>
-                                                <label for="bairro">Bairro</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um bairro.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-5 col-8">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input class="form-control" type="text" name="cidade" id="cidade"
-                                                    placeholder="Cidade..." value="{{ $cliente->cidade }}" required>
-                                                <label for="cidade">Cidade</label>
-                                                <div class="invalid-feedback">
-                                                    Informe uma cidade.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 col-4">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <select name="uf" id="uf" class="form-select" required>
-                                                    <option value="{{ $cliente->uf }}">{{ $cliente->uf }}</option>
-                                                    <option value="AL">AL</option>
-                                                    <option value="AL">AL</option>
-                                                    <option value="AM">AM</option>
-                                                    <option value="AP">AP</option>
-                                                    <option value="BA">BA</option>
-                                                    <option value="CE">CE</option>
-                                                    <option value="DF">DF</option>
-                                                    <option value="ES">ES</option>
-                                                    <option value="GO">GO</option>
-                                                    <option value="MA">MA</option>
-                                                    <option value="MG">MG</option>
-                                                    <option value="MS">MS</option>
-                                                    <option value="MT">MT</option>
-                                                    <option value="PA">PA</option>
-                                                    <option value="PB">PB</option>
-                                                    <option value="PE">PE</option>
-                                                    <option value="PI">PI</option>
-                                                    <option value="PR">PR</option>
-                                                    <option value="RJ">RJ</option>
-                                                    <option value="RN">RN</option>
-                                                    <option value="RO">RO</option>
-                                                    <option value="RR">RR</option>
-                                                    <option value="RS">RS</option>
-                                                    <option value="SC">SC</option>
-                                                    <option value="SE">SE</option>
-                                                    <option value="SP">SP</option>
-                                                    <option value="TO">TO</option>
-                                                </select>
-                                                <label for="estado">Estado</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um estado.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row">
+                        <div class="col-md-3 data-item">
+                            <span class="data-label">CEP</span>
+                            <p class="data-value">{{ $cliente->cep }}</p>
+                        </div>
+                        <div class="col-md-9 data-item">
+                            <span class="data-label">Logradouro</span>
+                            <p class="data-value">{{ $cliente->rua }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 data-item">
+                            <span class="data-label">Número</span>
+                            <p class="data-value">{{ $cliente->numero }}</p>
+                        </div>
+                        <div class="col-md-5 data-item">
+                            <span class="data-label">Bairro</span>
+                            <p class="data-value">{{ $cliente->bairro }}</p>
+                        </div>
+                        <div class="col-md-4 data-item">
+                            <span class="data-label">Cidade</span>
+                            <p class="data-value">{{ $cliente->cidade }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 data-item">
+                            <span class="data-label">Estado</span>
+                            <p class="data-value">{{ $cliente->uf }}</p>
+                        </div>
+                         <div class="col-md-3 data-item">
+                            <span class="data-label">Cód. IBGE</span>
+                            <p class="data-value">{{ $cliente->codigoIBGE }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+@stop
 
-@section('css')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-@endsection
-
-@section('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-    </script>
-@endsection

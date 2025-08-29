@@ -43,23 +43,19 @@ class NFCeService
 
     public static function getTotalNFCePerMonth($companyId)
     {
-        if ($companyId == 1) {
-            $companyId = '%';
-            $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
-                ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
-                ->where('n_f_ces.empresa_id', 'like', $companyId)
-                ->where('n_f_ces.situacao', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
-        } else {
-            $results = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
-                ->join('cupoms', 'n_f_ces.cupom_id', 'cupoms.id')
-                ->where('n_f_ces.empresa_id', $companyId)
-                ->where('n_f_ces.situacao', 'Autorizado')
-                ->groupBy('mes')
-                ->get();
+        $query = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
+            ->join('cupoms', 'n_f_ces.cupom_id', '=', 'cupoms.id')
+            ->where('n_f_ces.situacao', 'Autorizado')
+            ->whereYear('n_f_ces.data', date('Y')) // Filtra apenas o ano corrente
+            ->groupBy('mes')
+            ->orderBy('mes', 'asc'); // Garante que os meses venham ordenados
+
+        // Se não for a empresa "1", aplica o filtro por empresa
+        if ($companyId != 1) {
+            $query->where('n_f_ces.empresa_id', $companyId);
         }
-        return $results;
+
+        return $query->get();
     }
 
     public static function createNFCe($body, $couponId, $company)
@@ -246,7 +242,6 @@ class NFCeService
                 $std->vICMSEfet = null;
                 $std->vICMSSubstituto = null;
                 $make->tagICMSSN($std);
-
                 $std = new \stdClass();
                 $std->item = $index + 1;
                 $std->CST = $item->produto->cst_pis;
@@ -324,6 +319,7 @@ class NFCeService
                 $std->vPag = FormatationUtil::format($item->valor);
                 if ($card) {
                     $std->tpIntegra = 2;
+                    $std->tBand = '05';
                 }
                 $make->tagdetpag($std);
             }
@@ -340,8 +336,12 @@ class NFCeService
             $std->fone = getenv('RESP_FONE');
             $make->taginfRespTec($std);
 
-            $make->monta();
-            $xml = $make->getXML();
+            try {
+                $make->monta();
+                $xml = $make->getXML();
+            } catch (\Exception $e) {
+                dd($e->getMessage(), $make->getErrors());
+            }
             $signedXml = $this->sign($xml);
             $key = $make->getChave();
             $this->toTransmit($signedXml);

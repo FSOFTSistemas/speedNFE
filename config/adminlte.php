@@ -314,6 +314,12 @@ return [
             'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
         ],
         [
+            'text' => 'Entradas NFE',
+            'url'  => '/entrada',
+            'icon' => 'fas fa-file-upload',
+            'can'  => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+        ],
+        [
             'text'        => 'NFe',
             'icon'        => 'far fa-file-alt',
             'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
@@ -407,10 +413,64 @@ return [
             ],
         ],
         [
+            'text'  => 'Log',
+            'url'   => '/log',
+            'icon'  => 'fas fa-clipboard-list',
+        ],
+        [
+            'text'  => 'Fluxo de Caixa',
+            'icon'  => 'fas fa-cash-register',
+            'submenu' => [
+                [
+                    'text'        => 'Caixa',
+                    'url'         => '/fluxo-caixa',
+                    'icon'        => 'fas fa-cash-register',
+                    'shift'       => 'ml-2'
+                ],
+                [
+                    'text'        => 'Relatórios',
+                    'url'         => '/rel/fluxo-caixa',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift'       => 'ml-2'
+                ],
+                [
+                    'text'        => 'DRE',
+                    'url'         => '/dre',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift'       => 'ml-2'
+                ],
+            ],
+        ],
+        [
             'text'        => 'Configurações',
             'url'         => '/empresa',
             'icon'        => 'fas fa-cogs',
-        ]
+        ],
+        [
+            'text'        => 'Faturas',
+            'icon'        => 'fas fa-file-invoice',
+            'can'         => ['master'],
+            'submenu' => [
+                [
+                    'text'        => 'Assinatura',
+                    'url'         => '/faturas',
+                    'icon'        => 'fas fa-file-contract',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Histórico de pagamentos',
+                    'url'         => '/faturas/historico-pagamentos',
+                    'icon'        => 'fas fa-history',
+                    'shift' => 'ml-2'
+                ],
+                [
+                    'text'        => 'Formas de pagamentos',
+                    'url'         => '/faturas/metodos-pagamentos',
+                    'icon'        => 'fas fa-money-check-alt',
+                    'shift' => 'ml-2'
+                ]
+            ],
+        ],
     ],
 
     /*
