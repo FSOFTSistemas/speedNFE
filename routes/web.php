@@ -17,6 +17,7 @@ use App\Http\Controllers\DRE;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\FluxoDeCaixaController;
+
 use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
@@ -261,5 +262,6 @@ Route::prefix('faturas')->group(function () {
 });
 
 Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
+
 
 require __DIR__ . '/auth.php';
