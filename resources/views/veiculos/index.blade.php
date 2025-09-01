@@ -2,170 +2,185 @@
 
 @section('title', 'Veículos')
 
+@push('css')
+<style>
+    /* Estilos do Padrão Visual Definido */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --primary-color: #00033a;
+        --card-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --border-color: #dee2e6;
+        --text-dark: #343a40;
+        --text-light: #6c757d;
+        --action-delete: #dc3545;
+        --action-edit: #ffc107;
+        --success-color: #28a745;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .card-main {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        padding: 30px;
+    }
+    
+    .custom-btn {
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+    .custom-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .custom-btn-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; color: #fff !important; }
+    .custom-btn-danger { background-color: var(--action-delete) !important; border-color: var(--action-delete) !important; color: #fff !important; }
+
+    .header-buttons .btn { display: block; margin-bottom: 8px; }
+    .header-buttons .btn:last-child { margin-bottom: 0; }
+    @media (min-width: 992px) {
+        .header-buttons .btn { display: inline-block; margin-bottom: 0; margin-left: 8px; }
+    }
+    
+    .table thead th, .table tbody td {
+        background-color: transparent !important;
+        vertical-align: middle;
+        text-align: center;
+    }
+    .table thead th {
+        color: var(--text-dark) !important;
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-color) !important;
+        text-transform: uppercase;
+    }
+    .table tbody tr:hover { background-color: #f1f1f1 !important; }
+    .table td.text-left { text-align: left; }
+
+    .action-buttons {
+        white-space: nowrap;
+        text-align: right;
+    }
+    .action-buttons a {
+        color: var(--text-light);
+        margin: 0 8px;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+    .action-buttons a:hover.text-warning { color: var(--action-edit) !important; }
+    .action-buttons a:hover.text-danger { color: var(--action-delete) !important; }
+
+    .modal-content { border-radius: 15px; border: none; }
+    .modal-header { border-bottom: 1px solid var(--border-color); }
+</style>
+@endpush
+
 @section('content_header')
-    {{-- <div class="row" style="text-align: center">
-        <div class="col">
-            <h3>Veículos</h3>
+    <div class="row align-items-center">
+        <div class="col-lg-6 text-center text-lg-left mb-3 mb-lg-0">
+            <h1 class="m-0 text-dark" style="font-weight: 600;">Veículos</h1>
         </div>
-    </div> --}}
+        <div class="col-lg-6 text-center text-lg-right header-buttons">
+            <a class="btn custom-btn custom-btn-primary" href="{{ route('veiculos.create') }}">
+                <i class="fas fa-plus mr-1"></i> Novo Veículo
+            </a>
+        </div>
+    </div>
 @stop
 
 @section('content')
-
-    <div class="row" style="padding-top: 1%;">
-        <div class="col">
-            <a class="btn btn-primary" style="margin-bottom: 1%;" href="{{ route('veiculos.create') }}">&nbsp;+ Novo
-                veículo&nbsp;</a>
-        </div>
-    </div>
-
-    @component('components.dataTable', [
-        'responsive' => [
-            [
-                'responsivePriority' => 1,
-                'targets' => 0,
-            ],
-            [
-                'responsivePriority' => 2,
-                'targets' => 1,
-            ],
-            [
-                'responsivePriority' => 3,
-                'targets' => 2,
-            ],
-            [
-                'responsivePriority' => 4,
-                'targets' => 3,
-            ],
-            [
-                'responsivePriority' => 5,
-                'targets' => 4,
-            ],
-            [
-                'responsivePriority' => 6,
-                'targets' => 5,
-            ],
-            [
-                'responsivePriority' => 7,
-                'targets' => 6,
-            ],
-            [
-                'responsivePriority' => 8,
-                'targets' => 7,
-            ],
-            [
-                'responsivePriority' => 9,
-                'targets' => -1,
-            ],
-        ],
-        'searching' => true,
-        'lengthChange' => true,
-        'pageLength' => 10,
-        'ordering' => true,
-        'showFooter' => false,
-    ])
-        <thead class="table-primary" style="width: 100%">
-            <tr>
-                <th style="width: 5%">Id</th>
-                <th style="width: 10%">Placa</th>
-                <th style="width: 10%">CPF/CNPJ</th>
-                @if ($empresa == 1)
-                    <th style="width: 20%">Empresa</th>
-                @endif
-                <th style="width: 10%">Tp. de propriedade</th>
-                <th style="width: 10%">Tara(Kg)</th>
-                <th style="width: 10%">Capacidade(M³)</th>
-                <th style="width: 15%">Tp. de veículo</th>
-                <th style="width: 10%"></th>
-            </tr>
-        </thead>
-        <tbody style="width: 100%">
-            @foreach ($veiculos as $veiculo)
+<div class="card card-main">
+    <div class="card-body p-0">
+        @component('components.dataTable', [
+            'responsive' => true,
+            'searching' => true,
+            'lengthChange' => true,
+            'pageLength' => 10,
+            'ordering' => true,
+            'showFooter' => false,
+        ])
+            <thead class="table-light">
                 <tr>
-                    <td>#{{ $veiculo->id }}</td>
-                    <td>{{ $veiculo->placa }}</td>
-                    <td>{{ $veiculo->cpf_cnpj }}</td>
+                    <th>Id</th>
+                    <th>Placa</th>
+                    <th>CPF/CNPJ</th>
                     @if ($empresa == 1)
-                        <td>{{ $veiculo->fantasia }}</td>
+                        <th class="text-left">Empresa</th>
                     @endif
-                    <td>{{ $veiculo->tipo_propriedade }}</td>
-                    <td>{{ number_format($veiculo->tara, 1) }}</td>
-                    <td>{{ number_format($veiculo->capacidade_m3, 1) }}</td>
-                    <td>{{ $veiculo->tipo_veiculo }}</td>
-                    <td>
-                        <div class="row">
-                            <div class="col">
-                                <a title="Editar" href='{{ route('veiculos.edit', [$veiculo->id]) }}'
-                                    class='text-warning'><i class="fa fa-edit"></i></a>
-                            </div>
-                            <div class="col">
-                                <a title="Excluir" onclick="setaDadosModal({{ $veiculo->id }})" class='text-danger'><i
-                                        class="fa fa-trash" data-toggle="modal" data-target=".bd-delete-modal-lg"></i></a>
-                            </div>
-                        </div>
-                    </td>
+                    <th>Propriedade</th>
+                    <th>Tara(Kg)</th>
+                    <th>Capacidade(M³)</th>
+                    <th>Tipo</th>
+                    <th class="text-right">Ações</th>
                 </tr>
-            @endforeach
-        </tbody>
-    @endcomponent
+            </thead>
+            <tbody>
+                @foreach ($veiculos as $veiculo)
+                    <tr>
+                        <td>#{{ $veiculo->id }}</td>
+                        <td>{{ $veiculo->placa }}</td>
+                        <td>{{ $veiculo->cpf_cnpj }}</td>
+                        @if ($empresa == 1)
+                            <td class="text-left">{{ $veiculo->fantasia }}</td>
+                        @endif
+                        <td>{{ $veiculo->tipo_propriedade }}</td>
+                        <td>{{ number_format($veiculo->tara, 1, ',', '.') }}</td>
+                        <td>{{ number_format($veiculo->capacidade_m3, 1, ',', '.') }}</td>
+                        <td>{{ $veiculo->tipo_veiculo }}</td>
+                        <td class="action-buttons">
+                            <a title="Editar" href='{{ route('veiculos.edit', [$veiculo->id]) }}' class='text-warning'><i class="fa fa-edit"></i></a>
+                            <a title="Excluir" href="#" onclick="setaDadosModal({{ $veiculo->id }}, '{{ $veiculo->placa }}')" class='text-danger' data-toggle="modal" data-target="#deleteModal"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        @endcomponent
+    </div>
+</div>
 
-    <div class="modal fade bd-delete-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-
-                    <div class="col" style="text-align: center">
-                        <div class="modal-title" style="text: center">
-                            <h4>Apagar este Veículo ?</h4>
-                        </div>
-                    </div>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
-                    <p style="color: red; text-align: center">OBS: Você irá excluir todas as informações sobre este veículo!
-                    </p>
-
-                    <div class="" style="text-align: center">
-
-                        <form action="{{ route('veiculos.delete') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            @method('DELETE')
-                            <div class="form-group">
-                                <input type="hidden" step="0.01" class="form-control" id="veiculoID" name="veiculoID"
-                                    value="">
-                            </div>
-
-                            <div class="text-center">
-                                <button type="submit" style="width: 50%;" class="btn btn-danger">EXCLUIR</button>
-                            </div>
-                            <br>
-                        </form>
-
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                </div>
+<!-- Modal de Exclusão Genérico -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Apagar este Veículo?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <p>Tem certeza que deseja excluir o veículo de placa <br> <strong id="veiculoPlaca" class="text-danger"></strong>?</p>
+                <p class="text-danger mt-3"><b>Atenção:</b> Esta ação é irreversível!</p>
+                <form id="deleteForm" action="{{ route('veiculos.delete') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" id="veiculoID" name="veiculoID">
+                </form>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn custom-btn custom-btn-danger" onclick="document.getElementById('deleteForm').submit();">Sim, Excluir</button>
             </div>
         </div>
     </div>
-@stop
-
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+</div>
 @stop
 
 @section('js')
     <script>
-        function setaDadosModal(veiculoID) {
+        function setaDadosModal(veiculoID, veiculoPlaca) {
+            // Seta o ID no input hidden
             document.getElementById('veiculoID').value = veiculoID;
+
+            // Seta a placa do veículo no corpo do modal para confirmação
+            document.getElementById('veiculoPlaca').textContent = veiculoPlaca;
         }
     </script>
 @stop

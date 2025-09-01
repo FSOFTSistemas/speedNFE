@@ -51,10 +51,35 @@
         background-color: #00045e !important;
         border-color: #00045e !important;
     }
+
+    /* Otimização dos botões do cabeçalho para mobile */
+    .header-buttons .btn {
+        display: block; /* Ocupa a largura total e força a quebra de linha */
+        margin-bottom: 8px; /* Espaçamento entre os botões empilhados */
+    }
+    .header-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (min-width: 992px) { /* A partir de telas grandes (lg) */
+        .header-buttons .btn {
+            display: inline-block; /* Volta ao comportamento inline */
+            margin-bottom: 0;
+            margin-left: 8px; /* Adiciona espaçamento horizontal */
+        }
+        .header-buttons .btn:first-child {
+            margin-left: 0;
+        }
+    }
     
     /* Estilos da Tabela */
+    .table thead th, .table tbody td {
+        background-color: transparent !important;
+        vertical-align: middle;
+        text-align: center; /* Centraliza todo o texto por padrão */
+    }
+
     .table thead th {
-        background-color: #f8f9fa !important;
         color: var(--text-dark) !important;
         font-weight: 600;
         border-bottom: 2px solid var(--border-color) !important;
@@ -66,7 +91,15 @@
         background-color: #f1f1f1 !important;
     }
 
+    /* Ajuste para o nome do produto ficar à esquerda no corpo da tabela */
+    .table td.product-name {
+        text-align: left;
+    }
+
     /* Estilos dos Botões de Ação */
+    .action-buttons {
+        white-space: nowrap; /* Garante que os botões não quebrem a linha */
+    }
     .action-buttons a {
         color: var(--text-light);
         margin: 0 8px;
@@ -103,12 +136,12 @@
 
 @section('content_header')
     <div class="row align-items-center">
-        <div class="col-md-6">
+        <div class="col-lg-6 text-center text-lg-left mb-3 mb-lg-0">
             <h1 class="m-0 text-dark" style="font-weight: 600;">Produtos</h1>
         </div>
-        <div class="col-md-6 text-md-right mt-2 mt-md-0">
-            <a class="btn custom-btn custom-btn-primary mr-2" href="{{ route('entradas.index') }}"><i class="fas fa-upload mr-1"></i> Importações</a>
-            <a class="btn custom-btn custom-btn-primary mr-2" href="{{ route('categoria.index') }}"><i class="fas fa-sitemap mr-1"></i> Categorias</a>
+        <div class="col-lg-6 text-center text-lg-right header-buttons">
+            <a class="btn custom-btn custom-btn-primary" href="{{ route('entradas.index') }}"><i class="fas fa-upload mr-1"></i> Importações</a>
+            <a class="btn custom-btn custom-btn-primary" href="{{ route('categoria.index') }}"><i class="fas fa-sitemap mr-1"></i> Categorias</a>
             <a class="btn custom-btn custom-btn-primary" href="{{ route('produto.new') }}"><i class="fas fa-plus mr-1"></i> Novo Produto</a>
         </div>
     </div>
@@ -118,33 +151,43 @@
     <div class="card card-main">
         <div class="card-body p-0">
              @component('components.dataTable', [
-                'responsive' => true,
+                'responsive' => [
+                    'details' => [
+                        'type' => 'column',
+                        'target' => 0
+                    ]
+                ],
                 'searching' => true,
                 'lengthChange' => true,
                 'pageLength' => 10,
                 'ordering' => true,
                 'showFooter' => false,
+                'columnDefs' => [
+                    ['className' => 'control', 'orderable' => false, 'targets' => 0],
+                    ['responsivePriority' => 1, 'targets' => 1], // Prioridade alta para Nome do Produto
+                    ['responsivePriority' => 2, 'targets' => -1] // Prioridade alta para Ações
+                ]
             ])
                 <thead class="table-light">
                     <tr>
-                        <th>CÓDIGO</th>
+                        <th style="width: 10px;"></th>
                         <th>PRODUTO</th>
                         <th class="d-none d-md-table-cell">PREÇO CUSTO</th>
                         <th class="d-none d-lg-table-cell">PREÇO VENDA</th>
                         <th class="d-none d-lg-table-cell">CATEGORIA</th>
-                        <th class="text-right">AÇÕES</th>
+                        <th>AÇÕES</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     @foreach ($produtos as $produto)
                         <tr>
-                            <td>{{ $produto->codigo }}</td>
-                            <td>{{ $produto->produto }}</td>
+                            <td></td>
+                            <td class="product-name">{{ $produto->produto }}</td>
                             <td class="d-none d-md-table-cell">R$ {{ number_format($produto->precocusto, 2, ',', '.') }}</td>
                             <td class="d-none d-lg-table-cell">R$ {{ number_format($produto->precovenda, 2, ',', '.') }}</td>
                             <td class="d-none d-lg-table-cell">{{ $produto->descricao }}</td>
-                            <td class="text-right action-buttons">
+                            <td class="action-buttons">
                                 <a title="Visualizar" href="{{ route('ver_produto', [$produto->id]) }}" class='text-view'><i class="far fa-eye"></i></a>
                                 <a title="Editar" href="{{ route('editar_produto', ['id' => $produto->id]) }}" class='text-edit'><i class="far fa-edit"></i></a>
                                 <a title="Excluir" href="#" onclick="setaDadosModal({{ $produto->id }})" class='text-delete' data-toggle="modal" data-target="#deleteModal"><i class="far fa-trash-alt"></i></a>

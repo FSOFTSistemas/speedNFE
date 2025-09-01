@@ -89,29 +89,28 @@ class RelatoriosController extends Controller
     
 
 
-    public function gerarPdf(Request $request) { 
-        // dd($request -> inicio);
-        $vendas = DB::table('pedidos')
-        ->where('data', '<=', $request -> fim)
-        ->where('data','>=', $request -> inicio)
+public function gerarPdf(Request $request) 
+{
+    // 1. Busca os dados do banco de dados
+    $vendas = DB::table('pedidos')
+        ->where('data', '<=', $request->fim)
+        ->where('data', '>=', $request->inicio)
         ->get();
-        $dompdf = new Dompdf();
-    
-        $html = view('relatorios.vendasSinteticas', [
-            'vendas' => $request -> vendas,
-            'dataInicio' => $request -> inicio,
-            'dataFim' => $request -> fim,
-            'estado' => $request -> estado
-        ])->render();
-    
-        $dompdf->loadHtml($html);
-    
-        $dompdf->setPaper('A4');
-    
-        $dompdf->render();
-    
-        return $dompdf->stream('vendas_' . date('Y-m-d') . '.pdf');
-    }
+
+    $dompdf = new Dompdf();
+
+    $html = view('relatorios.vendasSinteticas', [
+        'vendas'      => $vendas, 
+        'data_inicio' => $request->inicio,
+        'data_fim'    => $request->fim
+    ])->render();
+
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4');
+    $dompdf->render();
+
+    return $dompdf->stream('vendas_' . date('Y-m-d') . '.pdf', array("Attachment" => false));
+}
     
     
 
