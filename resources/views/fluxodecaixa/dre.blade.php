@@ -120,7 +120,7 @@
 
     <div id="collapseFilters" class="collapse show" aria-labelledby="headingFilters">
         <div class="card-body border-bottom">
-            <form action="{{ route('dre.index') }}" method="GET">
+            <form target="_blank" action="{{ route('dre.index') }}" method="GET">
                 <div class="row align-items-end">
                     <div class="col-md-5">
                         <label for="data_inicial" class="form-label">Data Inicial</label>
