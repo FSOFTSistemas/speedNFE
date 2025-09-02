@@ -21,12 +21,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use NFePHP\DA\NFe\Danfce;
+use App\Http\Controllers\Traits\EnviaNFCe;
 
 class NFCeController extends Controller
 {
     private $cupomService;
     private $empresaServices;
     private $estoqueService;
+    use EnviaNFCe;
 
     public function __construct(CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService)
     {
@@ -71,32 +73,46 @@ class NFCeController extends Controller
         }
     }
 
+    // public function sendNFCe($id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $cupom = $this->cupomService->getCupom($id);
+    //         $nfceService = $this->makeNFCeService($cupom->empresa);
+    //         $this->empresaServices->incrementLastNFCe($cupom->empresa_id);
+    //         $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
+    //         $this->cupomService->updateCoupon($cupom);
+    //         NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
+    //         foreach ($cupom->itens as $item) {
+    //             $this->estoqueService->out($item->produto_id, $item->qtde);
+    //         }
+    //         DB::commit();
+    //         return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
+    //     } catch (LimitExceededException $e) {
+    //         DB::rollback();
+    //         $this->cupomService->rejectedCoupon($id);
+    //         return back()->with('warning', $e->getMessage());
+    //     }catch (MalformedXmlException $e) {
+    //         DB::rollback();
+    //         $this->cupomService->rejectedCoupon($id);
+    //         return back()->with('warning', $e->getMessage());
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+    //     }
+    // }
+
     public function sendNFCe($id)
     {
-        try {
-            DB::beginTransaction();
-            $cupom = $this->cupomService->getCupom($id);
-            $nfceService = $this->makeNFCeService($cupom->empresa);
-            $this->empresaServices->incrementLastNFCe($cupom->empresa_id);
-            $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
-            $this->cupomService->updateCoupon($cupom);
-            NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
-            foreach ($cupom->itens as $item) {
-                $this->estoqueService->out($item->produto_id, $item->qtde);
-            }
-            DB::commit();
-            return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
-        } catch (LimitExceededException $e) {
-            DB::rollback();
-            $this->cupomService->rejectedCoupon($id);
-            return back()->with('warning', $e->getMessage());
-        }catch (MalformedXmlException $e) {
-            DB::rollback();
-            $this->cupomService->rejectedCoupon($id);
-            return back()->with('warning', $e->getMessage());
-        } catch (Exception $e) {
-            DB::rollback();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        // Chama a lógica de negócio que está no Trait
+        $resultado = $this->_enviarNFCePeloId($id);
+
+        // Lida com o redirecionamento com base na resposta do Trait
+        if ($resultado->status === 'success') {
+            return redirect()->route('cupom.index')->with('success', $resultado->message);
+        } else {
+            // Usa o status ('warning' ou 'error') como a chave da mensagem de sessão
+            return back()->with($resultado->status, $resultado->message);
         }
     }
 

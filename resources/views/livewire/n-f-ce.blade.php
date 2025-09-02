@@ -1,6 +1,7 @@
 <div class="pdv-container">
-    <form action="{{ route('cupom.store') }}" method="POST" enctype="multipart/form-data">
+    <form id="pdv-form" action="{{ route('cupom.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="acao_pos_salvar" id="acao_pos_salvar" value="depois">
 
         <!-- Header com título e cliente -->
         <div class="pdv-header">
@@ -457,7 +458,8 @@
                                                 Limpar
                                             </button>
                                             <button class="btn btn-sucesso"
-                                                @if ($valorPago < $valorTotal || $troco < 0) disabled @endif type="submit">
+                                                @if ($valorPago < $valorTotal || $troco < 0) disabled @endif type="button"
+                                                onclick="confirmarFinalizacao()">
                                                 <i class="fas fa-check"></i>
                                                 Finalizar
                                             </button>
@@ -1206,6 +1208,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         (() => {
             'use strict'
@@ -1332,4 +1335,36 @@
             alert($message)
         });
     });
+</script>
+<script>
+    function confirmarFinalizacao() {
+        // Pega o formulário e o input hidden que criamos
+        const form = document.getElementById('pdv-form');
+        const acaoInput = document.getElementById('acao_pos_salvar');
+
+        Swal.fire({
+            title: 'Finalizar Venda',
+            text: "Deseja emitir a NFC-e agora ou deixar para depois?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Emitir Agora',
+            cancelButtonText: 'Salvar e Emitir Depois'
+        }).then((result) => {
+            // Se o usuário clicou em "Emitir Agora"
+            if (result.isConfirmed) {
+                // Define o valor do input hidden para 'agora'
+                acaoInput.value = 'agora';
+                // Envia o formulário
+                form.submit();
+            }
+            // Se o usuário clicou em "Salvar e Emitir Depois" (o botão de cancelar)
+            else if (result.dismiss === Swal.DismissReason.cancel) {
+                // O valor do input já é 'depois' por padrão, então apenas enviamos o formulário
+                acaoInput.value = 'depois';
+                form.submit();
+            }
+        });
+    }
 </script>

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\Traits\EnviaNFCe;
 
 class CupomController extends Controller
 {
@@ -21,6 +22,7 @@ class CupomController extends Controller
     private $itemCupomService;
     private $cupomFormaService;
     private $empresaServices;
+    use EnviaNFCe;
 
     public function __construct(CupomService $cupomService, ItemCupomService $itemCupomService, CupomFormaService $cupomFormaService, EmpresasService $empresaServices)
     {
@@ -49,9 +51,10 @@ class CupomController extends Controller
         }
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
         try {
+            // Validação dos dados (mantida como estava)
             $request->validate([
                 'cliente' => 'nullable|array',
                 'itens' => 'required|array',
@@ -65,15 +68,42 @@ class CupomController extends Controller
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'numeric' => 'O campo :attribute deve ser numérico!',
-                'array' => 'O campo :attribiute deve ser uma lista!'
+                'array' => 'O campo :attribute deve ser uma lista!'
             ]);
+
+            // Transação para salvar a venda (mantida como estava)
             DB::beginTransaction();
             $cupomId = $this->cupomService->createCupom($this->empresaServices->incrementCupomSequence(Auth::user()->empresa_id), $request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->troco, $request->cliente['id'], Auth::user()->empresa_id);
             $this->itemCupomService->createItemsCupom($request->itens, $cupomId);
             $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
             DB::commit();
-            return redirect()->route('cupom.create')->with('success','Venda realizada com sucesso!');
+
+            // --- INÍCIO DA NOVA LÓGICA ---
+
+            $mensagemSucesso = 'Venda realizada com sucesso!';
+
+            // Verifica a escolha do usuário vinda do formulário
+            if ($request->input('acao_pos_salvar') === 'agora') {
+                
+                // Chama a lógica de envio que está no Trait, passando o ID da venda recém-criada
+                $resultadoEmissao = $this->_enviarNFCePeloId($cupomId);
+
+                // Verifica o resultado retornado pelo Trait
+                if ($resultadoEmissao->status === 'success') {
+                    // Se deu certo, anexa a mensagem de sucesso da emissão
+                    $mensagemSucesso .= ' NFC-e emitida!';
+                } else {
+                    // Se a emissão falhou, redireciona de volta para o PDV com a mensagem de erro específica
+                    return redirect()->route('cupom.create')
+                                     ->with($resultadoEmissao->status, 'Venda salva, mas falha ao emitir: ' . $resultadoEmissao->message);
+                }
+            }
+
+            // Redireciona para a tela do PDV com a mensagem final de sucesso
+            return redirect()->route('cupom.create')->with('success', $mensagemSucesso);
+
         } catch (ValidationException $e) {
+            $errors = [];
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
