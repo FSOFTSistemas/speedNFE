@@ -12,11 +12,11 @@
 @stop
 
 @section('content')
-    <div class="row">
+    {{-- <div class="row">
         <div class="col">
             <a class="btn btn-secondary" href="{{ route('vendas.index') }}">Voltar</a>
         </div>
-    </div>
+    </div> --}}
 
     @livewire('pedido')
 
