@@ -222,50 +222,219 @@
                     </div>
                 </div>
 
-                {{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}
-                @if($produto->tpProd)
-                <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
-                    <div class="row">
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Tipo de Veículo</span>
-                            <p class="data-value">{{ $produto->tpVeic }}</p>
-                        </div>
-                        <div class="col-md-8 data-item">
-                            <span class="data-label">Chassi</span>
-                            <p class="data-value">{{ $produto->chassiVeic }}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Renavam</span>
-                            <p class="data-value">{{ $produto->renavanVeic }}</p>
-                        </div>
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Ano Fabricação</span>
-                            <p class="data-value">{{ $produto->anoFabVeic }}</p>
-                        </div>
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Ano Modelo</span>
-                            <p class="data-value">{{ $produto->anoModVeic }}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Peso Líquido (kg)</span>
-                            <p class="data-value">{{ $produto->pesoLVeic }}</p>
-                        </div>
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Peso Bruto (kg)</span>
-                            <p class="data-value">{{ $produto->pesoBVeic }}</p>
-                        </div>
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">Distância Eixos (mm)</span>
-                            <p class="data-value">{{ $produto->distVeic }}</p>
-                        </div>
-                    </div>
-                    {{-- Adicione aqui os demais campos de veículo no mesmo formato --}}
-                </div>
-                @endif
+               {{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}
+@if($produto->tpProd)
+<div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Tipo de Veículo</span>
+            <p class="data-value">
+                @switch($produto->tpVeic)
+                    @case('02') CICLOMOTOR @break
+                    @case('03') MOTONETA @break
+                    @case('04') MOTOCICLO @break
+                    @case('05') TRICICLO @break
+                    @case('06') AUTOMÓVEL @break
+                    @case('07') MICROÔNIBUS @break
+                    @case('08') ÔNIBUS @break
+                    @case('10') REBOQUE @break
+                    @case('11') SEMIREBOQUE @break
+                    @case('13') CAMINHONETA @break
+                    @case('14') CAMINHÃO @break
+                    @case('17') C.TRATOR @break
+                    @case('22') ESP/ÔNIBUS @break
+                    @case('23') MISTO/CAM @break
+                    @case('24') CARGA/CAM @break
+                    @default {{ $produto->tpVeic }}
+                @endswitch
+            </p>
+        </div>
+        <div class="col-md-8 data-item">
+            <span class="data-label">Chassi</span>
+            <p class="data-value">{{ $produto->chassiVeic }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Renavam</span>
+            <p class="data-value">{{ $produto->renavanVeic }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Ano Fabricação</span>
+            <p class="data-value">{{ $produto->anoFabVeic }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Ano Modelo</span>
+            <p class="data-value">{{ $produto->anoModVeic }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Peso Líquido (kg)</span>
+            <p class="data-value">{{ number_format($produto->pesoLVeic, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Peso Bruto (kg)</span>
+            <p class="data-value">{{ number_format($produto->pesoBVeic, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Distância Eixos (mm)</span>
+            <p class="data-value">{{ $produto->distVeic }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5 data-item">
+            <span class="data-label">Combustível</span>
+            <p class="data-value">
+                @switch($produto->combVeic)
+                    @case('01') ÁLCOOL @break
+                    @case('02') GASOLINA @break
+                    @case('03') DIESEL @break
+                    @case('16') ÁLCOOL/GASOLINA @break
+                    @case('17') GASOLINA/ÁLCOOL/GNV @break
+                    @case('18') GASOLINA/ELÉTRICO @break
+                    @default {{ $produto->combVeic }}
+                @endswitch
+            </p>
+        </div>
+        <div class="col-md-7 data-item">
+            <span class="data-label">Nº do Motor</span>
+            <p class="data-value">{{ $produto->nMotorVeic }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Potência (CV)</span>
+            <p class="data-value">{{ number_format($produto->cvVeic, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Cilindradas (cm³)</span>
+            <p class="data-value">{{ number_format($produto->cm3Veic, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Série</span>
+            <p class="data-value">{{ $produto->serieVeic }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Tipo de Pintura</span>
+            <p class="data-value">{{ $produto->tpPVeic }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Cor</span>
+            <p class="data-value">{{ $produto->corVeic }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Código Cor (DENATRAN)</span>
+            <p class="data-value">
+                @switch($produto->cCorVeic)
+                    @case('01') AMARELO @break
+                    @case('02') AZUL @break
+                    @case('03') BEGE @break
+                    @case('04') BRANCA @break
+                    @case('05') CINZA @break
+                    @case('06') DOURADA @break
+                    @case('07') GRENAR @break
+                    @case('08') LARANJA @break
+                    @case('09') MARROM @break
+                    @case('10') PRATA @break
+                    @case('11') PRETA @break
+                    @case('12') ROSA @break
+                    @case('13') ROXA @break
+                    @case('14') VERDE @break
+                    @case('15') VERMELHA @break
+                    @case('16') FANTASIA @break
+                    @default {{ $produto->cCorVeic }}
+                @endswitch
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Cód. Cor Montadora</span>
+            <p class="data-value">{{ $produto->cCorMontVeic }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Código da Marca</span>
+            <p class="data-value">{{ $produto->cMarcaVeic }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Condição do Veículo</span>
+            <p class="data-value">
+                @switch($produto->condVeic)
+                    @case('1') ACABADO @break
+                    @case('2') INACABADO @break
+                    @case('3') SEMIACABO @break
+                    @default {{ $produto->condVeic }}
+                @endswitch
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Espécie do Veículo</span>
+            <p class="data-value">
+                @switch($produto->espVeic)
+                    @case('1') PASSAGEIRO @break
+                    @case('2') CARGA @break
+                    @case('3') MISTO @break
+                    @case('4') CORRIDA @break
+                    @case('5') TRAÇÃO @break
+                    @case('6') ESPECIAL @break
+                    @default {{ $produto->espVeic }}
+                @endswitch
+            </p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Condição do Chassi (VIN)</span>
+            <p class="data-value">
+                @switch($produto->vinVeic)
+                    @case('N') NORMAL @break
+                    @case('R') REMARCADO @break
+                    @default {{ $produto->vinVeic }}
+                @endswitch
+            </p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Lotação Máxima</span>
+            <p class="data-value">{{ $produto->lotVeic }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5 data-item">
+            <span class="data-label">Restrição</span>
+            <p class="data-value">
+                @switch($produto->restriVeic)
+                    @case('0') NÃO HÁ @break
+                    @case('1') ALIENAÇÃO FIDUNCIÁRIA @break
+                    @case('2') ARRENDAMENTO MERCANTIL @break
+                    @case('3') RESERVA DE DOMÍNIO @break
+                    @case('4') PENHOR DE VEÍCULOS @break
+                    @case('9') OUTRAS @break
+                    @default {{ $produto->restriVeic }}
+                @endswitch
+            </p>
+        </div>
+        <div class="col-md-2 data-item">
+            <span class="data-label">Carga Máxima (kg)</span>
+            <p class="data-value">{{ $produto->cargaVeic }}</p>
+        </div>
+        <div class="col-md-5 data-item">
+            <span class="data-label">Tipo de Operação</span>
+            <p class="data-value">
+                @switch($produto->operVeic)
+                    @case('1') VENDA CONCESSIONÁRIA @break
+                    @case('2') FATURAMENTO DIRETO PARA CONSUMIDOR FINAL @break
+                    @case('3') VENDA DIRETO PARA GRANDES CONSUMIDORES @break
+                    @case('0') OUTRAS @break
+                    @default {{ $produto->operVeic }}
+                @endswitch
+            </p>
+        </div>
+    </div>
+</div>
+@endif
             </div>
         </div>
     </div>
