@@ -64,103 +64,6 @@
                         </button>
                     @endif
                 </div>
-
-                <!-- Área de entrada de produto -->
-                <div class="product-input-section">
-                    <h4 class="section-title">
-                        <i class="fas fa-barcode"></i>
-                        Adicionar Produto
-                    </h4>
-
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control"
-                            @isset($cod) disabled @endisset wire:model="prod"
-                            wire:keydown.enter="searchProds()" placeholder="Código ou nome do produto">
-                        @isset($cod)
-                            <button class="btn btn-outline-danger" type="button" wire:click="cancelProd">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        @endisset
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label class="form-label">Quantidade</label>
-                            <input type="number" @if (!isset($cod)) disabled @endif class="form-control"
-                                wire:model="qtde" wire:change="updateProductTotal" min="1" required>
-                        </div>
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="col-6">
-                            <label class="form-label">Desconto</label>
-                            <div class="input-group">
-                                <input type="number" @if (!isset($cod)) disabled @endif
-                                    class="form-control" wire:model="desconto" wire:change="updateProductTotal"
-                                    min="0"
-                                    @if ($descontoTipo === 'percent') max="100" @else max="{{ $unitario }}" @endif
-                                    step="0.01">
-                                <button class="btn btn-outline-secondary btn-sm" type="button"
-                                    wire:click="toggleDescontoTipo" title="Alternar entre % e R$">
-                                    @if ($descontoTipo === 'percent')
-                                        <i class="fas fa-percent"></i>
-                                    @else
-                                        <i class="fas fa-dollar-sign"></i>
-                                    @endif
-                                </button>
-                            </div>
-                            @if ($desconto > 0 && isset($cod))
-                                <small class="form-text text-success fw-bold">
-                                    Total: R$ {{ number_format($descontoCalculadoItem, 2, ',', '.') }}
-                                </small>
-                            @endif
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label">Acréscimo</label>
-                            <div class="input-group">
-                                <input type="number" @if (!isset($cod)) disabled @endif
-                                    class="form-control" wire:model="acrescimo" wire:change="updateProductTotal"
-                                    min="0" step="0.01">
-                                <button class="btn btn-outline-secondary btn-sm" type="button"
-                                    wire:click="toggleAcrescimoTipo" title="Alternar entre % e R$">
-                                    @if ($acrescimoTipo === 'percent')
-                                        <i class="fas fa-percent"></i>
-                                    @else
-                                        <i class="fas fa-dollar-sign"></i>
-                                    @endif
-                                </button>
-                            </div>
-                            @if ($acrescimo > 0 && isset($cod))
-                                <small class="form-text text-danger fw-bold">
-                                    Total: R$ {{ number_format($acrescimoCalculadoItem, 2, ',', '.') }}
-                                </small>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Total</label>
-                            <input type="number" @if (!isset($cod)) disabled @endif
-                                class="form-control total-input" wire:model="total" min="0" readonly>
-                        </div>
-                    </div>
-
-                    <div class="d-grid">
-                        @if ($editProd)
-                            <button class="btn btn-warning btn-lg" type="button" wire:click="updateProd">
-                                <i class="fas fa-save"></i>
-                                Salvar Alterações
-                            </button>
-                        @else
-                            <button class="btn btn-sucesso btn-lg" type="button"
-                                @if (!empty($formasSelecionadas)) disabled @endif wire:click="addProd">
-                                <i class="fas fa-plus"></i>
-                                Adicionar Item
-                            </button>
-                        @endif
-                    </div>
-                </div>
             </div>
 
             <!-- Área central - Lista de itens -->
@@ -256,6 +159,117 @@
                 </div>
             </div>
         </div>
+        
+
+
+        <div class="pdv-footer">
+<!-- Área de entrada de produto -->
+
+    <div class="row g-2 align-items-end row-cols-1 row-cols-md-6">
+        <!-- Produto -->
+        <div class="col-md-2">
+            <label class="form-label"><i class="fas fa-barcode"></i>
+        Adicionar Produto</label>
+            <div class="input-group">
+                <input type="text" class="form-control"
+                    @isset($cod) disabled @endisset wire:model="prod"
+                    wire:keydown.enter="searchProds()" placeholder="Código ou nome do produto">
+                @isset($cod)
+                    <button class="btn btn-outline-danger" type="button" wire:click="cancelProd">
+                        <i class="fas fa-times"></i>
+                    </button>
+                @endisset
+            </div>
+        </div>
+
+        <!-- Quantidade -->
+        <div class="col-md-2">
+            <label class="form-label">Quantidade</label>
+            <input type="number" @if (!isset($cod)) disabled @endif class="form-control"
+                wire:model="qtde" wire:change="updateProductTotal" min="1" required>
+        </div>
+
+        <!-- Desconto -->
+        <div class="col-md-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Desconto</label>
+                @if ($desconto > 0 && isset($cod))
+                    <small class="form-text text-success fw-bold mb-0 ms-2">
+                        R$ {{ number_format($descontoCalculadoItem, 2, ',', '.') }}
+                    </small>
+                @endif
+            </div>
+            <div class="input-group">
+                <input type="number" @if (!isset($cod)) disabled @endif
+                    class="form-control" wire:model="desconto" wire:change="updateProductTotal"
+                    min="0"
+                    @if ($descontoTipo === 'percent') max="100" @else max="{{ $unitario }}" @endif
+                    step="0.01">
+                <button class="btn btn-outline-secondary btn-sm" type="button"
+                    wire:click="toggleDescontoTipo" title="Alternar entre % e R$">
+                    @if ($descontoTipo === 'percent')
+                        <i class="fas fa-percent"></i>
+                    @else
+                        <i class="fas fa-dollar-sign"></i>
+                    @endif
+                </button>
+            </div>
+        </div>
+
+        <!-- Acréscimo -->
+        <div class="col-md-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Acréscimo</label>
+                @if ($acrescimo > 0 && isset($cod))
+                    <small class="form-text text-danger fw-bold mb-0 ms-2">
+                        R$ {{ number_format($acrescimoCalculadoItem, 2, ',', '.') }}
+                    </small>
+                @endif
+            </div>
+            <div class="input-group">
+                <input type="number" @if (!isset($cod)) disabled @endif
+                    class="form-control" wire:model="acrescimo" wire:change="updateProductTotal"
+                    min="0" step="0.01">
+                <button class="btn btn-outline-secondary btn-sm" type="button"
+                    wire:click="toggleAcrescimoTipo" title="Alternar entre % e R$">
+                    @if ($acrescimoTipo === 'percent')
+                        <i class="fas fa-percent"></i>
+                    @else
+                        <i class="fas fa-dollar-sign"></i>
+                    @endif
+                </button>
+            </div>
+        </div>
+
+        <!-- Total -->
+        <div class="col-md-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Total</label>
+            </div>
+            <input type="number" @if (!isset($cod)) disabled @endif
+                class="form-control total-input" wire:model="total" min="0" readonly>
+        </div>
+
+        <!-- Botão -->
+        <div class="col-md-2">
+            <label class="form-label d-block">&nbsp;</label>
+            @if ($editProd)
+                <button class="btn btn-warning w-100" type="button" wire:click="updateProd">
+                    <i class="fas fa-save"></i>
+                </button>
+            @else
+                <button class="btn btn-sucesso w-100" type="button"
+                    @if (!empty($formasSelecionadas)) disabled @endif wire:click="addProd">
+                    <i class="fas fa-plus"></i>
+                </button>
+            @endif
+        </div>
+    </div>
+
+
+        </div>
+
+        
 
         <!-- Totais fixos na parte inferior -->
         <div class="pdv-footer">
@@ -657,7 +671,7 @@
         /* Layout principal */
         .pdv-main-layout {
             display: flex;
-            height: calc(100vh - 380px);
+            height: calc(100vh - 440px);
             gap: 1rem;
             padding: 1rem;
         }

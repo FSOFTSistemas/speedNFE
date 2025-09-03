@@ -7,9 +7,33 @@ use App\Exceptions\MalformedXmlException;
 use App\Services\NFCeService;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use App\Utils\FormatationUtil;
 
 trait EnviaNFCe
 {
+
+        private function makeNFCeService($empresa)
+    {
+        $config = [
+            "atualizacao" => date('Y-m-d h:i:s'),
+            "tpAmb" => (int) $empresa->ambiente,
+            "razaosocial" => $empresa->razao,
+            "siglaUF" => $empresa->endereco->uf,
+            "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
+            "schemes" => "PL_009_V4",
+            "versao" => "4.00",
+            "tokenIBPT" => "AAAAAAA",
+            "CSC" => $empresa->csc,
+            "CSCid" => "00000" . $empresa->idCsc,
+            "proxyConf"   => [
+                "proxyIp"   => "",
+                "proxyPort" => "",
+                "proxyUser" => "",
+                "proxyPass" => ""
+            ]
+        ];
+        return new NFCeService($config, $empresa);
+    }
     /**
      * Contém a lógica de negócio para enviar uma NFC-e.
      * Retorna um objeto com o status e a mensagem do resultado.
