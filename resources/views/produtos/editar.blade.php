@@ -385,56 +385,200 @@
                 </div>
 
                 {{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}
-                <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
-                    @if ($produto->tpProd)
-                       <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="tpVeic" class="form-label">Tipo de Veículo</label>
-                                <select class="form-select select2-basic" name="tpVeic" id="tpVeic" required>
-                                    <option value="02" {{ $produto->tpVeic == '02' ? 'selected' : '' }}>CICLOMOTOR</option>
-                                    <option value="03" {{ $produto->tpVeic == '03' ? 'selected' : '' }}>MOTONETA</option>
-                                    <option value="04" {{ $produto->tpVeic == '04' ? 'selected' : '' }}>MOTOCICLO</option>
-                                    <option value="05" {{ $produto->tpVeic == '05' ? 'selected' : '' }}>TRICICLO</option>
-                                    <option value="06" {{ $produto->tpVeic == '06' ? 'selected' : '' }}>AUTOMÓVEL</option>
-                                    <option value="07" {{ $produto->tpVeic == '07' ? 'selected' : '' }}>MICROÔNIBUS</option>
-                                    <option value="08" {{ $produto->tpVeic == '08' ? 'selected' : '' }}>ÔNIBUS</option>
-                                    <option value="10" {{ $produto->tpVeic == '10' ? 'selected' : '' }}>REBOQUE</option>
-                                    <option value="11" {{ $produto->tpVeic == '11' ? 'selected' : '' }}>SEMIREBOQUE</option>
-                                    <option value="13" {{ $produto->tpVeic == '13' ? 'selected' : '' }}>CAMINHONETA</option>
-                                    <option value="14" {{ $produto->tpVeic == '14' ? 'selected' : '' }}>CAMINHÃO</option>
-                                    <option value="17" {{ $produto->tpVeic == '17' ? 'selected' : '' }}>C.TRATOR</option>
-                                    <option value="22" {{ $produto->tpVeic == '22' ? 'selected' : '' }}>ESP/ÔNIBUS</option>
-                                    <option value="23" {{ $produto->tpVeic == '23' ? 'selected' : '' }}>MISTO/CAM</option>
-                                    <option value="24" {{ $produto->tpVeic == '24' ? 'selected' : '' }}>CARGA/CAM</option>
-                                </select>
-                                <div class="invalid-feedback">Informe um tipo de veículo válido.</div>
-                            </div>
-                            <div class="col-md-8 mb-3">
-                                <label for="chassiVeic" class="form-label">Chassi</label>
-                                <input type="text" class="form-control" id="chassiVeic" required name="chassiVeic" oninput="this.value = this.value.toUpperCase()" value="{{ $produto->chassiVeic }}">
-                                <div class="invalid-feedback">Informe um chassi.</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="renavanVeic" class="form-label">Renavam</label>
-                                <input type="text" class="form-control" id="renavanVeic" required name="renavanVeic" value="{{ $produto->renavanVeic }}">
-                                <div class="invalid-feedback">Informe um renavan.</div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="anoFabVeic" class="form-label">Ano de Fabricação</label>
-                                <input type="number" class="form-control" id="anoFabVeic" required name="anoFabVeic" min="1950" max="{{ date('Y') }}" value="{{ $produto->anoFabVeic }}">
-                                <div class="invalid-feedback">Informe um ano de fabricação.</div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="anoModVeic" class="form-label">Ano de Modelo</label>
-                                <input type="number" class="form-control" id="anoModVeic" required name="anoModVeic" min="1950" max="{{ date('Y') + 1 }}" value="{{ $produto->anoModVeic }}">
-                                <div class="invalid-feedback">Informe um ano de modelo.</div>
-                            </div>
-                        </div>
-                        {{-- O restante dos campos de veículo seguem o mesmo padrão... --}}
-                    @endif
-                </div>
+{{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}
+<div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
+    @if ($produto->tpProd)
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="tpVeic" class="form-label">Tipo de Veículo</label>
+                <select class="form-select select2-basic" name="tpVeic" id="tpVeic" required>
+                    <option value="02" {{ $produto->tpVeic == '02' ? 'selected' : '' }}>CICLOMOTOR</option>
+                    <option value="03" {{ $produto->tpVeic == '03' ? 'selected' : '' }}>MOTONETA</option>
+                    <option value="04" {{ $produto->tpVeic == '04' ? 'selected' : '' }}>MOTOCICLO</option>
+                    <option value="05" {{ $produto->tpVeic == '05' ? 'selected' : '' }}>TRICICLO</option>
+                    <option value="06" {{ $produto->tpVeic == '06' ? 'selected' : '' }}>AUTOMÓVEL</option>
+                    <option value="07" {{ $produto->tpVeic == '07' ? 'selected' : '' }}>MICROÔNIBUS</option>
+                    <option value="08" {{ $produto->tpVeic == '08' ? 'selected' : '' }}>ÔNIBUS</option>
+                    <option value="10" {{ $produto->tpVeic == '10' ? 'selected' : '' }}>REBOQUE</option>
+                    <option value="11" {{ $produto->tpVeic == '11' ? 'selected' : '' }}>SEMIREBOQUE</option>
+                    <option value="13" {{ $produto->tpVeic == '13' ? 'selected' : '' }}>CAMINHONETA</option>
+                    <option value="14" {{ $produto->tpVeic == '14' ? 'selected' : '' }}>CAMINHÃO</option>
+                    <option value="17" {{ $produto->tpVeic == '17' ? 'selected' : '' }}>C.TRATOR</option>
+                    <option value="22" {{ $produto->tpVeic == '22' ? 'selected' : '' }}>ESP/ÔNIBUS</option>
+                    <option value="23" {{ $produto->tpVeic == '23' ? 'selected' : '' }}>MISTO/CAM</option>
+                    <option value="24" {{ $produto->tpVeic == '24' ? 'selected' : '' }}>CARGA/CAM</option>
+                </select>
+                <div class="invalid-feedback">Informe um tipo de veículo válido.</div>
+            </div>
+            <div class="col-md-8 mb-3">
+                <label for="chassiVeic" class="form-label">Chassi</label>
+                <input type="text" class="form-control" id="chassiVeic" required name="chassiVeic" oninput="this.value = this.value.toUpperCase()" value="{{ $produto->chassiVeic }}">
+                <div class="invalid-feedback">Informe um chassi.</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="renavanVeic" class="form-label">Renavam</label>
+                <input type="text" class="form-control" id="renavanVeic" required name="renavanVeic" value="{{ $produto->renavanVeic }}">
+                <div class="invalid-feedback">Informe um renavam.</div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="anoFabVeic" class="form-label">Ano de Fabricação</label>
+                <input type="number" class="form-control" id="anoFabVeic" required name="anoFabVeic" min="1950" max="{{ date('Y') }}" value="{{ $produto->anoFabVeic }}">
+                <div class="invalid-feedback">Informe um ano de fabricação.</div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="anoModVeic" class="form-label">Ano de Modelo</label>
+                <input type="number" class="form-control" id="anoModVeic" required name="anoModVeic" min="1950" max="{{ date('Y') + 1 }}" value="{{ $produto->anoModVeic }}">
+                <div class="invalid-feedback">Informe um ano de modelo.</div>
+            </div>
+        </div>
+        <div class="row">
+             <div class="col-md-4 mb-3">
+                 <label for="pesoLVeic" class="form-label">Peso Líquido (kg)</label>
+                 <input type="number" class="form-control" step="0.01" id="pesoLVeic" name="pesoLVeic" value="{{ $produto->pesoLVeic }}" placeholder="0.00">
+             </div>
+             <div class="col-md-4 mb-3">
+                 <label for="pesoBVeic" class="form-label">Peso Bruto (kg)</label>
+                 <input type="number" class="form-control" id="pesoBVeic" name="pesoBVeic" value="{{ $produto->pesoBVeic }}" placeholder="0.00">
+             </div>
+             <div class="col-md-4 mb-3">
+                 <label for="distVeic" class="form-label">Distância entre Eixos (mm)</label>
+                 <input type="text" class="form-control" id="distVeic" name="distVeic" value="{{ $produto->distVeic }}" placeholder="0000">
+             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 mb-3">
+                <label for="combVeic" class="form-label">Combustível</label>
+                <select class="form-select select2-basic" name="combVeic" id="combVeic">
+                    <option value="01" {{ $produto->combVeic == '01' ? 'selected' : '' }}>ÁLCOOL</option>
+                    <option value="02" {{ $produto->combVeic == '02' ? 'selected' : '' }}>GASOLINA</option>
+                    <option value="03" {{ $produto->combVeic == '03' ? 'selected' : '' }}>DIESEL</option>
+                    <option value="16" {{ $produto->combVeic == '16' ? 'selected' : '' }}>ÁLCOOL/GASOLINA</option>
+                    <option value="17" {{ $produto->combVeic == '17' ? 'selected' : '' }}>GASOLINA/ÁLCOOL/GNV</option>
+                    <option value="18" {{ $produto->combVeic == '18' ? 'selected' : '' }}>GASOLINA/ELÉTRICO</option>
+                </select>
+            </div>
+            <div class="col-md-7 mb-3">
+                <label for="nMotorVeic" class="form-label">Nº do Motor</label>
+                <input type="text" class="form-control" id="nMotorVeic" name="nMotorVeic" value="{{ $produto->nMotorVeic }}" placeholder="Número do Motor" oninput="this.value = this.value.toUpperCase()">
+            </div>
+        </div>
+        <div class="row">
+             <div class="col-md-4 mb-3">
+                 <label for="cvVeic" class="form-label">Potência (CV)</label>
+                 <input type="number" step="0.01" class="form-control" id="cvVeic" name="cvVeic" value="{{ $produto->cvVeic }}" placeholder="0.00">
+             </div>
+            <div class="col-md-4 mb-3">
+                <label for="cm3Veic" class="form-label">Cilindradas (cm³)</label>
+                <input type="number" step="0.01" class="form-control" id="cm3Veic" name="cm3Veic" value="{{ $produto->cm3Veic }}" placeholder="0.00">
+            </div>
+             <div class="col-md-4 mb-3">
+                 <label for="serieVeic" class="form-label">Série</label>
+                 <input type="text" class="form-control" id="serieVeic" name="serieVeic" value="{{ $produto->serieVeic }}" placeholder="Número de Série">
+             </div>
+        </div>
+        <div class="row">
+             <div class="col-md-4 mb-3">
+                 <label for="tpPVeic" class="form-label">Tipo de Pintura</label>
+                 <input type="text" class="form-control" id="tpPVeic" name="tpPVeic" value="{{ $produto->tpPVeic }}" placeholder="Ex: Metálica">
+             </div>
+             <div class="col-md-4 mb-3">
+                 <label for="corVeic" class="form-label">Cor</label>
+                 <input type="text" class="form-control" id="corVeic" name="corVeic" oninput="this.value = this.value.toUpperCase()" value="{{ $produto->corVeic }}" placeholder="Ex: PRETO">
+             </div>
+             <div class="col-md-4 mb-3">
+                 <label for="cCorVeic" class="form-label">Código da Cor (DENATRAN)</label>
+                 <select class="form-select select2-basic" name="cCorVeic" id="cCorVeic">
+                     <option value="01" {{ $produto->cCorVeic == '01' ? 'selected' : '' }}>AMARELO</option>
+                     <option value="02" {{ $produto->cCorVeic == '02' ? 'selected' : '' }}>AZUL</option>
+                     <option value="03" {{ $produto->cCorVeic == '03' ? 'selected' : '' }}>BEGE</option>
+                     <option value="04" {{ $produto->cCorVeic == '04' ? 'selected' : '' }}>BRANCA</option>
+                     <option value="05" {{ $produto->cCorVeic == '05' ? 'selected' : '' }}>CINZA</option>
+                     <option value="06" {{ $produto->cCorVeic == '06' ? 'selected' : '' }}>DOURADA</option>
+                     <option value="07" {{ $produto->cCorVeic == '07' ? 'selected' : '' }}>GRENAR</option>
+                     <option value="08" {{ $produto->cCorVeic == '08' ? 'selected' : '' }}>LARANJA</option>
+                     <option value="09" {{ $produto->cCorVeic == '09' ? 'selected' : '' }}>MARROM</option>
+                     <option value="10" {{ $produto->cCorVeic == '10' ? 'selected' : '' }}>PRATA</option>
+                     <option value="11" {{ $produto->cCorVeic == '11' ? 'selected' : '' }}>PRETA</option>
+                     <option value="12" {{ $produto->cCorVeic == '12' ? 'selected' : '' }}>ROSA</option>
+                     <option value="13" {{ $produto->cCorVeic == '13' ? 'selected' : '' }}>ROXA</option>
+                     <option value="14" {{ $produto->cCorVeic == '14' ? 'selected' : '' }}>VERDE</option>
+                     <option value="15" {{ $produto->cCorVeic == '15' ? 'selected' : '' }}>VERMELHA</option>
+                     <option value="16" {{ $produto->cCorVeic == '16' ? 'selected' : '' }}>FANTASIA</option>
+                 </select>
+             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="cCorMontVeic" class="form-label">Cód. Cor Montadora</label>
+                <input type="text" class="form-control" id="cCorMontVeic" name="cCorMontVeic" value="{{ $produto->cCorMontVeic }}" placeholder="Código da Montadora">
+            </div>
+             <div class="col-md-4 mb-3">
+                 <label for="cMarcaVeic" class="form-label">Código da Marca</label>
+                 <input type="text" class="form-control" id="cMarcaVeic" name="cMarcaVeic" value="{{ $produto->cMarcaVeic }}" placeholder="Código da Marca/Modelo">
+             </div>
+             <div class="col-md-4 mb-3">
+                 <label for="condVeic" class="form-label">Condição do Veículo</label>
+                 <select class="form-select select2-basic" name="condVeic" id="condVeic">
+                     <option value="1" {{ $produto->condVeic == '1' ? 'selected' : '' }}>ACABADO</option>
+                     <option value="2" {{ $produto->condVeic == '2' ? 'selected' : '' }}>INACABADO</option>
+                     <option value="3" {{ $produto->condVeic == '3' ? 'selected' : '' }}>SEMIACABO</option>
+                 </select>
+             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="espVeic" class="form-label">Espécie do Veículo</label>
+                <select class="form-select select2-basic" name="espVeic" id="espVeic">
+                    <option value="1" {{ $produto->espVeic == '1' ? 'selected' : '' }}>PASSAGEIRO</option>
+                    <option value="2" {{ $produto->espVeic == '2' ? 'selected' : '' }}>CARGA</option>
+                    <option value="3" {{ $produto->espVeic == '3' ? 'selected' : '' }}>MISTO</option>
+                    <option value="4" {{ $produto->espVeic == '4' ? 'selected' : '' }}>CORRIDA</option>
+                    <option value="5" {{ $produto->espVeic == '5' ? 'selected' : '' }}>TRAÇÃO</option>
+                    <option value="6" {{ $produto->espVeic == '6' ? 'selected' : '' }}>ESPECIAL</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="vinVeic" class="form-label">Condição do Chassi (VIN)</label>
+                <select class="form-select select2-basic" name="vinVeic" id="vinVeic">
+                    <option value="N" {{ $produto->vinVeic == 'N' ? 'selected' : '' }}>NORMAL</option>
+                    <option value="R" {{ $produto->vinVeic == 'R' ? 'selected' : '' }}>REMARCADO</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="lotVeic" class="form-label">Lotação Máxima</label>
+                <input type="text" class="form-control" id="lotVeic" name="lotVeic" value="{{ $produto->lotVeic }}" placeholder="Nº de Pessoas">
+            </div>
+        </div>
+        <div class="row">
+             <div class="col-md-5 mb-3">
+                 <label for="restriVeic" class="form-label">Restrição</label>
+                 <select class="form-select select2-basic" name="restriVeic" id="restriVeic">
+                     <option value="0" {{ $produto->restriVeic == '0' ? 'selected' : '' }}>NÃO HÁ</option>
+                     <option value="1" {{ $produto->restriVeic == '1' ? 'selected' : '' }}>ALIENAÇÃO FIDUNCIÁRIA</option>
+                     <option value="2" {{ $produto->restriVeic == '2' ? 'selected' : '' }}>ARRENDAMENTO MERCANTIL</option>
+                     <option value="3" {{ $produto->restriVeic == '3' ? 'selected' : '' }}>RESERVA DE DOMÍNIO</option>
+                     <option value="4" {{ $produto->restriVeic == '4' ? 'selected' : '' }}>PENHOR DE VEÍCULOS</option>
+                     <option value="9" {{ $produto->restriVeic == '9' ? 'selected' : '' }}>OUTRAS</option>
+                 </select>
+             </div>
+            <div class="col-md-2 mb-3">
+                <label for="cargaVeic" class="form-label">Carga Máxima (kg)</label>
+                <input type="number" class="form-control" id="cargaVeic" name="cargaVeic" value="{{ $produto->cargaVeic }}" placeholder="0">
+            </div>
+            <div class="col-md-5 mb-3">
+                <label for="operVeic" class="form-label">Tipo de Operação</label>
+                <select class="form-select select2-basic" name="operVeic" id="operVeic">
+                    <option value="1" {{ $produto->operVeic == '1' ? 'selected' : '' }}>VENDA CONCESSIONÁRIA</option>
+                    <option value="2" {{ $produto->operVeic == '2' ? 'selected' : '' }}>FATURAMENTO DIRETO PARA CONSUMIDOR FINAL</option>
+                    <option value="3" {{ $produto->operVeic == '3' ? 'selected' : '' }}>VENDA DIRETO PARA GRANDES CONSUMIDORES</option>
+                    <option value="0" {{ $produto->operVeic == '0' ? 'selected' : '' }}>OUTRAS</option>
+                </select>
+            </div>
+        </div>
+    @endif
+</div>
             </div>
             <div class="row mt-4">
                 <div class="col-md-6 mx-auto text-center">
