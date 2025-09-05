@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Traits\EnviaNFCe;
+use App\Services\EstoquesService;
 
 class CupomController extends Controller
 {
@@ -22,14 +23,16 @@ class CupomController extends Controller
     private $itemCupomService;
     private $cupomFormaService;
     private $empresaServices;
+    private $estoqueService;
     use EnviaNFCe;
 
-    public function __construct(CupomService $cupomService, ItemCupomService $itemCupomService, CupomFormaService $cupomFormaService, EmpresasService $empresaServices)
+    public function __construct(CupomService $cupomService, ItemCupomService $itemCupomService, CupomFormaService $cupomFormaService, EmpresasService $empresaServices, EstoquesService $estoqueService)
     {
         $this->cupomService = $cupomService;
         $this->itemCupomService = $itemCupomService;
         $this->cupomFormaService = $cupomFormaService;
         $this->empresaServices = $empresaServices;
+        $this->estoqueService = $estoqueService;
     }
 
     public function index()
@@ -86,7 +89,12 @@ class CupomController extends Controller
             if ($request->input('acao_pos_salvar') === 'agora') {
                 
                 // Chama a lógica de envio que está no Trait, passando o ID da venda recém-criada
-                $resultadoEmissao = $this->_enviarNFCePeloId($cupomId);
+                $resultadoEmissao = $this->_enviarNFCePeloId(
+                    $cupomId,
+                    $this->cupomService,
+                    $this->empresaServices,
+                    $this->estoqueService
+                );
 
                 // Verifica o resultado retornado pelo Trait
                 if ($resultadoEmissao->status === 'success') {

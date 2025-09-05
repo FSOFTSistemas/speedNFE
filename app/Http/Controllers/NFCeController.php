@@ -105,7 +105,12 @@ class NFCeController extends Controller
     public function sendNFCe($id)
     {
         // Chama a lógica de negócio que está no Trait
-        $resultado = $this->_enviarNFCePeloId($id);
+        $resultado = $this->_enviarNFCePeloId(
+            $id,
+            $this->cupomService,
+            $this->empresaServices,
+            $this->estoqueService
+        );
 
         // Lida com o redirecionamento com base na resposta do Trait
         if ($resultado->status === 'success') {

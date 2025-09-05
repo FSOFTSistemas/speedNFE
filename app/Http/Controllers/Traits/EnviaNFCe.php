@@ -9,10 +9,15 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Utils\FormatationUtil;
 
+// Dependências que serão injetadas via controller
+use App\Services\CupomService;
+use App\Services\EmpresasService;
+use App\Services\EstoquesService;
+
 trait EnviaNFCe
 {
 
-        private function makeNFCeService($empresa)
+    private function makeNFCeService($empresa)
     {
         $config = [
             "atualizacao" => date('Y-m-d h:i:s'),
@@ -39,20 +44,24 @@ trait EnviaNFCe
      * Retorna um objeto com o status e a mensagem do resultado.
      *
      * @param int $id
+     * @param CupomService $cupomService
+     * @param EmpresasService $empresaServices
+     * @param EstoquesService $estoqueService
      * @return object
      */
-    protected function _enviarNFCePeloId($id): object
+    protected function _enviarNFCePeloId(int $id, CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService): object
     {
         try {
             DB::beginTransaction();
-            $cupom = $this->cupomService->getCupom($id);
-            $nfceService = $this->makeNFCeService($cupom->empresa);
-            $this->empresaServices->incrementLastNFCe($cupom->empresa_id);
+            // Agora usa as variáveis recebidas como parâmetro, não mais $this->
+            $cupom = $cupomService->getCupom($id);
+            $nfceService = $this->makeNFCeService($cupom->empresa); // Este método está no próprio trait, então o $this continua
+            $empresaServices->incrementLastNFCe($cupom->empresa_id);
             $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
-            $this->cupomService->updateCoupon($cupom);
+            $cupomService->updateCoupon($cupom);
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
             foreach ($cupom->itens as $item) {
-                $this->estoqueService->out($item->produto_id, $item->qtde);
+                $estoqueService->out($item->produto_id, $item->qtde);
             }
             DB::commit();
 
@@ -61,7 +70,7 @@ trait EnviaNFCe
 
         } catch (LimitExceededException | MalformedXmlException $e) {
             DB::rollback();
-            $this->cupomService->rejectedCoupon($id);
+            $cupomService->rejectedCoupon($id);
             // ERRO CONHECIDO: Retorna um objeto de aviso
             return (object) ['status' => 'warning', 'message' => $e->getMessage()];
 

@@ -112,10 +112,10 @@ class EmpresasController extends Controller
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required|numeric',
-                'clientes' => 'required|numeric',
-                'produtos' => 'required|numeric',
-                'nfes' => 'required|numeric',
-                'mdfes' => 'required|numeric'
+                // 'clientes' => 'required|numeric',
+                // 'produtos' => 'required|numeric',
+                // 'nfes' => 'required|numeric',
+                // 'mdfes' => 'required|numeric'
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'max' => 'O campo :attribute deve conter no máximo :max caracteres!',

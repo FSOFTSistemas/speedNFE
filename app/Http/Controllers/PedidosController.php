@@ -105,7 +105,7 @@ class PedidosController extends Controller
     public function cartaCorrecao(Request $request)
     {
         try {
-            $venda = Pedido::find($request->venda_id);
+            $venda = Pedido::find($request->venda_id_cce);
             $emitente = Empresa::find($venda->empresa_id);
 
             if ($emitente == null) {
@@ -146,7 +146,7 @@ class PedidosController extends Controller
     public function cancelarNFe(Request $request)
     {
         try {
-            $venda = Pedido::find($request->venda_id);
+            $venda = Pedido::find($request->venda_id_cancelar);
             $emitente = Empresa::find($venda->empresa_id);
             if ($emitente == null) {
                 return response()->json('Configure o emitente', 404);
