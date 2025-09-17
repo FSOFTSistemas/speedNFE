@@ -183,7 +183,7 @@ class EmpresasController extends Controller
                 'mdfes' => 'required|numeric',
                 'name' => 'required|max:255',
                 'email' => 'required|email',
-                'confirm_email' => 'required',
+                // 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
             ], [
