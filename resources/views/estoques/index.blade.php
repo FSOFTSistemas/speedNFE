@@ -117,7 +117,9 @@
                             <td>{{ $estoque->estoque_atual }}</td>
                             <td class="action-buttons">
                                 <a title="Visualizar" href="{{ route('estoque.show', [$estoque->id]) }}" class="text-view"><i class="far fa-eye"></i></a>
+                                @if (Auth::user()->tipo == "admin")
                                 <a title="Editar" href="{{ route('estoque.edit', [$estoque->id]) }}" class="text-edit"><i class="far fa-edit"></i></a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

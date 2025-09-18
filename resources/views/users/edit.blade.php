@@ -70,7 +70,22 @@
                             </select>
                             <div class="invalid-feedback">Informe um tipo.</div>
                         </div>
+                        <hr>
                     </div>
+                    <p class="text-muted">Deixe os campos abaixo em branco para não alterar a senha.</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="senha" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" name="senha" id="senha" minlength="4">
+                            <div class="invalid-feedback">A senha precisa ter no mínimo 4 caracteres.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="senha_confirmation" class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" name="senha_confirmation" id="senha_confirmation">
+                            <div class="invalid-feedback">As senhas não conferem.</div>
+                        </div>
+                    </div>
+                    <hr>
 
                     {{-- CAMPOS EXCLUSIVOS DO MASTER --}}
                     @if (Auth::user()->cargo == 'master')

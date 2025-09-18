@@ -95,11 +95,14 @@ Route::middleware(['check.subscription'])->group(function () {
     //USUARIO
     Route::prefix('usuarios')->group(function () {
         Route::get('', [UsersController::class, 'show'])->name('index_usuario')->middleware('auth');
-        Route::get('/criar', [UsersController::class, 'create'])->name('usuario.create')->middleware(['auth', 'access.permission:master|admin']);
-        Route::post('/salvar', [UsersController::class, 'store'])->name('usuario.salvar')->middleware(['auth', 'access.permission:master|admin']);
-        Route::delete('/deletar', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth', 'access.permission:master']);
-        Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware(['auth', 'access.permission:master']);
-        Route::put('/{id}/atualizar', [UsersController::class, 'update'])->name('usuario.update')->middleware(['auth', 'access.permission:master|admin']);
+        Route::get('/criar', [UsersController::class, 'create'])->name('usuario.create')->middleware(['auth']);
+        Route::post('/salvar', [UsersController::class, 'store'])->name('usuario.salvar')->middleware(['auth']);
+        Route::delete('/deletar', [UsersController::class, 'destroy'])->name('excluir_usuario')->middleware(['auth']);
+        Route::get('/editar/{id}', [UsersController::class, 'editar'])->name('editar_usuario')->middleware(['auth']);
+        Route::put('/{id}/atualizar', [UsersController::class, 'update'])->name('usuario.update')->middleware(['auth']);
+
+        Route::post('/inativar', [UsersController::class, 'inativar'])->name('usuario.inativar');
+        Route::patch('/usuarios/{id}/ativar', [UsersController::class, 'ativar'])->name('usuario.ativar');
     });
 
     //PRODUTOS

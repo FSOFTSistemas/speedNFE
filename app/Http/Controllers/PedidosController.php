@@ -368,6 +368,9 @@ class PedidosController extends Controller
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max caracteres'
             ]);
+
+            
+
             DB::beginTransaction();
             $subtotal = 0;
             $desconto = 0;
@@ -392,6 +395,12 @@ class PedidosController extends Controller
                 );
                 foreach ($request->vendaItens as $item) {
                     $prod = $this->produtoServices->um($item['produto_id']);
+
+                    if ($request->finalidade == 1)
+                    {
+                        $this->itemServices->verificaVendaPorProduto($request->empresa, $prod); 
+                    }
+
                     $this->itemServices->create(
                         $pedido->id,
                         $prod,
@@ -421,7 +430,7 @@ class PedidosController extends Controller
             return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getmessage());
         }
     }
 

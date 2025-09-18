@@ -24,7 +24,8 @@ class User extends Authenticatable
         'password',
         'cargo',
         'empresa_id',
-        'tipo'
+        'tipo',
+        'status'
     ];
 
     /**

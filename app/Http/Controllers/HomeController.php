@@ -26,12 +26,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $quantidadePedidosPorMes = Pedido::where(DB::raw('MONTH(data)'), date('m'))->where('empresa_id', Auth::user()->empresa_id)->count();
-        $quantidadeProduto = Produto::where('empresa_id', Auth::user()->empresa_id)->count();
-        $quantidadeCliente = Cliente::where('empresa_id', Auth::user()->empresa_id)->count();
-        $quantidadeValorPedido = Pedido::where(DB::raw('MONTH(data)'), date('m'))->where('empresa_id', Auth::user()->empresa_id)->sum('total');
-        $quantidadeProdutosEmEstoque = Estoque::where('estoque_atual', '>', 0)->where('empresa_id', Auth::user()->empresa_id)->count();
-        return view('home', ['quantidadePedidosPorMes' => $quantidadePedidosPorMes, 'quantidadeProduto' => $quantidadeProduto, 'quantidadeCliente' => $quantidadeCliente, 'quantidadeValorPedido' => $quantidadeValorPedido, 'quantidadeProdutosEmEstoque' => $quantidadeProdutosEmEstoque]);
+        if(Auth::user()->tipo == 'admin'){
+            $quantidadePedidosPorMes = Pedido::where(DB::raw('MONTH(data)'), date('m'))->where('empresa_id', Auth::user()->empresa_id)->count();
+            $quantidadeProduto = Produto::where('empresa_id', Auth::user()->empresa_id)->count();
+            $quantidadeCliente = Cliente::where('empresa_id', Auth::user()->empresa_id)->count();
+            $quantidadeValorPedido = Pedido::where(DB::raw('MONTH(data)'), date('m'))->where('empresa_id', Auth::user()->empresa_id)->sum('total');
+            $quantidadeProdutosEmEstoque = Estoque::where('estoque_atual', '>', 0)->where('empresa_id', Auth::user()->empresa_id)->count();
+            return view('home', ['quantidadePedidosPorMes' => $quantidadePedidosPorMes, 'quantidadeProduto' => $quantidadeProduto, 'quantidadeCliente' => $quantidadeCliente, 'quantidadeValorPedido' => $quantidadeValorPedido, 'quantidadeProdutosEmEstoque' => $quantidadeProdutosEmEstoque]);
+        } else {
+            return view('home2');
+        }
     }
 
     public function homePage(){

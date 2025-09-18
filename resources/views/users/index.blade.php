@@ -97,6 +97,21 @@
 
 @section('content')
 <div class="card card-main">
+    @if(Auth::user()->cargo === 'master')
+    <div class="card-header">
+        <h3 class="card-title">Listagem de Usuários</h3>
+        <div class="card-tools">
+            <ul class="nav nav-pills ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link {{ $status == 'ativo' ? 'active' : '' }}" href="{{ route('index_usuario', ['status' => 'ativo']) }}">Ativos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ $status == 'inativo' ? 'active' : '' }}" href="{{ route('index_usuario', ['status' => 'inativo']) }}">Inativos</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    @endif
     <div class="card-body p-0">
         @component('components.dataTable', [
             'responsive' => true,
@@ -143,9 +158,8 @@
     'modalTitle' => 'Excluir Usuário',
     'sizeModal' => 'modal-md',
 ])
-    <form id="deleteForm" method="POST">
+    <form id="deleteForm" action="{{ route('usuario.inativar') }}" method="POST">
         @csrf
-        @method('DELETE')
         <input type="hidden" name="userId" id="userId">
         <div class="modal-body text-center">
             <p>Tem certeza que deseja apagar o usuário <br> <strong id="userEmail" class="text-danger"></strong>?</p>
@@ -161,11 +175,10 @@
 
 @section('js')
     <script>
-        // Função aprimorada para exibir o e-mail no modal
         function setaDadosModal(userId, userEmail) {
             // Define a action correta para o formulário
             let form = document.getElementById('deleteForm');
-            form.action = '/usuarios/' + userId; // Ajuste a rota conforme necessário
+            form.action = '/usuarios/inativar'; 
             
             // Seta o ID no input hidden
             document.getElementById('userId').value = userId;
