@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemPedido extends Model
 {
+
+    use HasFactory;
     protected $fillable = ['pedido_id', 'produto_id', 'qtde', 'empresa_id', 'desconto', 'acrescimo', 'unitario'];
 
     public function produto(){
@@ -17,5 +19,10 @@ class ItemPedido extends Model
         return $this->hasOneThrough(cfop::class, Pedido::class, 'id', 'id', 'pedido_id', 'cfop_id');
     }
 
-    use HasFactory;
+    public function pedido()
+{
+    return $this->belongsTo(Pedido::class);
+}
+
+
 }

@@ -24,7 +24,7 @@ class PlanoDeContaController extends Controller
     {
         try {
             $request->validate([
-                'codigo' => 'required|unique:plano_de_contas',
+                'codigo' => 'required',
                 'descricao' => 'required',
                 'tipo' => 'required|in:Receita,Despesa,Ativo,Passivo',
                 'conta_pai_id' => 'nullable|exists:plano_de_contas,id',
@@ -47,7 +47,7 @@ class PlanoDeContaController extends Controller
         try {
             $planoConta = PlanoDeConta::findOrFail($id);
 
-    
+
 
             $dadosValidados = $request->validate([
                 'codigo' => "required|unique:plano_de_contas,codigo,{$id}",
