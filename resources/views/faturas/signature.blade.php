@@ -9,86 +9,95 @@
 @stop
 
 @section('content')
+    @php
+        // Define parâmetros padrões
+        $expiracao = 3600; // 1 hora
+    @endphp
+
     <section>
         <div class="card">
             <div class="card-content">
                 <div class="card-body">
-                    @if (isset($signature->due))
-                        <div class="row">
-                            <div class="col">
-                                <h6>
-                                    <b>Licença para plataforma - Speed NFe</b>
-                                </h6>
+
+                    {{-- Histórico de Pagamentos --}}
+                    <div class="card border-secondary">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-receipt text-secondary"></i> Histórico de Pagamentos</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th style="white-space: nowrap;">Data Vencimento</th>
+                                            <th style="white-space: nowrap;">Data Recebimento</th>
+                                            <th style="white-space: nowrap;">Valor</th>
+                                            <th>Status</th>
+                                            <th>TXID</th>
+                                            <th style="white-space: nowrap;">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($payments ?? [] as $pay)
+                                            <tr>
+                                                <td>{{ $pay->descricao ?? '-' }}</td>
+                                                <td>{{ $pay->data_vencimento ?? '-' }}</td>
+                                                <td>{{ $pay->data_recebimento ?? '-' }}</td>
+                                                <td>R${{ number_format($pay->valor ?? 0, 2, ',', '.') }}</td>
+                                                <td>
+                                                    @php($st = strtoupper(trim($pay->status ?? '')))
+                                                    <span class="badge badge-{{ 
+                                                        $st === 'RECEBIDO' ? 'success' : (
+                                                        $st === 'PENDENTE' ? 'warning' : (
+                                                        $st === 'ATRASADO' ? 'danger' : 'secondary')) }}">
+                                                        {{ $st ?: 'N/D' }}
+                                                    </span>
+                                                </td>
+                                                <td style="max-width: 220px; overflow:hidden; text-overflow:ellipsis;">
+                                                    {{ $pay->txid ?? '-' }}
+                                                </td>
+                                                <td class="text-nowrap">
+
+                                                    {{-- Se tiver TXID, mostra botão "Ver" --}}
+                                                    @if (!empty($pay->txid))
+                                                        <a class="btn btn-xs btn-outline-primary"
+                                                            href="{{ url('/pix/cob/' . $pay->txid) }}"
+                                                            target="_blank">
+                                                            <i class="fas fa-eye"></i> Ver
+                                                        </a>
+                                                    @endif
+
+                                                    {{-- Se estiver PENDENTE ou ATRASADO, mostra botão "Pagar" --}}
+                                                    @if (in_array($st, ['PENDENTE', 'ATRASADO']))
+                                                        <a class="btn btn-xs btn-success ml-1"
+                                                            href="{{ route('pix.pagamento', [
+                                                                'valor' => number_format($pay->valor ?? 0, 2, '.', ''),
+                                                                'descricao' => $pay->descricao ?? 'Pagamento de Mensalidade',
+                                                                'expiracao' => 3600,
+                                                            ]) }}">
+                                                            <i class="fas fa-qrcode"></i> Pagar
+                                                        </a>
+                                                    @endif
+
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted py-4">
+                                                    Nenhum pagamento encontrado.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <h6>Mensal</h6>
-                            </div>
-                        </div>
-
-                        <div class="row pt-3">
-                            <div class="col">
-                                <h6><i class="fas fa-history text-teal"></i> Renovação automática</h6>
-                                <div class="row">
-                                    <div class="col">
-                                        <h6>ativada</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <h6>Data de expiração</h6>
-                                <div class="row">
-                                    <div class="col">
-                                        <h6
-                                            title="{{ isset($signature->due->expires_in) ? 'Expira em breve' : 'Expirado' }}">
-                                            <i class="fas fa-exclamation-circle text-pink"></i>
-                                            {{ $signature->due->expired_on ?? $signature->due->expires_in }}
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <h6>Preço de renovação</h6>
-                                <div class="row">
-                                    <div class="col">
-                                        <h6>R${{ number_format($signature->value, 2, '.', '.') }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <a class="btn btn-outline-primary border-secondary" data-toggle="modal"
-                                    data-target="#renewSignatureModal">Renovar agora</a>
-                            </div>
-                        </div>
-
-                        @component('components.modal', [
-                            'modalId' => 'renewSignatureModal',
-                            'modalTitle' => 'Renovar Assinatura',
-                            'sizeModal' => 'modal-lg',
-                        ])
-                        @endcomponent
-                    @else
-                        <div class="text-center">
-                            <h5>Seu perfil é isento de assinaturas dentro de nossa plataforma! <br> Aproveite gratuitamente
-                                as nossas funcionalidades</h5>
-                        </div>
-                    @endif
+                    </div>
+                    {{-- /Histórico --}}
 
                 </div>
             </div>
         </div>
     </section>
-
-    @component('components.modal', [
-        'modalId' => 'renewSignatureModal',
-        'modalTitle' => 'Renovar Assinatura',
-        'sizeModal' => 'modal-lg',
-    ])
-    @endcomponent
-
 @endsection

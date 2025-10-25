@@ -15,8 +15,22 @@ class FaturaController extends Controller
     {
         $customerCpfCnpj = auth()->user()->empresa->cpf_cnpj;
         $response = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj);
-        $body = json_decode($response->body());
-        return view('faturas.signature', ['signature' => $body]);
+        $history = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj . '/payment-history');
+        $signature = json_decode($response->body()) ?: new \stdClass();
+        $paymentsObj  = json_decode($history->body());
+
+        // compat: algumas views esperam $signature->payments
+        $signature->payments = $paymentsObj;
+
+
+        $payments = collect($paymentsObj ?? [])
+            ->flatten(1)  // remove um nível de array ([[obj],[obj]] → [obj,obj])
+            ->filter()    // remove nulls, se existirem
+            ->values()    // reindexa de 0,1,2...
+            ->all();
+
+
+        return view('faturas.signature', compact('signature', 'payments'));
     }
 
     public function paymentHistory()
@@ -26,12 +40,10 @@ class FaturaController extends Controller
         $response = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj . '/payment-history');
         $body = json_decode($response->body());
         return view('faturas.payment-history', ['response' => $body]);
-
     }
 
     public function paymentMethods()
     {
         return view('faturas.payment-methods');
     }
-
 }
