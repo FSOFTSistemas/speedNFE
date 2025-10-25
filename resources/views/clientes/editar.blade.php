@@ -94,6 +94,22 @@
 @stop
 
 @section('content')
+    <div class="alert alert-secondary">
+        <strong>ATENÇÃO:</strong>
+        <p>Para o campo de <b>Inscrição Estadual</b>, preencha da seguinte forma, se o cliente for <b>Pessoa Jurídica</b>:</p>
+        <ul>
+            <li style="color: gold">
+                <b><i>É CONTRIBUINTE: </i></b> Se o cliente possui Inscrição Estadual, digite o <b style="color: white">número da inscrição</b>.
+            </li>
+            <li style="color: gold">
+                <b><i>É CONTRIBUINTE ISENTO: </i> </b> Se o cliente é contribuinte, mas isento de inscrição, digite <b style="color: white">ISENTO</b>.
+            </li>
+            <li style="color: gold">
+                <b><i>NÃO É CONTRIBUINTE: </i></b> Se o cliente é consumidor final (pessoa física ou jurídica que não revende a
+                mercadoria), deixe o campo <b style="color: white">em branco</b>.
+            </li>
+        </ul>
+    </div>
 <div class="card card-main">
     <div class="card-body">
         <ul class="nav nav-tabs" id="tab" role="tablist">
@@ -147,9 +163,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="rg_ie" class="form-label">RG / Inscrição Estadual</label>
-                            <input class="form-control" type="text" name="rg_ie" id="rg_ie" required placeholder="RG ou Inscrição Estadual" value="{{ $cliente->rg_ie }}">
-                            <div class="invalid-feedback">Informe um RG/IE válido.</div>
+                            <label for="rg_ie" class="form-label">Inscrição Estadual</label>
+                            <input class="form-control" type="text" name="rg_ie" id="rg_ie" placeholder="Inscrição Estadual" value="{{ $cliente->rg_ie }}">
+                            <div class="invalid-feedback">Informe uma IE válida.</div>
+                            <small style="color: red;">
+                                    Obrigatório para clientes contribuintes.
+                                </small>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="telefone" class="form-label">Telefone</label>
@@ -290,39 +309,63 @@
                 })
                 .catch(error => console.error('Erro ao buscar CEP:', error));
         });
-        document.getElementById("cnpj_button").addEventListener("click", function(event) {
-            event.preventDefault();
-            const cnpj = document.getElementById('cpf_cnpj').value;
-            const tipo = document.getElementById('tipo').value;
-            if (tipo == 2) {
-                fetch('/clientes/cnpj', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ cnpj: somenteNumeros(cnpj) })
-                })
-                .then(response => response.json())
-                .then(resultado => {
-                    if (resultado && resultado.nome) {
-                        document.getElementById('nome').value = resultado.nome;
-                        document.getElementById('apelido').value = resultado.fantasia || '';
-                        document.getElementById("bairro").value = resultado.bairro;
-                        document.getElementById("cidade").value = resultado.municipio;
-                        document.getElementById("rua").value = resultado.logradouro;
-                        document.getElementById("uf").value = resultado.uf;
-                        document.getElementById("cep").value = resultado.cep.replace(/\D/g, '');
-                        document.getElementById("numero").value = resultado.numero;
-                    } else {
-                        alert("CNPJ não encontrado!");
-                    }
-                })
-                .catch(error => console.error('Erro ao buscar CNPJ:', error));
-            } else {
-                alert("Para busca automática, o tipo deve ser Pessoa Jurídica!");
-            }
-        });
+         document.getElementById("cnpj_button").addEventListener("click", function(event) {
+                event.preventDefault();
+                const cnpj = cpfCnpjInput.value;
+                const tipo = document.getElementById('tipo').value;
+
+                if (tipo == 2) {
+                    fetch('/clientes/cnpj', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                cnpj: somenteNumeros(cnpj)
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(resultado => {
+                            if (resultado && resultado.nome) {
+                                document.getElementById('nome').value = resultado.nome;
+                                document.getElementById('apelido').value = resultado.fantasia || '';
+                                document.getElementById("bairro").value = resultado.bairro;
+                                document.getElementById("cidade").value = resultado.municipio;
+                                document.getElementById("rua").value = resultado.logradouro;
+                                document.getElementById("uf").value = resultado.uf;
+                                document.getElementById("cep").value = resultado.cep.replace(/\D/g, '');
+                                document.getElementById("numero").value = resultado.numero;
+
+                                if (resultado.inscricao_estadual) {
+                                    document.getElementById("rg_ie").value = resultado
+                                        .inscricao_estadual;
+                                }
+
+                                // 🔹 NOVO: já busca o CEP automaticamente
+                                const cep = resultado.cep.replace(/\D/g, '');
+                                if (cep) {
+                                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                                        .then(resp => resp.json())
+                                        .then(data => {
+                                            if (!data.erro) {
+                                                document.getElementById("ibge").value = data.ibge;
+                                                if (salvarButton) salvarButton.disabled = false;
+                                            }
+                                        })
+                                        .catch(error => console.error('Erro ao buscar CEP após CNPJ:',
+                                            error));
+                                }
+                            } else {
+                                alert("CNPJ não encontrado!");
+                            }
+                        })
+                        .catch(error => console.error('Erro ao buscar CNPJ:', error));
+                } else {
+                    alert("Para busca automática, o tipo deve ser Pessoa Jurídica!");
+                }
+            });
     });
 </script>
 @endpush

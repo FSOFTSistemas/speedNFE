@@ -26,7 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if(Auth::user()->tipo == 'admin'){
+        if(Auth::user()->tipo == 'admin' || Auth::user()->cargo == 'master'){
             $quantidadePedidosPorMes = Pedido::where(DB::raw('MONTH(data)'), date('m'))->where('empresa_id', Auth::user()->empresa_id)->count();
             $quantidadeProduto = Produto::where('empresa_id', Auth::user()->empresa_id)->count();
             $quantidadeCliente = Cliente::where('empresa_id', Auth::user()->empresa_id)->count();

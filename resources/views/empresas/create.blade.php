@@ -201,6 +201,13 @@
                                 <option value="">Selecione uma Permissão</option>
                                 <option value="master" @if (old('cargo') == 'master') selected @endif>Master</option>
                                 <option value="admin" @if (old('cargo') == 'admin') selected @endif>Admin</option>
+                                <option value="client-NFe" @if (old('cargo') == 'client-NFe') selected @endif>Apenas NFe</option>
+                                <option value="client-NFCe" @if (old('cargo') == 'client-NFCe') selected @endif>Apenas NFCe</option>
+                                <option value="client-MDFe" @if (old('cargo') == 'client-MDFe') selected @endif>Apenas MDFe</option>
+                                <option value="client-CTe" @if (old('cargo') == 'client-CTe') selected @endif>Apenas CTe</option>
+                                <option value="client-advanced1" @if (old('cargo') == 'client-advanced1') selected @endif>NFe e MDFe</option>
+                                <option value="client-advanced2" @if (old('cargo') == 'client-advanced2') selected @endif>NFe e NFCe</option>
+                                <option value="client-advanced3" @if (old('cargo') == 'client-advanced3') selected @endif>CTe e MDFe</option>
                             </select><div class="invalid-feedback">Informe a permissão.</div>
                         </div>
                     </div>
@@ -219,7 +226,6 @@
 
 @section('js')
     <script>
-        // Scripts originais mantidos para funcionalidade
         (() => { 'use strict'; const forms = document.querySelectorAll('.needs-validation'); Array.from(forms).forEach(form => { form.addEventListener('submit', event => { if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); })();
         function formatarCpfCnpj(valor) { valor = valor.replace(/\D/g, ''); if (valor.length === 11) { return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); } else if (valor.length === 14) { return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5'); } else { return valor; } }
         function somenteNumeros(valor) { return valor.replace(/\D/g, ""); }

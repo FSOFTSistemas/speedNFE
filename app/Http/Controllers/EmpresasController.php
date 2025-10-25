@@ -183,6 +183,7 @@ class EmpresasController extends Controller
                 'mdfes' => 'required|numeric',
                 'name' => 'required|max:255',
                 'email' => 'required|email',
+                'tipo' => 'nullable',
                 // 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
@@ -195,6 +196,7 @@ class EmpresasController extends Controller
                 'file' => 'O certificado deve ser um arquivo!',
             ]);
             DB::beginTransaction();
+            $request['tipo'] = 'admin';
             $endereco = $this->enderecoServices->salvar(
                 $request->rua,
                 $request->bairro,
@@ -237,7 +239,8 @@ class EmpresasController extends Controller
                 $request->password,
                 $request->cargo,
                 $empresa->id,
-                $request->name
+                $request->name,
+                $request->tipo
             );
             DB::commit();
             return redirect()->route('empresa.show')->with('success', 'Empresa foi criada com sucesso!');

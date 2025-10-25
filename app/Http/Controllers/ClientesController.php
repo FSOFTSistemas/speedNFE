@@ -64,7 +64,7 @@ class ClientesController extends Controller
                 'codigo' => 'required',
                 'limite' => 'required',
                 'cpf_cnpj' => 'required',
-                'rg_ie' => 'required',
+                'rg_ie' => 'nullable',
                 'tipo' => 'required',
                 'telefone' => 'required|max:20',
                 'empresa' => 'required',
@@ -170,7 +170,7 @@ class ClientesController extends Controller
                 'nome' => 'required|max:255',
                 'apelido' => 'required|max:255',
                 'cpf_cnpj' => 'required',
-                'rg_ie' => 'required',
+                'rg_ie' => 'nullable',
                 'telefone' => 'required',
                 'limite' => 'required',
                 'rua' => 'required',
@@ -216,25 +216,70 @@ class ClientesController extends Controller
         }
     }
 
-    public function BuscarCNPJ(Request $request)
-    {
-        try {
-            $cnpj = $request->cnpj;
-            $URL = "https://receitaws.com.br/v1/";
-            $client = new Client([
-                'verify' => false,
-                'base_uri' => $URL,
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Access-Control-Allow-Origin' => 'https://receitaws.com.br',
-                ],
-            ]);
-            $response = $client->get("cnpj/" . $cnpj);
-            $body = $response->getBody()->getContents();
-            $responseXml = json_decode($body);
-            return $responseXml;
-        } catch (Exception $e) {
-            return back();
+   public function BuscarCNPJ(Request $request)
+{
+    try {
+        $cnpj = preg_replace('/\D/', '', $request->cnpj); // só números
+        $URL = "https://publica.cnpj.ws/cnpj/";
+
+        $client = new \GuzzleHttp\Client([
+            'verify' => false,
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        $response = $client->get($URL . $cnpj);
+        $body = $response->getBody()->getContents();
+        $json = json_decode($body, true);
+
+        if (!$json || isset($json['status']) && $json['status'] == 404) {
+            return response()->json(['erro' => 'CNPJ não encontrado'], 404);
         }
+
+        // tenta pegar a primeira inscrição estadual
+        $inscricaoEstadual = $json['estabelecimento']['inscricoes_estaduais'][0]['inscricao_estadual'] 
+            ?? 'ISENTO';
+
+        // 🔹 Normalizamos para os campos já usados na view
+        return response()->json([
+            'nome'      => $json['razao_social'] ?? '',
+            'fantasia'  => $json['estabelecimento']['nome_fantasia'] ?? '',
+            'logradouro'=> ($json['estabelecimento']['tipo_logradouro'] ?? '') . ' ' . ($json['estabelecimento']['logradouro'] ?? ''),
+            'numero'    => $json['estabelecimento']['numero'] ?? '',
+            'bairro'    => $json['estabelecimento']['bairro'] ?? '',
+            'municipio' => $json['estabelecimento']['cidade']['nome'] ?? '',
+            'uf'        => $json['estabelecimento']['estado']['sigla'] ?? '',
+            'cep'       => $json['estabelecimento']['cep'] ?? '',
+            'inscricao_estadual' => $inscricaoEstadual,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'erro' => 'Erro ao buscar CNPJ', 
+            'detalhes' => $e->getMessage()
+        ], 500);
     }
+}
+
+
+public function checkCpfCnpj(Request $request)
+{
+    $request->validate(['cpf_cnpj' => 'required|string']);
+
+    $cpfCnpj = $request->cpf_cnpj;
+
+    if (empty($cpfCnpj)) {
+        return response()->json(['exists' => false]);
+    }
+
+    $empresaId = Auth::user()->empresa_id; 
+
+    $exists = DB::table('clientes') 
+                ->where('cpf_cnpj', $cpfCnpj)
+                ->where('situacao', 0) 
+                ->where('empresa_id', $empresaId) 
+                ->exists();
+
+    return response()->json(['exists' => $exists]);
+}
 }

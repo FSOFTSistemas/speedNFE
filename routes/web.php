@@ -266,5 +266,7 @@ Route::prefix('faturas')->group(function () {
 
 Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
 
+Route::post('/clientes/check-cpf', [ClientesController::class, 'checkCpfCnpj'])->name('cliente.checkCpfCnpj');
+
 
 require __DIR__ . '/auth.php';

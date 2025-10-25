@@ -91,6 +91,24 @@
         background-color: var(--action-delete);
         color: #fff;
     }
+
+    /* --- CSS ADICIONADO PARA A PESQUISA --- */
+    .input-group .form-control {
+        box-shadow: none; 
+    }
+    .input-group .form-control:focus {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+    .input-group-text {
+        border-right: 0;
+        background-color: var(--card-bg);
+    }
+    .form-control.border-left-0 {
+        border-left: 0;
+    }
+    /* --- FIM DO CSS ADICIONADO --- */
+
 </style>
 @endpush
 
@@ -112,6 +130,16 @@
         </div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+                <input type="text" class="form-control" id="searchClientInput" placeholder="Pesquisar por nome ou CPF/CNPJ...">
+            </div>
+        </div>
+    </div>
     <div class="card card-main">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -125,10 +153,10 @@
                             <th class="text-right">Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="clientTableBody">
                         @forelse ($clientes as $cliente)
                             @if ($cliente->situacao == 0)
-                                <tr>
+                                <tr class="client-row">
                                     <td>{{ $cliente->nome }}</td>
                                     {{-- Coluna visível apenas em telas médias ou maiores --}}
                                     <td class="d-none d-md-table-cell">{{ $cliente->cpf_cnpj }}</td>
@@ -143,17 +171,16 @@
                                 </tr>
                             @endif
                         @empty
-                            <tr>
+                            <tr id="emptyRow">
                                 <td colspan="3" class="text-center">Nenhum cliente cadastrado.</td>
                             </tr>
                         @endforelse
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Confirmação de Exclusão -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -184,10 +211,54 @@
 
 @push('js')
     <script>
-        // Seta o ID do cliente no input hidden do modal
         function setaDadosModal(idCliente) {
             document.getElementById('idCliente').value = idCliente;
         }
+
+        document.getElementById('searchClientInput').addEventListener('keyup', function() {
+            let searchTerm = this.value.toLowerCase();
+            let tableBody = document.getElementById('clientTableBody');
+            let tableRows = tableBody.querySelectorAll('tr.client-row');
+            let emptyRow = document.getElementById('emptyRow');
+            let noResultsRow = document.getElementById('noResultsRow');
+            let visibleRows = 0;
+
+            tableRows.forEach(function(row) {
+                let nameCell = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
+                let cpfCell = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                let rowText = nameCell + ' ' + cpfCell;
+
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = "";
+                    visibleRows++;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            if (emptyRow) {
+                emptyRow.style.display = "none";
+            }
+
+            if (visibleRows === 0 && tableRows.length > 0) { 
+                if (!noResultsRow) {
+                    noResultsRow = tableBody.insertRow();
+                    noResultsRow.id = 'noResultsRow';
+                    let cell = noResultsRow.insertCell();
+                    cell.colSpan = 3; // Certifique-se que o colspan é igual ao da sua tabela
+                    cell.className = 'text-center text-muted';
+                    cell.textContent = 'Nenhum resultado encontrado para a sua pesquisa.';
+                }
+                noResultsRow.style.display = ""; // Mostra
+            } else {
+                if (noResultsRow) {
+                    noResultsRow.style.display = "none"; // Esconde
+                }
+            }
+            
+            if (searchTerm === '' && emptyRow) {
+                 emptyRow.style.display = "";
+            }
+        });
     </script>
 @endpush
-
