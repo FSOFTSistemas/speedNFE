@@ -15,8 +15,17 @@ class FaturaController extends Controller
     {
         $customerCpfCnpj = auth()->user()->empresa->cpf_cnpj;
         $response = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj);
-        $body = json_decode($response->body());
-        return view('faturas.signature', ['signature' => $body]);
+        $history = Http::get('https://financeiro.f-softsistemas.com.br/api/customer/' . $customerCpfCnpj . '/payment-history');
+        $signature = json_decode($response->body()) ?: new \stdClass();
+        $paymentsObj  = json_decode($history->body());
+        $paymentsArr  = is_array($paymentsObj) ? $paymentsObj : ($paymentsObj->data ?? []);
+        // compat: algumas views esperam $signature->payments
+        $signature->payments = $paymentsArr;
+
+        return view('faturas.signature', [
+            'signature' => $signature,
+            'payments'  => $paymentsArr,
+        ]);
     }
 
     public function paymentHistory()

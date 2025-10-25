@@ -28,6 +28,9 @@ use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\TransactionLogController;
 use App\Http\Controllers\VeiculoController;
 
+use App\Http\Controllers\PixController;
+use App\Http\Controllers\PixWebhookController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -255,6 +258,16 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth']);
     Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
     Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
+
+    //PIX
+    // Route::post('/pix/cob', [PixController::class, 'criar']);
+    // Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
+    // Route::post('/pix/webhook', [PixWebhookController::class, 'receber']);
+
+    Route::post('/pix/cob', [PixController::class, 'criar'])
+        ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+    Route::post('/pix/webhook', [PixWebhookController::class, 'receber'])
+        ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 });
 
 //FATURAS
@@ -265,6 +278,9 @@ Route::prefix('faturas')->group(function () {
 });
 
 Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
+
+
+
 
 
 require __DIR__ . '/auth.php';
