@@ -261,31 +261,23 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
     Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
 
-    //PIX
-    Route::post('/pix/cob', [PixController::class, 'criar'])->name('pix.criar');
-    Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
-    Route::post('/pix/webhook', [PixWebhookController::class, 'receber']);
-
-
-    // Página de pagamento PIX (GET /pagamento)
-    Route::get('/pagamento', function (\Illuminate\Http\Request $req) {
-        // Você pode passar ?valor=..., ?descricao=..., ?expiracao=... via querystring
-        // ou popular via sessão/flash a partir da tela de assinatura.
-        return view('faturas.payment', [
-            'valor'     => $req->query('valor', null),
-            'descricao' => $req->query('descricao', null),
-            'expiracao' => $req->query('expiracao', 3600),
-        ]);
-    })->name('pix.pagamento');
-
-    Route::get('/pagamento/sucesso', function (Request $req) {
-        return view('faturas.pagamento-sucesso', [
-            'txid'      => $req->query('txid'),
-            'valor'     => $req->query('valor'),
-            'descricao' => $req->query('descricao'),
-        ]);
-    })->name('pix.sucesso');
 });
+//PIX
+Route::post('/pix/cob', [PixController::class, 'criar'])->name('pix.criar');
+Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
+
+
+
+// Página de pagamento PIX (GET /pagamento)
+Route::post('/pagamento', [PixController::class, 'pagar'])->name('pix.pagamento');
+
+Route::get('/pagamento/sucesso', function (Request $req) {
+    return view('faturas.pagamento-sucesso', [
+        'txid'      => $req->query('txid'),
+        'valor'     => $req->query('valor'),
+        'descricao' => $req->query('descricao'),
+    ]);
+})->name('pix.sucesso');
 
 //FATURAS
 Route::prefix('faturas')->group(function () {
@@ -297,6 +289,11 @@ Route::prefix('faturas')->group(function () {
 Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
 
 Route::post('/clientes/check-cpf', [ClientesController::class, 'checkCpfCnpj'])->name('cliente.checkCpfCnpj');
+
+Route::post('/pagamento/enviar-confirmacao', [PixController::class, 'enviarConfirmacaoEmail'])
+     ->name('pix.enviarConfirmacao');
+
+     
 
 
 

@@ -449,7 +449,7 @@ return [
         [
             'text'        => 'Faturas',
             'icon'        => 'fas fa-file-invoice',
-            'can'         => ['master'],
+            'can'    => 'menu-faturas',
 
             'submenu' => [
                 [

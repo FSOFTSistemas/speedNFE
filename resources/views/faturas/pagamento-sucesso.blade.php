@@ -11,8 +11,8 @@
 
 @section('content')
     @php
-        $txid      = $txid ?? null;
-        $valor     = $valor ?? null;
+        $txid = $txid ?? null;
+        $valor = $valor ?? null;
         $descricao = $descricao ?? 'Pagamento';
     @endphp
 
@@ -27,22 +27,24 @@
                         <div style="width:110px;height:110px;position:relative;">
                             <svg viewBox="0 0 120 120" style="width:110px;height:110px;">
                                 <defs>
-                                    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <linearGradient id="g" x1="0%" y1="0%" x2="100%"
+                                        y2="100%">
                                         <stop offset="0%" stop-color="#34d399"></stop>
                                         <stop offset="100%" stop-color="#10b981"></stop>
                                     </linearGradient>
                                 </defs>
-                                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#g)" stroke-width="10"
-                                        stroke-linecap="round" opacity="0.2"/>
-                                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#g)" stroke-width="10"
-                                        stroke-linecap="round" stroke-dasharray="326"
-                                        stroke-dashoffset="326">
-                                    <animate attributeName="stroke-dashoffset" from="326" to="0" dur="0.8s" fill="freeze"/>
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#g)"
+                                    stroke-width="10" stroke-linecap="round" opacity="0.2" />
+                                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#g)"
+                                    stroke-width="10" stroke-linecap="round" stroke-dasharray="326" stroke-dashoffset="326">
+                                    <animate attributeName="stroke-dashoffset" from="326" to="0" dur="0.8s"
+                                        fill="freeze" />
                                 </circle>
                                 <path d="M38 64 L54 78 L84 42" fill="none" stroke="#10b981" stroke-width="10"
-                                      stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="80"
-                                      stroke-dashoffset="80">
-                                    <animate attributeName="stroke-dashoffset" from="80" to="0" begin="0.5s" dur="0.5s" fill="freeze"/>
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="80"
+                                    stroke-dashoffset="80">
+                                    <animate attributeName="stroke-dashoffset" from="80" to="0" begin="0.5s"
+                                        dur="0.5s" fill="freeze" />
                                 </path>
                             </svg>
                         </div>
@@ -64,8 +66,8 @@
                             <div class="border rounded p-3 h-100">
                                 <div class="text-muted small mb-1">Valor</div>
                                 <div class="h5 mb-0">
-                                    @if($valor)
-                                        R$ {{ number_format((float)$valor, 2, ',', '.') }}
+                                    @if ($valor)
+                                        R$ {{ number_format((float) $valor, 2, ',', '.') }}
                                     @else
                                         —
                                     @endif
@@ -85,7 +87,7 @@
                                     <code class="mr-2" style="white-space:nowrap;overflow:auto;display:block;">
                                         {{ $txid ?? '—' }}
                                     </code>
-                                    @if($txid)
+                                    @if ($txid)
                                         <button class="btn btn-sm btn-outline-secondary ml-auto" id="copyTxid">
                                             <i class="fas fa-copy"></i> Copiar
                                         </button>
@@ -96,10 +98,13 @@
                     </div>
 
                     <div class="mt-4 d-flex flex-wrap justify-content-center">
-                        <a href="{{ url('/') }}" class="btn btn-success mx-1 my-1">
+                        <a href="{{ url('/home') }}" class="btn btn-success mx-1 my-1">
                             <i class="fas fa-home"></i> Ir para o início
                         </a>
-                        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary mx-1 my-1">
+                        <button id="btnEnviarComprovante" class="btn btn-primary mx-1 my-1">
+                            <i class="fas fa-envelope"></i> Receber Comprovante
+                        </button>
+                        <a href="{{ url('/faturas') }}" class="btn btn-outline-secondary mx-1 my-1">
                             <i class="fas fa-arrow-left"></i> Voltar
                         </a>
                     </div>
@@ -116,16 +121,100 @@
 
 @push('js')
 <script>
-document.getElementById('copyTxid')?.addEventListener('click', async () => {
-    try {
-        const text = @json($txid ?? '');
-        if (!text) return;
-        await navigator.clipboard.writeText(text);
-        const btn = document.getElementById('copyTxid');
-        const old = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
-        setTimeout(()=> btn.innerHTML = old, 1500);
-    } catch {}
-});
+    // Injeta os dados da página (do PHP) para o JS
+    const pageData = {
+        txid: @json($txid ?? ''),
+        valor: @json($valor ?? '0.00'),
+        descricao: @json($descricao ?? 'Pagamento')
+    };
+
+    // Pega o CSRF token do <head> para as requisições AJAX
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    
+    // Lógica para o botão "Copiar TXID" (escondido)
+    document.getElementById('copyTxid')?.addEventListener('click', async () => {
+        try {
+            const text = pageData.txid;
+            if (!text) return;
+            await navigator.clipboard.writeText(text);
+            
+            const btn = document.getElementById('copyTxid');
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            btn.disabled = true;
+            setTimeout(()=> {
+                btn.innerHTML = oldHtml;
+                btn.disabled = false;
+            }, 2000);
+        } catch (e) {
+            console.error('Falha ao copiar TXID', e);
+        }
+    });
+
+    // Lógica para o botão "Receber Comprovante" (SweetAlert)
+    document.getElementById('btnEnviarComprovante')?.addEventListener('click', async () => {
+        
+        const { value: email } = await Swal.fire({
+            title: 'Receber Comprovante',
+            // inputLabel: 'Digite seu endereço de e-mail', // <--- REMOVIDO (v8)
+            text: 'Digite seu endereço de e-mail:',       // <--- ADICIONADO (alternativa)
+            input: 'email',
+            inputPlaceholder: 'seu.email@exemplo.com',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Enviar',
+            showLoaderOnConfirm: true,
+            preConfirm: (email) => {
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    Swal.showValidationMessage('Por favor, digite um e-mail válido.');
+                    return false;
+                }
+                return email;
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        });
+
+        if (email) {
+            try {
+                // O SweetAlert v8 não tem um 'Swal.showLoading()' separado assim
+                // O 'showLoaderOnConfirm: true' já faz isso.
+
+                const resp = await fetch(@json(route('pix.enviarConfirmacao')), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        txid: pageData.txid,
+                        valor: pageData.valor,
+                        descricao: pageData.descricao
+                    })
+                });
+
+                if (!resp.ok) {
+                    const err = await resp.json();
+                    throw new Error(err.message || 'Falha ao enviar.');
+                }
+
+                // Sucesso
+                await Swal.fire({
+                    type: 'success', 
+                    title: 'Enviado!',
+                    text: `O comprovante foi enviado para ${email}.`
+                });
+
+            } catch (error) {
+                // Erro
+                Swal.fire({
+                    type: 'error', 
+                    title: 'Oops...',
+                    text: error.message || 'Não foi possível enviar o e-mail.'
+                });
+            }
+        }
+    });
 </script>
 @endpush
