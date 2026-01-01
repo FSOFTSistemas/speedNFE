@@ -30,7 +30,7 @@ use App\Http\Controllers\VeiculoController;
 
 use App\Http\Controllers\PixController;
 use App\Http\Controllers\PixWebhookController;
-
+use App\Models\CClassTrib;
 use Illuminate\Http\Request;
 
 /*
@@ -293,7 +293,14 @@ Route::post('/clientes/check-cpf', [ClientesController::class, 'checkCpfCnpj'])-
 Route::post('/pagamento/enviar-confirmacao', [PixController::class, 'enviarConfirmacaoEmail'])
      ->name('pix.enviarConfirmacao');
 
-     
+     Route::get('/api/cclasstrib/{cst}', function ($cst) {
+    // Busca códigos que batem exatamente com o CST, ordenados
+    return CClassTrib::where('cst_compativel', $cst)
+                     ->orWhere('cst_compativel', intval($cst)) // Previne erro de '010' vs '10'
+                     ->select('codigo', 'descricao')
+                     ->orderBy('codigo')
+                     ->get();
+});
 
 
 

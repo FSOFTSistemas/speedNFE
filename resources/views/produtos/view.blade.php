@@ -133,7 +133,7 @@
                         </div>
                         <div class="col-md-6 data-item">
                             <span class="data-label">Categoria</span>
-                            <p class="data-value">{{ $produto->descricao }}</p>
+                            <p class="data-value">{{ $produto->categoria->descricao }}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -159,10 +159,10 @@
                             <span class="data-label">Unidade</span>
                             <p class="data-value">{{ strtoupper($produto->un) }}</p>
                         </div>
-                        <div class="col-md-3 data-item">
+                        {{-- <div class="col-md-3 data-item">
                             <span class="data-label">Empresa</span>
                             <p class="data-value">{{ $produto->fantasia }}</p>
-                        </div>
+                        </div> --}}
                         <div class="col-md-3 data-item">
                             <span class="data-label">É Veículo?</span>
                             <p class="data-value">{{ $produto->tpProd ? 'Sim' : 'Não' }}</p>
@@ -184,7 +184,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 data-item">
-                            <span class="data-label">CST</span>
+                            <span class="data-label">CST (ICMS)</span>
                             <p class="data-value">{{ $produto->cst }}</p>
                         </div>
                         <div class="col-md-8 data-item">
@@ -220,6 +220,38 @@
                             <p class="data-value">{{ $produto->ipi }}</p>
                         </div>
                     </div>
+
+                    {{-- BLOCO NOVO: REFORMA TRIBUTÁRIA --}}
+                    <hr class="my-4" style="border-top: 2px dashed #dee2e6;">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h5 style="color: var(--primary-color); font-weight: 600; text-transform: uppercase;">
+                                <i class="fas fa-file-invoice-dollar mr-2"></i>Reforma Tributária (Vigência 2026)
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 data-item">
+                            <span class="data-label">Classificação Tributária</span>
+                            <p class="data-value">{{ $produto->cClassTrib ?? '-' }}</p>
+                        </div>
+                        <div class="col-md-6 data-item">
+                            <span class="data-label">CST IBS/CBS</span>
+                            <p class="data-value">{{ $produto->cst_ibs_cbs ?? '-' }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 data-item">
+                            <span class="data-label">Alíquota IBS (Estadual) %</span>
+                            <p class="data-value">{{ isset($produto->pIBS) ? number_format((float)$produto->pIBS, 2, ',', '.') : '0,00' }}</p>
+                        </div>
+                        <div class="col-md-6 data-item">
+                            <span class="data-label">Alíquota CBS (Federal) %</span>
+                            <p class="data-value">{{ isset($produto->pCBS) ? number_format((float)$produto->pCBS, 2, ',', '.') : '0,00' }}</p>
+                        </div>
+                    </div>
+                    {{-- FIM BLOCO NOVO --}}
+
                 </div>
 
                {{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}

@@ -53,7 +53,13 @@ class Produto extends Model
         'lotVeic',
         'restriVeic',
         'cargaVeic',
-        'operVeic'
+        'operVeic',
+        // --- NOVOS CAMPOS: REFORMA TRIBUTÁRIA (RTC) ---
+        'cClassTrib',   // Código de Classificação Tributária (Obrigatório)
+        'pIBS',         // Alíquota do IBS
+        'pCBS',         // Alíquota da CBS
+        'pIS_imposto',  // Alíquota do Imposto Seletivo (usei esse nome para evitar conflito com palavra reservada 'is')
+        'cst_ibs_cbs'   // Novo CST para a reforma (futuro, bom já deixar preparado)
     ];
 
     public function empresa()

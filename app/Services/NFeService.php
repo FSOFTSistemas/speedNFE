@@ -21,14 +21,15 @@ class NFeService
 
     public function __construct($config, $emitente)
     {
-        $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
-        $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
+        // $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
+        // $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
     }
 
     public function gerarXml($venda, $emitente)
     {
-        // dd($venda);
-        $nfe = new Make();
+        // 1. CORREÇÃO CRÍTICA: Forçar Schema PL_010 para ativar a Reforma Tributária
+        $nfe = new Make('PL_010');
+
         $stdInNFe = new \stdClass();
         $stdInNFe->versao = '4.00';
         $stdInNFe->Id = null;
@@ -61,6 +62,12 @@ class NFeService
         $stdIde->verProc = '3.10.31';
         $tagide = $nfe->tagide($stdIde);
 
+        // --- CONTROLE DA REFORMA TRIBUTÁRIA (RTC) ---
+        $dataEmissao = new \DateTime(date("Y-m-d"));
+        $dataVirada  = new \DateTime('2026-01-01');
+        $isRTC = ($dataEmissao >= $dataVirada) || (getenv('TESTAR_RTC') == 'true' && $emitente->ambiente == 2);
+        // --------------------------------------------
+
         if ($venda->ref_nfe) {
             $stdrefNFe = new \stdClass();
             $stdrefNFe->refNFe = $venda->ref_nfe;
@@ -89,6 +96,7 @@ class NFeService
             $stdEmit->CPF = $cnpj;
         }
         $emit = $nfe->tagemit($stdEmit);
+
         // ENDERECO EMITENTE
         $stdEnderEmit = new \stdClass();
         $stdEnderEmit->xLgr = FormatationUtil::retiraAcentos($emitente->endereco->rua);
@@ -153,7 +161,6 @@ class NFeService
         $dest = $nfe->tagdest($stdDest);
 
         //ENDEREÇO DESTINATÁRIO
-
         $stdEnderDest = new \stdClass();
         $stdEnderDest->xLgr = FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
         $stdEnderDest->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
@@ -234,6 +241,12 @@ class NFeService
             $ncm = str_replace(".", "", $ncm);
             $stdProd->NCM = $ncm;
 
+            // --- INÍCIO RTC: Classificação Tributária ---
+            if ($isRTC && !empty($i->produto->cClassTrib)) {
+                $stdProd->cClassTrib = $i->produto->cClassTrib;
+            }
+            // --- FIM RTC ---
+
             $stdProd->CFOP = $venda->cfopNota->cfop;
 
             $stdProd->uCom = $i->produto->un;
@@ -247,10 +260,9 @@ class NFeService
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
             $stdProd->indTot = 1;
+
             if ($i->produto->tpProd == 1) {
                 $stdVeicProd = new \stdClass();
-
-                // Campos do veículo (adicionados)
                 $stdVeicProd->item = $key + 1;
                 $stdVeicProd->tpOp = $i->produto->operVeic;
                 $stdVeicProd->chassi = $i->produto->chassiVeic;
@@ -285,6 +297,7 @@ class NFeService
             $stdImposto->item = $key + 1;
             $nfe->tagimposto($stdImposto);
 
+            // --- SISTEMA LEGADO (MANTIDO) ---
             //ICMS
             $stdICMS = new \stdClass();
             $stdICMS->item = $key + 1;
@@ -313,8 +326,7 @@ class NFeService
             $stdCOFINS->CST = $i->produto->cst_cofins;
             $stdCOFINS->vBC = FormatationUtil::format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
             $stdCOFINS->pCOFINS = FormatationUtil::format($i->produto->cofins);
-            $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) *
-                ($i->produto->cofins / 100));
+            $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->cofins / 100));
             $COFINS = $nfe->tagCOFINS($stdCOFINS);
 
             //IPI
@@ -326,11 +338,57 @@ class NFeService
             $std->pIPI = FormatationUtil::format($i->produto->ipi);
             $std->vIPI = $stdProd->vProd * FormatationUtil::format(($i->produto->ipi / 100));
             $nfe->tagIPI($std);
+
+            // 2. CORREÇÃO CRÍTICA: CHAMADA AO tagIBSCBS (UNIFICADO)
+            if ($isRTC) {
+                $stdIBSCBS = new \stdClass();
+                $stdIBSCBS->item = $key + 1;
+                $cstBanco = $i->produto->cst_ibs_cbs ?? null;
+                $stdIBSCBS->CST = ($cstBanco && strlen($cstBanco) === 3) ? $cstBanco : '010';
+                // Só preenche se tiver valor real
+                if (!empty($i->produto->cClassTrib)) {
+                    $stdIBSCBS->cClassTrib = $i->produto->cClassTrib;
+                }
+                $stdIBSCBS->vBC = FormatationUtil::format($stdProd->vProd);
+
+                // --- IBS (Preenchimento) ---
+                // --- IBS (Preenchimento) ---
+                // Estadual (UF)
+                $stdIBSCBS->gIBSUF_pIBSUF = FormatationUtil::format($i->produto->pIBS);
+                $stdIBSCBS->gIBSUF_vIBSUF = FormatationUtil::format($stdIBSCBS->vBC * ($stdIBSCBS->gIBSUF_pIBSUF / 100));
+
+                // Municipal (Mun) - OBRIGATÓRIO INFORMAR (mesmo que seja zero)
+                // Se você não tiver campo no banco para pIBSMun, envie 0 fixo para evitar o erro 225
+                $stdIBSCBS->gIBSMun_pIBSMun = 0.00;
+                $stdIBSCBS->gIBSMun_vIBSMun = 0.00;
+
+                // Totalizador do IBS (Soma UF + Mun)
+                $stdIBSCBS->vIBS = $stdIBSCBS->gIBSUF_vIBSUF + $stdIBSCBS->gIBSMun_vIBSMun;
+
+                // Totalizador do IBS
+                $stdIBSCBS->vIBS = $stdIBSCBS->gIBSUF_vIBSUF; // + Mun se tiver
+
+                // --- CBS (Preenchimento) ---
+                $stdIBSCBS->gCBS_pCBS = FormatationUtil::format($i->produto->pCBS);
+                $stdIBSCBS->gCBS_vCBS = FormatationUtil::format($stdIBSCBS->vBC * ($stdIBSCBS->gCBS_pCBS / 100));
+
+                // Chama o método ÚNICO existente na Trait
+                $nfe->tagIBSCBS($stdIBSCBS);
+
+                // Grupo IS (Imposto Seletivo) - Mantido separado pois tem Trait própria
+                if (isset($i->produto->pIS_imposto) && $i->produto->pIS_imposto > 0) {
+                    $stdIS = new \stdClass();
+                    $stdIS->item = $key + 1;
+                    $stdIS->vBC  = $stdProd->vProd;
+                    $stdIS->pIS  = FormatationUtil::format($i->produto->pIS_imposto);
+                    $stdIS->vIS  = FormatationUtil::format($stdIS->vBC * ($stdIS->pIS / 100));
+                    $nfe->tagIS($stdIS);
+                }
+            }
         }
 
         $stdTransp = new \stdClass();
         $stdTransp->modFrete = '9';
-
         $transp = $nfe->tagtransp($stdTransp);
 
         //TOTALIZADOR NFE
@@ -365,14 +423,6 @@ class NFeService
         }
 
         foreach ($venda->fatura as $key => $fat) {
-            // $stdDup = new \stdClass();
-            // $stdDup->nDup = '00' . ($key + 1);
-            // $stdDup->dVenc = $fat->vencimento;
-            // $stdDup->dVenc = date('Y-m-d');
-            // $stdDup->vDup = FormatationUtil::format($fat->valor);
-
-            // $nfe->tagdup($stdDup);
-
             $stdPag = new \stdClass();
             $pag = $nfe->tagpag($stdPag);
 
@@ -435,12 +485,11 @@ class NFeService
             $detPag = $nfe->tagdetPag($stdDetPag);
         }
 
-
         $stdInfCpl = new \stdClass();
         $stdInfCpl->infCpl = $venda->info_complementares;
         $infCpl = $nfe->taginfAdic($stdInfCpl);
 
-        //TAG AUTORIZADOR XML VARIAVEL NO ARQUIVO .ENV, ESTADO DA BAHIA OBRIGATORIO
+        //TAG AUTORIZADOR XML
         if (getenv('AUT_XML') != '') {
             $std = new \stdClass();
             $cnpj = getenv('AUT_XML');
@@ -454,14 +503,16 @@ class NFeService
 
         //TAG RESPONSAVEL TECNICO
         $std = new \stdClass();
-        $std->CNPJ = getenv('RESP_CNPJ'); //CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico
-        $std->xContato = getenv('RESP_NOME'); //Nome da pessoa a ser contatada
-        $std->email = getenv('RESP_EMAIL'); //E-mail da pessoa jurídica a ser contatada
+        $std->CNPJ = getenv('RESP_CNPJ');
+        $std->xContato = getenv('RESP_NOME');
+        $std->email = getenv('RESP_EMAIL');
         $std->fone = getenv('RESP_FONE');
         $nfe->taginfRespTec($std);
 
         try {
             $nfe->montaNFe();
+            $xml = $nfe->getXML();
+            dd($xml);
             $arr = [
                 'chave' => $nfe->getChave(),
                 'xml' => $nfe->getXML(),
@@ -512,31 +563,31 @@ class NFeService
     //         ];
     //     }
     // }
-    
+
     public function transmitir($signXml, $chave, $caminho)
     {
         try {
             // Define idLote com 15 dígitos numéricos
             $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
-    
+
             // Envia em modo síncrono
             $resp = $this->tools->sefazEnviaLote([$signXml], $idLote, 1);
-    
+
             $st = new Standardize();
             $std = $st->toStd($resp);
-    
+
             if ($std->cStat == 104) {
                 $infProt = $std->protNFe->infProt;
-    
+
                 if ($infProt->cStat == 100) {
                     $xml = Complements::toAuthorize($signXml, $resp);
-    
+
                     if (!File::exists(public_path($caminho . '/'))) {
                         File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
                     }
-    
+
                     file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
-    
+
                     return [
                         'sucesso' => $infProt->nProt,
                     ];
@@ -550,7 +601,6 @@ class NFeService
                     'erro' => "Erro no processamento do lote: [{$std->cStat}] - {$std->xMotivo}",
                 ];
             }
-    
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),

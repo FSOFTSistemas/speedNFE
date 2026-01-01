@@ -1,5 +1,26 @@
 @php
     use Illuminate\Support\Str;
+
+    // --- LÓGICA DA REFORMA TRIBUTÁRIA (SIMULAÇÃO PARA PREVIEW) ---
+    // Verifica se estamos em 2026 ou depois
+    // Para testar AGORA, altere para: $isRTC = true;
+    $isRTC = date('Y') >= 2026; 
+
+    $totalIBS = 0;
+    $totalCBS = 0;
+
+    if($isRTC) {
+        foreach ($cupom->itens as $item) {
+            $vProd = $item->total; 
+            // Pega alíquota do produto ou usa padrão transição (0.1%)
+            $aliqIBS = isset($item->produto->pIBS) ? floatval($item->produto->pIBS) : 0.10;
+            $totalIBS += $vProd * ($aliqIBS / 100);
+
+            // Pega alíquota do produto ou usa padrão transição (0.9%)
+            $aliqCBS = isset($item->produto->pCBS) ? floatval($item->produto->pCBS) : 0.90;
+            $totalCBS += $vProd * ($aliqCBS / 100);
+        }
+    }
 @endphp
 
 <!DOCTYPE html>
@@ -133,10 +154,10 @@
                     <tr class="items-rows">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ Str::limit($item->produto->produto, 20, '...') }}</td>
-                        <td>{{ $item->qtde }}</td>
+                        <td>{{ number_format($item->qtde, 2, ',', '.') }}</td>
                         <td>{{ $item->produto->un }}</td>
-                        <td>{{ number_format($item->unitario, 2) }}</td>
-                        <td>{{ number_format($item->total, 2) }}</td>
+                        <td>{{ number_format($item->unitario, 2, ',', '.') }}</td>
+                        <td>{{ number_format($item->total, 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -152,14 +173,14 @@
                 </tr>
                 <tr>
                     <td colspan="5">Valor Total R$</td>
-                    <td class="text-end">{{ number_format($cupom->total, 2) }}</td>
+                    <td class="text-end">{{ number_format($cupom->total, 2, ',', '.') }}</td>
                 </tr>
                 <div class="position-fixed start-50 text-center translate-middle w-100">
                     <div class="watermark"><strong>SEM VALOR FISCAL</strong></div>
                 </div>
                 <tr>
                     <td colspan="5">Desconto R$</td>
-                    <td class="text-end">{{ number_format($cupom->desconto, 2) }}</td>
+                    <td class="text-end">{{ number_format($cupom->desconto, 2, ',', '.') }}</td>
                 </tr>
                 <tr>
                     <td colspan="5">Frete R$</td>
@@ -167,8 +188,32 @@
                 </tr>
                 <tr>
                     <td colspan="5"><strong class="fs-6">Valor a Pagar R$</strong></td>
-                    <td class="text-end"><strong class="fs-6">{{ number_format($cupom->total, 2) }}</strong></td>
+                    <td class="text-end"><strong class="fs-6">{{ number_format($cupom->total, 2, ',', '.') }}</strong></td>
                 </tr>
+                
+                {{-- INÍCIO DA ADIÇÃO (REFORMA TRIBUTÁRIA) --}}
+                @if($isRTC)
+                <tr>
+                    <td colspan="6">
+                        <hr style="border-top: 1px dotted #ccc;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <small><strong>TRIBUTOS TOTAIS INCIDENTES</strong><br>(Lei da Transparência)</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5"><small>IBS (Est/Mun)</small></td>
+                    <td class="text-end"><small>{{ number_format($totalIBS, 2, ',', '.') }}</small></td>
+                </tr>
+                <tr>
+                    <td colspan="5"><small>CBS (Fed)</small></td>
+                    <td class="text-end"><small>{{ number_format($totalCBS, 2, ',', '.') }}</small></td>
+                </tr>
+                @endif
+                {{-- FIM DA ADIÇÃO --}}
+
                 <tr>
                     <td colspan="6">
                         <hr>
@@ -181,12 +226,12 @@
                 @foreach ($cupom->formasPagamento as $formaPagamento)
                     <tr>
                         <td colspan="5">{{ $formaPagamento->forma }}</td>
-                        <td class="text-end">{{ number_format($formaPagamento->valor, 2) }}</td>
+                        <td class="text-end">{{ number_format($formaPagamento->valor, 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <tr>
                     <td colspan="5">Troco R$</td>
-                    <td class="text-end">{{ number_format($cupom->troco, 2) }}</td>
+                    <td class="text-end">{{ number_format($cupom->troco, 2, ',', '.') }}</td>
                 </tr>
             </tfoot>
         </table>
@@ -215,7 +260,7 @@
 
             <div class="row">
                 <div class="col">
-                    <b>{{ $cupom->data }}</b>
+                    <b>{{ date('d/m/Y', strtotime($cupom->data)) }}</b>
                 </div>
             </div>
         </section>
