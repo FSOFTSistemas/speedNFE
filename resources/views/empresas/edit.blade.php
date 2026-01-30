@@ -286,6 +286,12 @@
                         </div>
                     </div>
 
+                    <input type="hidden" name="nfes" value="{{ $empresa->limNFes }}">
+                    <input type="hidden" name="nfces" value="{{ $empresa->limNFCes }}">
+                    <input type="hidden" name="mdfes" value="{{ $empresa->limMDFes }}">
+                    <input type="hidden" name="clientes" value="{{ $empresa->limClientes }}">
+                    <input type="hidden" name="produtos" value="{{ $empresa->limProdutos }}">
+
                     @can('master')
                         <div class="tab-pane fade" id="limite" role="tabpanel">
                             <div class="row">

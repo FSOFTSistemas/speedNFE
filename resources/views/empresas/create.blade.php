@@ -160,11 +160,40 @@
                         <div class="col-md-4 mb-3"><label for="nfce" class="form-label">Nº da Última NFCe</label><input required class="form-control" type="number" name="nfce" id="nfce" value="{{ old('nfce') }}"><div class="invalid-feedback">Informe o nº da última NFCe.</div></div>
                         <div class="col-md-4 mb-3"><label for="mdfe" class="form-label">Nº da Última MDFe</label><input required class="form-control" type="number" name="mdfe" id="mdfe" value="{{ old('mdfe') }}"><div class="invalid-feedback">Informe o nº da última MDFe.</div></div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-2 mb-3"><label for="serie" class="form-label">Série</label><input required class="form-control" type="number" name="serie" id="serie" value="{{ old('serie') }}"><div class="invalid-feedback">Informe uma série.</div></div>
-                        <div class="col-md-3 mb-3"><label for="ambiente" class="form-label">Ambiente</label><select required class="form-select" name="ambiente" id="ambiente"><option value="">Selecione</option><option value="1" @if(old('ambiente')=='1') selected @endif>Produção</option><option value="2" @if(old('ambiente')=='2') selected @endif>Homologação</option></select><div class="invalid-feedback">Informe o ambiente.</div></div>
-                        <div class="col-md-7 mb-3"><label for="contador" class="form-label">E-mail do Contador</label><input class="form-control" type="email" name="contador" id="contador" value="{{ old('email') }}"></div>
-                    </div>
+<div class="row">
+    <div class="col-md-2 mb-3">
+        <label for="serie" class="form-label">Série</label>
+        <input required class="form-control" type="number" name="serie" id="serie" value="{{ old('serie') }}">
+        <div class="invalid-feedback">Informe uma série.</div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <label for="ambiente" class="form-label">Ambiente</label>
+        <select required class="form-select" name="ambiente" id="ambiente">
+            <option value="">Selecione</option>
+            <option value="1" @if(old('ambiente')=='1') selected @endif>Produção</option>
+            <option value="2" @if(old('ambiente')=='2') selected @endif>Homologação</option>
+        </select>
+        <div class="invalid-feedback">Informe o ambiente.</div>
+    </div>
+    
+    {{-- NOVO CAMPO CRT ADICIONADO AQUI --}}
+    <div class="col-md-3 mb-3">
+        <label for="crt" class="form-label">Regime Tributário (CRT)</label>
+        <select required class="form-select" name="crt" id="crt">
+            <option value="" disabled selected>Selecione</option>
+            <option value="1" @if(old('crt')=='1') selected @endif>1 - Simples Nacional</option>
+            <option value="2" @if(old('crt')=='2') selected @endif>2 - Simples Nacional - excesso de sublimite</option>
+            <option value="3" @if(old('crt')=='3') selected @endif>3 - Regime Normal (Lucro Presumido/Real)</option>
+            <option value="4" @if(old('crt')=='4') selected @endif>4 - Simples Nacional - MEI</option>
+        </select>
+        <div class="invalid-feedback">Informe o regime tributário.</div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <label for="contador" class="form-label">E-mail do Contador</label>
+        <input class="form-control" type="email" name="contador" id="contador" value="{{ old('email') }}">
+    </div>
+</div>
                     <div class="row">
                         <div class="col-md-3 mb-3"><label for="senha" class="form-label">Senha do Certificado</label><input class="form-control" type="password" name="senha" id="senha" required><div class="invalid-feedback">Informe a senha.</div></div>
                         <div class="col-md-9 mb-3"><label for="certificado" class="form-label">Arquivo do Certificado (.pfx)</label><input accept=".pfx" type="file" name="certificado" id="certificado" class="form-control" required><div class="invalid-feedback">Informe um certificado.</div></div>
