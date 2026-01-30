@@ -175,6 +175,7 @@ class ProdutosController extends Controller
                  return redirect()->route('produto.index')->with('warning', 'Produto não encontrado');
             }
 
+            $empresa = $this->empresaServices->buscarEmpresa($user->empresa_id);
             $empresas = $this->empresaServices->todos($user->empresa_id);
             $categorias = Categoria::all();
             $cfops = $this->pedidoServices->cfopAll();
@@ -185,6 +186,7 @@ class ProdutosController extends Controller
                 'user' => $user,
                 'produto' => $produto,
                 'empresas' => $empresas,
+                'empresa' => $empresa,
                 'categorias' => $categorias,
                 'cfops' => $cfops,
                 'ncms' => $ncms,
@@ -213,6 +215,7 @@ class ProdutosController extends Controller
     {
         try {
             $user = Auth::user();
+            $empresa = $this->empresaServices->buscarEmpresa($user->empresa_id);
             $empresas = $this->empresaServices->todos($user->empresa_id);
             $categorias = Categoria::all();
             $cfops = $this->pedidoServices->cfopAll();
@@ -222,6 +225,7 @@ class ProdutosController extends Controller
             return view('produtos.new', [
                 'user' => $user, 
                 'empresas' => $empresas, 
+                'empresa' => $empresa,
                 'categorias' => $categorias, 
                 'cfops' => $cfops, 
                 'ncms' => $ncms,
@@ -383,13 +387,18 @@ class ProdutosController extends Controller
 
     public function view($id)
     {
-        // Busca o produto pelo ID
+        $user = Auth::user();
+        
         $produto = \App\Models\Produto::find($id);
-
+        
         if (!$produto) {
             return back()->with('error', 'Produto não encontrado!');
-        }
-
-        return view('produtos.view', compact('produto')); 
+            }
+            
+            $empresa = $this->empresaServices->buscarEmpresa($user->empresa_id);
+        return view('produtos.view', [
+            'produto' => $produto,
+            'empresa' => $empresa 
+        ]);
     }
 }

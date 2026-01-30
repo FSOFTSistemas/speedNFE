@@ -249,9 +249,24 @@
                                     <option value="2" @if ($empresa->ambiente == 2) selected @endif>Homologação
                                     </option>
                                 </select></div>
-                            <div class="col-md-7 mb-3"><label class="form-label">E-mail do Contador</label><input
+                            <div class="col-md-4 mb-3"><label class="form-label">E-mail do Contador</label><input
                                     class="form-control" type="email" name="contador" id="contador"
                                     value="{{ $empresa->contador }}"></div>
+                            <div class="col-md-3 mb-3">
+                                <label for="crt" class="form-label">Regime Tributário (CRT)</label>
+                                <select class="form-control" name="crt" id="crt" required>
+                                    <option value="" disabled>Selecione o Regime...</option>
+                                    <option value="1" {{ old('crt', $empresa->crt) == 1 ? 'selected' : '' }}>1 -
+                                        Simples Nacional</option>
+                                    <option value="4" {{ old('crt', $empresa->crt) == 4 ? 'selected' : '' }}>1 -
+                                        Simples Nacional - MEI</option>
+                                    <option value="2" {{ old('crt', $empresa->crt) == 2 ? 'selected' : '' }}>2 -
+                                        Simples Nacional - excesso de sublimite</option>
+                                    <option value="3" {{ old('crt', $empresa->crt) == 3 ? 'selected' : '' }}>3 -
+                                        Regime Normal (Lucro Presumido/Real)</option>
+                                </select>
+                                <small class="text-muted">Obrigatório para emissão de documentos fiscais.</small>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-3 mb-3"><label class="form-label">Senha do Certificado</label><input

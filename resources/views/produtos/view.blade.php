@@ -171,88 +171,141 @@
                 </div>
 
                 {{-- ABA 2: INFORMAÇÕES FISCAIS --}}
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <div class="row">
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">CFOP Interno</span>
-                            <p class="data-value">{{ $produto->cfop_interno }}</p>
-                        </div>
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">CFOP Externo</span>
-                            <p class="data-value">{{ $produto->cfop_externo }}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 data-item">
-                            <span class="data-label">CST (ICMS)</span>
-                            <p class="data-value">{{ $produto->cst }}</p>
-                        </div>
-                        <div class="col-md-8 data-item">
-                            <span class="data-label">CST/CSOSN</span>
-                            <p class="data-value">{{ $produto->cst_csosn }}</p>
-                        </div>
-                    </div>
-                     <div class="row">
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">CST/PIS</span>
-                            <p class="data-value">{{ $produto->cst_pis }}</p>
-                        </div>
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">CST/COFINS</span>
-                            <p class="data-value">{{ $produto->cst_cofins }}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 data-item">
-                            <span class="data-label">ICMS (%)</span>
-                            <p class="data-value">{{ $produto->icms }}</p>
-                        </div>
-                        <div class="col-md-3 data-item">
-                            <span class="data-label">PIS (%)</span>
-                            <p class="data-value">{{ $produto->pis }}</p>
-                        </div>
-                        <div class="col-md-3 data-item">
-                            <span class="data-label">COFINS (%)</span>
-                            <p class="data-value">{{ $produto->cofins }}</p>
-                        </div>
-                        <div class="col-md-3 data-item">
-                            <span class="data-label">IPI (%)</span>
-                            <p class="data-value">{{ $produto->ipi }}</p>
-                        </div>
-                    </div>
+{{-- ABA 2: INFORMAÇÕES FISCAIS --}}
+<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    
+    {{-- Identificador do Regime --}}
+    <div class="row mb-3">
+        <div class="col-12">
+            <span class="badge badge-primary p-2" style="font-size: 0.9rem; background-color: var(--primary-color)">
+                <i class="fas fa-university mr-2"></i> 
+                REGIME: {{ in_array($empresa->crt, [1, 2, 4]) ? 'SIMPLES NACIONAL / MEI' : 'REGIME NORMAL' }}
+            </span>
+        </div>
+    </div>
 
-                    {{-- BLOCO NOVO: REFORMA TRIBUTÁRIA --}}
-                    <hr class="my-4" style="border-top: 2px dashed #dee2e6;">
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <h5 style="color: var(--primary-color); font-weight: 600; text-transform: uppercase;">
-                                <i class="fas fa-file-invoice-dollar mr-2"></i>Reforma Tributária (Vigência 2026)
-                            </h5>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">Classificação Tributária</span>
-                            <p class="data-value">{{ $produto->cClassTrib ?? '-' }}</p>
-                        </div>
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">CST IBS/CBS</span>
-                            <p class="data-value">{{ $produto->cst_ibs_cbs ?? '-' }}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">Alíquota IBS (Estadual) %</span>
-                            <p class="data-value">{{ isset($produto->pIBS) ? number_format((float)$produto->pIBS, 2, ',', '.') : '0,00' }}</p>
-                        </div>
-                        <div class="col-md-6 data-item">
-                            <span class="data-label">Alíquota CBS (Federal) %</span>
-                            <p class="data-value">{{ isset($produto->pCBS) ? number_format((float)$produto->pCBS, 2, ',', '.') : '0,00' }}</p>
-                        </div>
-                    </div>
-                    {{-- FIM BLOCO NOVO --}}
+    <div class="row">
+        <div class="col-md-6 data-item">
+            <span class="data-label">CFOP Interno</span>
+            <p class="data-value">{{ $produto->cfop_interno }}</p>
+        </div>
+        <div class="col-md-6 data-item">
+            <span class="data-label">CFOP Externo</span>
+            <p class="data-value">{{ $produto->cfop_externo }}</p>
+        </div>
+    </div>
 
-                </div>
+    <div class="row">
+        @if(in_array($empresa->crt, [1, 2, 4]))
+            {{-- Visualização para Simples Nacional / MEI --}}
+            <div class="col-md-12 data-item">
+                <span class="data-label">CSOSN (Simples Nacional)</span>
+                <p class="data-value">
+                    @switch($produto->cst_csosn)
+                        @case('101') 101 - Tributada com permissão de crédito @break
+                        @case('102') 102 - Tributada sem permissão de crédito @break
+                        @case('103') 103 - Isenção do ICMS @break
+                        @case('201') 201 - Tributada com perm. crédito e cobrança de ST @break
+                        @case('400') 400 - Não tributada @break
+                        @case('500') 500 - ICMS cobrado anteriormente por ST @break
+                        @case('900') 900 - Outros @break
+                        @default {{ $produto->cst_csosn }}
+                    @endswitch
+                </p>
+            </div>
+        @else
+            {{-- Visualização para Regime Normal (CRT 3) --}}
+            <div class="col-md-12 data-item">
+                <span class="data-label">CST (ICMS - Regime Normal)</span>
+                <p class="data-value">
+                    @switch($produto->cst)
+                        @case('00') 00 - Tributação integral @break
+                        @case('10') 10 - Tributação com ICMS e acréscimo de ST @break
+                        @case('20') 20 - Redução de base de cálculo @break
+                        @case('40') 40 - Isenta @break
+                        @case('60') 60 - ICMS cobrado anteriormente por ST @break
+                        @case('90') 90 - Outras operações @break
+                        @default {{ $produto->cst }}
+                    @endswitch
+                </p>
+            </div>
+        @endif
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 data-item">
+            <span class="data-label">CST/PIS</span>
+            <p class="data-value">
+                @if($produto->cst_pis == '1') 01 - Operação Tributável (Alíquota Básica) 
+                @elseif($produto->cst_pis == '49') 49 - Outras Operações de Saída
+                @elseif($produto->cst_pis == '99') 99 - Outras Operações
+                @else {{ $produto->cst_pis }} @endif
+            </p>
+        </div>
+        <div class="col-md-6 data-item">
+            <span class="data-label">CST/COFINS</span>
+            <p class="data-value">
+                @if($produto->cst_cofins == '1') 01 - Operação Tributável (Alíquota Básica)
+                @elseif($produto->cst_cofins == '49') 49 - Outras Operações de Saída
+                @elseif($produto->cst_cofins == '99') 99 - Outras Operações
+                @else {{ $produto->cst_cofins }} @endif
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 data-item">
+            <span class="data-label">ICMS (%)</span>
+            <p class="data-value">{{ number_format($produto->icms, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-3 data-item">
+            <span class="data-label">PIS (%)</span>
+            <p class="data-value">{{ number_format($produto->pis, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-3 data-item">
+            <span class="data-label">COFINS (%)</span>
+            <p class="data-value">{{ number_format($produto->cofins, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-3 data-item">
+            <span class="data-label">IPI (%)</span>
+            <p class="data-value">{{ number_format($produto->ipi, 2, ',', '.') }}</p>
+        </div>
+    </div>
+
+    {{-- BLOCO: REFORMA TRIBUTÁRIA --}}
+    <hr class="my-4" style="border-top: 2px dashed var(--border-color);">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <h5 style="color: var(--primary-color); font-weight: 600; text-transform: uppercase;">
+                <i class="fas fa-file-invoice-dollar mr-2"></i>Reforma Tributária (IBS / CBS)
+            </h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 data-item">
+            <span class="data-label">Classificação Tributária</span>
+            <p class="data-value">{{ $produto->cClassTrib ?: 'Não Informado' }}</p>
+        </div>
+        <div class="col-md-6 data-item">
+            <span class="data-label">CST IBS/CBS</span>
+            <p class="data-value">{{ $produto->cst_ibs_cbs ?: 'Não Informado' }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 data-item">
+            <span class="data-label">Alíquota IBS (%)</span>
+            <p class="data-value">{{ number_format($produto->pIBS ?? 0, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Alíquota CBS (%)</span>
+            <p class="data-value">{{ number_format($produto->pCBS ?? 0, 2, ',', '.') }}</p>
+        </div>
+        <div class="col-md-4 data-item">
+            <span class="data-label">Imposto Seletivo (%)</span>
+            <p class="data-value">{{ number_format($produto->pIS_imposto ?? 0, 2, ',', '.') }}</p>
+        </div>
+    </div>
+</div>
 
                {{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}
 @if($produto->tpProd)

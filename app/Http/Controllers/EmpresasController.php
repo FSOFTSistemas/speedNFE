@@ -112,6 +112,7 @@ class EmpresasController extends Controller
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required|numeric',
+                'crt' => 'nullable'
                 // 'clientes' => 'required|numeric',
                 // 'produtos' => 'required|numeric',
                 // 'nfes' => 'required|numeric',
@@ -184,6 +185,7 @@ class EmpresasController extends Controller
                 'name' => 'required|max:255',
                 'email' => 'required|email',
                 'tipo' => 'nullable',
+                'crt' => 'nullable',
                 // 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
@@ -232,7 +234,8 @@ class EmpresasController extends Controller
                 $request->mdfes,
                 $request->nfces,
                 $request->clientes,
-                $request->produtos
+                $request->produtos,
+                $request->crt
             );
             $this->userServices->store(
                 $request->email,

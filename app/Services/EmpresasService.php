@@ -34,6 +34,7 @@ class EmpresasService
                     'limMDFes' => $request->mdfes,
                     'limProdutos' => $request->produtos,
                     'limClientes' => $request->clientes,
+                    'crt' => $request->crt,
                 ]);
             } else {
                 $empresa->update([
@@ -54,6 +55,7 @@ class EmpresasService
                     'limMDFes' => $request->mdfes,
                     'limProdutos' => $request->produtos,
                     'limClientes' => $request->clientes,
+                    'crt' => $request->crt,
                 ]);
             }
         }
@@ -76,6 +78,7 @@ class EmpresasService
                 'limMDFes' => $request->mdfes,
                 'limProdutos' => $request->produtos,
                 'limClientes' => $request->clientes,
+                'crt' => $request->crt,
             ]);
         } else {
             $empresa->update([
@@ -94,6 +97,7 @@ class EmpresasService
                 'limMDFes' => $request->mdfes,
                 'limProdutos' => $request->produtos,
                 'limClientes' => $request->clientes,
+                'crt' => $request->crt,
             ]);
         }
         return $empresa;
