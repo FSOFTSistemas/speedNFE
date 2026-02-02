@@ -9,10 +9,23 @@ use App\Models\Cupom;
 class CupomService
 {
 
-    public function getCompanyCoupons($companyId)
-    {
-        return Cupom::where("empresa_id", $companyId)->get();
+public function getCompanyCoupons($companyId, $dataInicio = null, $dataFim = null, $situacao = null)
+{
+    $query = Cupom::where("empresa_id", $companyId);
+
+    // Filtro por intervalo de datas
+    if ($dataInicio && $dataFim) {
+        $query->whereBetween('data', [$dataInicio, $dataFim]);
     }
+
+    // Filtro por situação (Status)
+    if ($situacao) {
+        $query->where('situacao', $situacao);
+    }
+
+    // Ordenar pelos mais recentes
+    return $query->orderBy('id', 'desc')->get();
+}
 
     public function getCupom($id)
     {
