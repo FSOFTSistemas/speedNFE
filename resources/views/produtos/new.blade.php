@@ -269,7 +269,7 @@
 
     {{-- BLOCO 2: TRIBUTAÇÃO CONDICIONAL --}}
     <div class="row">
-        @if(in_array($empresa->crt, [1, 2, 4]))
+        @if(in_array($empresa->crt, [1, 4]))
             {{-- EXIBE APENAS CSOSN (Simples/MEI) --}}
             <div class="col-md-12 mb-3">
                 <label for="cst_csosn" class="form-label">CST/CSOSN (Simples Nacional)</label>
