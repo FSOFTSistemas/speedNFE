@@ -342,10 +342,18 @@ return [
                     'icon'        => 'fas fa-download',
                     'shift' => 'ml-2'
                 ],
+            ],
+        ],
+        [
+            'text'        => 'Relatórios',
+            'icon'        => 'fas fa-chart-area',
+            'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
+            'submenu' => [
                 [
-                    'text'        => 'Relatórios (NFe)',
+                    'text'        => ' NFe',
                     'url'         => '/relatorios',
-                    'icon'        => 'fas fa-chart-area',
+                    'icon'        => 'far fa-file-alt',
+                    'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
                     'shift' => 'ml-2'
                 ],
             ],
