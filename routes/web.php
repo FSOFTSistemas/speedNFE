@@ -302,6 +302,8 @@ Route::post('/pagamento/enviar-confirmacao', [PixController::class, 'enviarConfi
                      ->get();
 });
 
+Route::post('/notas/enviar-contador', [NotasFiscaisController::class, 'enviarXmlsContador'])->name('nfe.enviarContador');
+
 
 
 
