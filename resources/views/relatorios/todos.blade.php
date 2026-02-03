@@ -27,7 +27,7 @@
         border: none;
         border-radius: 15px;
         box-shadow: 0 5px 20px var(--shadow-color);
-        overflow: hidden; /* Garante que os cantos arredondados sejam mantidos */
+        overflow: hidden; 
     }
 
     .card-header-filters {
@@ -55,10 +55,17 @@
         padding: 10px 20px;
         transition: all 0.3s ease;
     }
-    .custom-btn-primary:hover { 
+    .custom-btn-primary:hover:not(:disabled) { 
         transform: translateY(-2px);
     }
     
+    /* Estilo para botão desabilitado */
+    .custom-btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        filter: grayscale(1);
+    }
+
     .form-label {
         font-weight: 500;
         color: #495057;
@@ -68,10 +75,6 @@
         border-radius: 8px;
         border: 1px solid var(--border-color);
         height: 48px;
-    }
-    .form-control:focus, .form-select:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 3, 58, .25);
     }
 
     /* Estilos da Tabela */
@@ -91,6 +94,14 @@
     }
     .table td.text-left { text-align: left; }
     .dataTables_wrapper { padding: 20px; }
+
+    .aviso-aux {
+        font-size: 0.7rem;
+        display: block;
+        margin-top: 4px;
+        color: #dc3545;
+        font-weight: 500;
+    }
 </style>
 @endpush
 
@@ -133,16 +144,17 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="inicio" class="form-label">Data Início</label>
-                        <input type="date" class="form-control" id="inicio" name="inicio">
+                        <input type="date" class="form-control input-data" id="inicio" name="inicio">
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="fim" class="form-label">Data Fim</label>
-                        <input type="date" class="form-control" id="fim" name="fim">
+                        <input type="date" class="form-control input-data" id="fim" name="fim">
                     </div>
                     <div class="col-md-1 mb-3">
-                        <button type="submit" class="btn custom-btn-primary w-100" form="relatorioForm" title="Gerar PDF">
+                        <button type="submit" class="btn custom-btn-primary w-100" id="btnGerarPdf" disabled title="Preencha as datas para liberar">
                             PDF <i class="fas fa-file-pdf"></i>
                         </button>
+                        <span id="msgErroData" class="aviso-aux">Defina as datas</span>
                     </div>
                 </div>
             </form>
@@ -189,13 +201,10 @@
 <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.0.3/b-3.0.1/b-colvis-3.0.1/b-html5-3.0.1/b-print-3.0.1/cr-2.0.0/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.1/sc-2.4.1/datatables.min.js"></script>
 <script>
     $(document).ready(function() {
+        // DataTable original
         $('#produtos').DataTable({
-            responsive: {
-                details: true
-            },
-            language: {
-                "url": 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json'
-            },
+            responsive: { details: true },
+            language: { "url": 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json' },
             layout: {
                 topStart: {
                     buttons: [
@@ -206,6 +215,31 @@
                 }
             }
         });
+
+        // Lógica de Trava do Botão
+        const btnPdf = $('#btnGerarPdf');
+        const inputsData = $('.input-data');
+        const msgErro = $('#msgErroData');
+
+        function validarCampos() {
+            let todosPreenchidos = true;
+            inputsData.each(function() {
+                if ($(this).val() === "") {
+                    todosPreenchidos = false;
+                }
+            });
+
+            if (todosPreenchidos) {
+                btnPdf.prop('disabled', false);
+                msgErro.fadeOut();
+            } else {
+                btnPdf.prop('disabled', true);
+                msgErro.fadeIn();
+            }
+        }
+
+        // Monitora mudanças nos campos de data
+        inputsData.on('change', validarCampos);
     });
 </script>
 @endsection

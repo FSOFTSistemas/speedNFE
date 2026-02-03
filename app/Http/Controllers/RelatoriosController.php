@@ -17,7 +17,7 @@ class RelatoriosController extends Controller
 {
     public function show()
     {
-        try{
+        try {
             $empresas = Empresa::all();
             $empresa = Auth::user()->empresa_id;
 
@@ -26,55 +26,78 @@ class RelatoriosController extends Controller
             }
 
             $pedidos = DB::table('pedidos')
-            ->select('pedidos.*','clientes.nome as cliente') 
-            ->join('clientes', 'clientes.id', 'pedidos.cliente_id')
-            ->where("pedidos.empresa_id", "like", $empresa)
-            ->get();
+                ->select('pedidos.*', 'clientes.nome as cliente')
+                ->join('clientes', 'clientes.id', 'pedidos.cliente_id')
+                ->where("pedidos.empresa_id", "like", $empresa)
+                ->get();
 
             return view('relatorios.todos', ['pedidos' => $pedidos, 'empresa' => $empresa, 'empresas' => $empresas]);
 
-
         } catch (Exception $e) {
-            dd($e);
-            return back();
-
+            return back()->with('error', 'Erro ao carregar dados: ' . $e->getMessage());
         }
     }
 
     public function relatorio(Request $request)
     {
-
         try {
-            $dataI = date('Y-m-d h:m:s', strtotime($request->inicio));
-            $dataF = date('Y-m-t h:m:s', strtotime($request->fim));
-            if ($request->empresa != '%') {
-                $empresa = Empresa::findOrFail($request->empresa);
+            $dataI = $request->inicio;
+            $dataF = $request->fim;
+            
+            $userEmpresaId = Auth::user()->empresa_id;
+
+            // Define a empresa para o filtro
+            if ($userEmpresaId == 1) {
+                $empresaFiltro = $request->empresa ?? "%";
+                $empresa = Empresa::find($request->empresa);
             } else {
-                $empresa = '';
+                $empresaFiltro = $userEmpresaId;
+                $empresa = Empresa::find($userEmpresaId);
             }
-            if ($request->tipoR == 'nfe') {
-                if ($request->status == '%') {
-                    $pedidos = DB::table('pedidos')
-                        ->select('*')
-                        ->whereRaw("(estado like 'Aprovado' or estado like 'Cancelado')")
-                        ->where("updated_at", '>=', $dataI)
-                        ->where("updated_at", "<=", $dataF)
-                        ->where("empresa_id", "like", $request->empresa)
-                        ->get();
-                } else {
-                    $pedidos = DB::table('pedidos')
-                        ->select('*')
-                        ->where('estado', 'like', $request->status)
-                        ->where("updated_at", '>=', $dataI)
-                        ->where("updated_at", "<=", $dataF)
-                        ->where("empresa_id", "like", $request->empresa)
-                        ->get();
-                }
-                $pdf = Pdf::loadView('relatorios.nfe', ['pedidos' => $pedidos, 'empresa' => $empresa]);
+
+            if ($request->tipo == "nfe") {
+                $pedidos = Pedido::whereBetween("data", [$dataI, $dataF])
+                    ->where("empresa_id", "like", $empresaFiltro)
+                    ->get();
+
+                $pdf = Pdf::loadView('relatorios.nfe', [
+                    'pedidos' => $pedidos, 
+                    'empresa' => $empresa
+                ]);
+                
                 return $pdf->stream(date('d-m-Y') . ' Relatorio de NFe.pdf');
             }
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Erro ao gerar relatório: ' . $e->getMessage());
+        }
+    }
+
+    public function gerarPdf(Request $request) 
+    {
+        try {
+            $userEmpresaId = Auth::user()->empresa_id;
+            
+            // Se for admin, usa o que vem no request ou tudo (%), se não for, trava no ID dele
+            $empresaFiltro = ($userEmpresaId == 1) ? ($request->empresa ?? "%") : $userEmpresaId;
+
+            // 1. Busca os dados do banco filtrando por empresa
+            $vendas = DB::table('pedidos')
+                ->where('data', '>=', $request->inicio)
+                ->where('data', '<=', $request->fim)
+                ->where('empresa_id', 'like', $empresaFiltro)
+                ->get();
+
+            // 2. Mantendo os nomes exatos que sua View espera
+            $pdf = Pdf::loadView('relatorios.vendasSinteticas', [
+                'vendas'      => $vendas, 
+                'data_inicio' => $request->inicio, 
+                'data_fim'    => $request->fim
+            ]);
+
+            return $pdf->stream('Relatorio_Vendas_Sintetico.pdf');
+
+        } catch (Exception $e) {
+            return back()->with('error', 'Erro ao gerar PDF: ' . $e->getMessage());
         }
     }
 
@@ -83,37 +106,7 @@ class RelatoriosController extends Controller
         try {
             return view('relatorios.index-mdfe');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Erro inesperado: ' . $e->getMessage());
         }
     }
-    
-
-
-public function gerarPdf(Request $request) 
-{
-    // 1. Busca os dados do banco de dados
-    $vendas = DB::table('pedidos')
-        ->where('data', '<=', $request->fim)
-        ->where('data', '>=', $request->inicio)
-        ->get();
-
-    $dompdf = new Dompdf();
-
-    $html = view('relatorios.vendasSinteticas', [
-        'vendas'      => $vendas, 
-        'data_inicio' => $request->inicio,
-        'data_fim'    => $request->fim
-    ])->render();
-
-    $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4');
-    $dompdf->render();
-
-    return $dompdf->stream('vendas_' . date('Y-m-d') . '.pdf', array("Attachment" => false));
 }
-    
-    
-
-}
-
-
