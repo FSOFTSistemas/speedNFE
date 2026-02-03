@@ -181,8 +181,9 @@
                 <div class="tab-content" id="tabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <label for="tipo" class="form-label">Tipo</label>
+                                <div class="input-group">
                                 <select class="form-select" name="tipo" id="tipo" required>
                                     <option value="" selected disabled>Selecione...</option>
                                     <option value="2" @if (old('tipo') == '2') selected @endif>Pessoa Jurídica
@@ -191,6 +192,7 @@
                                     </option>
                                 </select>
                                 <div class="invalid-feedback">Informe um tipo válido.</div>
+                                </div>
                             </div>
                             <div class="col-md-5 mb-3">
                                 <label for="cpf_cnpj" class="form-label">CPF/CNPJ</label>
@@ -304,8 +306,10 @@
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <label for="uf" class="form-label">Estado</label>
-                                <select name="uf" id="uf" class="form-select">
-                                    <option value="">UF</option>
+                                <div class="input-group">
+
+                                    <select name="uf" id="uf" class="form-select">
+                                        <option value="">UF</option>
                                     <option value="AC" @if (old('uf') == 'AC') selected @endif>AC</option>
                                     <option value="AL" @if (old('uf') == 'AL') selected @endif>AL</option>
                                     <option value="AP" @if (old('uf') == 'AP') selected @endif>AP</option>
@@ -335,6 +339,7 @@
                                     <option value="TO" @if (old('uf') == 'TO') selected @endif>TO</option>
                                 </select>
                                 <div class="invalid-feedback">Informe um estado válido.</div>
+                            </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="ibge" class="form-label">Cód. IBGE</label>
