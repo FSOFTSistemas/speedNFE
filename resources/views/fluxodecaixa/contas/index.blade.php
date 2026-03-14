@@ -157,7 +157,7 @@
                     {{-- O conteúdo do seu modal de criação original (assumindo a estrutura) --}}
                     <div class="form-group mb-3"><label class="form-label">Descrição</label><input type="text" class="form-control" name="descricao" required></div>
                     <div class="form-group mb-3"><label class="form-label">Código</label><input type="text" class="form-control" name="codigo" required></div>
-                    <div class="form-group mb-3"><label class="form-label">Tipo</label><select class="form-control" name="tipo"><option value="Sintética">Sintética</option><option value="Analítica">Analítica</option></select></div>
+                    <div class="form-group mb-3"><label class="form-label">Tipo</label><select class="form-control" name="tipo"><option value="Receita">Receita</option><option value="Despesa">Despesa</option></select></div>
                     <div class="form-group mb-3"><label class="form-label">Conta Pai</label><select class="form-control" name="conta_pai_id"><option value="">Nenhuma</option>@foreach($contas->where('tipo', 'Sintética') as $contaPai)<option value="{{ $contaPai->id }}">{{ $contaPai->descricao }}</option>@endforeach</select></div>
                     <div class="text-center mt-4"><button type="submit" class="btn custom-btn custom-btn-success">Salvar Nova Conta</button></div>
                 </form>

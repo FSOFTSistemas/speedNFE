@@ -85,6 +85,24 @@
             margin-bottom: 0;
         }
 
+        .card-main form label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        /* Ajuste para o card de valor não ficar maior que os filtros */
+        .row.mb-4 .card-main {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         @media (min-width: 992px) {
             .header-buttons .btn {
                 display: inline-block;
@@ -170,6 +188,43 @@
 @stop
 
 @section('content')
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <div class="card card-main p-3">
+                <form method="GET" action="{{ route('cupom.index') }}" class="row align-items-end">
+                    <div class="col-md-3">
+                        <label>Data Início</label>
+                        <input type="date" name="data_inicio" class="form-control" value="{{ $data_inicio }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label>Data Fim</label>
+                        <input type="date" name="data_fim" class="form-control" value="{{ $data_fim }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label>Situação</label>
+                        <select name="situacao" class="form-control">
+                            <option value="">Todas</option>
+                            <option value="ATIVO" {{ $situacao == 'ATIVO' ? 'selected' : '' }}>Ativo</option>
+                            <option value="CANCELADO" {{ $situacao == 'CANCELADO' ? 'selected' : '' }}>Cancelado</option>
+                            <option value="PENDENTE" {{ $situacao == 'PENDENTE' ? 'selected' : '' }}>Pendente</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn custom-btn custom-btn-primary btn-block">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-main text-center bg-primary text-white" style="padding: 20px;">
+                <h5 class="mb-1">Total no Período</h5>
+                <h3 class="font-weight-bold">R$ {{ number_format($valorTotalFiltrado, 2, ',', '.') }}</h3>
+            </div>
+        </div>
+    </div>
     <div class="card card-main">
         <div class="card-body p-0">
             @component('components.dataTable', [

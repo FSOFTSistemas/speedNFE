@@ -157,6 +157,7 @@
                 <input class="form-control" type="month" id="month" name="month" required>
                 <div class="invalid-feedback">Por favor, selecione o mês.</div>
             </div>
+
             <div class="form-group mb-3">
                 <label for="accountant" class="form-label">E-mail do Contador</label>
                 <input class="form-control" type="email" id="accountant" name="accountant" value="{{ $accountant }}" required>

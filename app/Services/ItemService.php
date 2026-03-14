@@ -53,7 +53,7 @@ class ItemService
     
     public static function verificaVendaPorProduto($empresaId, $produto)
     {
-       // return;
+        return;
         // 1) Valida se é um produto válido da empresa e do tipo esperado
         $produtoValido = Produto::where('empresa_id', $empresaId)
           ->where('id', $produto->id)

@@ -152,6 +152,9 @@
                                 <td class="text-left">{{ $pedido->fantasia }}</td>
                             @endif
                             <td class="action-buttons">
+                                <a href="{{ url('/debug-xml/' . $pedido->id) }}" target="_blank" class="btn btn-sm btn-info" title="Ver XML (Debug)">
+    <i class="fas fa-eye"></i> XML
+</a>
                                 @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
                                     <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}" title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a>
                                     <a href="{{ route('vendas.editar', [$pedido->id]) }}" title="Editar" class="text-info"><i class="fa fa-edit"></i></a>

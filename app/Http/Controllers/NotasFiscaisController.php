@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmailXmlContador;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Services\PedidosService;
 use App\Services\UsersService;
+use App\Utils\ZipArchiveUtil;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use NFePHP\DA\NFe\Danfe;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -101,4 +105,70 @@ class NotasFiscaisController extends Controller
         }
         return redirect('/notas')->with('alert', 'Não foram encontradas notas para o período solicitado.');
     }
+
+public function enviarXmlsContador(Request $request)
+{
+    try {
+        $request->validate([
+            'month' => 'required',
+            'accountant' => 'required|email'
+        ]);
+
+        $company = Auth::user()->empresa;
+        
+        // Monta os caminhos conforme sua estrutura confirmada
+        $ano = date('Y', strtotime($request->month));
+        $mes = date('m', strtotime($request->month));
+        
+        // Caminho absoluto para a pasta do mês
+        $folderPath = public_path($company->fantasia . '/' . $ano . '/' . $mes);
+
+        if (!file_exists($folderPath)) {
+            return back()->with('warning', "A pasta do período {$mes}/{$ano} não foi encontrada no servidor.");
+        }
+
+        // Nome do arquivo ZIP temporário
+        $zipName = 'XMLs_' . $company->fantasia . '_' . $mes . '_' . $ano . '.zip';
+        $zipPath = public_path($zipName);
+
+        $zip = new \ZipArchive;
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+            
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($folderPath),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            $hasFiles = false;
+            foreach ($files as $name => $file) {
+                if (!$file->isDir()) {
+                    $filePath = $file->getRealPath();
+                    $relativePath = basename($filePath);
+                    $zip->addFile($filePath, $relativePath);
+                    $hasFiles = true;
+                }
+            }
+            $zip->close();
+
+            if (!$hasFiles) {
+                unlink($zipPath);
+                return back()->with('warning', 'A pasta existe, mas não contém arquivos XML.');
+            }
+        }
+
+        // ENVIO: O e-mail destino é o $request->accountant (o que você digitou no modal)
+        \Illuminate\Support\Facades\Mail::to($request->accountant)
+            ->send(new \App\Mail\EmailXmlContador($company, $zipPath, $request->month));
+
+        // Deleta o zip após enviar
+        if (file_exists($zipPath)) {
+            unlink($zipPath);
+        }
+
+        return back()->with('success', 'E-mail enviado com sucesso para: ' . $request->accountant);
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'Erro ao processar: ' . $e->getMessage());
+    }
+}
 }

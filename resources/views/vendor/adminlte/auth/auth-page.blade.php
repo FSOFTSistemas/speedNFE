@@ -87,7 +87,7 @@
     /* Painel da Imagem (Metade Esquerda) */
     .image-panel {
         flex: 1;
-        background-image: url('https://placehold.co/1080x1920/00033a/ffffff?text=Sua+Imagem+Aqui');
+        background-image: url('https://placehold.co/1080x1920/00033a/ffffff?text=SPEED');
         /* IMPORTANTE: Troque a URL acima pela imagem desejada */
         background-size: cover;
         background-position: center;
@@ -141,7 +141,7 @@
         box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
         border-color: var(--accent-color);
     }
-    
+
     .input-group .input-group-text {
         border-radius: 8px !important;
         border: 1px solid var(--border-color);
@@ -192,7 +192,7 @@
         color: var(--primary-color);
         text-decoration: underline;
     }
-    
+
     /* Mensagens de erro */
     .invalid-feedback {
         text-align: left;
@@ -220,7 +220,7 @@
             padding: 20px;
             background-color: transparent;
         }
-        
+
         .form-content {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(25px);
@@ -252,7 +252,7 @@
 
         <div class="form-panel">
             <div class="form-content">
-                
+
                 <div class="login-logo">
                     {{-- Usa a URL do painel principal definida via configuração --}}
                     <a href="{{ route($home_url) }}">
@@ -302,7 +302,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="auth-links">
                         <div class="icheck-primary">
                             <input type="checkbox" name="remember" id="remember">
@@ -316,7 +316,7 @@
                             </p>
                         @endif
                     </div>
-                    
+
                 </form>
 
             </div>

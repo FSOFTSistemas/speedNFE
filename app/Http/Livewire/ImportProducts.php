@@ -21,6 +21,10 @@ class ImportProducts extends Component
         $categoriaService = new CategoriasService();
         $this->ide = (array) $data['nota']['ide'];
         $this->emit = (array) $data['nota']['emit'];
+        // >>> AQUI <<<
+        if (!isset($this->emit['CNPJ']) && isset($this->emit['CPF'])) {
+            $this->emit['CNPJ'] = $this->emit['CPF'];
+        }
         $this->vNF = (string) $data['nota']['vNF'][0];
         $this->chNFe = (string) $data['nota']['chNFe'][0];
         $this->categorias = $categoriaService->todasCategoriasEmpresa(auth()->user()->empresa_id);

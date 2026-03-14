@@ -130,13 +130,15 @@
             <div class="tab-content" id="tabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="row">
-                         <div class="col-md-4 mb-3">
+                         <div class="col-md-2 mb-3">
                             <label for="tipo" class="form-label">Tipo</label>
+                            <div class="input-group">
                             <select class="form-select" name="tipo" id="tipo" required>
                                 <option value="1" @if($cliente->tipo == 1) selected @endif>Pessoa Física</option>
                                 <option value="2" @if($cliente->tipo == 2) selected @endif>Pessoa Jurídica</option>
                             </select>
                             <div class="invalid-feedback">Informe um tipo válido.</div>
+                            </div>
                         </div>
                         <div class="col-md-5 mb-3">
                             <label for="cpf_cnpj" class="form-label">CPF/CNPJ</label>
@@ -224,6 +226,7 @@
                     <div class="row">
                          <div class="col-md-3 mb-3">
                             <label for="uf" class="form-label">Estado</label>
+                            <div class="input-group">
                             <select name="uf" id="uf" class="form-select">
                                 <option value="">UF</option>
                                 @foreach(['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'] as $estado)
@@ -231,6 +234,7 @@
                                 @endforeach
                             </select>
                             <div class="invalid-feedback">Informe um estado válido.</div>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="ibge" class="form-label">Cód. IBGE</label>

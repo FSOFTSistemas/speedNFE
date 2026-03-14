@@ -13,12 +13,17 @@ class ProdutosService
 
     }
 
-    public function salvar($id, $categoria, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,
-    $tpVeic, $chassiVeic, $renavanVeic, $anoFabVeic, $anoModVeic, $pesoLVeic, $pesoBVeic, $distVeic, $combVeic, $nMotorVeic, $cvVeic, $cm3Veic, $serieVeic,
-    $tpPVeic, $corVeic, $cCorVeic, $cCorMontVeic, $cMarcaVeic, $condVeic, $espVeic, $vinVeic, $lotVeic, $restriVeic, $cargaVeic, $operVeic, $cst, $icms, $pis,
-    $cofins, $ipi, $cfopexterno, $un)
-    {
+    public function salvar(
+        $id, $categoria, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,
+        $tpVeic, $chassiVeic, $renavanVeic, $anoFabVeic, $anoModVeic, $pesoLVeic, $pesoBVeic, $distVeic, $combVeic, $nMotorVeic, $cvVeic, $cm3Veic, $serieVeic,
+        $tpPVeic, $corVeic, $cCorVeic, $cCorMontVeic, $cMarcaVeic, $condVeic, $espVeic, $vinVeic, $lotVeic, $restriVeic, $cargaVeic, $operVeic, $cst, $icms, $pis,
+        $cofins, $ipi, $cfopexterno, $un,
+        // --- NOVOS CAMPOS RTC (Adicionados ao final) ---
+        $cClassTrib = null, $pIBS = null, $pCBS = null, $pIS_imposto = null, $cst_ibs_cbs = null
+    ) {
+        dd("salvar");
         $prod = Produto::find($id);
+        
         $prod->update([
             'codigo' => $codigo,
             'produto' => $produto,
@@ -37,6 +42,7 @@ class ProdutosService
             'cfop_externo' => $cfopexterno,
             'un' => $un,
             'categoria_id' => $categoria,
+            // --- VEICULOS ---
             'tpVeic' => $tpVeic,
             'chassiVeic' => $chassiVeic,
             'renavanVeic' => $renavanVeic,
@@ -61,7 +67,13 @@ class ProdutosService
             'lotVeic' => $lotVeic,
             'restriVeic' => $restriVeic,
             'cargaVeic' => $cargaVeic,
-            'operVeic' => $operVeic
+            'operVeic' => $operVeic,
+            // --- RTC ---
+            'cClassTrib' => $cClassTrib,
+            'pIBS' => $pIBS,
+            'pCBS' => $pCBS,
+            'pIS_imposto' => $pIS_imposto,
+            'cst_ibs_cbs' => $cst_ibs_cbs
         ]);
         return $prod;
     }
@@ -86,11 +98,21 @@ class ProdutosService
         $productsList = [];
         foreach ($request as $prod) {
             if (!Produto::whereEmpresaId($empresaId)->where('chassiVeic', $prod[0]['chassi'] ?? -1)->exists()) {
+                
+                $descricaoProduto = trim($prod[0]['xProd']);
+
+                $chassi = $prod[0]['chassi'] ?? '';
+                
+                if ($chassi) {
+                    $descricaoProduto .= ' - ' . $chassi;
+                }
+
+               
                 $produtoId = Produto::create([
                     'categoria_id' => $prod[0]['categoria'],
                     'empresa_id' => $empresaId,
                     'codigo' => $prod[0]['cEAN'],
-                    'produto' => $prod[0]['xProd'],
+                    'produto' => $descricaoProduto,
                     'precocusto' => $prod[0]['vProd'],
                     'precovenda' => $prod[0]['vVendaProd'],
                     'ncm' => $prod[0]['NCM'],
@@ -130,7 +152,9 @@ class ProdutosService
                     'lotVeic' => $prod[0]['lota'] ?? null,
                     'restriVeic' => $prod[0]['tpRest'] ?? null,
                     'cargaVeic' => $prod[0]['CMT'] ?? null,
-                    'operVeic' => $prod[0]['tpOp'] ?? null
+                    'operVeic' => $prod[0]['tpOp'] ?? null,
+                    // Deixei NULL no insert em massa por enquanto, pois geralmente vem de XML antigo
+                    // Se precisar importar isso de XML novo, terá que mapear aqui depois.
                 ])->id;
                 array_push($productsList, ['produtoId' => $produtoId, 'qtde' => $prod[0]['qCom']]);
             }
@@ -138,16 +162,31 @@ class ProdutosService
         return $productsList;
     }
 
-    public function store($categoria, $empresa, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,
-    $cst, $icms, $pis, $cofins, $ipi, $cfopexterno, $un, $tpProd, $tpVeic, $chassiVeic, $renavanVeic, $anoFabVeic, $anoModVeic, $pesoLVeic, $pesoBVeic,
-    $distVeic, $combVeic, $nMotorVeic, $cvVeic, $cm3Veic, $serieVeic, $tpPVeic, $corVeic, $cCorVeic, $cCorMontVeic, $cMarcaVeic, $condVeic, $espVeic,
-    $vinVeic, $lotVeic, $restriVeic, $cargaVeic, $operVeic)
-    {
+    public function store(
+        $categoria, $empresa, $codigo, $produto, $precocusto, $precovenda, $ncm, $cfopinterno, $cst_csosn, $cst_pis, $cst_cofins,
+        $cst, $icms, $pis, $cofins, $ipi, $cfopexterno, $un, $tpProd, $tpVeic, $chassiVeic, $renavanVeic, $anoFabVeic, $anoModVeic, $pesoLVeic, $pesoBVeic,
+        $distVeic, $combVeic, $nMotorVeic, $cvVeic, $cm3Veic, $serieVeic, $tpPVeic, $corVeic, $cCorVeic, $cCorMontVeic, $cMarcaVeic, $condVeic, $espVeic,
+        $vinVeic, $lotVeic, $restriVeic, $cargaVeic, $operVeic,
+        // --- NOVOS CAMPOS RTC ---
+        $cClassTrib = null, $pIBS = null, $pCBS = null, $pIS_imposto = null, $cst_ibs_cbs = null
+    ) {
+        
+         $descricaoProduto = trim($produto);
+
+        if (!empty($chassiVeic)) {
+            $chassiVeic = trim($chassiVeic);
+    
+            if (stripos($descricaoProduto, $chassiVeic) === false) {
+                $descricaoProduto .= ' - CHASSI: ' . $chassiVeic;
+            }
+        }
+
+
             return Produto::create([
                 'categoria_id' => $categoria,
                 'empresa_id' => $empresa,
                 'codigo' => $codigo,
-                'produto' => $produto,
+                'produto' => $descricaoProduto,
                 'precocusto' => $precocusto,
                 'precovenda' => $precovenda,
                 'ncm' => $ncm,
@@ -187,7 +226,13 @@ class ProdutosService
                 'lotVeic' => $lotVeic,
                 'restriVeic' => $restriVeic,
                 'cargaVeic' => $cargaVeic,
-                'operVeic' => $operVeic
+                'operVeic' => $operVeic,
+                // --- RTC ---
+                'cClassTrib' => $cClassTrib,
+                'pIBS' => $pIBS,
+                'pCBS' => $pCBS,
+                'pIS_imposto' => $pIS_imposto,
+                'cst_ibs_cbs' => $cst_ibs_cbs
             ]);
     }
 

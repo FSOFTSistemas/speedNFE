@@ -25,10 +25,11 @@ class NFeService
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
     }
 
-    public function gerarXml($venda, $emitente)
+public function gerarXml($venda, $emitente)
     {
-        // dd($venda);
-        $nfe = new Make();
+        // 1. CORREÇÃO CRÍTICA: Forçar Schema PL_010 para ativar a Reforma Tributária
+        $nfe = new Make('PL_010');
+
         $stdInNFe = new \stdClass();
         $stdInNFe->versao = '4.00';
         $stdInNFe->Id = null;
@@ -61,6 +62,12 @@ class NFeService
         $stdIde->verProc = '3.10.31';
         $tagide = $nfe->tagide($stdIde);
 
+        // --- CONTROLE DA REFORMA TRIBUTÁRIA (RTC) ---
+        $dataEmissao = new \DateTime(date("Y-m-d"));
+        $dataVirada  = new \DateTime('2026-01-01');
+        $isRTC = ($dataEmissao >= $dataVirada) || (getenv('TESTAR_RTC') == 'true' && $emitente->ambiente == 2);
+        // --------------------------------------------
+
         if ($venda->ref_nfe) {
             $stdrefNFe = new \stdClass();
             $stdrefNFe->refNFe = $venda->ref_nfe;
@@ -77,7 +84,9 @@ class NFeService
         $ie = str_replace("-", "", $ie);
         $stdEmit->IE = $ie;
 
-        $stdEmit->CRT = 1; // Simples nacional
+        // AJUSTE: CRT DINÂMICO DA EMPRESA
+        $stdEmit->CRT = $emitente->crt;
+
         $cnpj = str_replace(".", "", $emitente->cpf_cnpj);
         $cnpj = str_replace("/", "", $cnpj);
         $cnpj = str_replace("-", "", $cnpj);
@@ -89,6 +98,7 @@ class NFeService
             $stdEmit->CPF = $cnpj;
         }
         $emit = $nfe->tagemit($stdEmit);
+
         // ENDERECO EMITENTE
         $stdEnderEmit = new \stdClass();
         $stdEnderEmit->xLgr = FormatationUtil::retiraAcentos($emitente->endereco->rua);
@@ -117,34 +127,23 @@ class NFeService
 
         // DESTINATARIO
         $stdDest = new \stdClass();
-        $pFisica = false;
         $stdDest->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
 
         if ($venda->cliente->contribuinte) {
-            if ($venda->cliente->rg_ie == 'ISENTO') {
-                $stdDest->indIEDest = "2";
-            } else {
-                $stdDest->indIEDest = "1";
-            }
+            $stdDest->indIEDest = ($venda->cliente->rg_ie == 'ISENTO') ? "2" : "1";
         } else {
             $stdDest->indIEDest = "9";
         }
 
-        $cnpj_cpf = str_replace(".", "", $venda->cliente->cpf_cnpj);
-        $cnpj_cpf = str_replace("/", "", $cnpj_cpf);
-        $cnpj_cpf = str_replace("-", "", $cnpj_cpf);
+      
+        $cnpj_cpf = str_replace([".", "/", "-"], "", $venda->cliente->cpf_cnpj);
 
         if (strlen($cnpj_cpf) == 14) {
             $stdDest->CNPJ = $cnpj_cpf;
-            $ie = str_replace(".", "", $venda->cliente->rg_ie);
-            $ie = str_replace("/", "", $ie);
-            $ie = str_replace("-", "", $ie);
-            $stdDest->IE = $ie;
+            $stdDest->IE = str_replace([".", "/", "-"], "", $venda->cliente->rg_ie);
         } else {
             $stdDest->CPF = $cnpj_cpf;
-            $ie = str_replace(".", "", $venda->cliente->rg_ie);
-            $ie = str_replace("/", "", $ie);
-            $ie = str_replace("-", "", $ie);
+            $ie = str_replace([".", "/", "-"], "", $venda->cliente->rg_ie);
             if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) {
                 $stdDest->IE = $ie;
             }
@@ -153,25 +152,19 @@ class NFeService
         $dest = $nfe->tagdest($stdDest);
 
         //ENDEREÇO DESTINATÁRIO
-
         $stdEnderDest = new \stdClass();
         $stdEnderDest->xLgr = FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
         $stdEnderDest->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
         $stdEnderDest->xCpl = FormatationUtil::retiraAcentos($venda->endereco_cliente->complemento);
         $stdEnderDest->xBairro = FormatationUtil::retiraAcentos($venda->endereco_cliente->bairro);
 
-        $telefone = $venda->cliente->celular;
-        $telefone = str_replace("(", "", $telefone);
-        $telefone = str_replace(")", "", $telefone);
-        $telefone = str_replace("-", "", $telefone);
-        $telefone = str_replace(" ", "", $telefone);
+        $telefone = str_replace(["(", ")", "-", " "], "", $venda->cliente->celular);
         $stdEnderDest->fone = $telefone;
         $stdEnderDest->cMun = FormatationUtil::retiraPontuacoes($venda->endereco_cliente->codigoIBGE);
         $stdEnderDest->xMun = FormatationUtil::retiraAcentos($venda->endereco_cliente->cidade);
         $stdEnderDest->UF = $venda->endereco_cliente->uf;
 
-        $cep = str_replace("-", "", $venda->endereco_cliente->cep);
-        $cep = str_replace(".", "", $cep);
+        $cep = str_replace(["-", "."], "", $venda->endereco_cliente->cep);
         $stdEnderDest->CEP = $cep;
         $stdEnderDest->cPais = "1058";
         $stdEnderDest->xPais = "BRASIL";
@@ -179,30 +172,21 @@ class NFeService
 
         //ENTREGA
         $entrega = false;
-        foreach ($venda->itens as $key => $i) {
-            if ($i->produto->operVeic == 2) {
-                $entrega = true;
-            }
+        foreach ($venda->itens as $i) {
+            if ($i->produto->operVeic == 2) $entrega = true;
         }
         if ($entrega) {
             $stdEntrega = new \stdClass();
             if (strlen($cnpj_cpf) == 14) {
                 $stdEntrega->CNPJ = $cnpj_cpf;
-                $ie = str_replace(".", "", $venda->cliente->rg_ie);
-                $ie = str_replace("/", "", $ie);
-                $ie = str_replace("-", "", $ie);
-                $stdEntrega->IE = $ie;
+                $stdEntrega->IE = str_replace([".", "/", "-"], "", $venda->cliente->rg_ie);
             } else {
                 $stdEntrega->CPF = $cnpj_cpf;
-                $ie = str_replace(".", "", $venda->cliente->rg_ie);
-                $ie = str_replace("/", "", $ie);
-                $ie = str_replace("-", "", $ie);
-                if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) {
-                    $stdEntrega->IE = $ie;
-                }
+                $ie = str_replace([".", "/", "-"], "", $venda->cliente->rg_ie);
+                if (strtolower($ie) != "isento" && $venda->cliente->contribuinte) $stdEntrega->IE = $ie;
             }
             $stdEntrega->xNome = FormatationUtil::retiraAcentos($venda->cliente->nome);
-            $stdEntrega->xLgr =  FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
+            $stdEntrega->xLgr = FormatationUtil::retiraAcentos($venda->endereco_cliente->rua);
             $stdEntrega->nro = FormatationUtil::retiraAcentos($venda->endereco_cliente->numero);
             $stdEntrega->xCpl = FormatationUtil::retiraAcentos($venda->endereco_cliente->complemento);
             $stdEntrega->xBairro = FormatationUtil::retiraAcentos($venda->endereco_cliente->bairro);
@@ -213,44 +197,46 @@ class NFeService
             $stdEntrega->cPais = '1058';
             $stdEntrega->xPais = 'BRASIL';
             $stdEntrega->fone = $telefone;
-
             $nfe->tagentrega($stdEntrega);
         }
 
+        // --- INICIALIZAÇÃO DOS ACUMULADORES ---
+        $totvBC = 0;
+        $totvICMS = 0;
+        $totvIPI = 0;
+        $totvPIS = 0;
+        $totvCOFINS = 0;
+
         //ITENS DA NFE
         foreach ($venda->itens as $key => $i) {
-            //TAG DE PRODUTO
             $stdProd = new \stdClass();
             $stdProd->item = $key + 1;
 
             $cod = ValidationEAN13Util::validate_EAN13Barcode($i->produto->codigo);
-
             $stdProd->cEAN = $cod ? $i->produto->codigo : 'SEM GTIN';
             $stdProd->cEANTrib = $cod ? $i->produto->codigo : 'SEM GTIN';
             $stdProd->cProd = $i->produto->id;
             $stdProd->xProd = FormatationUtil::retiraAcentos($i->produto->produto);
+            $stdProd->NCM = str_replace(".", "", $i->produto->ncm);
 
-            $ncm = $i->produto->ncm;
-            $ncm = str_replace(".", "", $ncm);
-            $stdProd->NCM = $ncm;
+            if ($isRTC && !empty($i->produto->cClassTrib)) {
+                $stdProd->cClassTrib = $i->produto->cClassTrib;
+            }
 
             $stdProd->CFOP = $venda->cfopNota->cfop;
-
             $stdProd->uCom = $i->produto->un;
             $stdProd->qCom = $i->qtde;
             $stdProd->vUnCom = FormatationUtil::format($i->unitario);
             $stdProd->vProd = FormatationUtil::format(($i->qtde * $i->unitario));
-            if ($i->desconto > 0) {
-                $stdProd->vDesc = FormatationUtil::format($i->desconto);
-            }
+            if ($i->desconto > 0) $stdProd->vDesc = FormatationUtil::format($i->desconto);
+
             $stdProd->uTrib = $i->produto->un;
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
             $stdProd->indTot = 1;
+
             if ($i->produto->tpProd == 1) {
                 $stdVeicProd = new \stdClass();
-
-                // Campos do veículo (adicionados)
                 $stdVeicProd->item = $key + 1;
                 $stdVeicProd->tpOp = $i->produto->operVeic;
                 $stdVeicProd->chassi = $i->produto->chassiVeic;
@@ -276,7 +262,6 @@ class NFeService
                 $stdVeicProd->cCorDENATRAN = $i->produto->cCorMontVeic;
                 $stdVeicProd->lota = $i->produto->lotVeic;
                 $stdVeicProd->tpRest = $i->produto->restriVeic;
-
                 $nfe->tagveicProd($stdVeicProd);
             }
             $nfe->tagprod($stdProd);
@@ -284,19 +269,92 @@ class NFeService
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
             $nfe->tagimposto($stdImposto);
-
-            //ICMS
+  
+            // --- AJUSTE DINÂMICO DE ICMS POR CRT ---
             $stdICMS = new \stdClass();
             $stdICMS->item = $key + 1;
             $stdICMS->orig = 0;
-            $stdICMS->CSOSN = $i->produto->cst_csosn;
-            $stdICMS->modBC = 0;
-            $stdICMS->vBC = $stdProd->vProd;
-            $stdICMS->pICMS = FormatationUtil::format($i->produto->icms);
-            $stdICMS->vICMS = $stdICMS->vBC * ($stdICMS->pICMS / 100);
-            $stdICMS->pCredSN = FormatationUtil::format($i->produto->icms);
-            $stdICMS->vCredICMSSN = FormatationUtil::format($i->produto->icms);
-            $ICMS = $nfe->tagICMSSN($stdICMS);
+
+            if (in_array($emitente->crt, [1, 4])) {
+                $stdICMS->CSOSN = $i->produto->cst_csosn;
+                if (in_array($stdICMS->CSOSN, ['101', '201', '900'])) {
+                    $stdICMS->pCredSN = FormatationUtil::format($i->produto->icms);
+                    $stdICMS->vCredICMSSN = FormatationUtil::format($stdProd->vProd * ($stdICMS->pCredSN / 100));
+                }
+                $nfe->tagICMSSN($stdICMS);
+            } else {
+                
+                
+                
+                $stdICMS->CST = str_pad($i->produto->cst_csosn, 2, "0", STR_PAD_LEFT);
+                
+            
+               if (in_array($stdICMS->CST, ['00','10','20','70','90'])) {
+
+                    $stdICMS->modBC = 3;
+                    $stdICMS->vBC   = FormatationUtil::format($stdProd->vProd);
+                    $stdICMS->pICMS = FormatationUtil::format($i->produto->icms);
+                    $stdICMS->vICMS = FormatationUtil::format($stdProd->vProd * ($i->produto->icms / 100));
+                
+                    // >>> ACUMULA TOTAIS <<<
+                    $totvBC   += (float)$stdICMS->vBC;
+                    $totvICMS += (float)$stdICMS->vICMS;
+                
+                } else {
+                
+                    // CST sem destaque
+                    unset(
+                        $stdICMS->modBC,
+                        $stdICMS->vBC,
+                        $stdICMS->pICMS,
+                        $stdICMS->vICMS
+                    );
+                }
+            
+
+              
+                
+
+                
+                // chamada única
+                $icmsTag = $nfe->tagICMS($stdICMS);
+                
+                if ($icmsTag === null) {
+                    throw new \Exception("Falha ao gerar ICMS. CST={$stdICMS->CST}");
+                }
+
+                
+
+                if ($icmsTag === null) {
+                    throw new \Exception("Erro ao gerar tagICMS para o item " . ($key + 1));
+                }
+            }
+            
+            // DIFAL só quando: interestadual + não contribuinte
+            $ufEmit = $emitente->uf;                 // ex: "PE"
+            $ufDest = $venda->cliente->endereco->uf;           // ex: "SP"
+            $indIEDest = (int) $stdDest->indIEDest;  // 1,2,9
+            
+            if ($ufEmit !== $ufDest && $indIEDest === 9) {
+
+                $stdICMSUFDest = new \stdClass();
+                $stdICMSUFDest->item = $key + 1;
+            
+                $stdICMSUFDest->vBCUFDest = FormatationUtil::format($stdProd->vProd);
+            
+                // Se você ainda não vai calcular DIFAL agora:
+                $stdICMSUFDest->pFCPUFDest = 0;
+                $stdICMSUFDest->pICMSUFDest = 0;
+                $stdICMSUFDest->pICMSInter = 12;        // depois ajusta 7/12 conforme UF
+                $stdICMSUFDest->pICMSInterPart = 100;
+            
+                $stdICMSUFDest->vFCPUFDest = 0;
+                $stdICMSUFDest->vICMSUFDest = 0;
+                $stdICMSUFDest->vICMSUFRemet = 0;
+            
+                $nfe->tagICMSUFDest($stdICMSUFDest);
+            }
+           
 
             //PIS
             $stdPIS = new \stdClass();
@@ -305,7 +363,8 @@ class NFeService
             $stdPIS->vBC = FormatationUtil::format($i->produto->pis) > 0 ? $stdProd->vProd : 0.00;
             $stdPIS->pPIS = FormatationUtil::format($i->produto->pis);
             $stdPIS->vPIS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->pis / 100));
-            $PIS = $nfe->tagPIS($stdPIS);
+            $totvPIS += (float)$stdPIS->vPIS;
+            $nfe->tagPIS($stdPIS);
 
             //COFINS
             $stdCOFINS = new \stdClass();
@@ -313,46 +372,71 @@ class NFeService
             $stdCOFINS->CST = $i->produto->cst_cofins;
             $stdCOFINS->vBC = FormatationUtil::format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
             $stdCOFINS->pCOFINS = FormatationUtil::format($i->produto->cofins);
-            $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) *
-                ($i->produto->cofins / 100));
-            $COFINS = $nfe->tagCOFINS($stdCOFINS);
+            $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->cofins / 100));
+            $totvCOFINS += (float)$stdCOFINS->vCOFINS;
+            $nfe->tagCOFINS($stdCOFINS);
 
             //IPI
-            $std = new \stdClass();
-            $std->item = $key + 1;
-            $std->cEnq = '999';
-            $std->CST = $i->produto->ipi;
-            $std->vBC = FormatationUtil::format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
-            $std->pIPI = FormatationUtil::format($i->produto->ipi);
-            $std->vIPI = $stdProd->vProd * FormatationUtil::format(($i->produto->ipi / 100));
-            $nfe->tagIPI($std);
+            $stdIPI = new \stdClass();
+            $stdIPI->item = $key + 1;
+            $stdIPI->cEnq = '999';
+            $stdIPI->CST = $i->produto->ipi;
+            $stdIPI->vBC = FormatationUtil::format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
+            $stdIPI->pIPI = FormatationUtil::format($i->produto->ipi);
+            $stdIPI->vIPI = FormatationUtil::format($stdProd->vProd * ($i->produto->ipi / 100));
+            $totvIPI += (float)$stdIPI->vIPI;
+            $nfe->tagIPI($stdIPI);
+
+            if ($isRTC) {
+                $stdIBSCBS = new \stdClass();
+                $stdIBSCBS->item = $key + 1;
+                $cstBanco = $i->produto->cst_ibs_cbs ?? null;
+                $stdIBSCBS->CST = ($cstBanco && strlen($cstBanco) === 3) ? $cstBanco : '010';
+                if (!empty($i->produto->cClassTrib)) $stdIBSCBS->cClassTrib = $i->produto->cClassTrib;
+                $stdIBSCBS->vBC = FormatationUtil::format($stdProd->vProd);
+                $stdIBSCBS->gIBSUF_pIBSUF = FormatationUtil::format($i->produto->pIBS);
+                $stdIBSCBS->gIBSUF_vIBSUF = FormatationUtil::format($stdIBSCBS->vBC * ($stdIBSCBS->gIBSUF_pIBSUF / 100));
+                $stdIBSCBS->gIBSMun_pIBSMun = 0.00;
+                $stdIBSCBS->gIBSMun_vIBSMun = 0.00;
+                $stdIBSCBS->vIBS = $stdIBSCBS->gIBSUF_vIBSUF + $stdIBSCBS->gIBSMun_vIBSMun;
+                $stdIBSCBS->gCBS_pCBS = FormatationUtil::format($i->produto->pCBS);
+                $stdIBSCBS->gCBS_vCBS = FormatationUtil::format($stdIBSCBS->vBC * ($stdIBSCBS->gCBS_pCBS / 100));
+                $nfe->tagIBSCBS($stdIBSCBS);
+
+                if (isset($i->produto->pIS_imposto) && $i->produto->pIS_imposto > 0) {
+                    $stdIS = new \stdClass();
+                    $stdIS->item = $key + 1;
+                    $stdIS->vBC  = $stdProd->vProd;
+                    $stdIS->pIS  = FormatationUtil::format($i->produto->pIS_imposto);
+                    $stdIS->vIS  = FormatationUtil::format($stdIS->vBC * ($stdIS->pIS / 100));
+                    $nfe->tagIS($stdIS);
+                }
+            }
         }
 
         $stdTransp = new \stdClass();
         $stdTransp->modFrete = '9';
+        $nfe->tagtransp($stdTransp);
 
-        $transp = $nfe->tagtransp($stdTransp);
-
-        //TOTALIZADOR NFE
+        //TOTALIZADOR NFE (CORRIGIDO PARA ACUMULAR ITENS)
         $stdICMSTot = new \stdClass();
-        $stdICMSTot->vProd = 0.00;
-        $stdICMSTot->vBC = 0.00;
-        $stdICMSTot->vICMS = 0.00;
+        $stdICMSTot->vProd = FormatationUtil::format($venda->subtotal);
+        $stdICMSTot->vBC = FormatationUtil::format($totvBC);
+        $stdICMSTot->vICMS = FormatationUtil::format($totvICMS);
         $stdICMSTot->vICMSDeson = 0.00;
         $stdICMSTot->vBCST = 0.00;
         $stdICMSTot->vST = 0.00;
         $stdICMSTot->vFrete = 0.00;
         $stdICMSTot->vSeg = 0.00;
-        if ($venda->desconto > 0) {
-            $stdICMSTot->vDesc = FormatationUtil::format($venda->desconto);
-        }
+        $stdICMSTot->vDesc = $venda->desconto > 0 ? FormatationUtil::format($venda->desconto) : 0.00;
         $stdICMSTot->vII = 0.00;
-        $stdICMSTot->vIPI = 0.00;
-        $stdICMSTot->vPIS = 0.00;
-        $stdICMSTot->vCOFINS = 0.00;
+        $stdICMSTot->vIPI = FormatationUtil::format($totvIPI);
+        $stdICMSTot->vPIS = FormatationUtil::format($totvPIS);
+        $stdICMSTot->vCOFINS = FormatationUtil::format($totvCOFINS);
         $stdICMSTot->vOutro = 0.00;
         $stdICMSTot->vTotTrib = 0.00;
         $stdICMSTot->vNF = FormatationUtil::format($venda->total);
+        $nfe->tagICMSTot($stdICMSTot);
 
         //DUPLICATAS
         $stdFat = new \stdClass();
@@ -360,118 +444,56 @@ class NFeService
         $stdFat->vOrig = FormatationUtil::format($venda->subtotal);
         $stdFat->vDesc = FormatationUtil::format($venda->desconto);
         $stdFat->vLiq = FormatationUtil::format($venda->subtotal - $venda->desconto);
-        if ($venda->tipo_pagamento != '90') {
-            $fatura = $nfe->tagfat($stdFat);
-        }
+        if ($venda->tipo_pagamento != '90') $nfe->tagfat($stdFat);
 
-        foreach ($venda->fatura as $key => $fat) {
-            // $stdDup = new \stdClass();
-            // $stdDup->nDup = '00' . ($key + 1);
-            // $stdDup->dVenc = $fat->vencimento;
-            // $stdDup->dVenc = date('Y-m-d');
-            // $stdDup->vDup = FormatationUtil::format($fat->valor);
-
-            // $nfe->tagdup($stdDup);
-
+        foreach ($venda->fatura as $fat) {
             $stdPag = new \stdClass();
-            $pag = $nfe->tagpag($stdPag);
-
+            $nfe->tagpag($stdPag);
             $stdDetPag = new \stdClass();
-            switch ($fat->forma_pag->descricao) {
-                case "Dinheiro":
-                    $stdDetPag->tPag = '01';
-                    break;
-                case "Cheque":
-                    $stdDetPag->tPag = '02';
-                    break;
-                case "Cartão de Crédito":
-                    $stdDetPag->tPag = '03';
-                    break;
-                case "Cartão de Débito":
-                    $stdDetPag->tPag = '04';
-                    break;
-                case "Crédito Loja":
-                    $stdDetPag->tPag = '05';
-                    break;
-                case "Vale Alimentação":
-                    $stdDetPag->tPag = '10';
-                    break;
-                case "Vale Refeição":
-                    $stdDetPag->tPag = '11';
-                    break;
-                case "Vale Presente":
-                    $stdDetPag->tPag = '12';
-                    break;
-                case "Vale Combustível":
-                    $stdDetPag->tPag = '13';
-                    break;
-                case "Duplicata Mercantil":
-                    $stdDetPag->tPag = '14';
-                    break;
-                case "Boleto Bancário":
-                    $stdDetPag->tPag = '15';
-                    break;
-                case "Depósito Bancário":
-                    $stdDetPag->tPag = '16';
-                    break;
-                case "PIX":
-                    $stdDetPag->tPag = '17';
-                    break;
-                case "Sem Pagamento":
-                    $stdDetPag->tPag = '90';
-                    break;
-                case "Outros":
-                    $stdDetPag->tPag = '99';
-                    break;
-                default:
-                    break;
-            }
+            $mapPagamento = [
+                "Dinheiro" => '01', "Cheque" => '02', "Cartão de Crédito" => '03',
+                "Cartão de Débito" => '04', "Crédito Loja" => '05', "Vale Alimentação" => '10',
+                "Vale Refeição" => '11', "Vale Presente" => '12', "Vale Combustível" => '13',
+                "Duplicata Mercantil" => '14', "Boleto Bancário" => '15', "Depósito Bancário" => '16',
+                "PIX" => '17', "Sem Pagamento" => '90', "Outros" => '99'
+            ];
+            $stdDetPag->tPag = $mapPagamento[$fat->forma_pag->descricao] ?? '99';
             $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem Pagamento' ? FormatationUtil::format($fat->valor) : 0;
             $stdDetPag->indPag = 1;
             $stdDetPag->vTroco = 0;
-            if ($fat->forma_pag->descricao == 'Cartão de Crédito' || $fat->forma_pag->descricao == 'Cartão de Débito') {
-                $stdDetPag->tpIntegra = '2';
-            }
-            $detPag = $nfe->tagdetPag($stdDetPag);
+            if (in_array($fat->forma_pag->descricao, ['Cartão de Crédito', 'Cartão de Débito'])) $stdDetPag->tpIntegra = '2';
+            $nfe->tagdetPag($stdDetPag);
         }
-
 
         $stdInfCpl = new \stdClass();
         $stdInfCpl->infCpl = $venda->info_complementares;
-        $infCpl = $nfe->taginfAdic($stdInfCpl);
+        $nfe->taginfAdic($stdInfCpl);
 
-        //TAG AUTORIZADOR XML VARIAVEL NO ARQUIVO .ENV, ESTADO DA BAHIA OBRIGATORIO
         if (getenv('AUT_XML') != '') {
-            $std = new \stdClass();
-            $cnpj = getenv('AUT_XML');
-            $cnpj = str_replace(".", "", $cnpj);
-            $cnpj = str_replace("-", "", $cnpj);
-            $cnpj = str_replace("/", "", $cnpj);
-            $cnpj = str_replace(" ", "", $cnpj);
-            $std->CNPJ = $cnpj;
-            $aut = $nfe->tagautXML($std);
+            $stdAut = new \stdClass();
+            $stdAut->CNPJ = str_replace([".", "-", "/", " "], "", getenv('AUT_XML'));
+            $nfe->tagautXML($stdAut);
         }
 
-        //TAG RESPONSAVEL TECNICO
-        $std = new \stdClass();
-        $std->CNPJ = getenv('RESP_CNPJ'); //CNPJ da pessoa jurídica responsável pelo sistema utilizado na emissão do documento fiscal eletrônico
-        $std->xContato = getenv('RESP_NOME'); //Nome da pessoa a ser contatada
-        $std->email = getenv('RESP_EMAIL'); //E-mail da pessoa jurídica a ser contatada
-        $std->fone = getenv('RESP_FONE');
-        $nfe->taginfRespTec($std);
+        $stdRT = new \stdClass();
+        $stdRT->CNPJ = getenv('RESP_CNPJ');
+        $stdRT->xContato = getenv('RESP_NOME');
+        $stdRT->email = getenv('RESP_EMAIL');
+        $stdRT->fone = getenv('RESP_FONE');
+        $nfe->taginfRespTec($stdRT);
 
         try {
             $nfe->montaNFe();
-            $arr = [
+            $xml = $nfe->getXML();
+            
+            return [
                 'chave' => $nfe->getChave(),
-                'xml' => $nfe->getXML(),
+                'xml' => $xml,
                 'nNf' => $stdIde->nNF,
             ];
-            return $arr;
         } catch (\Exception $e) {
-            return [
-                'erros_xml' => $nfe->getErrors(),
-            ];
+        
+            return ['erros_xml' => $nfe->getErrors()];
         }
     }
 
@@ -512,31 +534,31 @@ class NFeService
     //         ];
     //     }
     // }
-    
+
     public function transmitir($signXml, $chave, $caminho)
     {
         try {
             // Define idLote com 15 dígitos numéricos
             $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
-    
+
             // Envia em modo síncrono
             $resp = $this->tools->sefazEnviaLote([$signXml], $idLote, 1);
-    
+
             $st = new Standardize();
             $std = $st->toStd($resp);
-    
+
             if ($std->cStat == 104) {
                 $infProt = $std->protNFe->infProt;
-    
+
                 if ($infProt->cStat == 100) {
                     $xml = Complements::toAuthorize($signXml, $resp);
-    
+
                     if (!File::exists(public_path($caminho . '/'))) {
                         File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
                     }
-    
+
                     file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
-    
+
                     return [
                         'sucesso' => $infProt->nProt,
                     ];
@@ -550,7 +572,6 @@ class NFeService
                     'erro' => "Erro no processamento do lote: [{$std->cStat}] - {$std->xMotivo}",
                 ];
             }
-    
         } catch (\Exception $e) {
             return [
                 'erro' => $e->getMessage(),

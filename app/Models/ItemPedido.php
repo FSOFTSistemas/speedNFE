@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ItemPedido extends Model
 {
-
-    use HasFactory;
     protected $fillable = ['pedido_id', 'produto_id', 'qtde', 'empresa_id', 'desconto', 'acrescimo', 'unitario'];
 
     public function produto(){
@@ -20,9 +18,8 @@ class ItemPedido extends Model
     }
 
     public function pedido()
-{
-    return $this->belongsTo(Pedido::class);
-}
-
-
+    {
+        return $this->belongsTo(Pedido::class);
+    }
+    use HasFactory;
 }

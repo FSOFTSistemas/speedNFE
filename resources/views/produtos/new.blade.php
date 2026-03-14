@@ -110,6 +110,15 @@
         padding-left: 0 !important;
         line-height: normal !important;
     }
+    .rtc-header {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 4px solid var(--primary-color);
+        font-weight: 600;
+        color: var(--primary-color);
+    }
 </style>
 @endpush
 
@@ -143,27 +152,16 @@
             </ul>
             <form class="needs-validation mt-4" novalidate method="POST" action="{{ route('salvar_produto') }}" id="main-form">
                 @csrf
+                {{-- CAMPO OCULTO DE EMPRESA (FIXO DO USUÁRIO) --}}
+                <input type="hidden" name="empresa" id="empresa" value="{{ $user->empresa_id }}">
+
                 <div class="tab-content" id="tabContent">
                     {{-- ABA 1: INFORMAÇÕES DO PRODUTO --}}
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <div class="row">
-                            @if ($user->empresa_id == 1)
-                                <div class="col-md-6 mb-3">
-                                    <label for="empresa" class="form-label">Empresa</label>
-                                    <select onchange="liberarProdutos()" class="form-select select2-basic" name="empresa" id="empresa" required>
-                                        <option value="" disabled selected>Selecione uma Empresa</option>
-                                        @foreach ($empresas as $emp)
-                                            <option value="{{ $emp->id }}" @if (old('empresa') == $emp->id) selected @endif>{{ $emp->fantasia }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="invalid-feedback">Informe uma empresa.</div>
-                                </div>
-                            @else
-                                <input type="hidden" name="empresa" id="empresa" value="{{ $user->empresa_id }}">
-                            @endif
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="categoria" class="form-label">Categoria</label>
-                                <select class="form-select select2-basic" name="categoria" id="categoria" required {{ $user->empresa_id != 1 ? '' : 'disabled' }}>
+                                <select class="form-select select2-basic" name="categoria" id="categoria" required>
                                     <option value="" disabled selected>Selecione uma Categoria</option>
                                     @foreach ($categorias as $categoria)
                                         <option class="categoria-option" data-empresa="{{ $categoria->empresa_id }}" value="{{ $categoria->id }}" @if (old('categoria') == $categoria->id) selected @endif>{{ $categoria->descricao }}</option>
@@ -237,177 +235,188 @@
                     </div>
 
                     {{-- ABA 2: INFORMAÇÕES FISCAIS --}}
-                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="cfopinterno" class="form-label">CFOP Interno (Dentro do Estado)</label>
-                                <select class="form-select select2-basic" name="cfopinterno" id="cfopinterno" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    @foreach ($cfops as $cfop)
-                                        <option value="{{ $cfop->cfop }}" @if (old('cfopinterno') == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="invalid-feedback">Informe um CFOP interno.</div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="cfopexterno" class="form-label">CFOP Externo (Fora do Estado)</label>
-                                <select class="form-select select2-basic" name="cfopexterno" id="cfopexterno" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    @foreach ($cfops as $cfop)
-                                        <option value="{{ $cfop->cfop }}" @if (old('cfopexterno') == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="invalid-feedback">Informe um CFOP externo.</div>
-                            </div>
-                        </div>
+{{-- ABA 2: INFORMAÇÕES FISCAIS --}}
+<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    
+    <div class="rtc-header mt-2 mb-4">
+        <i class="fas fa-university mr-2"></i> Regime Tributário: 
+        <strong>{{ in_array($empresa->crt, [1, 2, 4]) ? 'Simples Nacional / MEI' : 'Regime Normal' }}</strong>
+    </div>
 
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="cst" class="form-label">CST</label>
-                                <select class="form-select select2-basic" name="cst" id="cst" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    <option value="00" @if (old('cst') == '00') selected @endif>00 - Tributação integral</option>
-                                    <option value="10" @if (old('cst') == '10') selected @endif>10 - Tributação com ICMS e acréscimo de ST</option>
-                                    <option value="20" @if (old('cst') == '20') selected @endif>20 - Tributação com ICMS e acréscimo de ST com direito a crédito</option>
-                                    <option value="30" @if (old('cst') == '30') selected @endif>30 - Tributação simplificada (sem direito a crédito)</option>
-                                    <option value="40" @if (old('cst') == '40') selected @endif>40 - Tributação simplificada com acréscimo de ST</option>
-                                    <option value="41" @if (old('cst') == '41') selected @endif>41 - Tributação com ICMS e acréscimo de ST por Substituição Tributária</option>
-                                    <option value="50" @if (old('cst') == '50') selected @endif>50 - Tributação com ICMS e acréscimo de ST por Substituição Tributária com direito a crédito</option>
-                                    <option value="51" @if (old('cst') == '51') selected @endif>51 - Tributação com ICMS e acréscimo de ST por Substituição Tributária sem direito a crédito</option>
-                                    <option value="60" @if (old('cst') == '60') selected @endif>60 - Tributação com ICMS e acréscimo de ST por Substituição Tributária com acréscimo</option>
-                                    <option value="70" @if (old('cst') == '70') selected @endif>70 - Redução de base de cálculo e cobrança do ICMS por substituição tributária</option>
-                                    <option value="90" @if (old('cst') == '90') selected @endif>90 - Outras operações</option>
-                                </select>
-                                <div class="invalid-feedback">Informe um CST.</div>
-                            </div>
-                            <div class="col-md-8 mb-3">
-                                <label for="cst_csosn" class="form-label">CST/CSOSN</label>
-                                <select class="form-select select2-basic" name="cst_csosn" id="cst_csosn" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    <option value="101" @if (old('cst_csosn') == '101') selected @endif>101 - Tributada pelo Simples Nacional com permissão de crédito</option>
-                                    <option value="102" @if (old('cst_csosn') == '102') selected @endif>102 - Tributada pelo Simples Nacional sem permissão de crédito</option>
-                                    <option value="103" @if (old('cst_csosn') == '103') selected @endif>103 - Isenção do ICMS no Simples Nacional para faixa de receita bruta</option>
-                                    <option value="201" @if (old('cst_csosn') == '201') selected @endif>201 - Tributada pelo Simples Nacional com permissão de crédito e com cobrança do ICMS por substituição tributária</option>
-                                    <option value="202" @if (old('cst_csosn') == '202') selected @endif>202 - Tributada pelo Simples Nacional sem permissão de crédito e com cobrança do ICMS por substituição tributária</option>
-                                    <option value="203" @if (old('cst_csosn') == '203') selected @endif>203 - Isenção do ICMS no Simples Nacional para faixa de receita bruta e com cobrança do ICMS por substituição tributária</option>
-                                    <option value="300" @if (old('cst_csosn') == '300') selected @endif>300 - Imune</option>
-                                    <option value="400" @if (old('cst_csosn') == '400') selected @endif>400 - Não tributada pelo Simples Nacional</option>
-                                    <option value="500" @if (old('cst_csosn') == '500') selected @endif>500 - ICMS cobrado anteriormente por substituição tributária (substituído) ou por antecipação</option>
-                                    <option value="900" @if (old('cst_csosn') == '900') selected @endif>900 - Outros</option>
-                                </select>
-                                <div class="invalid-feedback">Informe um CST/CSOSN.</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 mb-3">
-                                <label for="cst_pis" class="form-label">CST/PIS</label>
-                                <select class="form-select select2-basic" name="cst_pis" id="cst_pis" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    <option value="1" @if (old('cst_pis') == '1') selected @endif>1 - Operação Tributável com Alíquota Básica</option>
-                                    <option value="2" @if (old('cst_pis') == '2') selected @endif>2 - Operação Tributável com Alíquota Diferenciada</option>
-                                    <option value="3" @if (old('cst_pis') == '3') selected @endif>3 - Operação Tributável com Alíquota por Unidade de Medida de Produto</option>
-                                    <option value="4" @if (old('cst_pis') == '4') selected @endif>4 - Operação Tributável Monofásica – Revenda a Alíquota Zero</option>
-                                    <option value="5" @if (old('cst_pis') == '5') selected @endif>5 - Operação Tributável por Substituição Tributária</option>
-                                    <option value="6" @if (old('cst_pis') == '6') selected @endif>6 - Operação Tributável a Alíquota Zero</option>
-                                    <option value="7" @if (old('cst_pis') == '7') selected @endif>7 - Operação Isenta da Contribuição</option>
-                                    <option value="8" @if (old('cst_pis') == '8') selected @endif>8 - Operação sem Incidência da Contribuição</option>
-                                    <option value="9" @if (old('cst_pis') == '9') selected @endif>9 - Operação com Suspensão da Contribuição</option>
-                                    <option value="49" @if (old('cst_pis') == '49') selected @endif>49 - Outras Operações de Saída</option>
-                                    <option value="50" @if (old('cst_pis') == '50') selected @endif>50 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                    <option value="51" @if (old('cst_pis') == '51') selected @endif>51 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno</option>
-                                    <option value="52" @if (old('cst_pis') == '52') selected @endif>52 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita de Exportação</option>
-                                    <option value="53" @if (old('cst_pis') == '53') selected @endif>53 - Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
-                                    <option value="54" @if (old('cst_pis') == '54') selected @endif>54 - Operação com Direito a Crédito – Vinculada a Receitas Tributadas no Mercado Interno e de Exportação</option>
-                                    <option value="55" @if (old('cst_pis') == '55') selected @endif>55 - Operação com Direito a Crédito – Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação</option>
-                                    <option value="56" @if (old('cst_pis') == '56') selected @endif>56 - Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação</option>
-                                    <option value="60" @if (old('cst_pis') == '60') selected @endif>60 - Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                    <option value="61" @if (old('cst_pis') == '61') selected @endif>61 - Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno</option>
-                                    <option value="62" @if (old('cst_pis') == '62') selected @endif>62 - Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação</option>
-                                    <option value="63" @if (old('cst_pis') == '63') selected @endif>63 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
-                                    <option value="64" @if (old('cst_pis') == '64') selected @endif>64 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação</option>
-                                    <option value="65" @if (old('cst_pis') == '65') selected @endif>65 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno and de Exportação</option>
-                                    <option value="66" @if (old('cst_pis') == '66') selected @endif>66 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno and de Exportação</option>
-                                    <option value="67" @if (old('cst_pis') == '67') selected @endif>67 - Crédito Presumido – Outras Operações</option>
-                                    <option value="70" @if (old('cst_pis') == '70') selected @endif>70 - Operação de Aquisição sem Direito a Crédito</option>
-                                    <option value="71" @if (old('cst_pis') == '71') selected @endif>71 - Operação de Aquisição com Isenção</option>
-                                    <option value="72" @if (old('cst_pis') == '72') selected @endif>72 - Operação de Aquisição com Suspensão</option>
-                                    <option value="73" @if (old('cst_pis') == '73') selected @endif>73 - Operação de Aquisição a Alíquota Zero</option>
-                                    <option value="74" @if (old('cst_pis') == '74') selected @endif>74 - Operação de Aquisição sem Incidência da Contribuição</option>
-                                    <option value="75" @if (old('cst_pis') == '75') selected @endif>75 - Operação de Aquisição por Substituição Tributária</option>
-                                    <option value="98" @if (old('cst_pis') == '98') selected @endif>98 - Outras Operações de Entrada</option>
-                                    <option value="99" @if (old('cst_pis') == '99') selected @endif>99 - Outras Operações</option>
-                                </select>
-                                <div class="invalid-feedback">Informe um CST/PIS.</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                             <div class="col-12 mb-3">
-                                <label for="cst_cofins" class="form-label">CST/COFINS</label>
-                                <select class="form-select select2-basic" name="cst_cofins" id="cst_cofins" required>
-                                     <option value="" disabled selected>Selecione...</option>
-                                     <option value="1" @if (old('cst_cofins') == '1') selected @endif>1 - Operação Tributável com Alíquota Básica</option>
-                                     <option value="2" @if (old('cst_cofins') == '2') selected @endif>2 - Operação Tributável com Alíquota Diferenciada</option>
-                                     <option value="3" @if (old('cst_cofins') == '3') selected @endif>3 - Operação Tributável com Alíquota por Unidade de Medida de Produto</option>
-                                     <option value="4" @if (old('cst_cofins') == '4') selected @endif>4 - Operação Tributável Monofásica – Revenda a Alíquota Zero</option>
-                                     <option value="5" @if (old('cst_cofins') == '5') selected @endif>5 - Operação Tributável por Substituição Tributária</option>
-                                     <option value="6" @if (old('cst_cofins') == '6') selected @endif>6 - Operação Tributável a Alíquota Zero</option>
-                                     <option value="7" @if (old('cst_cofins') == '7') selected @endif>7 - Operação Isenta da Contribuição</option>
-                                     <option value="8" @if (old('cst_cofins') == '8') selected @endif>8 - Operação sem Incidência da Contribuição</option>
-                                     <option value="9" @if (old('cst_cofins') == '9') selected @endif>9 - Operação com Suspensão da Contribuição</option>
-                                     <option value="49" @if (old('cst_cofins') == '49') selected @endif>49 - Outras Operações de Saída</option>
-                                     <option value="50" @if (old('cst_cofins') == '50') selected @endif>50 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                     <option value="51" @if (old('cst_cofins') == '51') selected @endif>51 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno</option>
-                                     <option value="52" @if (old('cst_cofins') == '52') selected @endif>52 - Operação com Direito a Crédito – Vinculada Exclusivamente a Receita de Exportação</option>
-                                     <option value="53" @if (old('cst_cofins') == '53') selected @endif>53 - Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
-                                     <option value="54" @if (old('cst_cofins') == '54') selected @endif>54 - Operação com Direito a Crédito – Vinculada a Receitas Tributadas no Mercado Interno e de Exportação</option>
-                                     <option value="55" @if (old('cst_cofins') == '55') selected @endif>55 - Operação com Direito a Crédito – Vinculada a Receitas Não Tributadas no Mercado Interno e de Exportação</option>
-                                     <option value="56" @if (old('cst_cofins') == '56') selected @endif>56 - Operação com Direito a Crédito – Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno e de Exportação</option>
-                                     <option value="60" @if (old('cst_cofins') == '60') selected @endif>60 - Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno</option>
-                                     <option value="61" @if (old('cst_cofins') == '61') selected @endif>61 - Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno</option>
-                                     <option value="62" @if (old('cst_cofins') == '62') selected @endif>62 - Crédito Presumido – Operação de Aquisição Vinculada Exclusivamente a Receita de Exportação</option>
-                                     <option value="63" @if (old('cst_cofins') == '63') selected @endif>63 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno</option>
-                                     <option value="64" @if (old('cst_cofins') == '64') selected @endif>64 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas no Mercado Interno e de Exportação</option>
-                                     <option value="65" @if (old('cst_cofins') == '65') selected @endif>65 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Não-Tributadas no Mercado Interno and de Exportação</option>
-                                     <option value="66" @if (old('cst_cofins') == '66') selected @endif>66 - Crédito Presumido – Operação de Aquisição Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno and de Exportação</option>
-                                     <option value="67" @if (old('cst_cofins') == '67') selected @endif>67 - Crédito Presumido – Outras Operações</option>
-                                     <option value="70" @if (old('cst_cofins') == '70') selected @endif>70 - Operação de Aquisição sem Direito a Crédito</option>
-                                     <option value="71" @if (old('cst_cofins') == '71') selected @endif>71 - Operação de Aquisição com Isenção</option>
-                                     <option value="72" @if (old('cst_cofins') == '72') selected @endif>72 - Operação de Aquisição com Suspensão</option>
-                                     <option value="73" @if (old('cst_cofins') == '73') selected @endif>73 - Operação de Aquisição a Alíquota Zero</option>
-                                     <option value="74" @if (old('cst_cofins') == '74') selected @endif>74 - Operação de Aquisição sem Incidência da Contribuição</option>
-                                     <option value="75" @if (old('cst_cofins') == '75') selected @endif>75 - Operação de Aquisição por Substituição Tributária</option>
-                                     <option value="98" @if (old('cst_cofins') == '98') selected @endif>98 - Outras Operações de Entrada</option>
-                                     <option value="99" @if (old('cst_cofins') == '99') selected @endif>99 - Outras Operações</option>
-                                </select>
-                                <div class="invalid-feedback">Informe um CST/COFINS.</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <label for="icms" class="form-label">ICMS (%)</label>
-                                <input class="form-control" type="number" name="icms" id="icms" value="{{ old('icms') ?? 20.5 }}" required placeholder="0.00">
-                                <div class="invalid-feedback">Informe um ICMS válido.</div>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="pis" class="form-label">PIS (%)</label>
-                                <input class="form-control" type="text" name="pis" id="pis" value="{{ old('pis') ?? '00' }}" required placeholder="0.00">
-                                <div class="invalid-feedback">Informe um PIS válido.</div>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="cofins" class="form-label">COFINS (%)</label>
-                                <input class="form-control" type="text" name="cofins" id="cofins" value="{{ old('cofins') ?? '00' }}" required placeholder="0.00">
-                                <div class="invalid-feedback">Informe um COFINS válido.</div>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="ipi" class="form-label">IPI (%)</label>
-                                <input type="text" class="form-control" name="ipi" id="ipi" value="{{ old('ipi') ?? '00' }}" required placeholder="0.00">
-                                <div class="invalid-feedback">Informe um IPI válido.</div>
-                            </div>
-                        </div>
-                    </div>
+    {{-- BLOCO 1: CFOPs --}}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="cfopinterno" class="form-label">CFOP Interno (Dentro do Estado)</label>
+            <select class="form-select select2-basic" name="cfopinterno" id="cfopinterno" required>
+                <option value="" disabled selected>Selecione...</option>
+                @foreach ($cfops as $cfop)
+                    <option value="{{ $cfop->cfop }}" @if (old('cfopinterno', $produto->cfopinterno ?? '') == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
+                @endforeach
+            </select>
+            <div class="invalid-feedback">Informe um CFOP interno.</div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="cfopexterno" class="form-label">CFOP Externo (Fora do Estado)</label>
+            <select class="form-select select2-basic" name="cfopexterno" id="cfopexterno" required>
+                <option value="" disabled selected>Selecione...</option>
+                @foreach ($cfops as $cfop)
+                    <option value="{{ $cfop->cfop }}" @if (old('cfopexterno', $produto->cfopexterno ?? '') == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
+                @endforeach
+            </select>
+            <div class="invalid-feedback">Informe um CFOP externo.</div>
+        </div>
+    </div>
+
+    {{-- BLOCO 2: TRIBUTAÇÃO CONDICIONAL --}}
+    <div class="row">
+        @if(in_array($empresa->crt, [1, 4]))
+            {{-- EXIBE APENAS CSOSN (Simples/MEI) --}}
+            <div class="col-md-12 mb-3">
+                <label for="cst_csosn" class="form-label">CST/CSOSN (Simples Nacional)</label>
+                <select class="form-select select2-basic" name="cst_csosn" id="cst_csosn" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="101" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '101') selected @endif>101 - Tributada pelo Simples Nacional com permissão de crédito</option>
+                    <option value="102" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '102') selected @endif>102 - Tributada pelo Simples Nacional sem permissão de crédito</option>
+                    <option value="103" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '103') selected @endif>103 - Isenção do ICMS no Simples Nacional para faixa de receita bruta</option>
+                    <option value="201" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '201') selected @endif>201 - Tributada pelo Simples Nacional com permissão de crédito e com cobrança do ICMS por substituição tributária</option>
+                    <option value="202" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '202') selected @endif>202 - Tributada pelo Simples Nacional sem permissão de crédito e com cobrança do ICMS por substituição tributária</option>
+                    <option value="203" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '203') selected @endif>203 - Isenção do ICMS no Simples Nacional para faixa de receita bruta e com cobrança do ICMS por substituição tributária</option>
+                    <option value="300" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '300') selected @endif>300 - Imune</option>
+                    <option value="400" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '400') selected @endif>400 - Não tributada pelo Simples Nacional</option>
+                    <option value="500" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '500') selected @endif>500 - ICMS cobrado anteriormente por substituição tributária (substituído) ou por antecipação</option>
+                    <option value="900" @if (old('cst_csosn', $produto->cst_csosn ?? '') == '900') selected @endif>900 - Outros</option>
+                </select>
+                <div class="invalid-feedback">Informe um CST/CSOSN.</div>
+            </div>
+            {{-- Envia um valor padrão para o campo oculto não quebrar a validação 'required' do Controller --}}
+            <input type="hidden" name="cst" value="90">
+        @else
+            {{-- EXIBE APENAS CST (Regime Normal) --}}
+            <div class="col-md-12 mb-3">
+                <label for="cst" class="form-label">CST (ICMS)</label>
+                <select class="form-select select2-basic" name="cst_csosn" id="cst_csosn" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="00" @if (old('cst_csosn', $produto->cst ?? '') == '00') selected @endif>00 - Tributação integral</option>
+                    <option value="10" @if (old('cst_csosn', $produto->cst ?? '') == '10') selected @endif>10 - Tributação com ICMS e acréscimo de ST</option>
+                    <option value="20" @if (old('cst_csosn', $produto->cst ?? '') == '20') selected @endif>20 - Tributação com ICMS e acréscimo de ST com direito a crédito</option>
+                    <option value="30" @if (old('cst_csosn', $produto->cst ?? '') == '30') selected @endif>30 - Tributação simplificada (sem direito a crédito)</option>
+                    <option value="40" @if (old('cst_csosn', $produto->cst ?? '') == '40') selected @endif>40 - Tributação simplificada com acréscimo de ST</option>
+                    <option value="41" @if (old('cst_csosn', $produto->cst ?? '') == '41') selected @endif>41 - Tributação com ICMS e acréscimo de ST por Substituição Tributária</option>
+                    <option value="50" @if (old('cst_csosn', $produto->cst ?? '') == '50') selected @endif>50 - Tributação com ICMS e acréscimo de ST por Substituição Tributária com direito a crédito</option>
+                    <option value="51" @if (old('cst_csosn', $produto->cst ?? '') == '51') selected @endif>51 - Tributação com ICMS e acréscimo de ST por Substituição Tributária sem direito a crédito</option>
+                    <option value="60" @if (old('cst_csosn', $produto->cst ?? '') == '60') selected @endif>60 - Tributação com ICMS e acréscimo de ST por Substituição Tributária com acréscimo</option>
+                    <option value="70" @if (old('cst_csosn', $produto->cst ?? '') == '70') selected @endif>70 - Redução de base de cálculo e cobrança do ICMS por substituição tributária</option>
+                    <option value="90" @if (old('cst_csosn', $produto->cst ?? '') == '90') selected @endif>90 - Outras operações</option>
+                </select>
+                <div class="invalid-feedback">Informe um CST.</div>
+            </div>
+            <!--{{-- Envia um valor padrão para o campo oculto não quebrar a validação 'required' do Controller --}}-->
+            <!--<input type="hidden" name="cst_csosn" value="900">-->
+        @endif
+    </div>
+
+    {{-- BLOCO 3: PIS / COFINS --}}
+    <div class="row">
+        <div class="col-12 mb-3">
+            <label for="cst_pis" class="form-label">CST/PIS</label>
+            <select class="form-select select2-basic" name="cst_pis" id="cst_pis" required>
+                <option value="" disabled selected>Selecione...</option>
+                <option value="1" @if (old('cst_pis', $produto->cst_pis ?? '') == '1') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
+                <option value="49" @if (old('cst_pis', $produto->cst_pis ?? '') == '49') selected @endif>49 - Outras Operações de Saída</option>
+                <option value="99" @if (old('cst_pis', $produto->cst_pis ?? '') == '99') selected @endif>99 - Outras Operações</option>
+            </select>
+            <div class="invalid-feedback">Informe um CST/PIS.</div>
+        </div>
+    </div>
+    <div class="row">
+         <div class="col-12 mb-3">
+            <label for="cst_cofins" class="form-label">CST/COFINS</label>
+            <select class="form-select select2-basic" name="cst_cofins" id="cst_cofins" required>
+                 <option value="" disabled selected>Selecione...</option>
+                 <option value="1" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '1') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
+                 <option value="49" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '49') selected @endif>49 - Outras Operações de Saída</option>
+                 <option value="99" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '99') selected @endif>99 - Outras Operações</option>
+            </select>
+            <div class="invalid-feedback">Informe um CST/COFINS.</div>
+        </div>
+    </div>
+
+    {{-- BLOCO 4: ALÍQUOTAS --}}
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <label for="icms" class="form-label">ICMS (%)</label>
+            <input class="form-control" type="number" name="icms" id="icms" value="{{ old('icms', $produto->icms ?? 20.5) }}" required placeholder="0.00">
+            <div class="invalid-feedback">Informe um ICMS válido.</div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="pis" class="form-label">PIS (%)</label>
+            <input class="form-control" type="text" name="pis" id="pis" value="{{ old('pis', $produto->pis ?? '00') }}" required placeholder="0.00">
+            <div class="invalid-feedback">Informe um PIS válido.</div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="cofins" class="form-label">COFINS (%)</label>
+            <input class="form-control" type="text" name="cofins" id="cofins" value="{{ old('cofins', $produto->cofins ?? '00') }}" required placeholder="0.00">
+            <div class="invalid-feedback">Informe um COFINS válido.</div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="ipi" class="form-label">IPI (%)</label>
+            <input type="text" class="form-control" name="ipi" id="ipi" value="{{ old('ipi', $produto->ipi ?? '00') }}" required placeholder="0.00">
+            <div class="invalid-feedback">Informe um IPI válido.</div>
+        </div>
+    </div>
+
+    {{-- BLOCO 5: REFORMA TRIBUTÁRIA --}}
+    <div class="rtc-header mt-4">
+        <i class="fas fa-balance-scale mr-2"></i> Reforma Tributária (IBS / CBS - A partir de 2026)
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="cst_ibs_cbs" class="form-label">CST IBS/CBS</label>
+            <select class="form-select select2-basic" name="cst_ibs_cbs" id="cst_ibs_cbs" onchange="limparCClass()">
+                <option value="" disabled selected>Selecione...</option>
+                @foreach ($csts as $cst)
+                    <option value="{{ $cst->codigo }}" @if (old('cst_ibs_cbs', $produto->cst_ibs_cbs ?? '') == $cst->codigo) selected @endif>
+                        {{ $cst->codigo }} - {{ Str::limit($cst->descricao, 80) }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="cClassTrib" class="form-label">Classificação Tributária (cClassTrib)</label>
+            <div class="input-group">
+                <input type="text" class="form-control" name="cClassTrib" id="cClassTrib" 
+                       value="{{ old('cClassTrib', $produto->cClassTrib ?? '') }}" placeholder="Selecione um CST primeiro..." required readonly>
+                <div class="input-group-append">
+                    <button title="Buscar Classificação" class="btn btn-primary custom-btn-primary" type="button" 
+                            onclick="abrirModalCClass()">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="invalid-feedback">O código cClassTrib é obrigatório.</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label for="pIBS" class="form-label">Alíquota IBS (%)</label>
+            <input class="form-control" type="number" step="0.01" name="pIBS" id="pIBS" value="{{ old('pIBS', $produto->pIBS ?? '') }}" placeholder="Ex: 12.00">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="pCBS" class="form-label">Alíquota CBS (%)</label>
+            <input class="form-control" type="number" step="0.01" name="pCBS" id="pCBS" value="{{ old('pCBS', $produto->pCBS ?? '') }}" placeholder="Ex: 8.00">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="pIS_imposto" class="form-label">Alíq. Imposto Seletivo (%)</label>
+            <input class="form-control" type="number" step="0.01" name="pIS_imposto" id="pIS_imposto" value="{{ old('pIS_imposto', $produto->pIS_imposto ?? '') }}" placeholder="Se houver incidência">
+        </div>
+    </div>
+</div>
 
                     {{-- ABA 3: INFORMAÇÕES DO VEÍCULO --}}
                     <div class="tab-pane fade" id="veic" role="tabpanel" aria-labelledby="veic-tab">
+                        {{-- MANTIDO IGUAL AO ORIGINAL --}}
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="tpVeic" class="form-label">Tipo de Veículo</label>
@@ -633,6 +642,31 @@
             </tbody>
         @endcomponent
     @endcomponent
+
+    {{-- MODAL CCLASSTRIB (NOVO) --}}
+    @component('components.modal', ['modalId' => 'CClassTribModal', 'modalTitle' => 'Selecione a Classificação Tributária', 'sizeModal' => 'modal-lg'])
+        <div class="row mb-2">
+            <div class="col-12">
+                <input type="text" id="searchCClass" class="form-control" placeholder="Filtrar resultados..." onkeyup="filtrarTabelaModal()">
+            </div>
+        </div>
+        <div style="max-height: 400px; overflow-y: auto;">
+            <div id="loading-cclass" style="display:none; text-align:center; padding: 20px;">
+                <i class="fas fa-spinner fa-spin fa-2x"></i><br>Carregando classificações...
+            </div>
+            <table class="table table-hover table-striped" id="tableCClass">
+                <thead class="table-primary">
+                    <tr>
+                        <th style="width: 100px;">Código</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyCClass">
+                    {{-- Linhas injetadas via JS --}}
+                </tbody>
+            </table>
+        </div>
+    @endcomponent
 @stop
 
 @push('js')
@@ -771,32 +805,13 @@
             isVehicleCheck.dispatchEvent(new Event('change')); // Garante estado inicial correto
        });
        
-        function liberarProdutos() {
-            const empresaSelect = document.getElementById("empresa");
-            const categoriaSelect = document.getElementById("categoria");
-            const selectedEmpresa = empresaSelect.value;
-
-            categoriaSelect.removeAttribute('disabled');
-            // Reset do Select2
-            $(categoriaSelect).val(null).trigger('change');
-            
-            const options = categoriaSelect.querySelectorAll('.categoria-option');
-            options.forEach(option => {
-                if (option.dataset.empresa == selectedEmpresa) {
-                    option.style.display = "";
-                } else {
-                    option.style.display = "none";
-                }
-            });
-             // Atualiza o Select2 após manipular as opções
-            $(categoriaSelect).trigger('change');
-        }
-        
+        // Lógica automática de filtro de categoria (Simplificada para apenas o user logado)
         document.addEventListener('DOMContentLoaded', function() {
-            @if ($user->empresa_id != 1)
-                const categoriaSelect = document.getElementById("categoria");
-                const empresaId = document.getElementById("empresa").value;
-                categoriaSelect.removeAttribute('disabled');
+            const categoriaSelect = document.getElementById("categoria");
+            // Pega o ID da empresa do input hidden
+            const empresaId = document.getElementById("empresa").value; 
+            
+            if(empresaId) {
                 const options = categoriaSelect.querySelectorAll('.categoria-option');
                 options.forEach(option => {
                     if (option.dataset.empresa == empresaId) {
@@ -805,14 +820,95 @@
                         option.style.display = "none";
                     }
                 });
-                $(categoriaSelect).trigger('change');
-            @endif
+                // Re-trigger para o Select2 pegar as mudanças (se necessário limpar o val)
+                // $(categoriaSelect).val(null).trigger('change'); 
+            }
         });
 
         function setaNcm(ncm) {
             document.getElementById('ncm').value = ncm;
             $('#NcmModal').modal('hide');
         }
+
+        // --- FUNÇÕES DA REFORMA TRIBUTÁRIA ---
+
+        function limparCClass() {
+            document.getElementById('cClassTrib').value = '';
+        }
+
+        function abrirModalCClass() {
+            const cst = document.getElementById('cst_ibs_cbs').value;
+            
+            if (!cst) {
+                alert('Por favor, selecione primeiro o CST IBS/CBS.');
+                // Tenta abrir o select2 se estiver inicializado
+                $('#cst_ibs_cbs').select2('open'); 
+                return;
+            }
+
+            // Abre o modal
+            $('#CClassTribModal').modal('show');
+            
+            // Mostra loading e limpa tabela
+            const tbody = document.getElementById('tbodyCClass');
+            const loading = document.getElementById('loading-cclass');
+            tbody.innerHTML = '';
+            loading.style.display = 'block';
+
+            // Chama a API
+            fetch(`/api/cclasstrib/${cst}`)
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
+                    
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="2" class="text-center">Nenhuma classificação encontrada para este CST.</td></tr>';
+                        return;
+                    }
+
+                    // Popula a tabela
+                    let html = '';
+                    data.forEach(item => {
+                        html += `
+                            <tr style="cursor: pointer;" onclick="selecionarCClass('${item.codigo}')">
+                                <td><b>${item.codigo}</b></td>
+                                <td>${item.descricao}</td>
+                            </tr>
+                        `;
+                    });
+                    tbody.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    loading.style.display = 'none';
+                    tbody.innerHTML = '<tr><td colspan="2" class="text-danger text-center">Erro ao buscar dados. Tente novamente.</td></tr>';
+                });
+        }
+
+        function selecionarCClass(codigo) {
+            document.getElementById('cClassTrib').value = codigo;
+            $('#CClassTribModal').modal('hide');
+        }
+
+        function filtrarTabelaModal() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchCClass");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tableCClass");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                tdDesc = tr[i].getElementsByTagName("td")[1];
+                tdCod = tr[i].getElementsByTagName("td")[0];
+                if (tdDesc || tdCod) {
+                    txtValueDesc = tdDesc.textContent || tdDesc.innerText;
+                    txtValueCod = tdCod.textContent || tdCod.innerText;
+                    if (txtValueDesc.toUpperCase().indexOf(filter) > -1 || txtValueCod.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
     </script>
 @endpush
-

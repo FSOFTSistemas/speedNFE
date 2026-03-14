@@ -136,6 +136,27 @@
 @stop
 
 @section('content')
+<div class="alert alert-info alert-dismissible fade show shadow-sm mt-3" role="alert">
+    <div class="d-flex align-items-center">
+        <div class="mr-3">
+            <i class="fas fa-bell fa-2x text-white"></i>
+        </div>
+        <div class="flex-fill">
+            <h5 class="mb-1 font-weight-bold text-dark">Novidade no sistema!</h5>
+           <p class="mb-1">
+    O sistema agora oferece <strong>pagamento online do plano contratado</strong> e 
+    <strong>acompanhamento em tempo real das suas faturas</strong>, tudo de forma prática e segura.
+</p>
+
+            <a href="{{ route('faturas.index') }}" class="btn btn-sm  mt-1 text-white">
+                <i class="fas fa-arrow-right"></i> Clique aqui para conferir
+            </a>
+        </div>
+    </div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
     <div class="row">
         {{-- Card: Notas Emitidas --}}
         @if (!auth()->user()->can('client-NFCe') || !auth()->user()->can('client-MDFe') || !auth()->user()->can('client-CTe') || !auth()->user()->can('client-advanced3'))

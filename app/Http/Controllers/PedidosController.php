@@ -83,7 +83,7 @@ class PedidosController extends Controller
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
                 "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_009_V4",
+                "schemes" => "PL_010_V1.30",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
                 "CSC" => $emitente->csc,
@@ -123,7 +123,7 @@ class PedidosController extends Controller
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
                 "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_009_V4",
+                "schemes" => "PL_010_V1.30",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
                 "CSC" => $emitente->csc,
@@ -146,6 +146,7 @@ class PedidosController extends Controller
     public function cancelarNFe(Request $request)
     {
         try {
+            
             $venda = Pedido::find($request->venda_id_cancelar);
             $emitente = Empresa::find($venda->empresa_id);
             if ($emitente == null) {
@@ -161,7 +162,7 @@ class PedidosController extends Controller
                 "razaosocial" => $emitente->razao,
                 "siglaUF" => $emitente->endereco->uf,
                 "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_009_V4",
+                "schemes" => "PL_010_V1.30",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
                 "CSC" => $emitente->csc,
@@ -212,6 +213,7 @@ class PedidosController extends Controller
             $empresa = Empresa::find($venda->empresa_id);
             $xml = file_get_contents(public_path($empresa->fantasia . '/' . date_format($venda->created_at, 'Y') . '/' . date_format($venda->created_at, 'm') . '/notas/Autorizadas/') . $venda->chave . '.xml');
             $danfe = new Danfe($xml);
+            $danfe->creditsIntegratorFooter('SpeedNFE - www.f-softsistemas.com.br', false);
             $pdf = $danfe->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
@@ -232,7 +234,8 @@ class PedidosController extends Controller
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
                 "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-                "schemes" => "PL_009_V4",
+                // "schemes" => "PL_009_V4",
+                "schemes" => "PL_010_V1.30",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
                 "CSC" => $empresa->csc,
@@ -465,7 +468,7 @@ class PedidosController extends Controller
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
                 "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-                "schemes" => "PL_009_V4",
+                "schemes" => "PL_010_V1.30",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",
                 "CSC" => $empresa->csc,

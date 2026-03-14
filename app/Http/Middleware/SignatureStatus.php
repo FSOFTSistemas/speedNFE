@@ -24,7 +24,7 @@ class SignatureStatus
         if (isset($body->due) && $body->due->expires === true) {
             $message = 'Sua licença expirou em ' . date('d/m/Y', strtotime($body->due->expired_on)) . ', efetue o pagamento para liberação da plataforma!';
             sweetalert($message, 'error');
-            return redirect()->route('home');
+            return redirect()->route('faturas.index');
         }
         return $next($request);
     }

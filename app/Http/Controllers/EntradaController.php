@@ -46,6 +46,7 @@ class EntradaController extends Controller
                 $dataFim = $request->input('data_fim');
                 $entradas = $entradas->whereBetween('dataEntrada', [$dataInicio, $dataFim]);
             }
+    
             return view('nfeEntrada.entradas', ['entradas' => $entradas]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
@@ -73,7 +74,7 @@ class EntradaController extends Controller
                 'fornecedor' => 'required',
                 'CNPJ' => 'required',
                 'IE' => 'required',
-                'fone' => 'required',
+                // 'fone' => 'required',
                 'rua' => 'required',
                 'nro' => 'required',
                 'bairro' => 'required',

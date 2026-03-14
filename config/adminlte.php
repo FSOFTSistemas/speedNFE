@@ -131,7 +131,7 @@ return [
 
     'usermenu_enabled' => true,
     'usermenu_header' => true,
-    'usermenu_header_class' => '',
+    'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
@@ -342,10 +342,18 @@ return [
                     'icon'        => 'fas fa-download',
                     'shift' => 'ml-2'
                 ],
+            ],
+        ],
+        [
+            'text'        => 'Relatórios',
+            'icon'        => 'fas fa-chart-area',
+            'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
+            'submenu' => [
                 [
-                    'text'        => 'Relatórios (NFe)',
+                    'text'        => ' NFe',
                     'url'         => '/relatorios',
-                    'icon'        => 'fas fa-chart-area',
+                    'icon'        => 'far fa-file-alt',
+                    'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
                     'shift' => 'ml-2'
                 ],
             ],
@@ -449,8 +457,7 @@ return [
         [
             'text'        => 'Faturas',
             'icon'        => 'fas fa-file-invoice',
-            'can'         => ['master'],
-
+            'can'    => 'menu-faturas',
             'submenu' => [
                 [
                     'text'        => 'Assinatura',
@@ -458,12 +465,12 @@ return [
                     'icon'        => 'fas fa-file-contract',
                     'shift' => 'ml-2'
                 ],
-                [
-                    'text'        => 'Histórico de pagamentos',
-                    'url'         => '/faturas/historico-pagamentos',
-                    'icon'        => 'fas fa-history',
-                    'shift' => 'ml-2'
-                ],
+                // [
+                //     'text'        => 'Histórico de pagamentos',
+                //     'url'         => '/faturas/historico-pagamentos',
+                //     'icon'        => 'fas fa-history',
+                //     'shift' => 'ml-2'
+                // ],
                 // [
                 //     'text'        => 'Formas de pagamentos',
                 //     'url'         => '/faturas/metodos-pagamentos',

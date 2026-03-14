@@ -35,15 +35,36 @@ class CupomController extends Controller
         $this->estoqueService = $estoqueService;
     }
 
-    public function index()
-    {
-        try {
-            $cupoms = $this->cupomService->getCompanyCoupons(Auth::user()->empresa_id);
-            return view('nfce.index', ['cupoms' => $cupoms]);
-        } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
-        }
+public function index(Request $request)
+{
+    try {
+        // Define as datas padrão (mês atual) se não houver filtro
+        $data_inicio = $request->get('data_inicio', date('Y-m-01'));
+        $data_fim = $request->get('data_fim', date('Y-m-t'));
+        $situacao = $request->get('situacao');
+
+        // Busca os cupons com os filtros aplicados
+        $cupoms = $this->cupomService->getCompanyCoupons(
+            Auth::user()->empresa_id, 
+            $data_inicio, 
+            $data_fim, 
+            $situacao
+        );
+
+        // Calcula o valor total dos cupons filtrados
+        $valorTotalFiltrado = $cupoms->sum('subtotal');
+
+        return view('nfce.index', [
+            'cupoms' => $cupoms,
+            'data_inicio' => $data_inicio,
+            'data_fim' => $data_fim,
+            'situacao' => $situacao,
+            'valorTotalFiltrado' => $valorTotalFiltrado
+        ]);
+    } catch (Exception $e) {
+        return back()->with('error', 'Erro: ' . $e->getMessage());
     }
+}
 
     public function create()
     {

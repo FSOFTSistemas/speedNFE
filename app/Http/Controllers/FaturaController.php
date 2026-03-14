@@ -29,8 +29,8 @@ class FaturaController extends Controller
             ->values()    // reindexa de 0,1,2...
             ->all();
 
-
-        return view('faturas.signature', compact('signature', 'payments'));
+            // dd($payments);
+        return view('faturas.signature', compact('signature', 'payments', 'customerCpfCnpj'));
     }
 
     public function paymentHistory()
