@@ -147,7 +147,6 @@
     O sistema agora oferece <strong>pagamento online do plano contratado</strong> e 
     <strong>acompanhamento em tempo real das suas faturas</strong>, tudo de forma prática e segura.
 </p>
-
             <a href="{{ route('faturas.index') }}" class="btn btn-sm  mt-1 text-white">
                 <i class="fas fa-arrow-right"></i> Clique aqui para conferir
             </a>

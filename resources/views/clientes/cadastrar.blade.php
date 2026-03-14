@@ -340,6 +340,7 @@
                                 <div class="invalid-feedback">Informe um estado válido.</div>
                                 </div>
                             </div>
+                            </div>
                             <div class="col-md-4 mb-3">
                                 <label for="ibge" class="form-label">Cód. IBGE</label>
                                 <input placeholder="Código IBGE" class="form-control" type="number" id="ibge"

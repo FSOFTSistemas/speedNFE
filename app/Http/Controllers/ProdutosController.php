@@ -169,8 +169,11 @@ class ProdutosController extends Controller
         try {
             $user = Auth::user();
             $produto = $this->produtoServices->um($id);
+<<<<<<< HEAD
             
             
+=======
+>>>>>>> e4941bf6366b30bd1afbb555dd5734e3b78ae124
 
             // Se o produto não for encontrado ou não pertencer à empresa (caso tenha lógica de segurança no service)
             if(!$produto){

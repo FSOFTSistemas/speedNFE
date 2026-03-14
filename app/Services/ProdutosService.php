@@ -21,7 +21,6 @@ class ProdutosService
         // --- NOVOS CAMPOS RTC (Adicionados ao final) ---
         $cClassTrib = null, $pIBS = null, $pCBS = null, $pIS_imposto = null, $cst_ibs_cbs = null
     ) {
-        dd("salvar");
         $prod = Produto::find($id);
         
         $prod->update([
@@ -170,7 +169,7 @@ class ProdutosService
         // --- NOVOS CAMPOS RTC ---
         $cClassTrib = null, $pIBS = null, $pCBS = null, $pIS_imposto = null, $cst_ibs_cbs = null
     ) {
-        
+
          $descricaoProduto = trim($produto);
 
         if (!empty($chassiVeic)) {
@@ -180,7 +179,6 @@ class ProdutosService
                 $descricaoProduto .= ' - CHASSI: ' . $chassiVeic;
             }
         }
-
 
             return Produto::create([
                 'categoria_id' => $categoria,

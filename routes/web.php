@@ -32,7 +32,6 @@ use App\Http\Controllers\PixController;
 use App\Http\Controllers\PixWebhookController;
 
 use App\Models\CClassTrib;
-
 use Illuminate\Http\Request;
 
 /*
@@ -262,24 +261,23 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth']);
     Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
     Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
-
 });
-    //PIX
-    Route::post('/pix/cob', [PixController::class, 'criar'])->name('pix.criar');
-    Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
-    
+//PIX
+Route::post('/pix/cob', [PixController::class, 'criar'])->name('pix.criar');
+Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
 
 
-    // Página de pagamento PIX (GET /pagamento)
-    Route::post('/pagamento', [PixController::class, 'pagar'])->name('pix.pagamento');
 
-    Route::get('/pagamento/sucesso', function (Request $req) {
-        return view('faturas.pagamento-sucesso', [
-            'txid'      => $req->query('txid'),
-            'valor'     => $req->query('valor'),
-            'descricao' => $req->query('descricao'),
-        ]);
-    })->name('pix.sucesso');
+// Página de pagamento PIX (GET /pagamento)
+Route::post('/pagamento', [PixController::class, 'pagar'])->name('pix.pagamento');
+
+Route::get('/pagamento/sucesso', function (Request $req) {
+    return view('faturas.pagamento-sucesso', [
+        'txid'      => $req->query('txid'),
+        'valor'     => $req->query('valor'),
+        'descricao' => $req->query('descricao'),
+    ]);
+})->name('pix.sucesso');
 
 //FATURAS
 Route::prefix('faturas')->group(function () {
@@ -293,18 +291,15 @@ Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index'
 Route::post('/clientes/check-cpf', [ClientesController::class, 'checkCpfCnpj'])->name('cliente.checkCpfCnpj');
 
 Route::post('/pagamento/enviar-confirmacao', [PixController::class, 'enviarConfirmacaoEmail'])
-     ->name('pix.enviarConfirmacao');
+    ->name('pix.enviarConfirmacao');
 
-     
-
-
-     Route::get('/api/cclasstrib/{cst}', function ($cst) {
+Route::get('/api/cclasstrib/{cst}', function ($cst) {
     // Busca códigos que batem exatamente com o CST, ordenados
     return CClassTrib::where('cst_compativel', $cst)
-                     ->orWhere('cst_compativel', intval($cst)) // Previne erro de '010' vs '10'
-                     ->select('codigo', 'descricao')
-                     ->orderBy('codigo')
-                     ->get();
+        ->orWhere('cst_compativel', intval($cst)) // Previne erro de '010' vs '10'
+        ->select('codigo', 'descricao')
+        ->orderBy('codigo')
+        ->get();
 });
 
 

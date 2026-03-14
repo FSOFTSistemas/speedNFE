@@ -234,7 +234,6 @@ class PedidosController extends Controller
                 "razaosocial" => $empresa->razao,
                 "siglaUF" => $empresa->endereco->uf,
                 "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-                // "schemes" => "PL_009_V4",
                 "schemes" => "PL_010_V1.30",
                 "versao" => "4.00",
                 "tokenIBPT" => "AAAAAAA",

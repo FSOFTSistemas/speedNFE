@@ -135,7 +135,6 @@ public function gerarXml($venda, $emitente)
             $stdDest->indIEDest = "9";
         }
 
-      
         $cnpj_cpf = str_replace([".", "/", "-"], "", $venda->cliente->cpf_cnpj);
 
         if (strlen($cnpj_cpf) == 14) {
@@ -269,7 +268,6 @@ public function gerarXml($venda, $emitente)
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
             $nfe->tagimposto($stdImposto);
-  
             // --- AJUSTE DINÂMICO DE ICMS POR CRT ---
             $stdICMS = new \stdClass();
             $stdICMS->item = $key + 1;
@@ -323,8 +321,6 @@ public function gerarXml($venda, $emitente)
                     throw new \Exception("Falha ao gerar ICMS. CST={$stdICMS->CST}");
                 }
 
-                
-
                 if ($icmsTag === null) {
                     throw new \Exception("Erro ao gerar tagICMS para o item " . ($key + 1));
                 }
@@ -354,7 +350,7 @@ public function gerarXml($venda, $emitente)
             
                 $nfe->tagICMSUFDest($stdICMSUFDest);
             }
-           
+
 
             //PIS
             $stdPIS = new \stdClass();
@@ -485,14 +481,12 @@ public function gerarXml($venda, $emitente)
         try {
             $nfe->montaNFe();
             $xml = $nfe->getXML();
-            
             return [
                 'chave' => $nfe->getChave(),
                 'xml' => $xml,
                 'nNf' => $stdIde->nNF,
             ];
         } catch (\Exception $e) {
-        
             return ['erros_xml' => $nfe->getErrors()];
         }
     }
