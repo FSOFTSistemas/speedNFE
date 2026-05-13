@@ -321,7 +321,7 @@
             <label for="cst_pis" class="form-label">CST/PIS</label>
             <select class="form-select select2-basic" name="cst_pis" id="cst_pis" required>
                 <option value="" disabled selected>Selecione...</option>
-                <option value="1" @if (old('cst_pis', $produto->cst_pis ?? '') == '1') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
+                <option value="01" @if (old('cst_pis', $produto->cst_pis ?? '') == '01') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
                 <option value="49" @if (old('cst_pis', $produto->cst_pis ?? '') == '49') selected @endif>49 - Outras Operações de Saída</option>
                 <option value="99" @if (old('cst_pis', $produto->cst_pis ?? '') == '99') selected @endif>99 - Outras Operações</option>
             </select>
@@ -333,7 +333,7 @@
             <label for="cst_cofins" class="form-label">CST/COFINS</label>
             <select class="form-select select2-basic" name="cst_cofins" id="cst_cofins" required>
                  <option value="" disabled selected>Selecione...</option>
-                 <option value="1" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '1') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
+                 <option value="01" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '01') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
                  <option value="49" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '49') selected @endif>49 - Outras Operações de Saída</option>
                  <option value="99" @if (old('cst_cofins', $produto->cst_cofins ?? '') == '99') selected @endif>99 - Outras Operações</option>
             </select>
@@ -434,6 +434,7 @@
                                     <option value="13" @if (old('tpVeic') == '13') selected @endif>13 - CAMINHONETA</option>
                                     <option value="14" @if (old('tpVeic') == '14') selected @endif>14 - CAMINHÃO</option>
                                     <option value="17" @if (old('tpVeic') == '17') selected @endif>17 - C.TRATOR</option>
+                                    <option value="21" @if (old('tpVeic') == '21') selected @endif>21 - QUADRICICLO</option>
                                     <option value="22" @if (old('tpVeic') == '22') selected @endif>22 - ESP/ÔNIBUS</option>
                                     <option value="23" @if (old('tpVeic') == '23') selected @endif>23 - MISTO/CAM</option>
                                     <option value="24" @if (old('tpVeic') == '24') selected @endif>24 - CARGA/CAM</option>

@@ -210,14 +210,16 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="precocusto" class="form-label">Preço de Custo</label>
-                                <input class="form-control" type="number" name="precocusto" id="precocusto" step="0.01" required 
-                                    placeholder="R$ 0,00" value="{{ $produto->precocusto }}">
+                                <input class="form-control" type="number" name="precocusto" id="precocusto" step="0.01" min="0" required
+                                    placeholder="R$ 0,00"
+                                    value="{{ old('precocusto', is_numeric($produto->precocusto) ? number_format((float) $produto->precocusto, 2, '.', '') : str_replace(',', '.', $produto->precocusto)) }}">
                                 <div class="invalid-feedback">Informe um preço de custo válido.</div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="precovenda" class="form-label">Preço de Venda</label>
-                                <input class="form-control" type="number" name="precovenda" step="0.01" id="precovenda" required 
-                                    placeholder="R$ 0,00" value="{{ $produto->precovenda }}">
+                                <input class="form-control" type="number" name="precovenda" id="precovenda" step="0.01" min="0" required
+                                    placeholder="R$ 0,00"
+                                    value="{{ old('precovenda', is_numeric($produto->precovenda) ? number_format((float) $produto->precovenda, 2, '.', '') : str_replace(',', '.', $produto->precovenda)) }}">
                                 <div class="invalid-feedback">Informe um preço de venda válido.</div>
                             </div>
                         </div>
@@ -270,11 +272,7 @@
             <select class="form-select select2-basic" name="cfopinterno" id="cfopinterno" required>
                 <option value="" disabled>Selecione...</option>
                 @foreach ($cfops as $cfop)
-<<<<<<< HEAD
                     <option value="{{ $cfop->cfop }}" @if (old('cfop_interno', $produto->cfop_interno) == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
-=======
-                    <option value="{{ $cfop->cfop }}" @if (old('cfopinterno', $produto->cfopinterno) == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
->>>>>>> e4941bf6366b30bd1afbb555dd5734e3b78ae124
                 @endforeach
             </select>
             <div class="invalid-feedback">Informe um CFOP interno.</div>
@@ -284,11 +282,7 @@
             <select class="form-select select2-basic" name="cfopexterno" id="cfopexterno" required>
                 <option value="" disabled>Selecione...</option>
                 @foreach ($cfops as $cfop)
-<<<<<<< HEAD
                     <option value="{{ $cfop->cfop }}" @if (old('cfop_externo', $produto->cfop_externo) == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
-=======
-                    <option value="{{ $cfop->cfop }}" @if (old('cfopexterno', $produto->cfopexterno) == $cfop->cfop) selected @endif>{{ $cfop->cfop }} - {{ $cfop->natureza }}</option>
->>>>>>> e4941bf6366b30bd1afbb555dd5734e3b78ae124
                 @endforeach
             </select>
             <div class="invalid-feedback">Informe um CFOP externo.</div>
@@ -320,7 +314,6 @@
         @else
             {{-- EXIBE APENAS CST (Regime Normal) --}}
             <div class="col-md-12 mb-3">
-<<<<<<< HEAD
                 <label for="cst_csosn" class="form-label">CST (ICMS)</label>
                 <select class="form-select select2-basic" name="cst_csosn" id="cst_csosn" required>
                     <option value="" disabled>Selecione...</option>
@@ -339,26 +332,6 @@
                 <div class="invalid-feedback">Informe um CST.</div>
             </div>
             <!--<input type="hidden" name="cst_csosn" value="900">-->
-=======
-                <label for="cst" class="form-label">CST (ICMS)</label>
-                <select class="form-select select2-basic" name="cst" id="cst" required>
-                    <option value="" disabled>Selecione...</option>
-                    <option value="00" @if (old('cst', $produto->cst) == '00') selected @endif>00 - Tributação integral</option>
-                    <option value="10" @if (old('cst', $produto->cst) == '10') selected @endif>10 - Tributação com ICMS e acréscimo de ST</option>
-                    <option value="20" @if (old('cst', $produto->cst) == '20') selected @endif>20 - Tributação com ICMS e acréscimo de ST com direito a crédito</option>
-                    <option value="30" @if (old('cst', $produto->cst) == '30') selected @endif>30 - Tributação simplificada (sem direito a crédito)</option>
-                    <option value="40" @if (old('cst', $produto->cst) == '40') selected @endif>40 - Tributação simplificada com acréscimo de ST</option>
-                    <option value="41" @if (old('cst', $produto->cst) == '41') selected @endif>41 - Tributação com ICMS e acréscimo de ST por Substituição Tributária</option>
-                    <option value="50" @if (old('cst', $produto->cst) == '50') selected @endif>50 - Tributação com ICMS e acréscimo de ST por Substituição Tributária com direito a crédito</option>
-                    <option value="51" @if (old('cst', $produto->cst) == '51') selected @endif>51 - Tributação com ICMS e acréscimo de ST por Substituição Tributária sem direito a crédito</option>
-                    <option value="60" @if (old('cst', $produto->cst) == '60') selected @endif>60 - Tributação com ICMS e acréscimo de ST por Substituição Tributária com acréscimo</option>
-                    <option value="70" @if (old('cst', $produto->cst) == '70') selected @endif>70 - Redução de base de cálculo e cobrança do ICMS por substituição tributária</option>
-                    <option value="90" @if (old('cst', $produto->cst) == '90') selected @endif>90 - Outras operações</option>
-                </select>
-                <div class="invalid-feedback">Informe um CST.</div>
-            </div>
-            <input type="hidden" name="cst_csosn" value="900">
->>>>>>> e4941bf6366b30bd1afbb555dd5734e3b78ae124
         @endif
     </div>
 
@@ -368,7 +341,7 @@
             <label for="cst_pis" class="form-label">CST/PIS</label>
             <select class="form-select select2-basic" name="cst_pis" id="cst_pis" required>
                 <option value="" disabled>Selecione...</option>
-                <option value="1" @if (old('cst_pis', $produto->cst_pis) == '1') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
+                <option value="01" @if (old('cst_pis', $produto->cst_pis) == '01') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
                 <option value="49" @if (old('cst_pis', $produto->cst_pis) == '49') selected @endif>49 - Outras Operações de Saída</option>
                 <option value="99" @if (old('cst_pis', $produto->cst_pis) == '99') selected @endif>99 - Outras Operações</option>
             </select>
@@ -380,7 +353,7 @@
             <label for="cst_cofins" class="form-label">CST/COFINS</label>
             <select class="form-select select2-basic" name="cst_cofins" id="cst_cofins" required>
                  <option value="" disabled>Selecione...</option>
-                 <option value="1" @if (old('cst_cofins', $produto->cst_cofins) == '1') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
+                 <option value="01" @if (old('cst_cofins', $produto->cst_cofins) == '01') selected @endif>01 - Operação Tributável com Alíquota Básica</option>
                  <option value="49" @if (old('cst_cofins', $produto->cst_cofins) == '49') selected @endif>49 - Outras Operações de Saída</option>
                  <option value="99" @if (old('cst_cofins', $produto->cst_cofins) == '99') selected @endif>99 - Outras Operações</option>
             </select>
@@ -481,6 +454,7 @@
                                         <option value="13" @if ($produto->tpVeic == '13') selected @endif>13 - CAMINHONETA</option>
                                         <option value="14" @if ($produto->tpVeic == '14') selected @endif>14 - CAMINHÃO</option>
                                         <option value="17" @if ($produto->tpVeic == '17') selected @endif>17 - C.TRATOR</option>
+                                        <option value="21" @if ($produto->tpVeic == '21') selected @endif>21 - QUADRICICLO</option>
                                         <option value="22" @if ($produto->tpVeic == '22') selected @endif>22 - ESP/ÔNIBUS</option>
                                         <option value="23" @if ($produto->tpVeic == '23') selected @endif>23 - MISTO/CAM</option>
                                         <option value="24" @if ($produto->tpVeic == '24') selected @endif>24 - CARGA/CAM</option>

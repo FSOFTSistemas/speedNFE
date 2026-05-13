@@ -119,6 +119,7 @@ class EntradaController extends Controller
             $companyId = Auth::user()->empresa_id;
             if (isset($request->type)) {
                 $response = ImportProductsService::readXML($request->nota);
+ 
             } else {
                 $emitente = $this->empresaServices->buscarEmpresa($companyId);
                 $importProductsServices = new ImportProductsService([

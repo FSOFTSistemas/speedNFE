@@ -72,7 +72,7 @@ class NFCeService
         ]);
     }
 
-public function generateXml($cupom, $emitente)
+    public function generateXml($cupom, $emitente)
     {
         
         try {
@@ -234,7 +234,7 @@ public function generateXml($cupom, $emitente)
                 $std = new \stdClass();
                 $std->item = $index + 1;
                 $std->orig = 0;
-  
+                
                 if($emitente->crt == 1){
                 
                     $std->CSOSN = $item->produto->cst_csosn;
@@ -292,7 +292,6 @@ public function generateXml($cupom, $emitente)
                 
                     $make->tagICMS($std);
                 }
-
 
                 $std = new \stdClass();
                 $std->item = $index + 1;
@@ -480,7 +479,6 @@ public function generateXml($cupom, $emitente)
 
             try {
                 $xml = $make->getXML();
-                dd($xml);
             } catch (\Exception $e) {
                 dd($e->getMessage(), $make->getErrors());
             }

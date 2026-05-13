@@ -166,7 +166,12 @@
                                     @if ($pedido->sequencia_evento > 0)
                                         <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}" class="text-dark"><i class="fa fa-print"></i></a>
                                     @endif
-                                    <a href="#" title="Cancelar" onclick="openCancelModal({{ $pedido->id }})" class="text-danger" data-toggle="modal" data-target="#cancelarModal"><i class="fa fa-ban"></i></a>
+
+                                    @if(Auth::user()->tipo == 'admin' || Auth::user()->cargo == 'master')
+                                        <a href="#" title="Cancelar" onclick="openCancelModal({{ $pedido->id }})" class="text-danger" data-toggle="modal" data-target="#cancelarModal">
+                                            <i class="fa fa-ban"></i>
+                                        </a>
+                                    @endif
                                 @else
                                     <a target='_blank' title="Imprimir Cancelamento" href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="text-dark"><i class="fa fa-print"></i></a>
                                 @endif

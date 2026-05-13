@@ -135,6 +135,7 @@ public function gerarXml($venda, $emitente)
             $stdDest->indIEDest = "9";
         }
 
+      
         $cnpj_cpf = str_replace([".", "/", "-"], "", $venda->cliente->cpf_cnpj);
 
         if (strlen($cnpj_cpf) == 14) {
@@ -268,6 +269,7 @@ public function gerarXml($venda, $emitente)
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
             $nfe->tagimposto($stdImposto);
+  
             // --- AJUSTE DINÂMICO DE ICMS POR CRT ---
             $stdICMS = new \stdClass();
             $stdICMS->item = $key + 1;
@@ -321,6 +323,8 @@ public function gerarXml($venda, $emitente)
                     throw new \Exception("Falha ao gerar ICMS. CST={$stdICMS->CST}");
                 }
 
+                
+
                 if ($icmsTag === null) {
                     throw new \Exception("Erro ao gerar tagICMS para o item " . ($key + 1));
                 }
@@ -350,7 +354,7 @@ public function gerarXml($venda, $emitente)
             
                 $nfe->tagICMSUFDest($stdICMSUFDest);
             }
-
+           
 
             //PIS
             $stdPIS = new \stdClass();
@@ -376,7 +380,7 @@ public function gerarXml($venda, $emitente)
             $stdIPI = new \stdClass();
             $stdIPI->item = $key + 1;
             $stdIPI->cEnq = '999';
-            $stdIPI->CST = $i->produto->ipi;
+            $stdIPI->CST = '51';//$i->produto->ipi;
             $stdIPI->vBC = FormatationUtil::format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
             $stdIPI->pIPI = FormatationUtil::format($i->produto->ipi);
             $stdIPI->vIPI = FormatationUtil::format($stdProd->vProd * ($i->produto->ipi / 100));
@@ -431,7 +435,7 @@ public function gerarXml($venda, $emitente)
         $stdICMSTot->vCOFINS = FormatationUtil::format($totvCOFINS);
         $stdICMSTot->vOutro = 0.00;
         $stdICMSTot->vTotTrib = 0.00;
-        $stdICMSTot->vNF = FormatationUtil::format($venda->total);
+        $stdICMSTot->vNF = FormatationUtil::format($venda->total - $venda->desconto);
         $nfe->tagICMSTot($stdICMSTot);
 
         //DUPLICATAS
@@ -481,12 +485,14 @@ public function gerarXml($venda, $emitente)
         try {
             $nfe->montaNFe();
             $xml = $nfe->getXML();
+            
             return [
                 'chave' => $nfe->getChave(),
                 'xml' => $xml,
                 'nNf' => $stdIde->nNF,
             ];
         } catch (\Exception $e) {
+        
             return ['erros_xml' => $nfe->getErrors()];
         }
     }

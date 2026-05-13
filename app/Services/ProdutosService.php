@@ -106,7 +106,7 @@ class ProdutosService
                     $descricaoProduto .= ' - ' . $chassi;
                 }
 
-               
+
                 $produtoId = Produto::create([
                     'categoria_id' => $prod[0]['categoria'],
                     'empresa_id' => $empresaId,
@@ -169,7 +169,7 @@ class ProdutosService
         // --- NOVOS CAMPOS RTC ---
         $cClassTrib = null, $pIBS = null, $pCBS = null, $pIS_imposto = null, $cst_ibs_cbs = null
     ) {
-
+        
          $descricaoProduto = trim($produto);
 
         if (!empty($chassiVeic)) {
@@ -179,6 +179,7 @@ class ProdutosService
                 $descricaoProduto .= ' - CHASSI: ' . $chassiVeic;
             }
         }
+
 
             return Produto::create([
                 'categoria_id' => $categoria,

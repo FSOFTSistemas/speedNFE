@@ -70,7 +70,7 @@ class ItemService
             ->where('produto_id', $produtoValido->id)
             ->whereHas('pedido', function ($q) {
                 $q->where('estado', 'Autorizado')
-                  ->whereNotIn('cfop', [493, 132]); // se CFOP for numérico, use [493,132]
+                  ->whereNotIn('cfop', [493, 132, 494, 166, 220, 204]); // se CFOP for numérico, use [493,132]
             })
             ->with('pedido:id,numero_nfe') // carrega numero_nfe do pedido relacionado
             ->first();

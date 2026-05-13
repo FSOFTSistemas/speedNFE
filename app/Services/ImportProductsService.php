@@ -47,7 +47,31 @@ class ImportProductsService
     public static function readXML($xml)
     {
         $note = simplexml_load_file($xml);
-        return ['nota' => ['ide' => $note->NFe->infNFe->ide, 'emit' => $note->NFe->infNFe->emit, 'vNF' => $note->NFe->infNFe->total->ICMSTot->vNF, 'chNFe' => $note->protNFe->infProt->chNFe], 'prods' => $note->NFe->infNFe->det];
+    
+        $prods = [];
+    
+        foreach ($note->NFe->infNFe->det as $det) {
+    
+            $cProd = (string) $det->prod->cProd;
+    
+            $det->prod->cProd = preg_replace(
+                '/[^A-Za-z0-9_-]/',
+                '_',
+                (string) $det->prod->cProd
+            );
+    
+            $prods[] = $det;
+        }
+    
+        return [
+            'nota' => [
+                'ide'   => $note->NFe->infNFe->ide,
+                'emit'  => $note->NFe->infNFe->emit,
+                'vNF'   => $note->NFe->infNFe->total->ICMSTot->vNF,
+                'chNFe' => $note->protNFe->infProt->chNFe ?? null,
+            ],
+            'prods' => $prods
+        ];
     }
 
 }

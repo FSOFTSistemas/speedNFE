@@ -420,38 +420,137 @@ class MDFeService
         }
     }
 
+    // public function encerrar($mdfe, $caminho)
+    // {
+    //     try {
+    //         if ($mdfe->situacao->value != 'Autorizado') {
+    //             return [
+    //                 'erro' => "Situação da nota não permite essa ação!",
+    //             ];
+    //         }
+    //         $resp = $this->tools->sefazEncerra($mdfe->chave_acesso, $mdfe->nProtocolo, '26', $mdfe->empresa->endereco->codigoIBGE);
+    //         $st = new Standardize();
+    //         $std = $st->toStd($resp);
+    //         sleep(2);
+    //         if ($std->infEvento->cStat != 135) {
+    //             return [
+    //                 'erro' => "[" . $std->infEvento->cStat . "] - " . $std->infEvento->xMotivo,
+    //             ];
+    //         }
+    //         $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
+    //         if (!File::exists(public_path($caminho . '/'))) {
+    //             File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
+    //         }
+    //         file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
+    //         return [
+    //             'sucesso' => true,
+    //             'nProt' => $std->infEvento->nProt,
+    //         ];
+    //     } catch (Exception $e) {
+    //         return [
+    //             'erro' => $e->getMessage(),
+    //         ];
+    //     }
+    // }
     public function encerrar($mdfe, $caminho)
-    {
-        try {
-            if ($mdfe->situacao->value != 'Autorizado') {
-                return [
-                    'erro' => "Situação da nota não permite essa ação!",
-                ];
-            }
-            $resp = $this->tools->sefazEncerra($mdfe->chave_acesso, $mdfe->nProtocolo, '26', $mdfe->empresa->endereco->codigoIBGE);
-            $st = new Standardize();
-            $std = $st->toStd($resp);
-            sleep(2);
-            if ($std->infEvento->cStat != 135) {
-                return [
-                    'erro' => "[" . $std->infEvento->cStat . "] - " . $std->infEvento->xMotivo,
-                ];
-            }
-            $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
-            if (!File::exists(public_path($caminho . '/'))) {
-                File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
-            }
-            file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
+{
+    try {
+        if ($mdfe->situacao->value != 'Autorizado') {
             return [
-                'sucesso' => true,
-                'nProt' => $std->infEvento->nProt,
-            ];
-        } catch (Exception $e) {
-            return [
-                'erro' => $e->getMessage(),
+                'erro' => 'Situação da nota não permite essa ação!',
             ];
         }
+
+        $ufPorCodigo = [
+            '11' => 'RO',
+            '12' => 'AC',
+            '13' => 'AM',
+            '14' => 'RR',
+            '15' => 'PA',
+            '16' => 'AP',
+            '17' => 'TO',
+            '21' => 'MA',
+            '22' => 'PI',
+            '23' => 'CE',
+            '24' => 'RN',
+            '25' => 'PB',
+            '26' => 'PE',
+            '27' => 'AL',
+            '28' => 'SE',
+            '29' => 'BA',
+            '31' => 'MG',
+            '32' => 'ES',
+            '33' => 'RJ',
+            '35' => 'SP',
+            '41' => 'PR',
+            '42' => 'SC',
+            '43' => 'RS',
+            '50' => 'MS',
+            '51' => 'MT',
+            '52' => 'GO',
+            '53' => 'DF',
+        ];
+
+        $ufCadastro = strtoupper(trim($mdfe->empresa->endereco->estado ?? ''));
+        $cMun = preg_replace('/\D/', '', (string)($mdfe->empresa->endereco->codigoIBGE ?? ''));
+
+        if (strlen($cMun) !== 7) {
+            return [
+                'erro' => 'Código IBGE do município de encerramento inválido.',
+            ];
+        }
+
+        $cUF = substr($cMun, 0, 2);
+        $ufDoIbge = $ufPorCodigo[$cUF] ?? null;
+
+        if (!$ufDoIbge) {
+            return [
+                'erro' => 'UF do código IBGE não pôde ser identificada.',
+            ];
+        }
+
+        if (!empty($ufCadastro) && $ufCadastro !== $ufDoIbge) {
+            return [
+                'erro' => "Divergência entre UF do cadastro ({$ufCadastro}) e UF do IBGE ({$ufDoIbge}).",
+            ];
+        }
+
+        $resp = $this->tools->sefazEncerra(
+            $mdfe->chave_acesso,
+            $mdfe->nProtocolo,
+            $cUF,
+            $cMun
+        );
+
+        $st = new Standardize();
+        $std = $st->toStd($resp);
+
+        sleep(2);
+
+        if (($std->infEvento->cStat ?? null) != 135) {
+            return [
+                'erro' => "[" . ($std->infEvento->cStat ?? '') . "] - " . ($std->infEvento->xMotivo ?? 'Erro no encerramento'),
+            ];
+        }
+
+        $closedXml = $this->tools->sefazConsultaChave($mdfe->chave_acesso);
+
+        if (!File::exists(public_path($caminho . '/'))) {
+            File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
+        }
+
+        file_put_contents(public_path($caminho . '/') . $mdfe->chave_acesso . '.xml', $closedXml);
+
+        return [
+            'sucesso' => true,
+            'nProt' => $std->infEvento->nProt,
+        ];
+    } catch (Exception $e) {
+        return [
+            'erro' => $e->getMessage(),
+        ];
     }
+}
 
     public function cancelar($mdfe, $just, $caminho)
     {
