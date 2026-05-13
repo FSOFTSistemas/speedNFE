@@ -216,27 +216,14 @@ class ProdutosService
                 ? $codigoEAN
                 : $codigoProduto;
 
-            $produtoExistenteQuery = Produto::whereEmpresaId($empresaId);
-
-            if (!empty($chassi)) {
-                $produtoExistenteQuery->where('chassiVeic', $chassi);
-            } else {
-                $produtoExistenteQuery->where('codigo', $codigo);
-            }
-
-            if ($produtoExistenteQuery->exists()) {
-                continue;
-            }
-
             $descricaoProduto = trim($item['xProd'] ?? '');
 
             if (!empty($chassi) && stripos($descricaoProduto, $chassi) === false) {
                 $descricaoProduto .= ' - CHASSI: ' . $chassi;
             }
 
-            $produtoId = Produto::create([
+            $dadosProduto = [
                 'categoria_id' => $item['categoria'],
-                'empresa_id' => $empresaId,
                 'codigo' => $codigo,
                 'produto' => $descricaoProduto,
                 'precocusto' => $item['vProd'],
@@ -279,7 +266,25 @@ class ProdutosService
                 'restriVeic' => $item['tpRest'] ?? null,
                 'cargaVeic' => $item['CMT'] ?? null,
                 'operVeic' => $item['tpOp'] ?? null,
-            ])->id;
+            ];
+
+            $produtoExistenteQuery = Produto::whereEmpresaId($empresaId);
+
+            if (!empty($chassi)) {
+                $produtoExistenteQuery->where('chassiVeic', $chassi);
+            } else {
+                $produtoExistenteQuery->where('codigo', $codigo);
+            }
+
+            $produtoExistente = $produtoExistenteQuery->first();
+
+            if ($produtoExistente) {
+                $produtoExistente->update($dadosProduto);
+                $produtoId = $produtoExistente->id;
+            } else {
+                $dadosProduto['empresa_id'] = $empresaId;
+                $produtoId = Produto::create($dadosProduto)->id;
+            }
 
             array_push($productsList, [
                 'produtoId' => $produtoId,
