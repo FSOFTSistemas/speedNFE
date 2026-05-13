@@ -114,7 +114,11 @@ class FluxoDeCaixaController extends Controller
             'tipo_relatorio' => 'required|in:geral,receitas_despesas,categoria,empresa,resumo',
         ]);
 
-        $query = FluxoDeCaixa::whereBetween('data', [$request->data_inicio, $request->data_fim]);
+        $dataInicio = \Carbon\Carbon::parse($request->data_inicio)->startOfDay();
+        $dataFim = \Carbon\Carbon::parse($request->data_fim)->endOfDay();
+
+        $query = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)
+            ->whereBetween('data', [$dataInicio, $dataFim]);
 
         switch ($request->tipo_relatorio) {
             case 'geral':
@@ -125,10 +129,10 @@ class FluxoDeCaixaController extends Controller
 
                 break;
             case 'categoria':
-                $dados = $query->selectRaw("plano_de_contas_id, SUM(valor) as total")
-                    ->join('plano_de_contas', 'fluxo_de_caixas.plano_de_contas_id', '=', 'plano_de_contas.id') // Fazendo o JOIN manualmente
-                    ->groupBy('plano_de_contas_id', 'plano_de_contas.descricao') // Agrupando pelo nome também
-                    ->addSelect('plano_de_contas.descricao as plano_de_contas_nome') // Selecionando o nome diretamente
+                $dados = $query->selectRaw("fluxo_de_caixas.plano_de_contas_id, plano_de_contas.descricao as plano_de_contas_nome, SUM(fluxo_de_caixas.valor) as total")
+                    ->join('plano_de_contas', 'fluxo_de_caixas.plano_de_contas_id', '=', 'plano_de_contas.id')
+                    ->where('plano_de_contas.empresa_id', Auth::user()->empresa_id)
+                    ->groupBy('fluxo_de_caixas.plano_de_contas_id', 'plano_de_contas.descricao')
                     ->get();
                 break;
             case 'empresa':
@@ -138,10 +142,13 @@ class FluxoDeCaixaController extends Controller
                     ->get();
                 break;
             case 'resumo':
+                $totalReceitas = (clone $query)->where('tipo', 'Receita')->sum('valor');
+                $totalDespesas = (clone $query)->where('tipo', 'Despesa')->sum('valor');
+
                 $dados = [
-                    'total_receitas' => $query->where('tipo', 'Receita')->sum('valor'),
-                    'total_despesas' => $query->where('tipo', 'Despesa')->sum('valor'),
-                    'saldo_final' => $query->sum('valor')
+                    'total_receitas' => $totalReceitas,
+                    'total_despesas' => $totalDespesas,
+                    'saldo_final' => $totalReceitas - $totalDespesas,
                 ];
                 break;
             default:
