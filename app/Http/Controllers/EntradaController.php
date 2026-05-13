@@ -88,6 +88,8 @@ class EntradaController extends Controller
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
                 'array' => 'O campo :attribute deve ser uma lista de produtos!'
             ]);
+
+            
             DB::beginTransaction();
             $entradaId = $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
             $productsList = $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
