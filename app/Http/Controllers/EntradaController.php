@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+
 
 class EntradaController extends Controller
 {
@@ -46,7 +48,7 @@ class EntradaController extends Controller
                 $dataFim = $request->input('data_fim');
                 $entradas = $entradas->whereBetween('dataEntrada', [$dataInicio, $dataFim]);
             }
-    
+            
             return view('nfeEntrada.entradas', ['entradas' => $entradas]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
@@ -89,7 +91,7 @@ class EntradaController extends Controller
                 'array' => 'O campo :attribute deve ser uma lista de produtos!'
             ]);
 
-            
+
             DB::beginTransaction();
             $entradaId = $this->entradaService->createEntrada($request, Auth::user()->empresa_id);
             $productsList = $this->produtoService->insertProductsList($request->prods, Auth::user()->empresa_id);
@@ -121,7 +123,6 @@ class EntradaController extends Controller
             $companyId = Auth::user()->empresa_id;
             if (isset($request->type)) {
                 $response = ImportProductsService::readXML($request->nota);
- 
             } else {
                 $emitente = $this->empresaServices->buscarEmpresa($companyId);
                 $importProductsServices = new ImportProductsService([

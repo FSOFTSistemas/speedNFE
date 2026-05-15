@@ -1,18 +1,27 @@
-import './bootstrap'
-import '../css/app.css'
+import "./bootstrap";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { createInertiaApp } from "@inertiajs/react";
 
-import { createRoot } from 'react-dom/client'
-import { createInertiaApp } from '@inertiajs/react'
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
+const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
+
+const inertiaElement = document.getElementById("inertia-app");
 
 createInertiaApp({
-    resolve: (name) =>
-        resolvePageComponent(
-            `./Pages/${name}.jsx`,
-            import.meta.glob('./Pages/**/*.jsx'),
-        ),
+    id: "inertia-app",
+
+    resolve: (name) => {
+
+        const page = pages[`./Pages/${name}.jsx`];
+
+        if (!page) {
+            throw new Error(`Página não encontrada: ./Pages/${name}.jsx`);
+        }
+
+        return page.default;
+    },
 
     setup({ el, App, props }) {
-        createRoot(el).render(<App {...props} />)
+        createRoot(el).render(<App {...props} />);
     },
-})
+});

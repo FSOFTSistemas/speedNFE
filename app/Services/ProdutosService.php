@@ -288,7 +288,71 @@ class ProdutosService
 
             array_push($productsList, [
                 'produtoId' => $produtoId,
-                'qtde' => $item['qCom']
+                'produto_id' => $produtoId,
+                'empresa_id' => $empresaId,
+
+                // Identificação do item na NFe
+                'numero_item' => $item['nItem'] ?? null,
+                'codigo_fornecedor' => $item['cProd'] ?? null,
+                'codigo_barras' => $item['cEAN'] ?? null,
+                'codigo_barras_tributavel' => $item['cEANTrib'] ?? null,
+                'descricao' => $item['xProd'] ?? null,
+                'ncm' => $item['NCM'] ?? null,
+                'cest' => $item['CEST'] ?? null,
+                'cfop' => $item['CFOP'] ?? null,
+                'unidade' => $item['uCom'] ?? null,
+                'unidade_tributavel' => $item['uTrib'] ?? null,
+
+                // Quantidades e valores
+                'qtde' => $item['qCom'] ?? 0,
+                'quantidade_tributavel' => $item['qTrib'] ?? null,
+                'valor_unitario' => $item['vUnCom'] ?? null,
+                'valor_unitario_tributavel' => $item['vUnTrib'] ?? null,
+                'valor_total' => $item['vProd'] ?? null,
+                'valor_desconto' => $item['vDesc'] ?? null,
+                'valor_frete' => $item['vFrete'] ?? null,
+                'valor_seguro' => $item['vSeg'] ?? null,
+                'valor_outros' => $item['vOutro'] ?? null,
+
+                // ICMS
+                'origem_icms' => $item['orig'] ?? null,
+                'cst_icms' => $item['CST'] ?? null,
+                'csosn' => $item['CSOSN'] ?? null,
+                'modalidade_bc_icms' => $item['modBC'] ?? null,
+                'valor_bc_icms' => $item['vBC'] ?? null,
+                'aliquota_icms' => $item['pICMS'] ?? $item['ICMS'] ?? null,
+                'valor_icms' => $item['vICMS'] ?? null,
+                'modalidade_bc_icms_st' => $item['modBCST'] ?? null,
+                'valor_bc_icms_st' => $item['vBCST'] ?? null,
+                'aliquota_icms_st' => $item['pICMSST'] ?? null,
+                'valor_icms_st' => $item['vICMSST'] ?? null,
+                'valor_icms_desonerado' => $item['vICMSDeson'] ?? null,
+
+                // IPI
+                'cst_ipi' => $item['CST_IPI'] ?? null,
+                'enquadramento_ipi' => $item['cEnq'] ?? null,
+                'valor_bc_ipi' => $item['vBC_IPI'] ?? null,
+                'aliquota_ipi' => $item['pIPI'] ?? $item['IPI'] ?? null,
+                'valor_ipi' => $item['vIPI'] ?? null,
+
+                // PIS
+                'cst_pis' => $item['CST_PIS'] ?? null,
+                'valor_bc_pis' => $item['vBC_PIS'] ?? null,
+                'aliquota_pis' => $item['pPIS'] ?? $item['PIS'] ?? null,
+                'valor_pis' => $item['vPIS'] ?? null,
+
+                // COFINS
+                'cst_cofins' => $item['CST_COFINS'] ?? null,
+                'valor_bc_cofins' => $item['vBC_COFINS'] ?? null,
+                'aliquota_cofins' => $item['pCOFINS'] ?? $item['COFINS'] ?? null,
+                'valor_cofins' => $item['vCOFINS'] ?? null,
+
+                // Pedido/compra
+                'numero_pedido' => $item['xPed'] ?? null,
+                'item_pedido' => $item['nItemPed'] ?? null,
+
+                // Dados extras do XML para auditoria futura
+                'informacoes_adicionais' => $item['infAdProd'] ?? null,
             ]);
         }
 

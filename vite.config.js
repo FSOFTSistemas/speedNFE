@@ -7,9 +7,19 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
-                'resources/js/app.js',
+                'resources/js/app.jsx',
+                'resources/js/Pages/notasEntradas.jsx',
             ],
             refresh: true,
         }),
+        react(),
     ],
+    server: {
+        host: 'localhost',
+        port: 5173,
+        hmr: {
+            host: 'localhost',
+            protocol: 'ws',
+        },
+    },
 });

@@ -24,4 +24,8 @@ class Entrada extends Model
         return $this->hasMany(ItensEntrada::class, 'entrada_id', 'id');
     }
 
+    public function itens()
+    {
+        return $this->hasMany(ItensEntrada::class, 'entrada_id', 'id');
+    }
 }
