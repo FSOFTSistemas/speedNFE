@@ -185,6 +185,7 @@
                         <tr>
                             <!--<td>{{ date('d/m/Y', strtotime($etd->dataEmissao)) }}</td>-->
                             <td>{{ $etd->dataEmissao ? \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $etd->dataEmissao)->format('d/m/Y') : '' }}</td>
+                            
                             <!--<td>{{ date('d/m/Y', strtotime($etd->dataEntrada)) }}</td>-->
                             <td>{{ $etd->dataEntrada ? \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $etd->dataEntrada)->format('d/m/Y') : '' }}</td>
                             <td>{{ $etd->numeroNota }}</td>
