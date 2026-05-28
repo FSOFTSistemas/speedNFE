@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController as ApiAuthController;
+use App\Http\Controllers\Api\V1\ClientesController as ApiClientesController;
+use App\Http\Controllers\Api\V1\DashboardController as ApiDashboardController;
+use App\Http\Controllers\Api\V1\ProdutosController as ApiProdutosController;
 use App\Http\Controllers\PixWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,5 +33,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('auth/me', [ApiAuthController::class, 'me'])->name('auth.me');
         Route::post('auth/refresh', [ApiAuthController::class, 'refresh'])->name('auth.refresh');
         Route::post('auth/logout', [ApiAuthController::class, 'logout'])->name('auth.logout');
+
+        Route::get('dashboard', [ApiDashboardController::class, 'index'])->name('dashboard.index');
+
+        Route::get('clientes/consultar-cnpj/{cnpj}', [ApiClientesController::class, 'consultarCnpj'])
+            ->name('clientes.consultar-cnpj');
+        Route::get('clientes/verificar-cpf-cnpj', [ApiClientesController::class, 'verificarCpfCnpj'])
+            ->name('clientes.verificar-cpf-cnpj');
+        Route::apiResource('clientes', ApiClientesController::class);
+
+        Route::apiResource('produtos', ApiProdutosController::class);
     });
 });
