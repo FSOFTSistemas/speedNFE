@@ -25,8 +25,9 @@ class NFeService
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
     }
 
-public function gerarXml($venda, $emitente)
+    public function gerarXml($venda, $emitente)
     {
+        
         // 1. CORREÇÃO CRÍTICA: Forçar Schema PL_010 para ativar a Reforma Tributária
         $nfe = new Make('PL_010');
 
@@ -135,7 +136,7 @@ public function gerarXml($venda, $emitente)
             $stdDest->indIEDest = "9";
         }
 
-      
+
         $cnpj_cpf = str_replace([".", "/", "-"], "", $venda->cliente->cpf_cnpj);
 
         if (strlen($cnpj_cpf) == 14) {
@@ -269,7 +270,7 @@ public function gerarXml($venda, $emitente)
             $stdImposto = new \stdClass();
             $stdImposto->item = $key + 1;
             $nfe->tagimposto($stdImposto);
-  
+
             // --- AJUSTE DINÂMICO DE ICMS POR CRT ---
             $stdICMS = new \stdClass();
             $stdICMS->item = $key + 1;
@@ -283,25 +284,24 @@ public function gerarXml($venda, $emitente)
                 }
                 $nfe->tagICMSSN($stdICMS);
             } else {
-                
-                
-                
+
+
+
                 $stdICMS->CST = str_pad($i->produto->cst_csosn, 2, "0", STR_PAD_LEFT);
-                
-            
-               if (in_array($stdICMS->CST, ['00','10','20','70','90'])) {
+
+
+                if (in_array($stdICMS->CST, ['00', '10', '20', '70', '90'])) {
 
                     $stdICMS->modBC = 3;
                     $stdICMS->vBC   = FormatationUtil::format($stdProd->vProd);
                     $stdICMS->pICMS = FormatationUtil::format($i->produto->icms);
                     $stdICMS->vICMS = FormatationUtil::format($stdProd->vProd * ($i->produto->icms / 100));
-                
+
                     // >>> ACUMULA TOTAIS <<<
                     $totvBC   += (float)$stdICMS->vBC;
                     $totvICMS += (float)$stdICMS->vICMS;
-                
                 } else {
-                
+
                     // CST sem destaque
                     unset(
                         $stdICMS->modBC,
@@ -310,51 +310,51 @@ public function gerarXml($venda, $emitente)
                         $stdICMS->vICMS
                     );
                 }
-            
 
-              
-                
 
-                
+
+
+
+
                 // chamada única
                 $icmsTag = $nfe->tagICMS($stdICMS);
-                
+
                 if ($icmsTag === null) {
                     throw new \Exception("Falha ao gerar ICMS. CST={$stdICMS->CST}");
                 }
 
-                
+
 
                 if ($icmsTag === null) {
                     throw new \Exception("Erro ao gerar tagICMS para o item " . ($key + 1));
                 }
             }
-            
+
             // DIFAL só quando: interestadual + não contribuinte
             $ufEmit = $emitente->uf;                 // ex: "PE"
             $ufDest = $venda->cliente->endereco->uf;           // ex: "SP"
             $indIEDest = (int) $stdDest->indIEDest;  // 1,2,9
-            
+
             if ($ufEmit !== $ufDest && $indIEDest === 9) {
 
                 $stdICMSUFDest = new \stdClass();
                 $stdICMSUFDest->item = $key + 1;
-            
+
                 $stdICMSUFDest->vBCUFDest = FormatationUtil::format($stdProd->vProd);
-            
+
                 // Se você ainda não vai calcular DIFAL agora:
                 $stdICMSUFDest->pFCPUFDest = 0;
                 $stdICMSUFDest->pICMSUFDest = 0;
                 $stdICMSUFDest->pICMSInter = 12;        // depois ajusta 7/12 conforme UF
                 $stdICMSUFDest->pICMSInterPart = 100;
-            
+
                 $stdICMSUFDest->vFCPUFDest = 0;
                 $stdICMSUFDest->vICMSUFDest = 0;
                 $stdICMSUFDest->vICMSUFRemet = 0;
-            
+
                 $nfe->tagICMSUFDest($stdICMSUFDest);
             }
-           
+
 
             //PIS
             $stdPIS = new \stdClass();
@@ -380,7 +380,7 @@ public function gerarXml($venda, $emitente)
             $stdIPI = new \stdClass();
             $stdIPI->item = $key + 1;
             $stdIPI->cEnq = '999';
-            $stdIPI->CST = '51';//$i->produto->ipi;
+            $stdIPI->CST = '51'; //$i->produto->ipi;
             $stdIPI->vBC = FormatationUtil::format($i->produto->ipi) > 0 ? $stdProd->vProd : 0.00;
             $stdIPI->pIPI = FormatationUtil::format($i->produto->ipi);
             $stdIPI->vIPI = FormatationUtil::format($stdProd->vProd * ($i->produto->ipi / 100));
@@ -451,11 +451,21 @@ public function gerarXml($venda, $emitente)
             $nfe->tagpag($stdPag);
             $stdDetPag = new \stdClass();
             $mapPagamento = [
-                "Dinheiro" => '01', "Cheque" => '02', "Cartão de Crédito" => '03',
-                "Cartão de Débito" => '04', "Crédito Loja" => '05', "Vale Alimentação" => '10',
-                "Vale Refeição" => '11', "Vale Presente" => '12', "Vale Combustível" => '13',
-                "Duplicata Mercantil" => '14', "Boleto Bancário" => '15', "Depósito Bancário" => '16',
-                "PIX" => '17', "Sem Pagamento" => '90', "Outros" => '99'
+                "Dinheiro" => '01',
+                "Cheque" => '02',
+                "Cartão de Crédito" => '03',
+                "Cartão de Débito" => '04',
+                "Crédito Loja" => '05',
+                "Vale Alimentação" => '10',
+                "Vale Refeição" => '11',
+                "Vale Presente" => '12',
+                "Vale Combustível" => '13',
+                "Duplicata Mercantil" => '14',
+                "Boleto Bancário" => '15',
+                "Depósito Bancário" => '16',
+                "PIX" => '17',
+                "Sem Pagamento" => '90',
+                "Outros" => '99'
             ];
             $stdDetPag->tPag = $mapPagamento[$fat->forma_pag->descricao] ?? '99';
             $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem Pagamento' ? FormatationUtil::format($fat->valor) : 0;
@@ -497,14 +507,14 @@ public function gerarXml($venda, $emitente)
         try {
             $nfe->montaNFe();
             $xml = $nfe->getXML();
-            
+
             return [
                 'chave' => $nfe->getChave(),
                 'xml' => $xml,
                 'nNf' => $stdIde->nNF,
             ];
         } catch (\Exception $e) {
-        
+
             return ['erros_xml' => $nfe->getErrors()];
         }
     }
