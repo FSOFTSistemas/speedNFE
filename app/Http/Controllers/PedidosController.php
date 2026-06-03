@@ -225,7 +225,6 @@ class PedidosController extends Controller
     public function enviarNFe($id)
     {
         try {
-            DB::beginTransaction();
             $venda = $this->pedidoServices->buscarPedido($id);
             $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $nfe_service = new NFeService([
@@ -250,6 +249,8 @@ class PedidosController extends Controller
                     $resultado = $nfe_service->transmitir($signed, $result['chave'], $empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
                     // dd($resultado);
                     if (isset($resultado['sucesso'])) {
+                        DB::beginTransaction();
+
                         $venda->chave = $result['chave'];
                         $venda->status = 1;
                         $venda->estado = 'Autorizado';
@@ -265,29 +266,41 @@ class PedidosController extends Controller
                                 $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
                             }
                         }
+
                         DB::commit();
                         return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
                     } else {
+                        DB::beginTransaction();
+
                         $venda->status = 3;
                         $venda->estado = 'Rejeitado';
                         $venda->save();
+
                         DB::commit();
                         return redirect('/vendas')->with('warning', $resultado['erro']);
                     }
                 } else {
-                    DB::rollBack();
+                    if (DB::transactionLevel() > 0) {
+                        DB::rollBack();
+                    }
                     return redirect('/vendas')->with('error', $result['erros_xml']);
                 }
             } else {
-                DB::rollBack();
+                if (DB::transactionLevel() > 0) {
+                    DB::rollBack();
+                }
                 return redirect('/vendas')->with("error", 404);
             }
         } catch (ValidatorException $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
     }
 
