@@ -122,6 +122,23 @@
                             </select>
                         </div>
                     </div>
+<br>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="aut_xml">CPF/CNPJ autorizado para XML</label>
+                            <input
+                                type="text"
+                                name="aut_xml"
+                                id="aut_xml"
+                                class="form-control"
+                                placeholder="CPF ou CNPJ autorizado"
+                                maxlength="18"
+                            >
+                            <small class="text-muted">
+                                Informe somente se desejar autorizar terceiro a baixar o XML.
+                            </small>
+                        </div>
+                    </div>
                 </div>
 
                 <hr class="my-4">

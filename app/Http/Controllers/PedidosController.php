@@ -146,7 +146,7 @@ class PedidosController extends Controller
     public function cancelarNFe(Request $request)
     {
         try {
-            
+
             $venda = Pedido::find($request->venda_id_cancelar);
             $emitente = Empresa::find($venda->empresa_id);
             if ($emitente == null) {
@@ -364,7 +364,8 @@ class PedidosController extends Controller
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required',
-                'info_complementares' => 'nullable|max:255'
+                'info_complementares' => 'nullable|max:255',
+                'aut_xml' => 'nullable|string|max:18',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'vendaItens.required' => 'Deve existir pelo menos um item no pedido!',
@@ -372,7 +373,13 @@ class PedidosController extends Controller
                 'max' => 'O campo :attribute deve conter no máximo :max caracteres'
             ]);
 
-            
+            $autXml = preg_replace('/\D/', '', $request->aut_xml ?? '');
+
+            if (!empty($autXml) && !in_array(strlen($autXml), [11, 14])) {
+                return back()
+                    ->withInput()
+                    ->with('warning', 'CPF/CNPJ autorizado para XML deve ter 11 ou 14 dígitos.');
+            }
 
             DB::beginTransaction();
             $subtotal = 0;
@@ -382,7 +389,7 @@ class PedidosController extends Controller
                 foreach ($request->vendaItens as $item) {
                     $prod = $this->produtoServices->um($item['produto_id']);
                     $desconto = $desconto + $item['desconto'];
-                    $subtotal = $subtotal + ($item['quantidade'] * $item['unitario'] );
+                    $subtotal = $subtotal + ($item['quantidade'] * $item['unitario']);
                 }
                 $pedido = $this->pedidoServices->create(
                     Auth::id(),
@@ -394,14 +401,14 @@ class PedidosController extends Controller
                     $request->finalidade == 4 ? 4 : 1,
                     $request->ref_nfe,
                     $request->tipo,
-                    $request->info_complementares
+                    $request->info_complementares,
+                    $autXml
                 );
                 foreach ($request->vendaItens as $item) {
                     $prod = $this->produtoServices->um($item['produto_id']);
 
-                    if ($request->finalidade == 1)
-                    {
-                        $this->itemServices->verificaVendaPorProduto($request->empresa, $prod); 
+                    if ($request->finalidade == 1) {
+                        $this->itemServices->verificaVendaPorProduto($request->empresa, $prod);
                     }
 
                     $this->itemServices->create(
@@ -504,5 +511,4 @@ class PedidosController extends Controller
             return response()->json('error: Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage(), $e->getCode());
         }
     }
-
 }

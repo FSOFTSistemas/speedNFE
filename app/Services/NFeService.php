@@ -469,9 +469,21 @@ public function gerarXml($venda, $emitente)
         $stdInfCpl->infCpl = $venda->info_complementares;
         $nfe->taginfAdic($stdInfCpl);
 
-        if (getenv('AUT_XML') != '') {
+        $autXml = preg_replace('/\D/', '', $venda->aut_xml ?? '');
+
+        if (!empty($autXml)) {
             $stdAut = new \stdClass();
-            $stdAut->CNPJ = str_replace([".", "-", "/", " "], "", getenv('AUT_XML'));
+
+            if (strlen($autXml) === 14) {
+                $stdAut->CNPJ = $autXml;
+                $stdAut->CPF = null;
+            } elseif (strlen($autXml) === 11) {
+                $stdAut->CNPJ = null;
+                $stdAut->CPF = $autXml;
+            } else {
+                throw new \Exception('CPF/CNPJ autorizado para XML inválido. Informe um CNPJ com 14 dígitos ou CPF com 11 dígitos.');
+            }
+
             $nfe->tagautXML($stdAut);
         }
 
