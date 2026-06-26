@@ -252,6 +252,7 @@ class ProdutosController extends Controller
     // SALVAR NOVO (POST)
     public function store(Request $request)
     {
+        
         try {
             $request->validate([
                 'empresa' => 'nullable',
@@ -266,7 +267,7 @@ class ProdutosController extends Controller
                 'tpProd' => 'nullable',
                 'cfopinterno' => 'required',
                 'cfopexterno' => 'required',
-                'cst' => 'required',
+                'cst' => 'nullable',
                 'cst_pis' => 'required',
                 'cst_cofins' => 'required',
                 'cofins' => 'required',
@@ -310,7 +311,7 @@ class ProdutosController extends Controller
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
                 'max' => 'O campo :attribute deve ter no máximo :max caracteres!'
             ]);
-
+           
             DB::beginTransaction();
             !$request->empresa ? $empresa = Auth::user()->empresa_id : $empresa = $request->empresa;
             
@@ -328,7 +329,7 @@ class ProdutosController extends Controller
                     $request->cst_csosn,
                     $request->cst_pis,
                     $request->cst_cofins,
-                    $request->cst,
+                    $request->cst_csosn,
                     doubleval($request->icms),
                     $request->pis,
                     $request->cofins,
@@ -368,7 +369,7 @@ class ProdutosController extends Controller
                     doubleval($request->pIS_imposto),
                     $request->cst_ibs_cbs
                 );
-                
+               
                 $this->estoqueService->create($request->estoque, $empresa, $produto->id);
             } else {
                 return redirect()->route('produto.index')->with('warning', 'O limite de cadastro de produtos foi atingido, faça assinatura de um novo plano para conseguir mais cadastros!');
@@ -380,6 +381,7 @@ class ProdutosController extends Controller
                 $errors[] = implode("<br>", $error);
             }
             DB::rollBack();
+            
             return back()->with('warning', implode("<br>", $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();

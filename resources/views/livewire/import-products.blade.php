@@ -88,7 +88,7 @@
         <div class="card card-main">
             <div class="card-body">
                 <header>
-                    <h4 class="mb-4 text-center" style="font-weight: 600;">{{ $emit['xFant'] }}</h4>
+                    <h4 class="mb-4 text-center" style="font-weight: 600;">{{ $emit['xFant'] ?? '' }}</h4>
                     <input type="hidden" class="form-control" name="nNF" wire:model="ide.nNF" required>
                     
                     <div class="row">

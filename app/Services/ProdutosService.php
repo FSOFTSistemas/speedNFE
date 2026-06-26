@@ -435,7 +435,7 @@ class ProdutosService
             'cst_csosn' => $cst_csosn,
             'cst_pis' => $cst_pis,
             'cst_cofins' => $cst_cofins,
-            'cst' => $cst,
+            'cst' => $cst_csosn,
             'icms' => $icms,
             'pis' => $pis,
             'cofins' => $cofins,
