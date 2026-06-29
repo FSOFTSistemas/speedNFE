@@ -1,39 +1,34 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PlanoController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PedidosController;
-use App\Http\Controllers\ProdutosController;
-use App\Http\Controllers\EstoqueController;
-use App\Http\Controllers\ClientesController;
-use App\Http\Controllers\FormaPagController;
-use App\Http\Controllers\EmpresasController;
-use App\Http\Controllers\ReceberController;
-use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\CupomController;
 use App\Http\Controllers\DRE;
+use App\Http\Controllers\EmpresasController;
 use App\Http\Controllers\EntradaController;
+use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\FluxoDeCaixaController;
-
+use App\Http\Controllers\FormaPagController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
+use App\Http\Controllers\PedidosController;
+use App\Http\Controllers\PixController;
+use App\Http\Controllers\PlanoController;
 use App\Http\Controllers\PlanoDeContaController;
+use App\Http\Controllers\ProdutosController;
+use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\TransactionLogController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VeiculoController;
-
-use App\Http\Controllers\PixController;
-use App\Http\Controllers\PixWebhookController;
-
 use App\Models\CClassTrib;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,22 +41,32 @@ use Illuminate\Http\Request;
 |
 */
 
-//Home
+// Home
 Route::get('/', function () {
 
     return view('homePage');
 });
 
+Route::get('/api/documentation', function () {
+    return response()->file(public_path('docs/swagger.html'));
+});
+
+Route::get('/docs/openapi.yaml', function () {
+    return response(file_get_contents(public_path('docs/openapi.yaml')), 200, [
+        'Content-Type' => 'application/yaml',
+    ]);
+});
+
 Route::get('/homePage', [HomeController::class, 'homePage'])->name('homePage');
 Route::get('/homePage2', [HomeController::class, 'homePage2'])->name('homePage2');
 
-//Planos
+// Planos
 Route::get('/planos', [PlanoController::class, 'Planos'])->name('Planos');
 
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware(['auth']);
 
 Route::middleware(['check.subscription'])->group(function () {
-    //CATEGORIA
+    // CATEGORIA
     Route::prefix('categoria')->group(function () {
         Route::get('', [CategoriasController::class, 'show'])->name('categoria.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::get('/cadastro', [CategoriasController::class, 'new'])->name('cadastrar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
@@ -69,7 +74,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/status/{id}', [CategoriasController::class, 'destroy'])->name('desativarReativar_categoria')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
-    //EMPRESA
+    // EMPRESA
     Route::prefix('empresa')->group(function () {
         Route::get('', [EmpresasController::class, 'index'])->name('empresa.index')->middleware(['auth']);
         Route::get('/todas', [EmpresasController::class, 'show'])->name('empresa.show')->middleware(['auth', 'access.permission:master']);
@@ -81,7 +86,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('/cadastrar', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware(['auth', 'access.permission:master']);
     });
 
-    //CLIENTE
+    // CLIENTE
     Route::get('/cliente', [ClientesController::class, 'show'])->name('cliente.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     Route::get('/cliente/cadastro', [ClientesController::class, 'new'])->name('cliente.create')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     Route::post('/cliente/cadastro', [ClientesController::class, 'salvar'])->name('criar_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
@@ -91,7 +96,7 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::delete('/cliente/del', [ClientesController::class, 'excluir'])->name('excluir_cliente')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     Route::post('/clientes/cnpj/', [ClientesController::class, 'BuscarCnpj'])->name('cnpj.clientes');
 
-    //FORMA DE PAGAMENTO
+    // FORMA DE PAGAMENTO
     Route::prefix('forma')->group(function () {
         Route::get('', [FormaPagController::class, 'show'])->middleware('auth');
         Route::get('/cadastro', [FormaPagController::class, 'new'])->middleware('auth');
@@ -99,7 +104,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/del/{id}', [FormaPagController::class, 'excluir'])->name('excluir_forma')->middleware('auth');
     });
 
-    //USUARIO
+    // USUARIO
     Route::prefix('usuarios')->group(function () {
         Route::get('', [UsersController::class, 'show'])->name('index_usuario')->middleware('auth');
         Route::get('/criar', [UsersController::class, 'create'])->name('usuario.create')->middleware(['auth']);
@@ -112,7 +117,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::patch('/usuarios/{id}/ativar', [UsersController::class, 'ativar'])->name('usuario.ativar');
     });
 
-    //PRODUTOS
+    // PRODUTOS
     Route::prefix('produto')->group(function () {
         Route::get('', [ProdutosController::class, 'show'])->name('produto.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::get('/cadastro', [ProdutosController::class, 'new'])->name('produto.new')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
@@ -123,7 +128,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::put('/editar/{id}', [ProdutosController::class, 'update'])->name('update_produto')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
-    //ENTRADAS
+    // ENTRADAS
     Route::prefix('entrada')->group(function () {
         Route::get('/', [EntradaController::class, 'index'])->name('entradas.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::get('/criar', [EntradaController::class, 'create'])->name('entradas.create')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
@@ -133,12 +138,12 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::delete('/entradas/{id}', [EntradaController::class, 'destroy'])->name('entradas.destroy')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
-    //ITENS ENTRADAS
+    // ITENS ENTRADAS
     Route::prefix('item-entrada')->group(function () {
         Route::get('/entrada/{entradaId}', [ItensEntradaController::class, 'show'])->name('itens-entradas.show')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
-    //ESTOQUE
+    // ESTOQUE
     Route::prefix('estoque')->group(function () {
         Route::get('', [EstoqueController::class, 'index'])->name('estoque.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
         Route::get('{estoqueId}/visualizar', [EstoqueController::class, 'show'])->name('estoque.show')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
@@ -146,7 +151,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::put('{estoqueId}/atualizar', [EstoqueController::class, 'update'])->name('estoque.update')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe']);
     });
 
-    //RECEBER
+    // RECEBER
     Route::prefix('receber')->group(function () {
         Route::get('', [ReceberController::class, 'show'])->middleware('auth');
         Route::get('/cadastro', [ReceberController::class, 'new'])->middleware('auth');
@@ -156,7 +161,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('/edit/{id}', [ReceberController::class, 'update'])->name('update_recebimento')->middleware('auth');
     });
 
-    //VENDAS
+    // VENDAS
     Route::get('/venda', [PedidosController::class, 'todos'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
     Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
     Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
@@ -174,20 +179,19 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::delete('/vendas/deletar', [PedidosController::class, 'destroyPedido'])->name('pedido.deletar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
     Route::get('/total-mes-nfes', [PedidosController::class, 'totalMesNFe'])->name('totalMesNFe');
 
-
-    //NOTAS FISCAIS
+    // NOTAS FISCAIS
     Route::get('/notas', [NotasFiscaisController::class, 'show'])->name('notas.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
     Route::get('/notas/{chave}', [NotasFiscaisController::class, 'visualizarPdf'])->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
     Route::post('/notas/xml', [NotasFiscaisController::class, 'downloadXml'])->name('baixarXml')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
     Route::post('/zip', [NotasFiscaisController::class, 'zip'])->name('zip')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
 
-    //INUTILIZAR
+    // INUTILIZAR
     Route::prefix('inutilizar')->group(function () {
         Route::get('', [PedidosController::class, 'inutil'])->name('inutilizar.index')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
         Route::post('', [PedidosController::class, 'inutilizar'])->name('inutilizar.create')->middleware(['auth', 'access.permission:master|admin|client-NFe|client-advanced1|client-advanced2']);
     });
 
-    //RELATORIOS
+    // RELATORIOS
     Route::prefix('relatorios')->group(function () {
         Route::get('', [RelatoriosController::class, 'show'])->middleware('auth');
         Route::post('', [RelatoriosController::class, 'relatorio'])->name('relatorio')->middleware('auth');
@@ -195,7 +199,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('/relatorio-pdf', [RelatoriosController::class, 'gerarPdf'])->name('relatorio-pdf')->middleware('auth');
     });
 
-    //MDFe
+    // MDFe
     Route::prefix('mdfes')->group(function () {
         Route::get('', [MDFEController::class, 'index'])->name('mdfe.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
         Route::get('/emitir', [MDFEController::class, 'create'])->name('mdfe.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
@@ -212,7 +216,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/total-mes-mdfes', [MDFEController::class, 'totalMesMDFe'])->name('totalMesMDFe');
     });
 
-    //MOTORISTAS
+    // MOTORISTAS
     Route::prefix('motoristas')->group(function () {
         Route::get('', [MotoristaController::class, 'index'])->name('motorista.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
         Route::get('/registrar', [MotoristaController::class, 'create'])->name('motorista.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
@@ -222,7 +226,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::delete('/deletar', [MotoristaController::class, 'delete'])->name('motorista.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
     });
 
-    //VEICULO
+    // VEICULO
     Route::prefix('veiculos')->group(function () {
         Route::get('', [VeiculoController::class, 'index'])->name('veiculos.index')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
         Route::get('/registrar', [VeiculoController::class, 'create'])->name('veiculos.create')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
@@ -232,7 +236,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::delete('/deletar', [VeiculoController::class, 'delete'])->name('veiculos.delete')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
     });
 
-    //NFCe
+    // NFCe
     Route::prefix('nfce')->group(function () {
         Route::get('/{id}/visualizar', [NFCeController::class, 'show'])->name('nfce.show')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::get('/{id}/enviar', [NFCeController::class, 'sendNFCe'])->name('nfce.send')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
@@ -246,7 +250,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::get('/total-mes-nfces', [NFCeController::class, 'totalMesNFCe'])->name('totalMesNFCe');
     });
 
-    //CUPOM
+    // CUPOM
     Route::prefix('cupom')->group(function () {
         Route::get('', [CupomController::class, 'index'])->name('cupom.index')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
         Route::get('/criar', [CupomController::class, 'create'])->name('cupom.create')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
@@ -264,24 +268,22 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
 
 });
-    //PIX
-    Route::post('/pix/cob', [PixController::class, 'criar'])->name('pix.criar');
-    Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
-    
+// PIX
+Route::post('/pix/cob', [PixController::class, 'criar'])->name('pix.criar');
+Route::get('/pix/cob/{txid}', [PixController::class, 'consultar']);
 
+// Página de pagamento PIX (GET /pagamento)
+Route::post('/pagamento', [PixController::class, 'pagar'])->name('pix.pagamento');
 
-    // Página de pagamento PIX (GET /pagamento)
-    Route::post('/pagamento', [PixController::class, 'pagar'])->name('pix.pagamento');
+Route::get('/pagamento/sucesso', function (Request $req) {
+    return view('faturas.pagamento-sucesso', [
+        'txid' => $req->query('txid'),
+        'valor' => $req->query('valor'),
+        'descricao' => $req->query('descricao'),
+    ]);
+})->name('pix.sucesso');
 
-    Route::get('/pagamento/sucesso', function (Request $req) {
-        return view('faturas.pagamento-sucesso', [
-            'txid'      => $req->query('txid'),
-            'valor'     => $req->query('valor'),
-            'descricao' => $req->query('descricao'),
-        ]);
-    })->name('pix.sucesso');
-
-//FATURAS
+// FATURAS
 Route::prefix('faturas')->group(function () {
     Route::get('', [FaturaController::class, 'index'])->name('faturas.index');
     Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
@@ -293,22 +295,17 @@ Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index'
 Route::post('/clientes/check-cpf', [ClientesController::class, 'checkCpfCnpj'])->name('cliente.checkCpfCnpj');
 
 Route::post('/pagamento/enviar-confirmacao', [PixController::class, 'enviarConfirmacaoEmail'])
-     ->name('pix.enviarConfirmacao');
+    ->name('pix.enviarConfirmacao');
 
-     
-
-
-     Route::get('/api/cclasstrib/{cst}', function ($cst) {
+Route::get('/api/cclasstrib/{cst}', function ($cst) {
     // Busca códigos que batem exatamente com o CST, ordenados
     return CClassTrib::where('cst_compativel', $cst)
-                     ->orWhere('cst_compativel', intval($cst)) // Previne erro de '010' vs '10'
-                     ->select('codigo', 'descricao')
-                     ->orderBy('codigo')
-                     ->get();
+        ->orWhere('cst_compativel', intval($cst)) // Previne erro de '010' vs '10'
+        ->select('codigo', 'descricao')
+        ->orderBy('codigo')
+        ->get();
 });
-
 
 Route::post('/notas/enviar-contador', [NotasFiscaisController::class, 'enviarXmlsContador'])->name('nfe.enviarContador');
 
-
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

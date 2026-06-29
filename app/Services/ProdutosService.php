@@ -3,12 +3,166 @@
 namespace App\Services;
 
 use App\Models\Produto;
-use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class ProdutosService
 {
     public function __construct() {}
+
+    public function listarApi(array $filters, $user = null): LengthAwarePaginator
+    {
+        $query = Produto::query();
+
+        $this->aplicarEscopoEmpresaApi($query, $filters, $user);
+        $this->aplicarFiltrosApi($query, $filters);
+
+        $allowedSortFields = [
+            'id',
+            'produto',
+            'codigo',
+            'ncm',
+            'precovenda',
+            'precocusto',
+            'created_at',
+            'updated_at',
+        ];
+
+        $sortBy = $filters['sort_by'] ?? 'produto';
+        $sortBy = in_array($sortBy, $allowedSortFields, true) ? $sortBy : 'produto';
+
+        $sortOrder = strtolower($filters['sort_order'] ?? 'asc') === 'desc' ? 'desc' : 'asc';
+
+        $perPage = (int) ($filters['per_page'] ?? 15);
+        $perPage = max(1, min($perPage, 100));
+
+        return $query->orderBy($sortBy, $sortOrder)->paginate($perPage);
+    }
+
+    public function buscarPermitidoApi(int $id, $user = null): Produto
+    {
+        $query = Produto::query();
+
+        if ($user && (int) $user->empresa_id !== 1) {
+            $query->where('empresa_id', $user->empresa_id);
+        }
+
+        return $query->findOrFail($id);
+    }
+
+    public function criarApi(array $data, $user = null): Produto
+    {
+        return Produto::create($this->mapearPayloadApi($data, $user));
+    }
+
+    public function atualizarApi(Produto $produto, array $data, $user = null): Produto
+    {
+        $produto->update($this->mapearPayloadApi($data, $user, true));
+
+        return $produto->fresh();
+    }
+
+    public function removerApi(Produto $produto): bool
+    {
+        return (bool) $produto->delete();
+    }
+
+    private function aplicarEscopoEmpresaApi(Builder $query, array $filters, $user = null): void
+    {
+        if ($user && (int) $user->empresa_id !== 1) {
+            $query->where('empresa_id', $user->empresa_id);
+
+            return;
+        }
+
+        if (! empty($filters['empresa_id'])) {
+            $query->where('empresa_id', $filters['empresa_id']);
+        } elseif (! empty($filters['empresa'])) {
+            $query->where('empresa_id', $filters['empresa']);
+        }
+    }
+
+    private function aplicarFiltrosApi(Builder $query, array $filters): void
+    {
+        if (! empty($filters['search'])) {
+            $search = trim($filters['search']);
+            $searchOnlyNumbers = preg_replace('/\D/', '', $search);
+
+            $query->where(function ($q) use ($search, $searchOnlyNumbers) {
+                $q->where('produto', 'like', "%{$search}%")
+                    ->orWhere('codigo', 'like', "%{$search}%")
+                    ->orWhere('ncm', 'like', "%{$search}%");
+
+                if (! empty($searchOnlyNumbers)) {
+                    $q->orWhere('ncm', 'like', "%{$searchOnlyNumbers}%");
+                }
+            });
+        }
+
+        if (! empty($filters['produto'])) {
+            $query->where('produto', 'like', '%'.trim($filters['produto']).'%');
+        }
+
+        if (! empty($filters['descricao'])) {
+            $query->where('produto', 'like', '%'.trim($filters['descricao']).'%');
+        }
+
+        if (! empty($filters['codigo'])) {
+            $query->where('codigo', trim($filters['codigo']));
+        }
+
+        if (! empty($filters['ncm'])) {
+            $ncm = preg_replace('/\D/', '', trim($filters['ncm']));
+            $query->where('ncm', $ncm);
+        }
+
+        if (! empty($filters['categoria_id'])) {
+            $query->where('categoria_id', $filters['categoria_id']);
+        } elseif (! empty($filters['categoria'])) {
+            $query->where('categoria_id', $filters['categoria']);
+        }
+    }
+
+    private function mapearPayloadApi(array $data, $user = null, bool $isUpdate = false): array
+    {
+        $mapped = [
+            'codigo' => $data['codigo'] ?? null,
+            'produto' => $data['produto'] ?? ($data['descricao'] ?? null),
+            'precocusto' => $data['precocusto'] ?? ($data['preco_custo'] ?? null),
+            'precovenda' => $data['precovenda'] ?? ($data['preco_venda'] ?? null),
+            'ncm' => $data['ncm'] ?? null,
+            'cfop_interno' => $data['cfopinterno'] ?? ($data['cfop'] ?? null),
+            'cfop_externo' => $data['cfopexterno'] ?? null,
+            'cst_csosn' => $data['cst_csosn'] ?? ($data['csosn'] ?? null),
+            'cst_pis' => $data['cst_pis'] ?? null,
+            'cst_cofins' => $data['cst_cofins'] ?? null,
+            'cst' => $data['cst'] ?? null,
+            'icms' => $data['icms'] ?? ($data['aliquota_icms'] ?? null),
+            'pis' => $data['pis'] ?? ($data['aliquota_pis'] ?? null),
+            'cofins' => $data['cofins'] ?? ($data['aliquota_cofins'] ?? null),
+            'ipi' => $data['ipi'] ?? ($data['aliquota_ipi'] ?? null),
+            'un' => $data['un'] ?? ($data['unidade'] ?? null),
+            'empresa_id' => $data['empresa_id'] ?? ($data['empresa'] ?? null),
+            'categoria_id' => $data['categoria_id'] ?? ($data['categoria'] ?? null),
+            'tpProd' => $data['tpProd'] ?? null,
+            'cClassTrib' => $data['cClassTrib'] ?? null,
+            'pIBS' => $data['pIBS'] ?? null,
+            'pCBS' => $data['pCBS'] ?? null,
+            'pIS_imposto' => $data['pIS_imposto'] ?? null,
+            'cst_ibs_cbs' => $data['cst_ibs_cbs'] ?? null,
+        ];
+
+        if (! $isUpdate && $user && empty($mapped['empresa_id'])) {
+            $mapped['empresa_id'] = $user->empresa_id;
+        }
+
+        if ($user && (int) $user->empresa_id !== 1) {
+            $mapped['empresa_id'] = $user->empresa_id;
+        }
+
+        return array_filter($mapped, fn ($value) => $value !== null);
+    }
 
     public function salvar(
         $id,
@@ -112,8 +266,9 @@ class ProdutosService
             'pIBS' => $pIBS,
             'pCBS' => $pCBS,
             'pIS_imposto' => $pIS_imposto,
-            'cst_ibs_cbs' => $cst_ibs_cbs
+            'cst_ibs_cbs' => $cst_ibs_cbs,
         ]);
+
         return $prod;
     }
 
@@ -129,6 +284,7 @@ class ProdutosService
     public function destroy($id)
     {
         $produto = Produto::find($id);
+
         return $produto->delete();
     }
 
@@ -145,7 +301,6 @@ class ProdutosService
     //             if ($chassi) {
     //                 $descricaoProduto .= ' - ' . $chassi;
     //             }
-
 
     //             $produtoId = Produto::create([
     //                 'categoria_id' => $prod[0]['categoria'],
@@ -212,14 +367,14 @@ class ProdutosService
             $codigoEAN = trim($item['cEAN'] ?? '');
             $codigoProduto = trim($item['cProd'] ?? '');
 
-            $codigo = (!empty($codigoEAN) && strtoupper($codigoEAN) !== 'SEM GTIN')
+            $codigo = (! empty($codigoEAN) && strtoupper($codigoEAN) !== 'SEM GTIN')
                 ? $codigoEAN
                 : $codigoProduto;
 
             $descricaoProduto = trim($item['xProd'] ?? '');
 
-            if (!empty($chassi) && stripos($descricaoProduto, $chassi) === false) {
-                $descricaoProduto .= ' - CHASSI: ' . $chassi;
+            if (! empty($chassi) && stripos($descricaoProduto, $chassi) === false) {
+                $descricaoProduto .= ' - CHASSI: '.$chassi;
             }
 
             $dadosProduto = [
@@ -242,7 +397,7 @@ class ProdutosService
                 'un' => $item['uCom'],
                 'tpProd' => $item['tpProd'],
                 'tpVeic' => $item['tpVeic'] ?? null,
-                'chassiVeic' => !empty($chassi) ? $chassi : null,
+                'chassiVeic' => ! empty($chassi) ? $chassi : null,
                 'renavanVeic' => $item['renavan'] ?? null,
                 'anoFabVeic' => $item['anoFab'] ?? null,
                 'anoModVeic' => $item['anoMod'] ?? null,
@@ -270,7 +425,7 @@ class ProdutosService
 
             $produtoExistenteQuery = Produto::whereEmpresaId($empresaId);
 
-            if (!empty($chassi)) {
+            if (! empty($chassi)) {
                 $produtoExistenteQuery->where('chassiVeic', $chassi);
             } else {
                 $produtoExistenteQuery->where('codigo', $codigo);
@@ -414,14 +569,13 @@ class ProdutosService
 
         $descricaoProduto = trim($produto);
 
-        if (!empty($chassiVeic)) {
+        if (! empty($chassiVeic)) {
             $chassiVeic = trim($chassiVeic);
 
             if (stripos($descricaoProduto, $chassiVeic) === false) {
-                $descricaoProduto .= ' - CHASSI: ' . $chassiVeic;
+                $descricaoProduto .= ' - CHASSI: '.$chassiVeic;
             }
         }
-
 
         return Produto::create([
             'categoria_id' => $categoria,
@@ -473,7 +627,7 @@ class ProdutosService
             'pIBS' => $pIBS,
             'pCBS' => $pCBS,
             'pIS_imposto' => $pIS_imposto,
-            'cst_ibs_cbs' => $cst_ibs_cbs
+            'cst_ibs_cbs' => $cst_ibs_cbs,
         ]);
     }
 
@@ -490,6 +644,7 @@ class ProdutosService
         if ($id == 1) {
             $id = '%';
         }
+
         return DB::table('produtos')
             ->select('produtos.*', 'empresas.fantasia', 'categorias.descricao')
             ->join('categorias', 'categorias.id', '=', 'produtos.categoria_id')
@@ -524,7 +679,8 @@ class ProdutosService
 
     public function searchProdByFilter($filter, $companyId)
     {
-        $filter = empty($filter) ? '' : '%' . $filter . '%';
+        $filter = empty($filter) ? '' : '%'.$filter.'%';
+
         return Produto::where('produto', 'like', $filter)->whereEmpresaId($companyId)->get();
     }
 }

@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  title: speedNFE API
+  version: 1.0.0
+  description: API REST versionada para autenticação, cadastros, estoque, financeiro e documentos fiscais.
+servers:
+  - url: /api/v1
+    description: Servidor atual
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Dashboard
+  - name: Clientes
+  - name: Produtos
+  - name: Entradas
+  - name: Estoques
+  - name: Financeiro
+  - name: Fiscal
+  - name: Relatorios
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          nullable: true
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+        user:
+          type: object
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        cpf_cnpj:
+          type: string
+        empresa_id:
+          type: integer
+    Produto:
+      type: object
+      properties:
+        id:
+          type: integer
+        produto:
+          type: string
+        codigo:
+          type: string
+        ncm:
+          type: string
+        empresa_id:
+          type: integer
+    StandardMessage:
+      type: object
+      properties:
+        message:
+          type: string
+  responses:
+    Unauthorized:
+      description: Token ausente, inválido ou expirado.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Erro de validação.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Recurso não encontrado.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      security: []
+      summary: Autentica usuário e retorna JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login efetuado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Retorna usuário autenticado.
+      responses:
+        '200':
+          description: Usuário atual.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Renova o token JWT.
+      responses:
+        '200':
+          description: Novo token.
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Invalida o token atual.
+      responses:
+        '200':
+          description: Logout realizado.
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      summary: Retorna indicadores do dashboard.
+      responses:
+        '200':
+          description: Indicadores.
+  /clientes:
+    get:
+      tags: [Clientes]
+      summary: Lista clientes paginados.
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+        - in: query
+          name: per_page
+          schema: { type: integer, default: 15, maximum: 100 }
+      responses:
+        '200':
+          description: Lista paginada.
+    post:
+      tags: [Clientes]
+      summary: Cria cliente.
+      responses:
+        '201':
+          description: Cliente criado.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /clientes/{id}:
+    get:
+      tags: [Clientes]
+      summary: Detalha cliente.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Cliente.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Clientes]
+      summary: Atualiza cliente.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Cliente atualizado.
+    delete:
+      tags: [Clientes]
+      summary: Remove cliente.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Cliente removido.
+  /clientes/consultar-cnpj/{cnpj}:
+    get:
+      tags: [Clientes]
+      summary: Consulta dados públicos de CNPJ.
+      parameters:
+        - in: path
+          name: cnpj
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Dados do CNPJ.
+  /clientes/verificar-cpf-cnpj:
+    get:
+      tags: [Clientes]
+      summary: Verifica se CPF/CNPJ já existe.
+      parameters:
+        - in: query
+          name: cpf_cnpj
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Resultado da verificação.
+  /produtos:
+    get:
+      tags: [Produtos]
+      summary: Lista produtos paginados.
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+        - in: query
+          name: categoria_id
+          schema: { type: integer }
+        - in: query
+          name: per_page
+          schema: { type: integer, default: 15, maximum: 100 }
+      responses:
+        '200':
+          description: Lista paginada.
+    post:
+      tags: [Produtos]
+      summary: Cria produto.
+      responses:
+        '201':
+          description: Produto criado.
+  /produtos/{id}:
+    get:
+      tags: [Produtos]
+      summary: Detalha produto.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Produto.
+    put:
+      tags: [Produtos]
+      summary: Atualiza produto.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Produto atualizado.
+    delete:
+      tags: [Produtos]
+      summary: Remove produto.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Produto removido.
+  /entradas:
+    get:
+      tags: [Entradas]
+      summary: Lista entradas de NFe importadas.
+      responses:
+        '200':
+          description: Lista paginada.
+  /entradas/{id}:
+    get:
+      tags: [Entradas]
+      summary: Detalha entrada.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Entrada.
+    delete:
+      tags: [Entradas]
+      summary: Remove entrada e ajusta estoque.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Entrada removida.
+  /estoques:
+    get:
+      tags: [Estoques]
+      summary: Lista estoques.
+      responses:
+        '200':
+          description: Lista paginada.
+  /estoques/{id}:
+    get:
+      tags: [Estoques]
+      summary: Detalha estoque.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Estoque.
+    put:
+      tags: [Estoques]
+      summary: Atualiza estoque.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Estoque atualizado.
+  /formas-pagamento:
+    get:
+      tags: [Financeiro]
+      summary: Lista formas de pagamento.
+      responses:
+        '200':
+          description: Lista.
+    post:
+      tags: [Financeiro]
+      summary: Cria forma de pagamento.
+      responses:
+        '201':
+          description: Criada.
+  /plano-contas:
+    get:
+      tags: [Financeiro]
+      summary: Lista plano de contas.
+      responses:
+        '200':
+          description: Lista.
+    post:
+      tags: [Financeiro]
+      summary: Cria plano de conta.
+      responses:
+        '201':
+          description: Criado.
+  /fluxo-caixa:
+    get:
+      tags: [Financeiro]
+      summary: Lista lançamentos do fluxo de caixa.
+      responses:
+        '200':
+          description: Lista paginada.
+    post:
+      tags: [Financeiro]
+      summary: Cria lançamento no fluxo de caixa.
+      responses:
+        '201':
+          description: Criado.
+  /fluxo-caixa/resumo:
+    get:
+      tags: [Financeiro]
+      summary: Retorna resumo de receitas, despesas e saldo.
+      responses:
+        '200':
+          description: Resumo.
+  /receber:
+    get:
+      tags: [Financeiro]
+      summary: Lista contas a receber.
+      responses:
+        '200':
+          description: Lista paginada.
+    post:
+      tags: [Financeiro]
+      summary: Cria conta a receber.
+      responses:
+        '201':
+          description: Criada.
+  /nfce:
+    get:
+      tags: [Fiscal]
+      summary: Lista NFCe.
+      responses:
+        '200':
+          description: Lista paginada.
+  /nfce/{id}:
+    get:
+      tags: [Fiscal]
+      summary: Detalha NFCe.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: NFCe.
+  /nfce/{id}/pdf:
+    get:
+      tags: [Fiscal]
+      summary: Retorna DANFCE em PDF.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: PDF.
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+  /nfce/{id}/xml:
+    get:
+      tags: [Fiscal]
+      summary: Baixa XML da NFCe.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: XML.
+  /nfce/cupons/{cupom}/enviar:
+    post:
+      tags: [Fiscal]
+      summary: Envia cupom para emissão de NFCe.
+      parameters:
+        - in: path
+          name: cupom
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Envio processado.
+  /notas-fiscais:
+    get:
+      tags: [Fiscal]
+      summary: Lista NFe emitidas.
+      responses:
+        '200':
+          description: Lista paginada.
+  /relatorios/vendas:
+    get:
+      tags: [Relatorios]
+      summary: Relatório JSON de vendas por período.
+      parameters:
+        - in: query
+          name: inicio
+          required: true
+          schema: { type: string, format: date }
+        - in: query
+          name: fim
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Relatório.
+  /relatorios/nfe:
+    get:
+      tags: [Relatorios]
+      summary: Relatório JSON de NFe por período.
+      parameters:
+        - in: query
+          name: inicio
+          required: true
+          schema: { type: string, format: date }
+        - in: query
+          name: fim
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Relatório.
