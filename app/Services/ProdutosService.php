@@ -126,6 +126,34 @@ class ProdutosService
 
     private function mapearPayloadApi(array $data, $user = null, bool $isUpdate = false): array
     {
+        $vehicleFields = [
+            'tpVeic',
+            'chassiVeic',
+            'renavanVeic',
+            'anoFabVeic',
+            'anoModVeic',
+            'pesoLVeic',
+            'pesoBVeic',
+            'distVeic',
+            'combVeic',
+            'nMotorVeic',
+            'cvVeic',
+            'cm3Veic',
+            'serieVeic',
+            'tpPVeic',
+            'corVeic',
+            'cCorVeic',
+            'cCorMontVeic',
+            'cMarcaVeic',
+            'condVeic',
+            'espVeic',
+            'vinVeic',
+            'lotVeic',
+            'restriVeic',
+            'cargaVeic',
+            'operVeic',
+        ];
+
         $mapped = [
             'codigo' => $data['codigo'] ?? null,
             'produto' => $data['produto'] ?? ($data['descricao'] ?? null),
@@ -146,6 +174,31 @@ class ProdutosService
             'empresa_id' => $data['empresa_id'] ?? ($data['empresa'] ?? null),
             'categoria_id' => $data['categoria_id'] ?? ($data['categoria'] ?? null),
             'tpProd' => $data['tpProd'] ?? null,
+            'tpVeic' => $data['tpVeic'] ?? null,
+            'chassiVeic' => $data['chassiVeic'] ?? null,
+            'renavanVeic' => $data['renavanVeic'] ?? null,
+            'anoFabVeic' => $data['anoFabVeic'] ?? null,
+            'anoModVeic' => $data['anoModVeic'] ?? null,
+            'pesoLVeic' => $data['pesoLVeic'] ?? null,
+            'pesoBVeic' => $data['pesoBVeic'] ?? null,
+            'distVeic' => $data['distVeic'] ?? null,
+            'combVeic' => $data['combVeic'] ?? null,
+            'nMotorVeic' => $data['nMotorVeic'] ?? null,
+            'cvVeic' => $data['cvVeic'] ?? null,
+            'cm3Veic' => $data['cm3Veic'] ?? null,
+            'serieVeic' => $data['serieVeic'] ?? null,
+            'tpPVeic' => $data['tpPVeic'] ?? null,
+            'corVeic' => $data['corVeic'] ?? null,
+            'cCorVeic' => $data['cCorVeic'] ?? null,
+            'cCorMontVeic' => $data['cCorMontVeic'] ?? null,
+            'cMarcaVeic' => $data['cMarcaVeic'] ?? null,
+            'condVeic' => $data['condVeic'] ?? null,
+            'espVeic' => $data['espVeic'] ?? null,
+            'vinVeic' => $data['vinVeic'] ?? null,
+            'lotVeic' => $data['lotVeic'] ?? null,
+            'restriVeic' => $data['restriVeic'] ?? null,
+            'cargaVeic' => $data['cargaVeic'] ?? null,
+            'operVeic' => $data['operVeic'] ?? null,
             'cClassTrib' => $data['cClassTrib'] ?? null,
             'pIBS' => $data['pIBS'] ?? null,
             'pCBS' => $data['pCBS'] ?? null,
@@ -161,7 +214,23 @@ class ProdutosService
             $mapped['empresa_id'] = $user->empresa_id;
         }
 
-        return array_filter($mapped, fn ($value) => $value !== null);
+        $fieldsToKeepNull = [];
+
+        if ($isUpdate && array_key_exists('tpProd', $data) && empty($data['tpProd'])) {
+            $mapped['tpProd'] = null;
+
+            foreach ($vehicleFields as $field) {
+                $mapped[$field] = null;
+            }
+
+            $fieldsToKeepNull = ['tpProd', ...$vehicleFields];
+        }
+
+        return array_filter(
+            $mapped,
+            fn ($value, $key) => $value !== null || in_array($key, $fieldsToKeepNull, true),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 
     public function salvar(
