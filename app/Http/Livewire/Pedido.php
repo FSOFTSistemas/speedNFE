@@ -94,6 +94,38 @@ class Pedido extends Component
             $this->cfop = '';
             $this->vendaItens = [];
             $this->formasVenda = [];
+
+            // Se voltamos aqui após uma falha de validação no envio do formulário,
+            // restaura os dados que o usuário já tinha preenchido (inclusive os itens
+            // já adicionados) em vez de reiniciar o formulário do zero.
+            if (old('vendaItens')) {
+                $this->empresa = old('empresa', $this->empresa);
+                $this->cliente = old('cliente');
+                $this->cfop = old('cfop', '');
+                $this->finalidade = old('finalidade', $this->finalidade);
+                $this->tipo = old('tipo', $this->tipo);
+
+                if ($this->cfop) {
+                    $cfopEncontrado = $sPedidos->findCfop($this->cfop);
+                    $this->bcfop = $cfopEncontrado->cfop ?? '';
+                }
+
+                $subtotal = 0;
+                foreach (old('vendaItens') as $item) {
+                    $produto = Produto::find($item['produto_id']);
+                    $total = ($item['unitario'] * $item['quantidade']) - $item['desconto'];
+                    $this->vendaItens[] = [
+                        'produto_id' => $item['produto_id'],
+                        'descricao' => $produto->produto ?? '',
+                        'quantidade' => $item['quantidade'],
+                        'unitario' => $item['unitario'],
+                        'desconto' => $item['desconto'],
+                        'total' => $total,
+                    ];
+                    $subtotal += $total;
+                }
+                $this->subtotal = $subtotal;
+            }
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }

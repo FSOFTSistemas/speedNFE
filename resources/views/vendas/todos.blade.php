@@ -100,7 +100,9 @@
 @section('content_header')
     <div class="row align-items-center">
         <div class="col-lg-6 text-center text-lg-left mb-3 mb-lg-0">
-            <h1 class="m-0 text-dark" style="font-weight: 600;">Resumo de Notas NFe</h1>
+            <div class="page-eyebrow">Vendas</div>
+            <h1 class="m-0 text-dark" style="font-weight: 700;">Resumo de Notas NFe</h1>
+            <div class="page-subtitle">Acompanhe, filtre e gerencie as notas emitidas</div>
         </div>
         <div class="col-lg-6 text-center text-lg-right header-buttons">
             <a href="/vendas/nova" class="btn custom-btn custom-btn-primary">
@@ -111,6 +113,130 @@
 @stop
 
 @section('content')
+    @php
+        $totalNotas = $pedidos->count();
+        $valorTotal = $pedidos->sum('total');
+        $totalAutorizadas = $pedidos->where('estado', 'Autorizado')->count();
+        $totalPendentes = $pedidos->where('estado', 'Pendente')->count();
+    @endphp
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary-soft"><i class="fas fa-file-invoice"></i></div>
+            <div>
+                <div class="stat-value">{{ $totalNotas }}</div>
+                <div class="stat-label">Notas no período</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info-soft"><i class="fas fa-money-bill-wave"></i></div>
+            <div>
+                <div class="stat-value">R$ {{ number_format($valorTotal, 2, ',', '.') }}</div>
+                <div class="stat-label">Valor total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success-soft"><i class="fas fa-check-circle"></i></div>
+            <div>
+                <div class="stat-value">{{ $totalAutorizadas }}</div>
+                <div class="stat-label">Autorizadas</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-warning-soft"><i class="fas fa-hourglass-half"></i></div>
+            <div>
+                <div class="stat-value">{{ $totalPendentes }}</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+        </div>
+    </div>
+
+    @php
+        $filtrosAtivos = request()->hasAny(['data_inicio', 'data_fim', 'cliente', 'chassi', 'estado']);
+    @endphp
+    <div class="card card-main mb-4 filter-toolbar">
+        <div class="filter-card-header" data-toggle="collapse" data-target="#filtrosVendas"
+            aria-expanded="{{ $filtrosAtivos ? 'true' : 'false' }}" aria-controls="filtrosVendas">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-filter mr-2"></i>Filtros
+                @if ($filtrosAtivos)
+                    <span class="badge badge-info filter-active-badge ml-2">Ativos</span>
+                @endif
+            </h5>
+            <i class="fas fa-chevron-down filter-toggle-icon"></i>
+        </div>
+        <div class="collapse {{ $filtrosAtivos ? 'show' : '' }}" id="filtrosVendas">
+        <div class="card-body">
+            <form action="{{ route('vendas.index') }}" method="GET" class="row align-items-end">
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_inicio" class="form-label">Data Início</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                            value="{{ request()->get('data_inicio', $filtros['data_inicio']) }}">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_fim" class="form-label">Data Fim</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim"
+                            value="{{ request()->get('data_fim', $filtros['data_fim']) }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 mb-2">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="cliente" name="cliente"
+                            placeholder="Nome ou CPF/CNPJ" value="{{ request()->get('cliente') }}">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="chassi" class="form-label">Chassi</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-motorcycle"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="chassi" name="chassi"
+                            placeholder="Chassi" value="{{ request()->get('chassi') }}">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="estado" class="form-label">Situação</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                        </div>
+                        <select class="form-control" id="estado" name="estado">
+                            <option value="">Todas</option>
+                            @foreach (\App\Enums\EstadoEnum::cases() as $estadoOption)
+                                <option value="{{ $estadoOption->value }}" @selected(request('estado') == $estadoOption->value)>
+                                    {{ $estadoOption->value }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12 col-md-1 mb-2">
+                    <button type="submit" class="btn custom-btn custom-btn-primary w-100">Filtrar</button>
+                </div>
+            </form>
+            @if ($filtrosAtivos)
+                <div class="mt-2 text-right">
+                    <a href="{{ route('vendas.index') }}" class="text-muted"><i class="fas fa-times-circle"></i> Limpar filtros</a>
+                </div>
+            @endif
+        </div>
+        </div>
+    </div>
+
     <div class="card card-main">
         <div class="card-body p-0">
             @component('components.dataTable', [
@@ -152,29 +278,55 @@
                                 <td class="text-left">{{ $pedido->fantasia }}</td>
                             @endif
                             <td class="action-buttons">
-                                <a href="{{ url('/debug-xml/' . $pedido->id) }}" target="_blank" class="btn btn-sm btn-info" title="Ver XML (Debug)">
-    <i class="fas fa-eye"></i> XML
-</a>
-                                @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
-                                    <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}" title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a>
-                                    <a href="{{ route('vendas.editar', [$pedido->id]) }}" title="Editar" class="text-info"><i class="fa fa-edit"></i></a>
-                                    <a href="#" title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger" data-toggle="modal" data-target="#excluirModal"><i class="fa fa-trash"></i></a>
-                                    <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" onclick="loadPage()" title="Enviar NFe" class="text-success"><i class="fas fa-upload"></i></a>
-                                @elseif($pedido->estado == 'Autorizado')
-                                    <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Imprimir" class="text-primary"><i class="fa fa-print"></i></a>
-                                    <a href="#" title="Carta de Correção" onclick="openCceModal({{ $pedido->id }})" class="text-warning" data-toggle="modal" data-target="#cceModal"><i class="fas fa-file-alt"></i></a>
-                                    @if ($pedido->sequencia_evento > 0)
-                                        <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}" class="text-dark"><i class="fa fa-print"></i></a>
-                                    @endif
+                                <a href="{{ url('/debug-xml/' . $pedido->id) }}" target="_blank" class="btn btn-sm btn-info mb-1" title="Ver XML (Debug)">
+                                    <i class="fas fa-eye"></i> XML
+                                </a>
 
-                                    @if(Auth::user()->tipo == 'admin' || Auth::user()->cargo == 'master')
-                                        <a href="#" title="Cancelar" onclick="openCancelModal({{ $pedido->id }})" class="text-danger" data-toggle="modal" data-target="#cancelarModal">
-                                            <i class="fa fa-ban"></i>
-                                        </a>
+                                {{-- Desktop: ícones compactos --}}
+                                <span class="d-none d-md-inline-flex">
+                                    @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
+                                        <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}" title="Visualizar" class="text-primary"><i class="fa fa-eye"></i></a>
+                                        <a href="{{ route('vendas.editar', [$pedido->id]) }}" title="Editar" class="text-info"><i class="fa fa-edit"></i></a>
+                                        <a href="#" title="Excluir" onclick="setaDadosExcluir({{ $pedido->id }});" class="text-danger" data-toggle="modal" data-target="#excluirModal"><i class="fa fa-trash"></i></a>
+                                        <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" onclick="loadPage()" title="Enviar NFe" class="text-success"><i class="fas fa-upload"></i></a>
+                                    @elseif($pedido->estado == 'Autorizado')
+                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" title="Imprimir" class="text-primary"><i class="fa fa-print"></i></a>
+                                        <a href="#" title="Carta de Correção" onclick="openCceModal({{ $pedido->id }})" class="text-warning" data-toggle="modal" data-target="#cceModal"><i class="fas fa-file-alt"></i></a>
+                                        @if ($pedido->sequencia_evento > 0)
+                                            <a target='_blank' title="Imprimir CCe" href="/venda/cce/{{ $pedido->id }}" class="text-dark"><i class="fa fa-print"></i></a>
+                                        @endif
+                                        @if(Auth::user()->tipo == 'admin' || Auth::user()->cargo == 'master')
+                                            <a href="#" title="Cancelar" onclick="openCancelModal({{ $pedido->id }})" class="text-danger" data-toggle="modal" data-target="#cancelarModal">
+                                                <i class="fa fa-ban"></i>
+                                            </a>
+                                        @endif
+                                    @else
+                                        <a target='_blank' title="Imprimir Cancelamento" href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="text-dark"><i class="fa fa-print"></i></a>
                                     @endif
-                                @else
-                                    <a target='_blank' title="Imprimir Cancelamento" href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="text-dark"><i class="fa fa-print"></i></a>
-                                @endif
+                                </span>
+
+                                {{-- Mobile: botões com nome, mais fáceis de tocar --}}
+                                <div class="mobile-actions d-md-none">
+                                    @if ($pedido->estado == 'Pendente' || $pedido->estado == 'Rejeitado')
+                                        <a target="_blank" href="{{ route('vendas.show', [$pedido->id]) }}" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye"></i> Visualizar</a>
+                                        <a href="{{ route('vendas.editar', [$pedido->id]) }}" class="btn btn-sm btn-outline-info"><i class="fa fa-edit"></i> Editar</a>
+                                        <a href="#" onclick="setaDadosExcluir({{ $pedido->id }});" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#excluirModal"><i class="fa fa-trash"></i> Excluir</a>
+                                        <a href="{{ route('enviarXML', ['id' => $pedido->id]) }}" onclick="loadPage()" class="btn btn-sm btn-outline-success"><i class="fas fa-upload"></i> Enviar NFe</a>
+                                    @elseif($pedido->estado == 'Autorizado')
+                                        <a target="_blank" href="{{ route('imprimirXML', [$pedido->id]) }}" class="btn btn-sm btn-outline-primary"><i class="fa fa-print"></i> Imprimir</a>
+                                        <a href="#" onclick="openCceModal({{ $pedido->id }})" class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#cceModal"><i class="fas fa-file-alt"></i> Carta de Correção</a>
+                                        @if ($pedido->sequencia_evento > 0)
+                                            <a target='_blank' href="/venda/cce/{{ $pedido->id }}" class="btn btn-sm btn-outline-dark"><i class="fa fa-print"></i> Imprimir CCe</a>
+                                        @endif
+                                        @if(Auth::user()->tipo == 'admin' || Auth::user()->cargo == 'master')
+                                            <a href="#" onclick="openCancelModal({{ $pedido->id }})" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#cancelarModal">
+                                                <i class="fa fa-ban"></i> Cancelar
+                                            </a>
+                                        @endif
+                                    @else
+                                        <a target='_blank' href="{{ route('imprimirCancelamentoXML', ['id' => $pedido->id]) }}" class="btn btn-sm btn-outline-dark"><i class="fa fa-print"></i> Imprimir Cancelamento</a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach

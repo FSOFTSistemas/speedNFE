@@ -15,6 +15,7 @@ class Entrada extends Model
         'numeroNota',
         'fornecedor',
         'chave',
+        'xml',
         'valor',
         'empresa_id'
     ];

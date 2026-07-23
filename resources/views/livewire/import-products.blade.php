@@ -132,6 +132,7 @@
                      <input type="hidden" name="uf" wire:model="emit.enderEmit.UF">
                      <input type="hidden" name="CEP" wire:model="emit.enderEmit.CEP">
                      <input type="hidden" name="dhSaiEnt" value="{{ date('d/m/Y H:i:s', strtotime($ide['dhSaiEnt'] ?? now())) }}">
+                     <input type="hidden" name="xml" value="{{ $xml }}">
                 </header>
                 
                 <hr class="my-4">

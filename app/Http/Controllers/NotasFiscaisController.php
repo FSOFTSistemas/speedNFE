@@ -31,14 +31,35 @@ class NotasFiscaisController extends Controller
         $this->pedidoServices = $pedidoServices;
     }
 
-    public function show()
+    public function show(Request $request)
     {
         try {
             $empresa = $this->userServices->getEmpresa(Auth::id());
             $fullPath = public_path();
             array_map('unlink', glob("$fullPath/*.zip"));
-            $notas = $this->pedidoServices->buscarPedidos($empresa->empresa_id);
-            return view('notas.todos', ['notas' => $notas, 'empresa' => Auth::user()->empresa_id]);
+
+            $dataInicio = $request->filled('data_inicio')
+                ? $request->input('data_inicio')
+                : now()->subMonths(2)->startOfDay()->format('Y-m-d');
+            $dataFim = $request->filled('data_fim')
+                ? $request->input('data_fim')
+                : now()->endOfDay()->format('Y-m-d');
+
+            $filtros = [
+                'data_inicio' => $dataInicio,
+                'data_fim' => $dataFim,
+                'cliente' => $request->input('cliente'),
+                'chassi' => $request->input('chassi'),
+                'estado' => $request->input('estado'),
+            ];
+
+            $notas = $this->pedidoServices->buscarPedidos($empresa->empresa_id, $filtros);
+
+            return view('notas.todos', [
+                'notas' => $notas,
+                'empresa' => Auth::user()->empresa_id,
+                'filtros' => $filtros,
+            ]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }

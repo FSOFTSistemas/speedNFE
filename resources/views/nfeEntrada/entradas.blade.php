@@ -2,161 +2,125 @@
 
 @section('title', 'Entradas de Notas Fiscais')
 
-@push('css')
-<style>
-    /* Estilos importados para consistência */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-    :root {
-        --primary-color: #00033a;
-        --card-bg: #ffffff;
-        --shadow-color: rgba(0, 0, 0, 0.08);
-        --border-color: #dee2e6;
-        --text-dark: #343a40;
-        --text-light: #6c757d;
-        --action-view: #17a2b8;
-        --action-delete: #dc3545;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-    
-    .card-main {
-        background: var(--card-bg);
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px var(--shadow-color);
-        padding: 30px;
-    }
-    
-    .custom-btn {
-        font-weight: 500;
-        border-radius: 8px;
-        padding: 10px 20px;
-        transition: all 0.3s ease;
-    }
-    .custom-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .custom-btn-primary {
-        background-color: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-        color: #fff !important;
-    }
-    .custom-btn-primary:hover {
-        background-color: #00045e !important;
-        border-color: #00045e !important;
-    }
-    .custom-btn-success {
-        background-color: #28a745 !important;
-        border-color: #28a745 !important;
-        color: #fff !important;
-    }
-    .custom-btn-success:hover {
-        background-color: #218838 !important;
-        border-color: #1e7e34 !important;
-    }
-    .custom-btn-secondary {
-        background-color: var(--text-light) !important;
-        border-color: var(--text-light) !important;
-        color: #fff !important;
-    }
-    .custom-btn-secondary:hover {
-        background-color: #5a6268 !important;
-        border-color: #545b62 !important;
-    }
-
-    /* Otimização dos botões do cabeçalho para mobile */
-    .header-buttons .btn {
-        display: block;
-        margin-bottom: 8px;
-    }
-     .header-buttons .btn:last-child {
-        margin-bottom: 0;
-    }
-    @media (min-width: 992px) {
-        .header-buttons .btn {
-            display: inline-block;
-            margin-bottom: 0;
-            margin-left: 8px;
-        }
-        .header-buttons .btn:first-child {
-            margin-left: 0;
-        }
-    }
-    
-    /* Estilos da Tabela */
-    .table thead th, .table tbody td {
-        background-color: transparent !important;
-        vertical-align: middle;
-        text-align: center;
-    }
-    .table thead th {
-        color: var(--text-dark) !important;
-        font-weight: 600;
-        border-bottom: 2px solid var(--border-color) !important;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .table tbody tr:hover {
-        background-color: #f1f1f1 !important;
-    }
-    .table td.fornecedor-name, .table th.fornecedor-header {
-        text-align: left;
-    }
-
-    /* Ações */
-    .action-buttons {
-        white-space: nowrap;
-    }
-    .action-buttons .btn {
-        margin: 0 4px;
-    }
-    
-    /* Modal */
-    .modal-content {
-        border-radius: 15px;
-    }
-</style>
-@endpush
-
 @section('content_header')
     <div class="row align-items-center">
         <div class="col-lg-6 text-center text-lg-left mb-3 mb-lg-0">
-            <h1 class="m-0 text-dark" style="font-weight: 600;">Entradas de Notas Fiscais</h1>
+            <div class="page-eyebrow">Entradas</div>
+            <h1 class="m-0 text-dark" style="font-weight: 700;">Entradas de Notas Fiscais</h1>
+            <div class="page-subtitle">Notas de compra importadas ou lançadas manualmente</div>
         </div>
         <div class="col-lg-6 text-center text-lg-right header-buttons">
             <a class="btn custom-btn custom-btn-primary" data-toggle="modal" data-target="#modalImportarNFe"><i class="fas fa-upload mr-1"></i> Importar NFe</a>
             <a href="{{ route('entradas.manual') }}" class="btn custom-btn custom-btn-success"><i class="fas fa-plus mr-1"></i> Nova Entrada Manual</a>
-            <a href="{{ route('produto.index') }}" class="btn custom-btn custom-btn-secondary">Voltar para Produtos</a>
+            <a href="{{ route('produto.index') }}" class="btn custom-btn btn-outline-secondary">Voltar para Produtos</a>
         </div>
     </div>
 @stop
 
 @section('content')
-    <div class="card card-main">
-        <div class="card-header bg-transparent border-0 pb-0">
-            <h5 class="card-title mb-0">Filtrar por Período</h5>
+    @php
+        $totalEntradas = $entradas->count();
+        $valorTotal = $entradas->sum('valor');
+    @endphp
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary-soft"><i class="fas fa-file-invoice"></i></div>
+            <div>
+                <div class="stat-value">{{ $totalEntradas }}</div>
+                <div class="stat-label">Entradas no período</div>
+            </div>
         </div>
-        <div class="card-body">
-            <form action="{{ route('entradas.index') }}" method="GET" class="form-inline">
-                <div class="form-group mr-2 mb-2 flex-grow-1">
-                    <label for="data_inicio" class="mr-2">De:</label>
-                    <input type="date" name="data_inicio" id="data_inicio" class="form-control flex-grow-1" value="{{ request('data_inicio') }}">
-                </div>
-                <div class="form-group mr-2 mb-2 flex-grow-1">
-                    <label for="data_fim" class="mr-2">Até:</label>
-                    <input type="date" name="data_fim" id="data_fim" class="form-control flex-grow-1" value="{{ request('data_fim') }}">
-                </div>
-                <button type="submit" class="btn custom-btn custom-btn-primary mb-2">Filtrar</button>
-                <a href="{{ route('entradas.index') }}" class="btn btn-outline-secondary mb-2 ml-2" title="Limpar os filtros aplicados" data-toggle="tooltip">Limpar</a>
-            </form>
+        <div class="stat-card">
+            <div class="stat-icon bg-info-soft"><i class="fas fa-money-bill-wave"></i></div>
+            <div>
+                <div class="stat-value">R$ {{ number_format($valorTotal, 2, ',', '.') }}</div>
+                <div class="stat-label">Valor total</div>
+            </div>
         </div>
     </div>
 
-    <div class="card card-main mt-4">
+    @php
+        $filtrosAtivos = request()->hasAny(['data_inicio', 'data_fim', 'fornecedor', 'busca', 'chassi']);
+    @endphp
+    <div class="card card-main mb-4">
+        <div class="filter-card-header" data-toggle="collapse" data-target="#filtrosEntradas"
+            aria-expanded="{{ $filtrosAtivos ? 'true' : 'false' }}" aria-controls="filtrosEntradas">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-filter mr-2"></i>Filtros
+                @if ($filtrosAtivos)
+                    <span class="badge badge-info filter-active-badge ml-2">Ativos</span>
+                @endif
+            </h5>
+            <i class="fas fa-chevron-down filter-toggle-icon"></i>
+        </div>
+        <div class="collapse {{ $filtrosAtivos ? 'show' : '' }}" id="filtrosEntradas">
+        <div class="card-body">
+            <form action="{{ route('entradas.index') }}" method="GET" class="row align-items-end">
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_inicio" class="form-label">Data Início</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                            value="{{ request()->get('data_inicio', $filtros['data_inicio']) }}">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_fim" class="form-label">Data Fim</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim"
+                            value="{{ request()->get('data_fim', $filtros['data_fim']) }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 mb-2">
+                    <label for="fornecedor" class="form-label">Fornecedor</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="fornecedor" name="fornecedor"
+                            placeholder="Nome do fornecedor" value="{{ request()->get('fornecedor') }}">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="busca" class="form-label">Número ou Chave</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="busca" name="busca"
+                            placeholder="Nº ou chave" value="{{ request()->get('busca') }}">
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="chassi" class="form-label">Chassi</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-motorcycle"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="chassi" name="chassi"
+                            placeholder="Chassi" value="{{ request()->get('chassi') }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-1 mb-2">
+                    <button type="submit" class="btn custom-btn custom-btn-primary w-100">Filtrar</button>
+                </div>
+            </form>
+            @if ($filtrosAtivos)
+                <div class="mt-2 text-right">
+                    <a href="{{ route('entradas.index') }}" class="text-muted"><i class="fas fa-times-circle"></i> Limpar filtros</a>
+                </div>
+            @endif
+        </div>
+        </div>
+    </div>
+
+    <div class="card card-main">
         <div class="card-body p-0">
             @component('components.dataTable', [
                 'responsive' => true,
@@ -172,7 +136,7 @@
                         <th>Emissão</th>
                         <th>Entrada</th>
                         <th>Nº</th>
-                        <th class="fornecedor-header">Fornecedor</th>
+                        <th class="text-left">Fornecedor</th>
                         <th>Chave</th>
                         <th>Valor (R$)</th>
                         <th>Ações</th>
@@ -181,26 +145,38 @@
 
                 <tbody>
                     @foreach ($entradas as $etd)
-                    
                         <tr>
-                            <!--<td>{{ date('d/m/Y', strtotime($etd->dataEmissao)) }}</td>-->
-                            <td>{{ $etd->dataEmissao ? \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $etd->dataEmissao)->format('d/m/Y') : '' }}</td>
-                            
-                            <!--<td>{{ date('d/m/Y', strtotime($etd->dataEntrada)) }}</td>-->
-                            <td>{{ $etd->dataEntrada ? \Carbon\Carbon::createFromFormat('d/m/Y H:i:s', $etd->dataEntrada)->format('d/m/Y') : '' }}</td>
+                            <td>{{ optional(\App\Utils\FormatationUtil::parseData($etd->dataEmissao))->format('d/m/Y') }}</td>
+                            <td>{{ optional(\App\Utils\FormatationUtil::parseData($etd->dataEntrada))->format('d/m/Y') }}</td>
                             <td>{{ $etd->numeroNota }}</td>
-                            <td class="fornecedor-name">{{ $etd->fornecedor }}</td>
+                            <td class="text-left">{{ $etd->fornecedor }}</td>
                             <td>{{ $etd->chave }}</td>
                             <td>{{ $etd->valor }}</td>
                             <td class="action-buttons">
-                                <a title="Visualizar" href="{{ route('itens-entradas.show', [$etd->id]) }}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
-                                <form action="{{ route('entradas.destroy', $etd->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta entrada? Esta ação não pode ser desfeita.');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Excluir">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
+                                <span class="d-none d-md-inline-flex">
+                                    <a title="Visualizar" href="{{ route('itens-entradas.show', [$etd->id]) }}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                    @if ($etd->xml)
+                                        <a title="Abrir PDF" href="{{ route('entradas.pdf', $etd->id) }}" target="_blank" class="btn btn-secondary btn-sm"><i class="fa fa-file-pdf"></i></a>
+                                    @endif
+                                    <form action="{{ route('entradas.destroy', $etd->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta entrada? Esta ação não pode ser desfeita.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Excluir">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </span>
+                                <div class="mobile-actions d-md-none">
+                                    <a href="{{ route('itens-entradas.show', [$etd->id]) }}" class="btn btn-sm btn-outline-info"><i class="fa fa-eye"></i> Visualizar</a>
+                                    @if ($etd->xml)
+                                        <a href="{{ route('entradas.pdf', $etd->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fa fa-file-pdf"></i> Abrir PDF</a>
+                                    @endif
+                                    <form action="{{ route('entradas.destroy', $etd->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta entrada? Esta ação não pode ser desfeita.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="fa fa-trash"></i> Excluir</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

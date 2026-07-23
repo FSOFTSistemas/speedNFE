@@ -13,6 +13,7 @@ use App\Services\NFeService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
 use App\Utils\FormatationUtil;
+use App\Utils\NFeErroUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,7 @@ use Illuminate\Validation\ValidationException;
 use NFePHP\Common\Exception\ValidatorException;
 use NFePHP\DA\NFe\Daevento;
 use NFePHP\DA\NFe\Danfe;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PedidosController extends Controller
 {
@@ -277,13 +279,15 @@ class PedidosController extends Controller
                         $venda->save();
 
                         DB::commit();
-                        return redirect('/vendas')->with('warning', $resultado['erro']);
+                        Alert::warning('A NFe foi rejeitada pela SEFAZ', NFeErroUtil::formatar($resultado['erro']))->persistent();
+                        return redirect('/vendas');
                     }
                 } else {
                     if (DB::transactionLevel() > 0) {
                         DB::rollBack();
                     }
-                    return redirect('/vendas')->with('error', $result['erros_xml']);
+                    Alert::error('Não foi possível gerar a NFe', NFeErroUtil::formatar($result['erros_xml']))->persistent();
+                    return redirect('/vendas');
                 }
             } else {
                 if (DB::transactionLevel() > 0) {
@@ -446,11 +450,8 @@ class PedidosController extends Controller
                 return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (ValidationException $e) {
-            foreach ($e->errors() as $error) {
-                $errors[] = implode(PHP_EOL, $error);
-            }
             DB::rollBack();
-            return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
+            return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getmessage());
@@ -467,11 +468,31 @@ class PedidosController extends Controller
         }
     }
 
-    public function todos()
+    public function todos(Request $request)
     {
         try {
-            $pedidos = $this->pedidoServices->formatedVenda(Auth::user()->empresa_id);
-            return view('vendas.todos', ['pedidos' => $pedidos, 'empresa' => Auth::user()->empresa_id]);
+            $dataInicio = $request->filled('data_inicio')
+                ? $request->input('data_inicio')
+                : now()->subMonths(2)->startOfDay()->format('Y-m-d');
+            $dataFim = $request->filled('data_fim')
+                ? $request->input('data_fim')
+                : now()->endOfDay()->format('Y-m-d');
+
+            $filtros = [
+                'data_inicio' => $dataInicio,
+                'data_fim' => $dataFim,
+                'cliente' => $request->input('cliente'),
+                'chassi' => $request->input('chassi'),
+                'estado' => $request->input('estado'),
+            ];
+
+            $pedidos = $this->pedidoServices->formatedVenda(Auth::user()->empresa_id, $filtros);
+
+            return view('vendas.todos', [
+                'pedidos' => $pedidos,
+                'empresa' => Auth::user()->empresa_id,
+                'filtros' => $filtros,
+            ]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }

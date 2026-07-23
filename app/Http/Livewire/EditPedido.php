@@ -77,9 +77,9 @@ class EditPedido extends Component
                     'produto_id' => $produto->id,
                     'descricao' => $produto->produto,
                     'quantidade' => $item->qtde,
-                    'unitario' => $produto->precovenda,
+                    'unitario' => $item->unitario,
                     'desconto' => $item->desconto,
-                    'total' => ($produto->precovenda * $item->qtde) - $item->desconto,
+                    'total' => ($item->unitario * $item->qtde) - $item->desconto + $item->acrescimo,
                 ];
             }
         } catch (Exception $e) {

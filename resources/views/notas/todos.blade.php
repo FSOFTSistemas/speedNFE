@@ -148,6 +148,67 @@
 @stop
 
 @section('content')
+    @php
+        $filtrosAtivos = request()->hasAny(['data_inicio', 'data_fim', 'cliente', 'chassi', 'estado']);
+    @endphp
+    <div class="card card-main mb-4">
+        <div class="filter-card-header" data-toggle="collapse" data-target="#filtrosNotas"
+            aria-expanded="{{ $filtrosAtivos ? 'true' : 'false' }}" aria-controls="filtrosNotas">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-filter mr-2"></i>Filtros
+                @if ($filtrosAtivos)
+                    <span class="badge badge-info filter-active-badge ml-2">Ativos</span>
+                @endif
+            </h5>
+            <i class="fas fa-chevron-down filter-toggle-icon"></i>
+        </div>
+        <div class="collapse {{ $filtrosAtivos ? 'show' : '' }}" id="filtrosNotas">
+        <div class="card-body">
+            <form action="{{ route('notas.index') }}" method="GET" class="row align-items-end">
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_inicio" class="form-label">Data Início</label>
+                    <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                        value="{{ request()->get('data_inicio', $filtros['data_inicio']) }}">
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_fim" class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" id="data_fim" name="data_fim"
+                        value="{{ request()->get('data_fim', $filtros['data_fim']) }}">
+                </div>
+                <div class="col-12 col-md-3 mb-2">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <input type="text" class="form-control" id="cliente" name="cliente"
+                        placeholder="Nome ou CPF/CNPJ" value="{{ request()->get('cliente') }}">
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="chassi" class="form-label">Chassi</label>
+                    <input type="text" class="form-control" id="chassi" name="chassi"
+                        placeholder="Chassi" value="{{ request()->get('chassi') }}">
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="estado" class="form-label">Situação</label>
+                    <select class="form-control" id="estado" name="estado">
+                        <option value="">Todas</option>
+                        @foreach (\App\Enums\EstadoEnum::cases() as $estadoOption)
+                            <option value="{{ $estadoOption->value }}" @selected(request('estado') == $estadoOption->value)>
+                                {{ $estadoOption->value }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-md-1 mb-2">
+                    <button type="submit" class="btn custom-btn custom-btn-info w-100">Filtrar</button>
+                </div>
+            </form>
+            @if ($filtrosAtivos)
+                <div class="mt-2 text-right">
+                    <a href="{{ route('notas.index') }}" class="text-muted"><i class="fas fa-times-circle"></i> Limpar filtros</a>
+                </div>
+            @endif
+        </div>
+        </div>
+    </div>
+
     <div class="card card-main">
         <div class="card-body p-0">
             @component('components.dataTable', [
@@ -161,6 +222,8 @@
                 <thead class="table-light">
                     <tr>
                         <th>Número</th>
+                        <th>Data</th>
+                        <th class="text-left">Cliente</th>
                         <th class="text-left">Chave</th>
                         <th>Valor</th>
                         <th>Estado</th>
@@ -174,14 +237,16 @@
                     @foreach ($notas as $nota)
                         <tr>
                             <td>#{{ $nota->numero_nfe }}</td>
+                            <td>{{ date('d/m/Y', strtotime($nota->data)) }}</td>
+                            <td class="text-left">{{ $nota->cliente_nome ?? '-' }}</td>
                             <td class="text-left">
                                 <a href="/venda/imprimir/{{ $nota->id }}" target="_blank">{{ $nota->chave }}</a>
                             </td>
                             <td>R$ {{ number_format($nota->total, 2, ',', '.') }}</td>
                             <td>
-                                @if ($nota->estado == 'Autorizado')
+                                @if ($nota->estado->value == 'Autorizado')
                                     <span class="badge badge-success">{{ $nota->estado }}</span>
-                                @elseif ($nota->estado == 'Cancelado')
+                                @elseif ($nota->estado->value == 'Cancelado')
                                     <span class="badge badge-danger">{{ $nota->estado }}</span>
                                 @else
                                     <span class="badge badge-warning">{{ $nota->estado }}</span>

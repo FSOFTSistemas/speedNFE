@@ -25,4 +25,29 @@ class FormatationUtil {
         return $texto;
     }
 
+    /**
+     * Faz o parse de uma data armazenada como string tentando, em ordem, os
+     * formatos informados. Necessário porque algumas colunas (ex.: dataEntrada
+     * e dataEmissao de entradas) guardam datas em formatos diferentes
+     * dependendo de como o registro foi criado.
+     *
+     * @return \Carbon\Carbon|null
+     */
+    public static function parseData($valor, array $formatos = ['d/m/Y H:i:s', 'Y-m-d'])
+    {
+        if (empty($valor)) {
+            return null;
+        }
+
+        foreach ($formatos as $formato) {
+            try {
+                return \Carbon\Carbon::createFromFormat($formato, $valor);
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return null;
+    }
+
 }

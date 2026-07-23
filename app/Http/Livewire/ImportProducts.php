@@ -12,6 +12,7 @@ class ImportProducts extends Component
     public $emit = [];
     public $vNF = 0;
     public $chNFe = '';
+    public $xml = '';
     public $prods = [];
     public $itemProd = [];
     public $categorias = [];
@@ -27,6 +28,7 @@ class ImportProducts extends Component
         }
         $this->vNF = (string) $data['nota']['vNF'][0];
         $this->chNFe = (string) $data['nota']['chNFe'][0];
+        $this->xml = $data['xml'] ?? '';
         $this->categorias = $categoriaService->todasCategoriasEmpresa(auth()->user()->empresa_id);
         $this->createProductsList($data['prods']);
     }
