@@ -1,6 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Visualizar Produto')
+@php
+    $ehRamoMotos = ($empresa->ramo_atividade ?? null) === 'motos';
+@endphp
+
+@section('title', $ehRamoMotos ? 'Visualizar Veículo' : 'Visualizar Produto')
 
 @push('css')
 <style>
@@ -93,7 +97,7 @@
 @section('content_header')
     <div class="row align-items-center">
         <div class="col-md-8">
-            <h1 class="m-0 text-dark" style="font-weight: 600;">Visualizar Produto</h1>
+            <h1 class="m-0 text-dark" style="font-weight: 600;">{{ $ehRamoMotos ? 'Visualizar Veículo' : 'Visualizar Produto' }}</h1>
         </div>
         <div class="col-md-4 text-md-right mt-2 mt-md-0">
             <a href="{{ route('editar_produto', ['id' => $produto->id]) }}" class="btn custom-btn-edit mr-2">
@@ -110,7 +114,7 @@
             <ul class="nav nav-tabs" id="tab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                        aria-controls="home" aria-selected="true"><b>Informações do Produto</b></a>
+                        aria-controls="home" aria-selected="true"><b>{{ $ehRamoMotos ? 'Informações do Veículo' : 'Informações do Produto' }}</b></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
@@ -128,7 +132,7 @@
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <div class="row">
                         <div class="col-md-6 data-item">
-                            <span class="data-label">Produto</span>
+                            <span class="data-label">{{ $ehRamoMotos ? 'Veículo' : 'Produto' }}</span>
                             <p class="data-value">{{ $produto->produto }}</p>
                         </div>
                         <div class="col-md-6 data-item">

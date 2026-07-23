@@ -201,12 +201,26 @@ class ProdutosController extends Controller
     }
 
     // LISTAGEM
-    public function show()
+    public function show(Request $request)
     {
         try {
             $user = Auth::user();
-            $produtos = $this->produtoServices->todos($user->empresa_id);
-            return view('produtos.todos', ['produtos' => $produtos, 'empresa' => $user->empresa_id]);
+
+            $filtros = [
+                'busca' => $request->input('busca'),
+                'categoria_id' => $request->input('categoria_id'),
+                'chassi' => $request->input('chassi'),
+            ];
+
+            $produtos = $this->produtoServices->todos($user->empresa_id, $filtros);
+            $categorias = (new CategoriasService())->todasCategoriasEmpresa($user->empresa_id);
+
+            return view('produtos.todos', [
+                'produtos' => $produtos,
+                'empresa' => $user->empresa_id,
+                'categorias' => $categorias,
+                'filtros' => $filtros,
+            ]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado: ' . $e->getMessage());
         }

@@ -93,6 +93,7 @@ class EmpresasController extends Controller
             $request->validate([
                 'nome' => 'required|max:255',
                 'fantasia' => 'required|max:255',
+                'ramo_atividade' => 'required|in:motos,geral',
                 'rg_ie' => 'required',
                 'telefone' => 'required',
                 'rua' => 'required|max:255',
@@ -121,7 +122,8 @@ class EmpresasController extends Controller
                 'required' => 'O campo :attribute é obrigatório!',
                 'max' => 'O campo :attribute deve conter no máximo :max caracteres!',
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
-                'email' => 'O campo :attribute deve ser um email'
+                'email' => 'O campo :attribute deve ser um email',
+                'ramo_atividade.in' => 'Selecione um ramo de atividade válido!'
             ]);
             DB::beginTransaction();
             $empresa = $this->empresaServices->atualizar($id, $request);

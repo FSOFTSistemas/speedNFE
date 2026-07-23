@@ -14,6 +14,7 @@ class Empresa extends Model
 	protected $fillable = [
 		'razao',
 		'fantasia',
+		'ramo_atividade',
 		'cpf_cnpj',
 		'endereco_id',
 		'rg_ie',

@@ -465,6 +465,12 @@ class ProdutosService
                 'ipi' => $item['IPI'],
                 'un' => $item['uCom'],
                 'tpProd' => $item['tpProd'],
+                // Reforma Tributária (IBS/CBS) - se a nota do fornecedor não trouxer
+                // esses dados, assume os padrões definidos pela empresa.
+                'cClassTrib' => $item['cClassTrib'] ?? '000001',
+                'pIBS' => $item['pIBS'] ?? 0.1,
+                'pCBS' => $item['pCBS'] ?? 0.9,
+                'cst_ibs_cbs' => $item['cst_ibs_cbs'] ?? '000',
                 'tpVeic' => $item['tpVeic'] ?? null,
                 'chassiVeic' => ! empty($chassi) ? $chassi : null,
                 'renavanVeic' => $item['renavan'] ?? null,
@@ -708,18 +714,35 @@ class ProdutosService
             ->get();
     }
 
-    public function todos($id)
+    public function todos($id, array $filtros = [])
     {
         if ($id == 1) {
             $id = '%';
         }
 
-        return DB::table('produtos')
+        $query = DB::table('produtos')
             ->select('produtos.*', 'empresas.fantasia', 'categorias.descricao')
             ->join('categorias', 'categorias.id', '=', 'produtos.categoria_id')
             ->join('empresas', 'empresas.id', '=', 'produtos.empresa_id')
-            ->where('produtos.empresa_id', 'like', $id)
-            ->get();
+            ->where('produtos.empresa_id', 'like', $id);
+
+        if (!empty($filtros['busca'])) {
+            $busca = $filtros['busca'];
+            $query->where(function ($q) use ($busca) {
+                $q->where('produtos.produto', 'like', "%{$busca}%")
+                    ->orWhere('produtos.codigo', 'like', "%{$busca}%");
+            });
+        }
+
+        if (!empty($filtros['categoria_id'])) {
+            $query->where('produtos.categoria_id', $filtros['categoria_id']);
+        }
+
+        if (!empty($filtros['chassi'])) {
+            $query->where('produtos.chassiVeic', 'like', '%' . $filtros['chassi'] . '%');
+        }
+
+        return $query->get();
     }
 
     public function umVenda($id)

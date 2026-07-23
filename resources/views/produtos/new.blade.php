@@ -1,6 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Cadastro de Produto')
+@php
+    $ehRamoMotos = ($empresa->ramo_atividade ?? null) === 'motos';
+@endphp
+
+@section('title', $ehRamoMotos ? 'Cadastro de Veículo' : 'Cadastro de Produto')
 
 @push('css')
 <style>
@@ -125,7 +129,7 @@
 @section('content_header')
     <div class="row align-items-center">
         <div class="col-md-10">
-            <h1 class="m-0 text-dark" style="font-weight: 600;">Cadastro de Produto</h1>
+            <h1 class="m-0 text-dark" style="font-weight: 600;">{{ $ehRamoMotos ? 'Cadastro de Veículo' : 'Cadastro de Produto' }}</h1>
         </div>
         <div class="col-md-2 text-md-right mt-2 mt-md-0">
             <a href="{{ route('produto.index') }}" class="btn custom-btn-secondary btn-block">Voltar</a>
@@ -139,7 +143,7 @@
             <ul class="nav nav-tabs" id="tab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab"
-                        aria-controls="home" aria-selected="true"><b>Informações do Produto</b></a>
+                        aria-controls="home" aria-selected="true"><b>{{ $ehRamoMotos ? 'Informações do Veículo' : 'Informações do Produto' }}</b></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="profile-tab" data-toggle="pill" href="#profile" role="tab"
@@ -172,14 +176,14 @@
                         </div>
                         <div class="row">
                              <div class="col-md-9 mb-3">
-                                <label for="produto" class="form-label">Nome do Produto</label>
-                                <input class="form-control" type="text" name="produto" id="produto" required placeholder="Ex: REFRIGERANTE COCA-COLA 2L" oninput="this.value = this.value.toUpperCase()" value="{{ old('produto') }}">
-                                <div class="invalid-feedback">Informe um nome de produto válido.</div>
+                                <label for="produto" class="form-label">{{ $ehRamoMotos ? 'Nome do Veículo' : 'Nome do Produto' }}</label>
+                                <input class="form-control" type="text" name="produto" id="produto" required placeholder="{{ $ehRamoMotos ? 'Ex: HONDA CG 160 FAN 2024' : 'Ex: REFRIGERANTE COCA-COLA 2L' }}" oninput="this.value = this.value.toUpperCase()" value="{{ old('produto') }}">
+                                <div class="invalid-feedback">Informe um nome de {{ $ehRamoMotos ? 'veículo' : 'produto' }} válido.</div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="codigo" class="form-label">Cód. de Barras (EAN)</label>
                                 <input class="form-control" type="text" name="codigo" id="codigo" placeholder="SEM GTIN" oninput="this.value = this.value.toUpperCase()" value="{{ old('codigo') }}" required>
-                                <small class="font-weight-bold"><i class="fas fa-info-circle mr-1"></i> Caso o produto não tenha código de barras, por favor inserir 'SEM GTIN' no campo acima</small>
+                                <small class="font-weight-bold"><i class="fas fa-info-circle mr-1"></i> Caso o {{ $ehRamoMotos ? 'veículo' : 'produto' }} não tenha código de barras, por favor inserir 'SEM GTIN' no campo acima</small>
                             </div>
                         </div>
                         <div class="row">
@@ -227,7 +231,7 @@
                             </div>
                             <div class="col-md-2 mb-3 d-flex align-items-center">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="tpProd" id="tpProd" @if (old('tpProd')) checked @endif>
+                                    <input type="checkbox" class="form-check-input" name="tpProd" id="tpProd" @if (old('tpProd', ($empresa->ramo_atividade ?? null) === 'motos')) checked @endif>
                                     <label class="form-check-label text-bold" for="tpProd">É Veículo?</label>
                                 </div>
                             </div>
@@ -700,8 +704,8 @@
             // HTML dos botões
             const btnProximo1HTML = `<button type="button" id="btn-proximo-1" class="btn custom-btn-primary" disabled>Próximo <i class="fas fa-arrow-right ml-1"></i></button>`;
             const btnProximo2HTML = `<button type="button" id="btn-proximo-2" class="btn custom-btn-primary" disabled>Próximo <i class="fas fa-arrow-right ml-1"></i></button>`;
-            const btnSalvarHTML = `<button type="submit" id="btn-salvar" class="btn custom-btn-primary">Salvar Produto</button>`;
-            const btnSalvarVeicHTML = `<button type="submit" id="btn-salvar-veic" class="btn custom-btn-primary" disabled>Salvar Produto</button>`;
+            const btnSalvarHTML = `<button type="submit" id="btn-salvar" class="btn custom-btn-primary">{{ $ehRamoMotos ? 'Salvar Veículo' : 'Salvar Produto' }}</button>`;
+            const btnSalvarVeicHTML = `<button type="submit" id="btn-salvar-veic" class="btn custom-btn-primary" disabled>{{ $ehRamoMotos ? 'Salvar Veículo' : 'Salvar Produto' }}</button>`;
             
             // Função para verificar validade de uma aba
             const checkTabValidity = (tabElement) => {
