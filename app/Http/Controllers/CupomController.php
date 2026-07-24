@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Traits\EnviaNFCe;
 use App\Services\EstoquesService;
+use App\Services\FluxoDeCaixaService;
 
 class CupomController extends Controller
 {
@@ -24,15 +25,17 @@ class CupomController extends Controller
     private $cupomFormaService;
     private $empresaServices;
     private $estoqueService;
+    private $fluxoCaixaService;
     use EnviaNFCe;
 
-    public function __construct(CupomService $cupomService, ItemCupomService $itemCupomService, CupomFormaService $cupomFormaService, EmpresasService $empresaServices, EstoquesService $estoqueService)
+    public function __construct(CupomService $cupomService, ItemCupomService $itemCupomService, CupomFormaService $cupomFormaService, EmpresasService $empresaServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService)
     {
         $this->cupomService = $cupomService;
         $this->itemCupomService = $itemCupomService;
         $this->cupomFormaService = $cupomFormaService;
         $this->empresaServices = $empresaServices;
         $this->estoqueService = $estoqueService;
+        $this->fluxoCaixaService = $fluxoCaixaService;
     }
 
 public function index(Request $request)
@@ -117,7 +120,8 @@ public function index(Request $request)
                     $cupomId,
                     $this->cupomService,
                     $this->empresaServices,
-                    $this->estoqueService
+                    $this->estoqueService,
+                    $this->fluxoCaixaService
                 );
 
                 // Verifica o resultado retornado pelo Trait

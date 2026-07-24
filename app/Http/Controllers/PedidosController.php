@@ -8,6 +8,7 @@ use App\Models\Pedido;
 use App\Services\EmpresasService;
 use App\Services\EstoquesService;
 use App\Services\FaturaService;
+use App\Services\FluxoDeCaixaService;
 use App\Services\ItemService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
@@ -32,8 +33,9 @@ class PedidosController extends Controller
     private ItemService $itemServices;
     private ProdutosService $produtoServices;
     private EstoquesService $estoqueService;
+    private FluxoDeCaixaService $fluxoCaixaService;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService)
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService)
     {
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
@@ -41,6 +43,7 @@ class PedidosController extends Controller
         $this->faturaServices = $faturaServices;
         $this->produtoServices = $produtoServices;
         $this->estoqueService = $estoqueService;
+        $this->fluxoCaixaService = $fluxoCaixaService;
     }
 
     public function imprimirCorrecao($id)
@@ -182,6 +185,7 @@ class PedidosController extends Controller
                 foreach ($venda->itens as $item) {
                     $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
                 }
+                $this->fluxoCaixaService->estornarPorOrigem('NFe', $venda->id);
                 return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
             } else {
                 return redirect('/venda')->with('error', $nfe['data']['retEvento']['infEvento']['xMotivo']);
@@ -270,6 +274,14 @@ class PedidosController extends Controller
                             foreach ($venda->itens as $item) {
                                 $this->estoqueService->out($item->produto_id, $item->qtde);
                             }
+                            $this->fluxoCaixaService->registrarEntradaAutomatica(
+                                $venda->empresa_id,
+                                $venda->total,
+                                'Venda NFe #' . $venda->numero_nfe . ($venda->cliente ? ' - ' . $venda->cliente->nome : ''),
+                                $venda->data,
+                                'NFe',
+                                $venda->id
+                            );
                         } else {
                             foreach ($venda->itens as $item) {
                                 $this->estoqueService->reverseStock($item->produto_id, $item->qtde);

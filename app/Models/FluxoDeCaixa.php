@@ -17,6 +17,8 @@ class FluxoDeCaixa extends Model
         'valor',
         'tipo',
         'plano_de_contas_id',
+        'origem',
+        'origem_id',
         'empresa_id',
     ];
 

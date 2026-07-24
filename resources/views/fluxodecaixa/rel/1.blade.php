@@ -177,6 +177,46 @@
         <p class="total highlight" style="padding: 10px; text-align: center;">
             <strong>Saldo Final:</strong> R$ {{ number_format($dados['saldo_final'], 2, ',', '.') }}
         </p>
+    @elseif($request->tipo_relatorio == 'categoria')
+        <table>
+            <thead>
+                <tr>
+                    <th>Plano de Contas</th>
+                    <th>Tipo</th>
+                    <th>Total (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($dados as $item)
+                    <tr>
+                        <td>{{ $item->plano_de_contas_nome }}</td>
+                        <td>
+                            <span class="{{ $item->tipo == 'Entrada' ? 'highlight' : 'saida-highlight' }}">
+                                {{ $item->tipo }}
+                            </span>
+                        </td>
+                        <td>{{ number_format($item->total, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @elseif($request->tipo_relatorio == 'empresa')
+        <table>
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Total (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($dados as $item)
+                    <tr>
+                        <td>{{ optional($item->empresa)->fantasia ?? optional($item->empresa)->razao ?? 'Empresa #' . $item->empresa_id }}</td>
+                        <td>{{ number_format($item->total, 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     @endif
 </body>
 

@@ -13,6 +13,7 @@ use App\Utils\FormatationUtil;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\EstoquesService;
+use App\Services\FluxoDeCaixaService;
 
 trait EnviaNFCe
 {
@@ -47,9 +48,10 @@ trait EnviaNFCe
      * @param CupomService $cupomService
      * @param EmpresasService $empresaServices
      * @param EstoquesService $estoqueService
+     * @param FluxoDeCaixaService $fluxoCaixaService
      * @return object
      */
-    protected function _enviarNFCePeloId(int $id, CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService): object
+    protected function _enviarNFCePeloId(int $id, CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService): object
     {
         try {
             DB::beginTransaction();
@@ -60,6 +62,14 @@ trait EnviaNFCe
             $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
             $cupomService->updateCoupon($cupom);
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
+            $fluxoCaixaService->registrarEntradaAutomatica(
+                $cupom->empresa_id,
+                $cupom->total,
+                'Venda NFCe #' . $cupom->nroCupom . ($cupom->cliente ? ' - ' . $cupom->cliente->nome : ''),
+                $cupom->data,
+                'NFCe',
+                $cupom->id
+            );
             DB::commit();
 
             // SUCESSO: Retorna um objeto de sucesso

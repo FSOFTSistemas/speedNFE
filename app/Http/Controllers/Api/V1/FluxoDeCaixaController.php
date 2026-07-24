@@ -42,6 +42,9 @@ class FluxoDeCaixaController extends ApiController
     public function update(Request $request, int $id): JsonResponse
     {
         $fluxo = $this->findAllowed($id);
+        if ($fluxo->origem) {
+            return $this->message('Lancamento gerado automaticamente por uma ' . $fluxo->origem . ' nao pode ser editado manualmente.', 422);
+        }
         $fluxo->update($this->validated($request, true));
 
         return $this->success($fluxo->fresh('planoDeContas'), 'Lancamento atualizado com sucesso.');
@@ -49,7 +52,11 @@ class FluxoDeCaixaController extends ApiController
 
     public function destroy(int $id): JsonResponse
     {
-        $this->findAllowed($id)->delete();
+        $fluxo = $this->findAllowed($id);
+        if ($fluxo->origem) {
+            return $this->message('Lancamento gerado automaticamente por uma ' . $fluxo->origem . ' nao pode ser excluido manualmente.', 422);
+        }
+        $fluxo->delete();
 
         return $this->message('Lancamento removido com sucesso.');
     }
@@ -60,8 +67,8 @@ class FluxoDeCaixaController extends ApiController
         $this->scopeEmpresa($query, $request);
         $this->scopePeriodo($query, $request);
 
-        $receitas = (clone $query)->where('tipo', 'Receita')->sum('valor');
-        $despesas = (clone $query)->where('tipo', 'Despesa')->sum('valor');
+        $receitas = (clone $query)->where('tipo', 'Entrada')->sum('valor');
+        $despesas = (clone $query)->where('tipo', 'Saída')->sum('valor');
 
         return $this->success([
             'total_receitas' => $receitas,
@@ -78,7 +85,7 @@ class FluxoDeCaixaController extends ApiController
             'descricao' => [$required, 'string', 'max:255'],
             'valor' => [$required, 'numeric'],
             'data' => [$required, 'date'],
-            'tipo' => [$required, 'string'],
+            'tipo' => [$required, 'in:Entrada,Saída'],
             'plano_de_contas_id' => [$required, 'exists:plano_de_contas,id'],
         ]);
     }

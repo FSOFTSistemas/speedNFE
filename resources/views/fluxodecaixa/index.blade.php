@@ -110,24 +110,74 @@
             <h1 class="m-0 text-dark" style="font-weight: 600;">Fluxo de Caixa</h1>
         </div>
         <div class="col-lg-8 text-center text-lg-right header-actions">
-            <form action="{{ route('fluxo-caixa.index') }}" method="GET" class="form-inline mr-lg-3">
-                <input type="date" class="form-control mr-2" id="data_inicio" name="data_inicio" value="{{ request()->get('data_inicio', $dataInicio->format('Y-m-d')) }}">
-                <input type="date" class="form-control mr-2" id="data_fim" name="data_fim" value="{{ request()->get('data_fim', $dataFim->format('Y-m-d')) }}">
-                <button type="submit" class="btn custom-btn custom-btn-primary">Filtrar</button>
-            </form>
-            <div class="mt-2 mt-lg-0">
-                <button class="btn custom-btn custom-btn-success" data-toggle="modal" data-target="#createModal">
-                    <i class="fas fa-plus mr-1"></i> Novo Lançamento
-                </button>
-                <a href="{{ route('contas.index') }}" class="btn custom-btn custom-btn-secondary">
-                    <i class="fas fa-list-alt mr-1"></i> Plano de Contas
-                </a>
-            </div>
+            <button class="btn custom-btn custom-btn-success" data-toggle="modal" data-target="#createModal">
+                <i class="fas fa-plus mr-1"></i> Novo Lançamento
+            </button>
+            <a href="{{ route('contas.index') }}" class="btn custom-btn custom-btn-secondary">
+                <i class="fas fa-list-alt mr-1"></i> Plano de Contas
+            </a>
         </div>
     </div>
 @stop
 
 @section('content')
+    @php
+        $filtrosAtivos = request()->hasAny(['data_inicio', 'data_fim', 'tipo', 'origem']);
+    @endphp
+    <div class="card card-main mb-4">
+        <div class="filter-card-header" data-toggle="collapse" data-target="#filtrosFluxo"
+            aria-expanded="{{ $filtrosAtivos ? 'true' : 'false' }}" aria-controls="filtrosFluxo">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-filter mr-2"></i>Filtros
+                @if ($filtrosAtivos)
+                    <span class="badge badge-info filter-active-badge ml-2">Ativos</span>
+                @endif
+            </h5>
+            <i class="fas fa-chevron-down filter-toggle-icon"></i>
+        </div>
+        <div class="collapse {{ $filtrosAtivos ? 'show' : '' }}" id="filtrosFluxo">
+        <div class="card-body">
+            <form action="{{ route('fluxo-caixa.index') }}" method="GET" class="row align-items-end">
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_inicio" class="form-label">Data Início</label>
+                    <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                        value="{{ request()->get('data_inicio', $dataInicio->format('Y-m-d')) }}">
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="data_fim" class="form-label">Data Fim</label>
+                    <input type="date" class="form-control" id="data_fim" name="data_fim"
+                        value="{{ request()->get('data_fim', $dataFim->format('Y-m-d')) }}">
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-control" id="tipo" name="tipo">
+                        <option value="">Todos</option>
+                        <option value="Entrada" @selected(request('tipo') == 'Entrada')>Entrada</option>
+                        <option value="Saída" @selected(request('tipo') == 'Saída')>Saída</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    <label for="origem" class="form-label">Origem</label>
+                    <select class="form-control" id="origem" name="origem">
+                        <option value="">Todas</option>
+                        <option value="Manual" @selected(request('origem') == 'Manual')>Manual</option>
+                        <option value="NFe" @selected(request('origem') == 'NFe')>NFe</option>
+                        <option value="NFCe" @selected(request('origem') == 'NFCe')>NFCe</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2 mb-2">
+                    <button type="submit" class="btn custom-btn custom-btn-primary w-100">Filtrar</button>
+                </div>
+            </form>
+            @if ($filtrosAtivos)
+                <div class="mt-2 text-right">
+                    <a href="{{ route('fluxo-caixa.index') }}" class="text-muted"><i class="fas fa-times-circle"></i> Limpar filtros</a>
+                </div>
+            @endif
+        </div>
+        </div>
+    </div>
+
 <div class="card card-main">
     <div class="card-body p-0">
         @component('components.dataTable', [
@@ -145,6 +195,7 @@
                     <th class="text-left">Plano de Contas</th>
                     <th>Valor</th>
                     <th>Tipo</th>
+                    <th>Origem</th>
                     <th>Data</th>
                     <th class="text-right">Ações</th>
                 </tr>
@@ -162,10 +213,23 @@
                             @else <span class="badge badge-danger">Saída</span>
                             @endif
                         </td>
+                        <td>
+                            @if ($lancamento->origem == 'NFe')
+                                <a href="{{ route('imprimirXML', $lancamento->origem_id) }}" target="_blank" class="badge badge-primary" title="Ver NFe">NFe #{{ $lancamento->origem_id }}</a>
+                            @elseif ($lancamento->origem == 'NFCe')
+                                <a href="{{ route('nfce.show', $lancamento->origem_id) }}" target="_blank" class="badge badge-primary" title="Ver NFCe">NFCe #{{ $lancamento->origem_id }}</a>
+                            @else
+                                <span class="badge badge-secondary">Manual</span>
+                            @endif
+                        </td>
                         <td>{{ \Carbon\Carbon::parse($lancamento->data)->format('d/m/Y') }}</td>
                         <td class="action-buttons">
-                            <a title="Editar" href="#" class="text-warning" onclick="openEditModal({{ json_encode($lancamento) }})"><i class="fa fa-edit"></i></a>
-                            <a title="Excluir" href="#" class="text-danger" onclick="openDeleteModal({{ $lancamento->id }})"><i class="fa fa-trash"></i></a>
+                            @if ($lancamento->origem)
+                                <span class="text-muted" title="Lançamento automático — altere cancelando a nota de origem"><i class="fa fa-lock"></i></span>
+                            @else
+                                <a title="Editar" href="#" class="text-warning" onclick="openEditModal({{ json_encode($lancamento) }})"><i class="fa fa-edit"></i></a>
+                                <a title="Excluir" href="#" class="text-danger" onclick="openDeleteModal({{ $lancamento->id }})"><i class="fa fa-trash"></i></a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -187,7 +251,7 @@
                     <div class="form-group mb-3"><label class="form-label">Plano de Contas</label><select class="form-control" name="plano_de_contas_id" id="edit_plano_de_contas_id" required><option value="">Selecione</option>@foreach ($planosDeContas as $plano)<option value="{{ $plano->id }}">{{ $plano->descricao }}</option>@endforeach</select></div>
                     <div class="form-group mb-3"><label class="form-label">Descrição</label><input type="text" class="form-control" name="descricao" id="edit_descricao" required></div>
                     <div class="form-group mb-3"><label class="form-label">Valor</label><input type="number" class="form-control" name="valor" step="0.01" id="edit_valor" required></div>
-                    <div class="form-group mb-3"><label class="form-label">Tipo</label><select class="form-control" name="tipo" id="edit_tipo"><option value="Entrada">Entrada</option><option value="Saida">Saída</option></select></div>
+                    <div class="form-group mb-3"><label class="form-label">Tipo</label><select class="form-control" name="tipo" id="edit_tipo"><option value="Entrada">Entrada</option><option value="Saída">Saída</option></select></div>
                     <div class="form-group mb-3"><label class="form-label">Data</label><input type="date" class="form-control" name="data" id="edit_data" required></div>
                     <div class="text-center"><button type="submit" class="btn custom-btn custom-btn-warning">Salvar Alterações</button></div>
                 </form>
@@ -223,7 +287,7 @@
                     <div class="form-group mb-3"><label class="form-label">Plano de Contas</label><select class="form-control" name="plano_de_contas_id" required><option value="">Selecione</option>@foreach ($planosDeContas as $plano)<option value="{{ $plano->id }}">{{ $plano->descricao }}</option>@endforeach</select></div>
                     <div class="form-group mb-3"><label class="form-label">Descrição</label><input type="text" class="form-control" name="descricao" required></div>
                     <div class="form-group mb-3"><label class="form-label">Valor</label><input type="number" class="form-control" name="valor" step="0.01" required></div>
-                    <div class="form-group mb-3"><label class="form-label">Tipo</label><select class="form-control" name="tipo"><option value="Entrada">Entrada</option><option value="Saida">Saída</option></select></div>
+                    <div class="form-group mb-3"><label class="form-label">Tipo</label><select class="form-control" name="tipo"><option value="Entrada">Entrada</option><option value="Saída">Saída</option></select></div>
                     <div class="form-group mb-3"><label class="form-label">Data</label><input type="date" class="form-control" name="data" required></div>
                     <div class="text-center"><button type="submit" class="btn custom-btn custom-btn-success">Salvar Lançamento</button></div>
                 </form>

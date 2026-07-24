@@ -8,6 +8,7 @@ use App\Models\NFCe;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\EstoquesService;
+use App\Services\FluxoDeCaixaService;
 use App\Services\NFCeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class NFCeController extends ApiController
     public function __construct(
         private CupomService $cupomService,
         private EmpresasService $empresaServices,
-        private EstoquesService $estoqueService
+        private EstoquesService $estoqueService,
+        private FluxoDeCaixaService $fluxoCaixaService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -68,7 +70,8 @@ class NFCeController extends ApiController
             $cupomId,
             $this->cupomService,
             $this->empresaServices,
-            $this->estoqueService
+            $this->estoqueService,
+            $this->fluxoCaixaService
         );
 
         return response()->json([
