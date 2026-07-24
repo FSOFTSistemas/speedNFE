@@ -40,4 +40,16 @@ class Pedido extends Model
         return $this->hasMany(FaturaPedido::class, 'venda_id', 'id');
     }
 
+    public function xmlAutorizado(){
+        return $this->hasOne(PedidoXml::class, 'pedido_id')->where('tipo', 'autorizado');
+    }
+
+    public function xmlCancelado(){
+        return $this->hasOne(PedidoXml::class, 'pedido_id')->where('tipo', 'cancelado');
+    }
+
+    public function xmlCce(){
+        return $this->hasOne(PedidoXml::class, 'pedido_id')->where('tipo', 'cce');
+    }
+
 }

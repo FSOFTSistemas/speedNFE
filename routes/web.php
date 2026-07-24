@@ -198,6 +198,7 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('', [RelatoriosController::class, 'relatorio'])->name('relatorio')->middleware('auth');
         Route::get('/mdfe', [RelatoriosController::class, 'indexMDFe'])->name('relatorio.indexMDFe')->middleware('auth');
         Route::post('/relatorio-pdf', [RelatoriosController::class, 'gerarPdf'])->name('relatorio-pdf')->middleware('auth');
+        Route::get('/dashboard-data', [RelatoriosController::class, 'dashboardData'])->name('relatorios.dashboard-data')->middleware('auth');
     });
 
     // MDFe

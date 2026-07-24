@@ -278,9 +278,13 @@
                                 <td class="text-left">{{ $pedido->fantasia }}</td>
                             @endif
                             <td class="action-buttons">
-                                <a href="{{ url('/debug-xml/' . $pedido->id) }}" target="_blank" class="btn btn-sm btn-info mb-1" title="Ver XML (Debug)">
-                                    <i class="fas fa-eye"></i> XML
-                                </a>
+                                <form action="{{ route('baixarXml') }}" method="POST" class="d-inline-block mb-1">
+                                    @csrf
+                                    <input type="hidden" name="pedido_id" value="{{ $pedido->id }}">
+                                    <button type="submit" class="btn btn-sm btn-info" title="Baixar XML">
+                                        <i class="fas fa-file-code"></i> XML
+                                    </button>
+                                </form>
 
                                 {{-- Desktop: ícones compactos --}}
                                 <span class="d-none d-md-inline-flex">

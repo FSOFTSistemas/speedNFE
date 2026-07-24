@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PedidoXml;
 use App\Utils\FormatationUtil;
 use App\Utils\ValidationEAN13Util;
 use Illuminate\Support\Facades\File;
@@ -557,7 +558,7 @@ class NFeService
     //     }
     // }
 
-    public function transmitir($signXml, $chave, $caminho)
+    public function transmitir($signXml, $chave, $pedidoId)
     {
         try {
             // Define idLote com 15 dígitos numéricos
@@ -575,11 +576,10 @@ class NFeService
                 if ($infProt->cStat == 100) {
                     $xml = Complements::toAuthorize($signXml, $resp);
 
-                    if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
-                    }
-
-                    file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+                    PedidoXml::updateOrCreate(
+                        ['pedido_id' => $pedidoId, 'tipo' => 'autorizado'],
+                        ['xml' => $xml]
+                    );
 
                     return [
                         'sucesso' => $infProt->nProt,
@@ -627,7 +627,7 @@ class NFeService
         }
     }
 
-    public function cartaCorrecao($venda, $justificativa, $caminho)
+    public function cartaCorrecao($venda, $justificativa)
     {
         try {
             $chave = $venda->chave;
@@ -644,10 +644,11 @@ class NFeService
                 $cStat = $std->retEvento->infEvento->cStat;
                 if ($cStat == '135' || $cStat == '136') {
                     $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
-                    if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
-                    }
-                    file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+
+                    PedidoXml::updateOrCreate(
+                        ['pedido_id' => $venda->id, 'tipo' => 'cce'],
+                        ['xml' => $xml]
+                    );
 
                     $venda->sequencia_evento += 1;
                     $venda->save();
@@ -661,7 +662,7 @@ class NFeService
         }
     }
 
-    public function cancelar($venda, $justificativa, $caminho)
+    public function cancelar($venda, $justificativa)
     {
         try {
             $chave = $venda->chave;
@@ -683,10 +684,11 @@ class NFeService
                 $cStat = $std->retEvento->infEvento->cStat;
                 if ($cStat == '101' || $cStat == '135' || $cStat == '155') {
                     $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
-                    if (!File::exists(public_path($caminho . '/'))) {
-                        File::makeDirectory(public_path($caminho . '/'), 0777, true, true);
-                    }
-                    file_put_contents(public_path($caminho . '/') . $chave . '.xml', $xml);
+
+                    PedidoXml::updateOrCreate(
+                        ['pedido_id' => $venda->id, 'tipo' => 'cancelado'],
+                        ['xml' => $xml]
+                    );
 
                     return $json;
                 } else {

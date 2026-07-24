@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use App\Models\Pedido;
+use App\Services\RelatoriosService;
 use App\Services\UsersService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -98,6 +99,27 @@ class RelatoriosController extends Controller
 
         } catch (Exception $e) {
             return back()->with('error', 'Erro ao gerar PDF: ' . $e->getMessage());
+        }
+    }
+
+    public function dashboardData(Request $request, RelatoriosService $relatoriosService)
+    {
+        try {
+            $userEmpresaId = Auth::user()->empresa_id;
+            $empresaFiltro = ($userEmpresaId == 1) ? ($request->empresa ?? 1) : $userEmpresaId;
+
+            $dataInicio = $request->filled('data_inicio')
+                ? $request->input('data_inicio')
+                : now()->subDays(30)->format('Y-m-d');
+            $dataFim = $request->filled('data_fim')
+                ? $request->input('data_fim')
+                : now()->format('Y-m-d');
+
+            $dados = $relatoriosService->dashboard($empresaFiltro, $dataInicio, $dataFim);
+
+            return response()->json($dados);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

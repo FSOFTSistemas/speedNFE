@@ -48,8 +48,11 @@ class PedidosController extends Controller
         try {
             $venda = $this->pedidoServices->buscarPedido($id);
             $emitente = $this->empresaServices->buscarEmpresa($venda->empresa_id);
-            $xml = file_get_contents($emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/CCe/' . $venda->chave . '.xml');
-            $daevento = new Daevento($xml, $emitente);
+            $xmlRow = $venda->xmlCce;
+            if (!$xmlRow) {
+                return back()->with('error', 'XML de correção não encontrado.');
+            }
+            $daevento = new Daevento($xmlRow->xml, $emitente);
             $daevento->debugMode(true);
             $pdf = $daevento->render();
             return response($pdf)->header('Content-Type', 'application/pdf');
@@ -132,7 +135,7 @@ class PedidosController extends Controller
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
 
-            $result = $nfe_service->cartaCorrecao($venda, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/CCe');
+            $result = $nfe_service->cartaCorrecao($venda, $request->justificativa);
             if (!isset($result['erro'])) {
                 return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
             } else {
@@ -170,7 +173,7 @@ class PedidosController extends Controller
                 "CSC" => $emitente->csc,
                 "CSCid" => '00000' . $emitente->idCsc,
             ], $emitente);
-            $nfe = $nfe_service->cancelar($venda, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas');
+            $nfe = $nfe_service->cancelar($venda, $request->justificativa);
             if (!isset($nfe['erro'])) {
                 $venda->status = 0;
                 $venda->estado = 'Cancelado';
@@ -194,10 +197,12 @@ class PedidosController extends Controller
     {
         try {
             $venda = Pedido::find($id);
-            $empresa = Empresa::find($venda->empresa_id);
-            $xml = file_get_contents(public_path($empresa->fantasia . '/' . date_format($venda->created_at, 'Y') . '/' . date_format($venda->created_at, 'm') . '/notas/Canceladas/') . $venda->chave . '.xml');
+            $xmlRow = $venda->xmlCancelado;
+            if (!$xmlRow) {
+                return back()->with('error', 'XML de cancelamento não encontrado.');
+            }
             $dadosEmitente = Empresa::find($venda->empresa_id);
-            $daevento = new Daevento($xml, $dadosEmitente->toArray());
+            $daevento = new Daevento($xmlRow->xml, $dadosEmitente->toArray());
             $daevento->debugMode(true);
             $pdf = $daevento->render();
             return response($pdf)
@@ -212,9 +217,11 @@ class PedidosController extends Controller
     {
         try {
             $venda = Pedido::find($id);
-            $empresa = Empresa::find($venda->empresa_id);
-            $xml = file_get_contents(public_path($empresa->fantasia . '/' . date_format($venda->created_at, 'Y') . '/' . date_format($venda->created_at, 'm') . '/notas/Autorizadas/') . $venda->chave . '.xml');
-            $danfe = new Danfe($xml);
+            $xmlRow = $venda->xmlAutorizado;
+            if (!$xmlRow) {
+                return back()->with('error', 'XML da nota não encontrado.');
+            }
+            $danfe = new Danfe($xmlRow->xml);
             $danfe->creditsIntegratorFooter('SpeedNFE - www.f-softsistemas.com.br', false);
             $pdf = $danfe->render();
             return response($pdf)
@@ -248,7 +255,7 @@ class PedidosController extends Controller
                 if (!isset($result['erros_xml'])) {
                     $signed = $nfe_service->sign($result['xml']);
                     // dd($signed);
-                    $resultado = $nfe_service->transmitir($signed, $result['chave'], $empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
+                    $resultado = $nfe_service->transmitir($signed, $result['chave'], $venda->id);
                     // dd($resultado);
                     if (isset($resultado['sucesso'])) {
                         DB::beginTransaction();

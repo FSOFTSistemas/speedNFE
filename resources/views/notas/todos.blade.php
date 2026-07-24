@@ -258,10 +258,7 @@
                             <td class="action-buttons">
                                 <form action="{{ route('baixarXml') }}" method="POST">
                                     @csrf
-                                    <input type="hidden" name="empresa" value="{{ $nota->fantasia }}">
-                                    <input type="hidden" name="chave" value="{{ $nota->chave }}">
-                                    <input type="hidden" name="data" value="{{ $nota->data }}">
-                                    <input type="hidden" name="estado" value="{{ $nota->estado }}">
+                                    <input type="hidden" name="pedido_id" value="{{ $nota->id }}">
                                     <button class="btn-icon" type="submit" title="Download XML">
                                         <i class="fa fa-file-code"></i>
                                     </button>

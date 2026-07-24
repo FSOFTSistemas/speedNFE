@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\EmailXmlContador;
-use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Services\PedidosService;
 use App\Services\UsersService;
@@ -15,9 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use NFePHP\DA\NFe\Danfe;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use ZipArchive;
 
 class NotasFiscaisController extends Controller
 {
@@ -68,13 +64,13 @@ class NotasFiscaisController extends Controller
     public function visualizarPdf($chave)
     {
         try {
-            $venda = Pedido::get()->where('chave', '=', $chave);
-            $empresa = Empresa::findOrFail($venda->empresa_id);
-            return $empresa;
-
-            $xml = file_get_contents(public_path($empresa->fantasia . '/' . date_format($venda->created_at, 'Y') . '/' . date_format($venda->created_at, 'm') . '/notas/Autorizadas/') . $venda->chave . '.xml');
-            return $xml;
-            $danfe = new Danfe($xml);
+            $venda = Pedido::where('chave', $chave)->firstOrFail();
+            $xmlRow = $venda->xmlAutorizado;
+            if (!$xmlRow) {
+                session()->flash("erro", 'XML da nota não encontrado.');
+                return redirect()->back();
+            }
+            $danfe = new Danfe($xmlRow->xml);
             $pdf = $danfe->render();
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
@@ -87,9 +83,17 @@ class NotasFiscaisController extends Controller
     public function downloadXml(Request $request)
     {
         try {
-            $estado = $request->estado == 'Autorizado' ? 'Autorizadas' : ($request->estado == 'Cancelado' ? 'Canceladas' : 'CCe');
-            $xml = asset($request->empresa . '/' . date('Y', strtotime($request->data)) . '/' . date('m', strtotime($request->data)) . '/notas/' . $estado . '/' . $request->chave . '.xml');
-            return response()->download($xml);
+            $venda = Pedido::findOrFail($request->pedido_id);
+
+            $xmlRow = $venda->xmlAutorizado ?? $venda->xmlCancelado ?? $venda->xmlCce;
+            if (!$xmlRow) {
+                return back()->with('error', 'XML não encontrado para esta nota.');
+            }
+
+            return response($xmlRow->xml, 200, [
+                'Content-Type' => 'text/xml',
+                'Content-Disposition' => 'attachment; filename="' . $venda->chave . '.xml"',
+            ]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
         }
@@ -98,33 +102,40 @@ class NotasFiscaisController extends Controller
     public function zip(Request $request)
     {
         $company = Auth::user()->empresa;
-        $rootPath = realpath($company->fantasia . '/' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '/' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m'));
+        $data = DateTime::createFromFormat('Y-m', $request->periodo);
+        $ano = $data->format('Y');
+        $mes = $data->format('m');
 
-        if ($rootPath) {
+        $pedidos = Pedido::where('empresa_id', $company->id)
+            ->where('chave', '!=', '')
+            ->whereYear('data', $ano)
+            ->whereMonth('data', $mes)
+            ->with(['xmlAutorizado', 'xmlCancelado', 'xmlCce'])
+            ->get();
 
-            $zip = new ZipArchive;
-            $zip->open($company->fantasia . ' ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
-
-            /** @var SplFileInfo[] $files */
-            $files = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($rootPath),
-                RecursiveIteratorIterator::LEAVES_ONLY
-            );
-
-            foreach ($files as $name => $file) {
-                if (!$file->isDir()) {
-                    $filePath = $file->getRealPath();
-                    $relativePath = substr($filePath, strlen($rootPath) + 1);
-
-                    $zip->addFile($filePath, $relativePath);
-                }
+        $archives = collect();
+        foreach ($pedidos as $pedido) {
+            if ($pedido->xmlAutorizado) {
+                $archives->push((object) ['chave' => $pedido->chave, 'xml' => $pedido->xmlAutorizado->xml]);
             }
-
-            $zip->close();
-
-            return response()->download(public_path($company->fantasia . ' ' . DateTime::createFromFormat('Y-m', $request->periodo)->format('m') . '-' . DateTime::createFromFormat('Y-m', $request->periodo)->format('Y') . '.zip'));
+            if ($pedido->xmlCancelado) {
+                $archives->push((object) ['chave' => $pedido->chave . '-cancelado', 'xml' => $pedido->xmlCancelado->xml]);
+            }
+            if ($pedido->xmlCce) {
+                $archives->push((object) ['chave' => $pedido->chave . '-cce', 'xml' => $pedido->xmlCce->xml]);
+            }
         }
-        return redirect('/notas')->with('alert', 'Não foram encontradas notas para o período solicitado.');
+
+        if ($archives->isEmpty()) {
+            return redirect('/notas')->with('alert', 'Não foram encontradas notas para o período solicitado.');
+        }
+
+        $zipPath = ZipArchiveUtil::zip($archives, $company->id);
+        if (!$zipPath) {
+            return redirect('/notas')->with('alert', 'Não foi possível gerar o arquivo ZIP.');
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
 public function enviarXmlsContador(Request $request)
@@ -136,55 +147,35 @@ public function enviarXmlsContador(Request $request)
         ]);
 
         $company = Auth::user()->empresa;
-        
-        // Monta os caminhos conforme sua estrutura confirmada
         $ano = date('Y', strtotime($request->month));
         $mes = date('m', strtotime($request->month));
-        
-        // Caminho absoluto para a pasta do mês
-        $folderPath = public_path($company->fantasia . '/' . $ano . '/' . $mes);
 
-        if (!file_exists($folderPath)) {
-            return back()->with('warning', "A pasta do período {$mes}/{$ano} não foi encontrada no servidor.");
+        $pedidos = Pedido::where('empresa_id', $company->id)
+            ->where('chave', '!=', '')
+            ->whereYear('data', $ano)
+            ->whereMonth('data', $mes)
+            ->with('xmlAutorizado')
+            ->get()
+            ->filter(fn ($p) => $p->xmlAutorizado);
+
+        if ($pedidos->isEmpty()) {
+            return back()->with('warning', "Nenhuma nota autorizada encontrada para o período {$mes}/{$ano}.");
         }
 
-        // Nome do arquivo ZIP temporário
-        $zipName = 'XMLs_' . $company->fantasia . '_' . $mes . '_' . $ano . '.zip';
-        $zipPath = public_path($zipName);
+        $archives = $pedidos->map(fn ($p) => (object) [
+            'chave' => $p->chave,
+            'xml' => $p->xmlAutorizado->xml,
+        ]);
 
-        $zip = new \ZipArchive;
-        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
-            
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($folderPath),
-                \RecursiveIteratorIterator::LEAVES_ONLY
-            );
-
-            $hasFiles = false;
-            foreach ($files as $name => $file) {
-                if (!$file->isDir()) {
-                    $filePath = $file->getRealPath();
-                    $relativePath = basename($filePath);
-                    $zip->addFile($filePath, $relativePath);
-                    $hasFiles = true;
-                }
-            }
-            $zip->close();
-
-            if (!$hasFiles) {
-                unlink($zipPath);
-                return back()->with('warning', 'A pasta existe, mas não contém arquivos XML.');
-            }
+        $zipPath = ZipArchiveUtil::zip($archives, $company->id);
+        if (!$zipPath) {
+            return back()->with('warning', 'Não foi possível gerar o arquivo ZIP.');
         }
 
-        // ENVIO: O e-mail destino é o $request->accountant (o que você digitou no modal)
-        \Illuminate\Support\Facades\Mail::to($request->accountant)
-            ->send(new \App\Mail\EmailXmlContador($company, $zipPath, $request->month));
+        Mail::to($request->accountant)
+            ->send(new EmailXmlContador($company, $zipPath, $request->month));
 
-        // Deleta o zip após enviar
-        if (file_exists($zipPath)) {
-            unlink($zipPath);
-        }
+        ZipArchiveUtil::deleteArchive($zipPath);
 
         return back()->with('success', 'E-mail enviado com sucesso para: ' . $request->accountant);
 
