@@ -16,6 +16,7 @@ use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NotasFiscaisController;
+use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PedidosController;
 use App\Http\Controllers\PixController;
 use App\Http\Controllers\PlanoController;
@@ -76,13 +77,13 @@ Route::middleware(['check.subscription'])->group(function () {
 
     // EMPRESA
     Route::prefix('empresa')->group(function () {
-        Route::get('', [EmpresasController::class, 'index'])->name('empresa.index')->middleware(['auth']);
+        Route::get('', [EmpresasController::class, 'index'])->name('empresa.index')->middleware(['auth', 'can:menu-administracao']);
         Route::get('/todas', [EmpresasController::class, 'show'])->name('empresa.show')->middleware(['auth', 'access.permission:master']);
         Route::get('/ver/{id}', [EmpresasController::class, 'view'])->name('empresa.view')->middleware(['auth', 'access.permission:master']);
         Route::get('/status/{id}', [EmpresasController::class, 'desativarReativar'])->name('desativarReativar_empresa')->middleware(['auth', 'access.permission:master']);
         Route::get('/cadastro', [EmpresasController::class, 'cadastrar'])->name('empresa.create')->middleware(['auth', 'access.permission:master']);
-        Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware(['auth']);
-        Route::put('/salvar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware(['auth']);
+        Route::get('/editar/{id}', [EmpresasController::class, 'editar'])->name('editar_empresa')->middleware(['auth', 'can:menu-administracao']);
+        Route::put('/salvar/{id}', [EmpresasController::class, 'update'])->name('update_empresa')->middleware(['auth', 'can:menu-administracao']);
         Route::post('/cadastrar', [EmpresasController::class, 'store'])->name('salvar_empresa')->middleware(['auth', 'access.permission:master']);
     });
 
@@ -194,11 +195,11 @@ Route::middleware(['check.subscription'])->group(function () {
 
     // RELATORIOS
     Route::prefix('relatorios')->group(function () {
-        Route::get('', [RelatoriosController::class, 'show'])->middleware('auth');
-        Route::post('', [RelatoriosController::class, 'relatorio'])->name('relatorio')->middleware('auth');
+        Route::get('', [RelatoriosController::class, 'show'])->middleware(['auth', 'can:menu-administracao']);
+        Route::post('', [RelatoriosController::class, 'relatorio'])->name('relatorio')->middleware(['auth', 'can:menu-administracao']);
         Route::get('/mdfe', [RelatoriosController::class, 'indexMDFe'])->name('relatorio.indexMDFe')->middleware('auth');
-        Route::post('/relatorio-pdf', [RelatoriosController::class, 'gerarPdf'])->name('relatorio-pdf')->middleware('auth');
-        Route::get('/dashboard-data', [RelatoriosController::class, 'dashboardData'])->name('relatorios.dashboard-data')->middleware('auth');
+        Route::post('/relatorio-pdf', [RelatoriosController::class, 'gerarPdf'])->name('relatorio-pdf')->middleware(['auth', 'can:menu-administracao']);
+        Route::get('/dashboard-data', [RelatoriosController::class, 'dashboardData'])->name('relatorios.dashboard-data')->middleware(['auth', 'can:menu-administracao']);
     });
 
     // MDFe
@@ -261,13 +262,22 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::delete('/cancelar', [CupomController::class, 'destroyCoupon'])->name('cupom.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCe|client-advanced2']);
     });
 
-    Route::resource('contas', PlanoDeContaController::class)->middleware(['auth']);
-    Route::resource('fluxo-caixa', FluxoDeCaixaController::class)->middleware(['auth']);
-    Route::get('/rel/fluxo-caixa', [FluxoDeCaixaController::class, 'telaRrelatorio'])->name('rel');
-    Route::get('/relatorio/fluxo-caixa', [FluxoDeCaixaController::class, 'gerarRelatorio'])->name('fluxo_caixa.gerarRelatorio');
-    Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth']);
-    Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth']);
-    Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth']);
+    Route::resource('contas', PlanoDeContaController::class)->middleware(['auth', 'can:menu-administracao']);
+    Route::resource('fluxo-caixa', FluxoDeCaixaController::class)->middleware(['auth', 'can:menu-administracao']);
+    Route::get('/rel/fluxo-caixa', [FluxoDeCaixaController::class, 'telaRrelatorio'])->name('rel')->middleware(['auth', 'can:menu-administracao']);
+    Route::get('/relatorio/fluxo-caixa', [FluxoDeCaixaController::class, 'gerarRelatorio'])->name('fluxo_caixa.gerarRelatorio')->middleware(['auth', 'can:menu-administracao']);
+    Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth', 'can:menu-administracao']);
+    Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth', 'can:menu-administracao']);
+    Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth', 'can:menu-administracao']);
+
+    Route::prefix('notificacoes')->middleware(['auth'])->group(function () {
+        Route::get('/central', [NotificacaoController::class, 'index'])->name('notificacoes.index')->middleware('access.permission:master');
+        Route::post('/central', [NotificacaoController::class, 'store'])->name('notificacoes.store')->middleware('access.permission:master');
+        Route::get('/minhas', [NotificacaoController::class, 'minhas'])->name('notificacoes.minhas');
+        Route::get('/widget', [NotificacaoController::class, 'widget'])->name('notificacoes.widget');
+        Route::post('/{id}/marcar-lida', [NotificacaoController::class, 'marcarLida'])->name('notificacoes.marcarLida');
+        Route::post('/marcar-todas-lidas', [NotificacaoController::class, 'marcarTodasLidas'])->name('notificacoes.marcarTodasLidas');
+    });
 
 });
 // PIX
@@ -286,13 +296,13 @@ Route::get('/pagamento/sucesso', function (Request $req) {
 })->name('pix.sucesso');
 
 // FATURAS
-Route::prefix('faturas')->group(function () {
+Route::prefix('faturas')->middleware(['auth', 'can:menu-administracao'])->group(function () {
     Route::get('', [FaturaController::class, 'index'])->name('faturas.index');
     Route::get('/historico-pagamentos', [FaturaController::class, 'paymentHistory'])->name('faturas.paymentHistory');
     Route::get('/metodos-pagamentos', [FaturaController::class, 'paymentMethods'])->name('faturas.paymentMethods');
 });
 
-Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index');
+Route::get('/log', [TransactionLogController::class, 'index'])->name('log.index')->middleware(['auth', 'can:menu-administracao']);
 
 Route::post('/clientes/check-cpf', [ClientesController::class, 'checkCpfCnpj'])->name('cliente.checkCpfCnpj');
 

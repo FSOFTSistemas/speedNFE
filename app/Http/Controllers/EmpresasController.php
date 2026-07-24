@@ -59,6 +59,10 @@ class EmpresasController extends Controller
 
     public function editar($id)
     {
+        if (Auth::user()->cargo !== 'master' && (int) $id !== (int) Auth::user()->empresa_id) {
+            abort(403);
+        }
+
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
             return view('empresas.edit', ['empresa' => $empresa, 'user' => Auth::user()]);
@@ -89,6 +93,10 @@ class EmpresasController extends Controller
 
     public function update($id, Request $request)
     {
+        if (Auth::user()->cargo !== 'master' && (int) $id !== (int) Auth::user()->empresa_id) {
+            abort(403);
+        }
+
         try {
             $request->validate([
                 'nome' => 'required|max:255',

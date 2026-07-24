@@ -296,6 +296,17 @@ return [
             'icon'        => 'fas fa-home',
         ],
         [
+            'id'              => 'notificacoes-widget',
+            'icon'            => 'far fa-bell',
+            'type'            => 'navbar-notification',
+            'topnav_right'    => true,
+            'url'             => '/notificacoes/minhas',
+            'label_color'     => 'danger',
+            'dropdown_mode'   => true,
+            'dropdown_flabel' => 'Ver todas as notificações',
+            'update_cfg'      => ['url' => '/notificacoes/widget', 'period' => 20],
+        ],
+        [
             'text'        => 'Cliente',
             'url'         => '/cliente',
             'icon'        => 'fas fa-solid fa-user',
@@ -347,13 +358,13 @@ return [
         [
             'text'        => 'Relatórios',
             'icon'        => 'fas fa-chart-area',
-            'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
+            'can'         => 'menu-administracao',
             'submenu' => [
                 [
                     'text'        => ' NFe',
                     'url'         => '/relatorios',
                     'icon'        => 'far fa-file-alt',
-                    'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
+                    'can'         => 'menu-administracao',
                     'shift' => 'ml-2'
                 ],
             ],
@@ -421,62 +432,79 @@ return [
             ],
         ],
         [
-            'text'  => 'Log',
-            'url'   => '/log',
-            'icon'  => 'fas fa-clipboard-list',
+            'text' => 'Central de Notificações',
+            'url'  => '/notificacoes/central',
+            'icon' => 'far fa-bell',
+            'can'  => ['master'],
         ],
         [
-            'text'  => 'Fluxo de Caixa',
-            'icon'  => 'fas fa-cash-register',
+            'text'    => 'Administração',
+            'icon'    => 'fas fa-user-shield',
+            'can'     => 'menu-administracao',
             'submenu' => [
                 [
-                    'text'        => 'Caixa',
-                    'url'         => '/fluxo-caixa',
-                    'icon'        => 'fas fa-cash-register',
-                    'shift'       => 'ml-2'
+                    'text'  => 'Configurações',
+                    'url'   => '/empresa',
+                    'icon'  => 'fas fa-cogs',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'Relatórios',
-                    'url'         => '/rel/fluxo-caixa',
-                    'icon'        => 'fas fa-file-contract',
-                    'shift'       => 'ml-2'
+                    'text'    => 'Fluxo de Caixa',
+                    'icon'    => 'fas fa-cash-register',
+                    'shift'   => 'ml-2',
+                    'submenu' => [
+                        [
+                            'text'        => 'Caixa',
+                            'url'         => '/fluxo-caixa',
+                            'icon'        => 'fas fa-cash-register',
+                            'shift'       => 'ml-4'
+                        ],
+                        [
+                            'text'        => 'Relatórios',
+                            'url'         => '/rel/fluxo-caixa',
+                            'icon'        => 'fas fa-file-contract',
+                            'shift'       => 'ml-4'
+                        ],
+                        [
+                            'text'        => 'DRE',
+                            'url'         => '/dre',
+                            'icon'        => 'fas fa-file-contract',
+                            'shift'       => 'ml-4'
+                        ],
+                    ],
                 ],
                 [
-                    'text'        => 'DRE',
-                    'url'         => '/dre',
-                    'icon'        => 'fas fa-file-contract',
-                    'shift'       => 'ml-2'
+                    'text'        => 'Faturas',
+                    'icon'        => 'fas fa-file-invoice',
+                    'shift'       => 'ml-2',
+                    'can'    => 'menu-faturas',
+                    'submenu' => [
+                        [
+                            'text'        => 'Assinatura',
+                            'url'         => '/faturas',
+                            'icon'        => 'fas fa-file-contract',
+                            'shift' => 'ml-4'
+                        ],
+                        // [
+                        //     'text'        => 'Histórico de pagamentos',
+                        //     'url'         => '/faturas/historico-pagamentos',
+                        //     'icon'        => 'fas fa-history',
+                        //     'shift' => 'ml-4'
+                        // ],
+                        // [
+                        //     'text'        => 'Formas de pagamentos',
+                        //     'url'         => '/faturas/metodos-pagamentos',
+                        //     'icon'        => 'fas fa-money-check-alt',
+                        //     'shift' => 'ml-4'
+                        // ]
+                    ],
                 ],
-            ],
-        ],
-        [
-            'text'        => 'Configurações',
-            'url'         => '/empresa',
-            'icon'        => 'fas fa-cogs',
-        ],
-        [
-            'text'        => 'Faturas',
-            'icon'        => 'fas fa-file-invoice',
-            'can'    => 'menu-faturas',
-            'submenu' => [
                 [
-                    'text'        => 'Assinatura',
-                    'url'         => '/faturas',
-                    'icon'        => 'fas fa-file-contract',
-                    'shift' => 'ml-2'
+                    'text'  => 'Auditoria',
+                    'url'   => '/log',
+                    'icon'  => 'fas fa-clipboard-list',
+                    'shift' => 'ml-2',
                 ],
-                // [
-                //     'text'        => 'Histórico de pagamentos',
-                //     'url'         => '/faturas/historico-pagamentos',
-                //     'icon'        => 'fas fa-history',
-                //     'shift' => 'ml-2'
-                // ],
-                // [
-                //     'text'        => 'Formas de pagamentos',
-                //     'url'         => '/faturas/metodos-pagamentos',
-                //     'icon'        => 'fas fa-money-check-alt',
-                //     'shift' => 'ml-2'
-                // ]
             ],
         ],
     ],
