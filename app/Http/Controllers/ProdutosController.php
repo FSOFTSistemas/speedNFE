@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Categoria;
 use App\Models\CstIbsCbs; // Importante para a Reforma Tributária
 use App\Services\CategoriasService;
 use App\Services\EmpresasService;
@@ -179,7 +178,7 @@ class ProdutosController extends Controller
 
             $empresa = $this->empresaServices->buscarEmpresa($user->empresa_id);
             $empresas = $this->empresaServices->todos($user->empresa_id);
-            $categorias = Categoria::all();
+            $categorias = $this->categoriaServices->todasCategoriasEmpresa($user->empresa_id);
             $cfops = $this->pedidoServices->cfopAll();
             $ncms = $this->pedidoServices->ncmAll();
             $csts = CstIbsCbs::orderBy('codigo')->get();
@@ -213,7 +212,7 @@ class ProdutosController extends Controller
             ];
 
             $produtos = $this->produtoServices->todos($user->empresa_id, $filtros);
-            $categorias = (new CategoriasService())->todasCategoriasEmpresa($user->empresa_id);
+            $categorias = $this->categoriaServices->todasCategoriasEmpresa($user->empresa_id);
 
             return view('produtos.todos', [
                 'produtos' => $produtos,
@@ -233,10 +232,10 @@ class ProdutosController extends Controller
             $user = Auth::user();
             $empresa = $this->empresaServices->buscarEmpresa($user->empresa_id);
             $empresas = $this->empresaServices->todos($user->empresa_id);
-            $categorias = Categoria::all();
+            $categorias = $this->categoriaServices->todasCategoriasEmpresa($user->empresa_id);
             $cfops = $this->pedidoServices->cfopAll();
             $ncms = $this->pedidoServices->ncmAll();
-            $csts = CstIbsCbs::orderBy('codigo')->get(); 
+            $csts = CstIbsCbs::orderBy('codigo')->get();
 
             return view('produtos.new', [
                 'user' => $user, 
