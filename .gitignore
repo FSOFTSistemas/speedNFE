@@ -4,6 +4,8 @@
 /public/*
 !/public/docs/
 !/public/docs/**
+!/public/css/
+!/public/css/**
 /public/storage
 /storage/*.key
 /vendor
