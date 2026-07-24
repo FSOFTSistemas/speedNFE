@@ -60,9 +60,6 @@ trait EnviaNFCe
             $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
             $cupomService->updateCoupon($cupom);
             NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
-            foreach ($cupom->itens as $item) {
-                $estoqueService->out($item->produto_id, $item->qtde);
-            }
             DB::commit();
 
             // SUCESSO: Retorna um objeto de sucesso

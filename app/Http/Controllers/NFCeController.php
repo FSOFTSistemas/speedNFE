@@ -259,9 +259,6 @@ class NFCeController extends Controller
                     $resultXml = $nfceService->generateXml($coupon, $coupon->empresa);
                     $this->cupomService->updateCoupon($coupon);
                     NFCeService::createNFCe($resultXml, $coupon->id, $coupon->empresa);
-                    foreach ($coupon->itens as $item) {
-                        $this->estoqueService->out($item->produto_id, $item->qtde);
-                    }
                 } catch (Exception $e) {
                     $this->cupomService->rejectedCoupon($coupon->id);
                     array_push($errorsCaught, 'Cupom: ' . $coupon->nroCupom . ' - ' . $e->getMessage());

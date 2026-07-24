@@ -100,6 +100,9 @@ public function index(Request $request)
             $cupomId = $this->cupomService->createCupom($this->empresaServices->incrementCupomSequence(Auth::user()->empresa_id), $request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->troco, $request->cliente['id'], Auth::user()->empresa_id);
             $this->itemCupomService->createItemsCupom($request->itens, $cupomId);
             $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
+            foreach ($request->itens as $item) {
+                $this->estoqueService->out($item['prodId'], $item['qtde']);
+            }
             DB::commit();
 
             // --- INÍCIO DA NOVA LÓGICA ---
@@ -148,6 +151,10 @@ public function index(Request $request)
     {
         try {
             DB::beginTransaction();
+            $coupon = $this->cupomService->getCupom($request->couponId);
+            foreach ($coupon->itens as $item) {
+                $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
+            }
             $this->cupomService->cancelCoupon($request->couponId);
             DB::commit();
             return redirect()->route('cupom.index')->with('success','Venda cancelada com sucesso!');

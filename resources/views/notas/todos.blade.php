@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@php
+    $ehRamoMotos = optional(Auth::user()->empresa)->ramo_atividade === 'motos';
+@endphp
+
 @section('title', 'Notas Fiscais')
 
 @push('css')
@@ -180,11 +184,13 @@
                     <input type="text" class="form-control" id="cliente" name="cliente"
                         placeholder="Nome ou CPF/CNPJ" value="{{ request()->get('cliente') }}">
                 </div>
-                <div class="col-6 col-md-2 mb-2">
-                    <label for="chassi" class="form-label">Chassi</label>
-                    <input type="text" class="form-control" id="chassi" name="chassi"
-                        placeholder="Chassi" value="{{ request()->get('chassi') }}">
-                </div>
+                @if ($ehRamoMotos)
+                    <div class="col-6 col-md-2 mb-2">
+                        <label for="chassi" class="form-label">Chassi</label>
+                        <input type="text" class="form-control" id="chassi" name="chassi"
+                            placeholder="Chassi" value="{{ request()->get('chassi') }}">
+                    </div>
+                @endif
                 <div class="col-6 col-md-2 mb-2">
                     <label for="estado" class="form-label">Situação</label>
                     <select class="form-control" id="estado" name="estado">
