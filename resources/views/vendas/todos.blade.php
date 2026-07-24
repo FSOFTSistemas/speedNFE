@@ -114,44 +114,6 @@
 
 @section('content')
     @php
-        $totalNotas = $pedidos->count();
-        $valorTotal = $pedidos->sum('total');
-        $totalAutorizadas = $pedidos->where('estado', 'Autorizado')->count();
-        $totalPendentes = $pedidos->where('estado', 'Pendente')->count();
-    @endphp
-
-    <div class="stat-grid">
-        <div class="stat-card">
-            <div class="stat-icon bg-primary-soft"><i class="fas fa-file-invoice"></i></div>
-            <div>
-                <div class="stat-value">{{ $totalNotas }}</div>
-                <div class="stat-label">Notas no período</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon bg-info-soft"><i class="fas fa-money-bill-wave"></i></div>
-            <div>
-                <div class="stat-value">R$ {{ number_format($valorTotal, 2, ',', '.') }}</div>
-                <div class="stat-label">Valor total</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon bg-success-soft"><i class="fas fa-check-circle"></i></div>
-            <div>
-                <div class="stat-value">{{ $totalAutorizadas }}</div>
-                <div class="stat-label">Autorizadas</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon bg-warning-soft"><i class="fas fa-hourglass-half"></i></div>
-            <div>
-                <div class="stat-value">{{ $totalPendentes }}</div>
-                <div class="stat-label">Pendentes</div>
-            </div>
-        </div>
-    </div>
-
-    @php
         $filtrosAtivos = request()->hasAny(['data_inicio', 'data_fim', 'cliente', 'chassi', 'estado']);
     @endphp
     <div class="card card-main mb-4 filter-toolbar">

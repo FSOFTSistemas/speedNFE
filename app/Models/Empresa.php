@@ -39,6 +39,15 @@ class Empresa extends Model
 		'crt'
 	];
 
+	protected $casts = [
+		'senhaCertificado' => 'encrypted',
+	];
+
+	protected $hidden = [
+		'senhaCertificado',
+		'certificado',
+	];
+
 	public function endereco()
 	{
 		return $this->hasOne(Endereco::class, 'id', 'endereco_id');

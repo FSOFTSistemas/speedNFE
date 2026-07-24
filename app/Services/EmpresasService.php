@@ -13,7 +13,7 @@ class EmpresasService
     {
         $empresa = Empresa::find($id);
         if ($request->hasFile('certificado')) {
-            $path = $request->certificado->storeAs('public/certificados', $request->nome . '.pfx');
+            $path = $request->certificado->storeAs('certificados', $request->nome . '.pfx');
             if ($request->senha != '') {
                 $empresa->update([
                     'razao' => $request->nome,
@@ -179,8 +179,8 @@ class EmpresasService
 
     public function storeCertificate($certificado, $nome, $senha)
     {
-        $path = $certificado->storeAs('public/certificados', $nome . '.pfx');
-        $content = file_get_contents('../storage/app/public/certificados/' . $nome . '.pfx');
+        $path = $certificado->storeAs('certificados', $nome . '.pfx');
+        $content = file_get_contents(storage_path('app/certificados/' . $nome . '.pfx'));
         Certificate::readPfx($content, $senha);
         return $path;
     }

@@ -20,7 +20,7 @@ class MDFeService
 
     public function __construct($config, $emitente)
     {
-        $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
+        $certificado = file_get_contents(storage_path('app/certificados/' . $emitente->razao . '.pfx'));
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
     }
 
