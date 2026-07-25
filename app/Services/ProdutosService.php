@@ -698,11 +698,11 @@ class ProdutosService
             'cargaVeic' => $cargaVeic,
             'operVeic' => $operVeic,
             // --- RTC ---
-            'cClassTrib' => $cClassTrib,
-            'pIBS' => $pIBS,
-            'pCBS' => $pCBS,
+            'cClassTrib' => $cClassTrib ?: '000001',
+            'pIBS' => $pIBS ?? 0.1,
+            'pCBS' => $pCBS ?? 0.9,
             'pIS_imposto' => $pIS_imposto,
-            'cst_ibs_cbs' => $cst_ibs_cbs,
+            'cst_ibs_cbs' => $cst_ibs_cbs ?: '000',
         ]);
     }
 
@@ -726,7 +726,7 @@ class ProdutosService
             ->join('empresas', 'empresas.id', '=', 'produtos.empresa_id')
             ->where('produtos.empresa_id', 'like', $id);
 
-        if (!empty($filtros['busca'])) {
+        if (! empty($filtros['busca'])) {
             $busca = $filtros['busca'];
             $query->where(function ($q) use ($busca) {
                 $q->where('produtos.produto', 'like', "%{$busca}%")
@@ -734,12 +734,12 @@ class ProdutosService
             });
         }
 
-        if (!empty($filtros['categoria_id'])) {
+        if (! empty($filtros['categoria_id'])) {
             $query->where('produtos.categoria_id', $filtros['categoria_id']);
         }
 
-        if (!empty($filtros['chassi'])) {
-            $query->where('produtos.chassiVeic', 'like', '%' . $filtros['chassi'] . '%');
+        if (! empty($filtros['chassi'])) {
+            $query->where('produtos.chassiVeic', 'like', '%'.$filtros['chassi'].'%');
         }
 
         return $query->get();

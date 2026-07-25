@@ -374,13 +374,17 @@
         <i class="fas fa-balance-scale mr-2"></i> Reforma Tributária (IBS / CBS - A partir de 2026)
     </div>
 
+    @php
+        $cstIbsCbsPadrao = old('cst_ibs_cbs', $produto->cst_ibs_cbs ?? '000');
+    @endphp
+
     <div class="row">
         <div class="col-md-6 mb-3">
             <label for="cst_ibs_cbs" class="form-label">CST IBS/CBS</label>
             <select class="form-select select2-basic" name="cst_ibs_cbs" id="cst_ibs_cbs" onchange="limparCClass()">
-                <option value="" disabled selected>Selecione...</option>
+                <option value="" disabled @if ($cstIbsCbsPadrao === '') selected @endif>Selecione...</option>
                 @foreach ($csts as $cst)
-                    <option value="{{ $cst->codigo }}" @if (old('cst_ibs_cbs', $produto->cst_ibs_cbs ?? '') == $cst->codigo) selected @endif>
+                    <option value="{{ $cst->codigo }}" @if ($cstIbsCbsPadrao == $cst->codigo) selected @endif>
                         {{ $cst->codigo }} - {{ Str::limit($cst->descricao, 80) }}
                     </option>
                 @endforeach
@@ -390,7 +394,7 @@
             <label for="cClassTrib" class="form-label">Classificação Tributária (cClassTrib)</label>
             <div class="input-group">
                 <input type="text" class="form-control" name="cClassTrib" id="cClassTrib" 
-                       value="{{ old('cClassTrib', $produto->cClassTrib ?? '') }}" placeholder="Selecione um CST primeiro..." required readonly>
+                       value="{{ old('cClassTrib', $produto->cClassTrib ?? '000001') }}" placeholder="Selecione um CST primeiro..." required readonly>
                 <div class="input-group-append">
                     <button title="Buscar Classificação" class="btn btn-primary custom-btn-primary" type="button" 
                             onclick="abrirModalCClass()">
@@ -405,11 +409,11 @@
     <div class="row">
         <div class="col-md-4 mb-3">
             <label for="pIBS" class="form-label">Alíquota IBS (%)</label>
-            <input class="form-control" type="number" step="0.01" name="pIBS" id="pIBS" value="{{ old('pIBS', $produto->pIBS ?? '') }}" placeholder="Ex: 12.00">
+            <input class="form-control" type="number" step="0.01" name="pIBS" id="pIBS" value="{{ old('pIBS', $produto->pIBS ?? '0.10') }}" placeholder="Ex: 0.10">
         </div>
         <div class="col-md-4 mb-3">
             <label for="pCBS" class="form-label">Alíquota CBS (%)</label>
-            <input class="form-control" type="number" step="0.01" name="pCBS" id="pCBS" value="{{ old('pCBS', $produto->pCBS ?? '') }}" placeholder="Ex: 8.00">
+            <input class="form-control" type="number" step="0.01" name="pCBS" id="pCBS" value="{{ old('pCBS', $produto->pCBS ?? '0.90') }}" placeholder="Ex: 0.90">
         </div>
         <div class="col-md-4 mb-3">
             <label for="pIS_imposto" class="form-label">Alíq. Imposto Seletivo (%)</label>

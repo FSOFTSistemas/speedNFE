@@ -16,7 +16,7 @@ class NFeErroUtil
      * SEFAZ em uma mensagem legível, com uma dica de qual parte da venda
      * (cliente, empresa, endereço ou produto) provavelmente está envolvida.
      *
-     * @param string|array $erro
+     * @param  string|array  $erro
      */
     public static function formatar($erro): string
     {
@@ -28,19 +28,34 @@ class NFeErroUtil
             return 'Ocorreu um erro ao processar a nota. Tente novamente.';
         }
 
-        $texto = implode(PHP_EOL, array_map(fn ($mensagem) => '• ' . $mensagem, $mensagens));
+        $mensagensFormatadas = array_map(function ($mensagem) {
+            return RejeicoesSefazUtil::formatarMensagemAmigavel($mensagem) ?? '• '.$mensagem;
+        }, $mensagens);
+
+        $texto = implode(PHP_EOL.PHP_EOL, $mensagensFormatadas);
 
         $categorias = self::identificarCategorias(implode(' ', $mensagens));
-        if (!empty($categorias)) {
-            $texto = 'Possível problema em: ' . implode(', ', $categorias) . '.' . PHP_EOL . PHP_EOL . $texto;
+        if (! empty($categorias) && ! self::possuiRejeicaoSefaz($mensagens)) {
+            $texto = 'Possível problema em: '.implode(', ', $categorias).'.'.PHP_EOL.PHP_EOL.$texto;
         }
 
         return $texto;
     }
 
+    private static function possuiRejeicaoSefaz(array $mensagens): bool
+    {
+        foreach ($mensagens as $mensagem) {
+            if (RejeicoesSefazUtil::porCodigo(RejeicoesSefazUtil::extrairCodigo($mensagem)) !== null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static function identificarCategorias(string $texto): array
     {
-        $textoBusca = ' ' . mb_strtolower($texto) . ' ';
+        $textoBusca = ' '.mb_strtolower($texto).' ';
         $encontradas = [];
 
         foreach (self::CATEGORIAS as $categoria => $palavrasChave) {
