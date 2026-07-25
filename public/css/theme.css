@@ -367,3 +367,216 @@ body {
         white-space: normal;
     }
 }
+
+/* ---------- Central de Ajuda ---------- */
+.help-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+    border-radius: 16px;
+    padding: 48px 32px;
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.help-hero h1 {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.help-hero p {
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 24px;
+}
+
+.help-search-wrap {
+    position: relative;
+    max-width: 620px;
+    margin: 0 auto;
+}
+
+.help-search-wrap i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    font-size: 1.05rem;
+}
+
+.help-search-wrap .form-control {
+    height: 54px;
+    border-radius: 50px;
+    border: none;
+    padding-left: 52px;
+    font-size: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.help-category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.help-category-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 3px 14px var(--shadow-color);
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.help-category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px var(--shadow-color);
+    text-decoration: none;
+}
+
+.help-category-card .stat-icon {
+    margin-bottom: 14px;
+}
+
+.help-category-card h5 {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.help-category-card p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.help-category-card .help-category-count {
+    font-size: 0.75rem;
+    color: var(--info-color);
+    font-weight: 600;
+}
+
+.help-breadcrumb {
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+}
+
+.help-breadcrumb a {
+    color: var(--text-light);
+}
+
+.help-breadcrumb a:hover {
+    color: var(--info-color);
+}
+
+.help-breadcrumb .divider {
+    color: var(--text-light);
+    margin: 0 6px;
+}
+
+.help-article-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 4px;
+    border-bottom: 1px solid var(--border-color);
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: color 0.15s ease;
+}
+
+.help-article-list-item:last-child {
+    border-bottom: none;
+}
+
+.help-article-list-item:hover {
+    color: var(--info-color);
+    text-decoration: none;
+}
+
+.help-article-list-item .help-article-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.help-article-list-item .help-article-resumo {
+    font-size: 0.82rem;
+    color: var(--text-light);
+}
+
+.help-article-body h5 {
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-top: 22px;
+    margin-bottom: 10px;
+}
+
+.help-article-body p {
+    color: var(--text-dark);
+    line-height: 1.7;
+}
+
+.help-article-body ol,
+.help-article-body ul {
+    padding-left: 1.2rem;
+    line-height: 1.8;
+}
+
+.help-article-body li::marker {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.badge-codigo {
+    font-family: monospace;
+    font-size: 0.85rem !important;
+    background: rgba(0, 3, 58, 0.08);
+    color: var(--primary-color);
+}
+
+.help-feedback {
+    border-top: 1px solid var(--border-color);
+    margin-top: 32px;
+    padding-top: 24px;
+    text-align: center;
+}
+
+.help-feedback-btn {
+    border-radius: 50px;
+    padding: 8px 20px;
+    margin: 0 6px;
+    font-weight: 500;
+}
+
+.help-sidebar-nav-item {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: var(--text-dark);
+    font-size: 0.88rem;
+    text-decoration: none;
+    margin-bottom: 2px;
+}
+
+.help-sidebar-nav-item:hover {
+    background-color: #f4f5f9;
+    text-decoration: none;
+    color: var(--info-color);
+}
+
+.help-sidebar-nav-item.active {
+    background-color: rgba(23, 162, 184, 0.12);
+    color: var(--info-color);
+    font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+    .help-hero {
+        padding: 32px 18px;
+    }
+
+    .help-category-grid {
+        grid-template-columns: 1fr;
+    }
+}

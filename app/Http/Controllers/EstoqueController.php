@@ -18,10 +18,25 @@ class EstoqueController extends Controller
         $this->estoqueService = $estoqueService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
             $stocks = $this->estoqueService->getCompanyStocks(Auth::user()->empresa_id);
+
+            if ($request->filled('chassi')) {
+                $chassi = mb_strtolower($request->input('chassi'));
+                $stocks = $stocks->filter(function ($estoque) use ($chassi) {
+                    return str_contains(mb_strtolower(optional($estoque->produto)->chassiVeic ?? ''), $chassi);
+                });
+            }
+
+            if ($request->filled('modelo')) {
+                $modelo = mb_strtolower($request->input('modelo'));
+                $stocks = $stocks->filter(function ($estoque) use ($modelo) {
+                    return str_contains(mb_strtolower(optional($estoque->produto)->produto ?? ''), $modelo);
+                });
+            }
+
             return view("estoques.index", ["estoques" => $stocks]);
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());

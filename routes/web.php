@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AjudaController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\CupomController;
@@ -269,6 +270,13 @@ Route::middleware(['check.subscription'])->group(function () {
     Route::get('/dre', [DRE::class, 'index'])->name('dre.index')->middleware(['auth', 'can:menu-administracao']);
     Route::post('/dre', [DRE::class, 'index'])->name('dre.filtrar')->middleware(['auth', 'can:menu-administracao']);
     Route::get('/dre-pdf', [DRE::class, 'gerarPDF'])->name('dre.pdf')->middleware(['auth', 'can:menu-administracao']);
+
+    // AJUDA / TUTORIAIS
+    Route::prefix('ajuda')->name('ajuda.')->middleware('auth')->group(function () {
+        Route::get('/', [AjudaController::class, 'index'])->name('index');
+        Route::get('/categoria/{categoria}', [AjudaController::class, 'categoria'])->name('categoria');
+        Route::get('/artigo/{artigo}', [AjudaController::class, 'artigo'])->name('artigo');
+    });
 
     Route::prefix('notificacoes')->middleware(['auth'])->group(function () {
         Route::get('/central', [NotificacaoController::class, 'index'])->name('notificacoes.index')->middleware('access.permission:master');

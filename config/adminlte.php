@@ -432,6 +432,11 @@ return [
             ],
         ],
         [
+            'text' => 'Central de Ajuda',
+            'url'  => '/ajuda',
+            'icon' => 'fas fa-graduation-cap',
+        ],
+        [
             'text' => 'Central de Notificações',
             'url'  => '/notificacoes/central',
             'icon' => 'far fa-bell',

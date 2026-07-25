@@ -115,6 +115,9 @@
                     <tr>
                         <th style="width: 10px;"></th>
                         <th>{{ $ehRamoMotos ? 'MODELOS' : 'PRODUTO' }}</th>
+                        @if ($ehRamoMotos)
+                            <th class="d-none d-md-table-cell">CHASSI</th>
+                        @endif
                         <th class="d-none d-md-table-cell">PREÇO CUSTO</th>
                         <th class="d-none d-lg-table-cell">PREÇO VENDA</th>
                         <th class="d-none d-lg-table-cell">CATEGORIA</th>
@@ -127,6 +130,9 @@
                         <tr>
                             <td></td>
                             <td class="product-name text-left">{{ $produto->produto }}</td>
+                            @if ($ehRamoMotos)
+                                <td class="d-none d-md-table-cell">{{ $produto->chassiVeic ?? '-' }}</td>
+                            @endif
                             <td class="d-none d-md-table-cell">R$ {{ number_format($produto->precocusto, 2, ',', '.') }}</td>
                             <td class="d-none d-lg-table-cell">R$ {{ number_format($produto->precovenda, 2, ',', '.') }}</td>
                             <td class="d-none d-lg-table-cell">{{ $produto->descricao }}</td>

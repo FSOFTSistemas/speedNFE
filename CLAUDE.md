@@ -36,6 +36,12 @@ php artisan route:list --path=api/v1   # inspect API routes
 Setup: copy `.env.example` to `.env`, then `php artisan key:generate`. API docs are served at
 `/api/documentation` (Swagger UI) and `/docs/openapi.yaml`.
 
+**Test DB caution**: `phpunit.xml` has its sqlite in-memory overrides commented out, and no test uses
+`RefreshDatabase`/`DatabaseTransactions`. This means `php artisan test` runs against whatever
+`DB_CONNECTION`/`DB_DATABASE` is set in `.env` — currently a real MySQL database, not an ephemeral one. Be
+careful about data-mutating tests; consider pointing `.env`'s DB vars at a disposable database before
+running the suite.
+
 ## Architecture
 
 ### Two parallel front ends over one domain layer
