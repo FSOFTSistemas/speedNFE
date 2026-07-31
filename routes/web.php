@@ -3,6 +3,7 @@
 use App\Http\Controllers\AjudaController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\ClientesController;
+use App\Http\Controllers\CTeController;
 use App\Http\Controllers\CupomController;
 use App\Http\Controllers\DRE;
 use App\Http\Controllers\EmpresasController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\ItensEntradaController;
 use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
+use App\Http\Controllers\NFComController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PedidosController;
@@ -25,6 +27,7 @@ use App\Http\Controllers\PlanoDeContaController;
 use App\Http\Controllers\ProdutosController;
 use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\RelatoriosController;
+use App\Http\Controllers\ServicosController;
 use App\Http\Controllers\TransactionLogController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VeiculoController;
@@ -218,6 +221,42 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('/cancelar-nota', [MDFEController::class, 'cancelarMDFe'])->name('mdfe.cancel')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
         Route::get('/{mdfeId}/{mode}/imprimir-nota', [MDFEController::class, 'imprimirMDFe'])->name('mdfe.print')->middleware(['auth', 'access.permission:master|admin|client-MDFe|client-advanced1|client-advanced3']);
         Route::get('/total-mes-mdfes', [MDFEController::class, 'totalMesMDFe'])->name('totalMesMDFe');
+    });
+
+    // NFCom
+    Route::prefix('nfcom')->group(function () {
+        Route::get('', [NFComController::class, 'index'])->name('nfcom.index')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::get('/emitir', [NFComController::class, 'create'])->name('nfcom.create')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::post('/emitir', [NFComController::class, 'store'])->name('nfcom.store')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::get('/{id}/editar', [NFComController::class, 'edit'])->name('nfcom.edit')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::put('/{id}/update', [NFComController::class, 'update'])->name('nfcom.update')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::delete('/deletar', [NFComController::class, 'delete'])->name('nfcom.delete')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::get('/{id}/visualizar', [NFComController::class, 'visualizar'])->name('nfcom.view')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::get('/{id}/download-xml', [NFComController::class, 'downloadXml'])->name('nfcom.downloadXml')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::get('/{id}/enviar-nota', [NFComController::class, 'enviarNFCom'])->name('nfcom.enviar')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::post('/cancelar-nota', [NFComController::class, 'cancelarNFCom'])->name('nfcom.cancel')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+    });
+
+    // Serviços (catálogo NFCom)
+    Route::prefix('servicos')->group(function () {
+        Route::get('', [ServicosController::class, 'index'])->name('servicos.index')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::post('', [ServicosController::class, 'store'])->name('servicos.store')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::put('/{id}', [ServicosController::class, 'update'])->name('servicos.update')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::delete('', [ServicosController::class, 'destroy'])->name('servicos.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+    });
+
+    // CTe
+    Route::prefix('ctes')->group(function () {
+        Route::get('', [CTeController::class, 'index'])->name('cte.index')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::get('/emitir', [CTeController::class, 'create'])->name('cte.create')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::post('/emitir', [CTeController::class, 'store'])->name('cte.store')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::get('/{id}/editar', [CTeController::class, 'edit'])->name('cte.edit')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::put('/{id}/update', [CTeController::class, 'update'])->name('cte.update')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::delete('/deletar', [CTeController::class, 'delete'])->name('cte.delete')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::get('/{id}/visualizar', [CTeController::class, 'visualizar'])->name('cte.view')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::get('/{id}/download-xml', [CTeController::class, 'downloadXml'])->name('cte.downloadXml')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::get('/{id}/enviar-nota', [CTeController::class, 'enviarCTe'])->name('cte.enviar')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
+        Route::post('/cancelar-nota', [CTeController::class, 'cancelarCTe'])->name('cte.cancel')->middleware(['auth', 'access.permission:master|admin|client-CTe|client-advanced3']);
     });
 
     // MOTORISTAS

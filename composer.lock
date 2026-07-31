@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afcf7939aab0cedc96793e9a31d0c36e",
+    "content-hash": "296b6fdb9c5e58d19e96640a9a97bcff",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -3117,6 +3117,81 @@
             "time": "2026-05-25T17:11:24+00:00"
         },
         {
+            "name": "nfephp-org/sped-cte",
+            "version": "v5.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nfephp-org/sped-cte.git",
+                "reference": "4f6ec80dd3bb0dafc1d4f23acdfd253e335013a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nfephp-org/sped-cte/zipball/4f6ec80dd3bb0dafc1d4f23acdfd253e335013a1",
+                "reference": "4f6ec80dd3bb0dafc1d4f23acdfd253e335013a1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-openssl": "*",
+                "ext-simplexml": "*",
+                "ext-soap": "*",
+                "ext-zlib": "*",
+                "justinrainbow/json-schema": "^5.2",
+                "nfephp-org/sped-common": "^5.0",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^5.7",
+                "scrutinizer/ocular": "^1.3",
+                "sebastian/phpcpd": "^3.0",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "v4.0": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NFePHP\\CTe\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later",
+                "GPL-3.0-or-later",
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roberto L. Machado",
+                    "email": "linux.rlm@gmail.com.br",
+                    "homepage": "http://www.nfephp.org",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Comunidade NFePHP",
+                    "homepage": "https://github.com/nfephp-org/sped-cte/graphs/contributors"
+                }
+            ],
+            "description": "API para geração e comunicação da CTe com as SEFAZ autorizadoras.",
+            "homepage": "https://github.com/nfephp-org/sped-cte",
+            "keywords": [
+                "cte",
+                "nfephp",
+                "sped"
+            ],
+            "support": {
+                "issues": "https://github.com/nfephp-org/sped-cte/issues",
+                "source": "https://github.com/nfephp-org/sped-cte/tree/v5.0.1"
+            },
+            "time": "2025-06-06T19:01:16+00:00"
+        },
+        {
             "name": "nfephp-org/sped-da",
             "version": "v1.1.6",
             "source": {
@@ -3356,6 +3431,96 @@
                 "source": "https://github.com/nfephp-org/sped-mdfe/tree/master"
             },
             "time": "2026-05-28T19:19:33+00:00"
+        },
+        {
+            "name": "nfephp-org/sped-nfcom",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nfephp-org/sped-nfcom.git",
+                "reference": "3bc64c2437170944b0d3dedefe9492b78707f97d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nfephp-org/sped-nfcom/zipball/3bc64c2437170944b0d3dedefe9492b78707f97d",
+                "reference": "3bc64c2437170944b0d3dedefe9492b78707f97d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-openssl": "*",
+                "ext-simplexml": "*",
+                "ext-soap": "*",
+                "ext-zlib": "*",
+                "justinrainbow/json-schema": "^5.2",
+                "nfephp-org/sped-common": "^5.1.0",
+                "php": ">= 7.4"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.3",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "v1.0": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NFePHP\\NFCom\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "NFePHP\\NFCom\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "phpcbf": [
+                    "vendor/bin/phpcbf src/"
+                ],
+                "phpcs": [
+                    "vendor/bin/phpcs src/"
+                ],
+                "stan": [
+                    "vendor/bin/phpstan analyse src/"
+                ]
+            },
+            "license": [
+                "LGPL-3.0-or-later",
+                "GPL-3.0-or-later",
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roberto L. Machado",
+                    "email": "linux.rlm@gmail.com.br",
+                    "homepage": "https://www.nfephp.com.br/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Comunidade NFePHP",
+                    "homepage": "https://github.com/nfephp-org/sped-nfe/graphs/contributors"
+                }
+            ],
+            "description": "Biblioteca para geração e operação com NFCom (modelo 62)",
+            "homepage": "https://github.com/nfephp-org/sped-nfcom",
+            "keywords": [
+                "nfcom",
+                "nfephp",
+                "sped"
+            ],
+            "support": {
+                "source": "https://github.com/nfephp-org/sped-nfcom/tree/main",
+                "issues": "https://github.com/nfephp-org/sped-nfcom/issues"
+            },
+            "time": "2026-07-06T12:31:01+00:00"
         },
         {
             "name": "nfephp-org/sped-nfe",
@@ -10585,7 +10750,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "nfephp-org/sped-mdfe": 20
+        "nfephp-org/sped-mdfe": 20,
+        "nfephp-org/sped-nfcom": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

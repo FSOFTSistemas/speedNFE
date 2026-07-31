@@ -82,14 +82,22 @@ Web routes use a custom `access.permission:role1|role2|...` middleware
 on `users`) against the pipe-separated role list — **not** the `spatie/laravel-permission` package's
 roles/permissions system, even though that package is installed and its tables exist. Known `cargo` values
 seen in routes: `master`, `admin`, `client-advanced1`, `client-advanced2`, `client-advanced3`, `client-NFe`,
-`client-NFCe`, `client-MDFe`. Web routes are further gated by a `check.subscription` middleware group.
+`client-NFCe`, `client-MDFe`, `client-NFCom`. Web routes are further gated by a `check.subscription`
+middleware group.
 
 ### Fiscal document integration
 
-NFe/NFCe/MDFe issuance goes through the `nfephp-org/sped-*` packages (`sped-nfe`, `sped-mdfe`, `sped-da` for
-DANFE PDFs), wrapped by `app/Services/NFeService.php`, `NFCeService.php`, `MDFeService.php`. Certificates are
-read per-company from `storage/app/public/certificados/{razao}.pfx` (PFX + password stored on the `Empresa`
-model). Treat changes to these services as fiscal-compliance-sensitive — they build the SEFAZ payloads.
+NFe/NFCe/MDFe/NFCom issuance goes through the `nfephp-org/sped-*` packages (`sped-nfe`, `sped-mdfe`,
+`sped-nfcom`, `sped-da` for DANFE PDFs), wrapped by `app/Services/NFeService.php`, `NFCeService.php`,
+`MDFeService.php`, `NFComService.php`. Certificates are read per-company from
+`storage/app/certificados/{razao}.pfx` (PFX + password stored on the `Empresa` model, field
+`senhaCertificado`). Treat changes to these services as fiscal-compliance-sensitive — they build the SEFAZ
+payloads.
+
+NFCom (telecom services electronic invoice) is the newest document type: `NFComController` /
+`NFComService` build and transmit the document from an `NFCom` header + `NFComItem` lines, gated by the
+`client-NFCom` role; the `Servico` model (`ServicosController`/`ServicosService`) is a per-company catalog
+of billable services used when building NFCom items.
 
 ### Other integrations
 

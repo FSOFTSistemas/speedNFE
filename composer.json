@@ -4,6 +4,9 @@
     "description": "The Laravel Framework.",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
+    "repositories": [
+        { "type": "vcs", "url": "https://github.com/nfephp-org/sped-nfcom" }
+    ],
     "require": {
         "php": "^8.0.2",
         "barryvdh/laravel-dompdf": "^2.0",
@@ -18,8 +21,10 @@
         "laravel/ui": "^4.1",
         "livewire/livewire": "^2.10",
         "maennchen/zipstream-php": "^2.4",
+        "nfephp-org/sped-cte": "^5.0",
         "nfephp-org/sped-da": "^1.1",
         "nfephp-org/sped-mdfe": "dev-master",
+        "nfephp-org/sped-nfcom": "dev-main",
         "nfephp-org/sped-nfe": "^5.2",
         "php-flasher/flasher-laravel": "^1.15",
         "php-flasher/flasher-sweetalert-laravel": "^1.15",

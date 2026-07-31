@@ -8,12 +8,11 @@ use NFePHP\Common\Certificate;
 
 class EmpresasService
 {
-
     public function atualizar($id, $request)
     {
         $empresa = Empresa::find($id);
         if ($request->hasFile('certificado')) {
-            $path = $request->certificado->storeAs('certificados', $request->nome . '.pfx');
+            $path = $request->certificado->storeAs('certificados', $request->nome.'.pfx');
             if ($request->senha != '') {
                 $empresa->update([
                     'razao' => $request->nome,
@@ -104,6 +103,7 @@ class EmpresasService
                 'crt' => $request->crt,
             ]);
         }
+
         return $empresa;
     }
 
@@ -163,10 +163,11 @@ class EmpresasService
                 ->get();
         } else {
             $results = DB::table('empresas')
-            ->select('*')
-            ->where('id', $empresa)
-            ->get();
+                ->select('*')
+                ->where('id', $empresa)
+                ->get();
         }
+
         return $results;
     }
 
@@ -179,9 +180,10 @@ class EmpresasService
 
     public function storeCertificate($certificado, $nome, $senha)
     {
-        $path = $certificado->storeAs('certificados', $nome . '.pfx');
-        $content = file_get_contents(storage_path('app/certificados/' . $nome . '.pfx'));
+        $path = $certificado->storeAs('certificados', $nome.'.pfx');
+        $content = file_get_contents(storage_path('app/certificados/'.$nome.'.pfx'));
         Certificate::readPfx($content, $senha);
+
         return $path;
     }
 
@@ -190,6 +192,7 @@ class EmpresasService
         $company = Empresa::find($companyId);
         $company->sequenciaCupom = $company->sequenciaCupom + 1;
         $company->save();
+
         return $company->sequenciaCupom;
     }
 
@@ -197,6 +200,20 @@ class EmpresasService
     {
         $company = Empresa::find($companyId);
         $company->ultimaNFCe = $company->ultimaNFCe + 1;
+        $company->save();
+    }
+
+    public function incrementLastNFCom($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->ultimaNFCom = $company->ultimaNFCom + 1;
+        $company->save();
+    }
+
+    public function incrementLastCTe($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->ultimaCTe = $company->ultimaCTe + 1;
         $company->save();
     }
 }
