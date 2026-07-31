@@ -34,4 +34,24 @@ class RejeicoesSefazUtilTest extends TestCase
         $this->assertStringContainsString('Possível problema em: Produto.', $mensagem);
         $this->assertStringContainsString('Campo prod NCM não informado', $mensagem);
     }
+
+    public function test_formata_erro_de_telefone_do_responsavel_tecnico(): void
+    {
+        $mensagem = NFeErroUtil::formatar(
+            'Preenchimento Obrigatório! [fone] ZD01 infRespTec - Informar o telefone da pessoa a ser contatada na empresa desenvolvedora do sistema.'
+        );
+
+        $this->assertStringContainsString('Possível problema em: Telefone.', $mensagem);
+        $this->assertStringContainsString('Telefone inválido ou ausente em Configurações > Responsável técnico.', $mensagem);
+        $this->assertStringContainsString('Informe apenas números com DDD', $mensagem);
+    }
+
+    public function test_formata_erro_undefined_de_fone_do_cliente_sem_tags_tecnicas(): void
+    {
+        $mensagem = NFeErroUtil::formatar('Undefined property: stdClass::$fone em <enderDest>');
+
+        $this->assertStringContainsString('Telefone inválido ou ausente em Cadastro do cliente.', $mensagem);
+        $this->assertStringNotContainsString('Undefined property', $mensagem);
+        $this->assertStringNotContainsString('<enderDest>', $mensagem);
+    }
 }
