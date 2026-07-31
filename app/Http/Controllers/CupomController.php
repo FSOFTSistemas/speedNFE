@@ -100,7 +100,16 @@ public function index(Request $request)
 
             // Transação para salvar a venda (mantida como estava)
             DB::beginTransaction();
-            $cupomId = $this->cupomService->createCupom($this->empresaServices->incrementCupomSequence(Auth::user()->empresa_id), $request->valorTotal, $request->descontoTotal, $request->acrescimoTotal, $request->subtotal, $request->troco, $request->cliente['id'], Auth::user()->empresa_id);
+            $cupomId = $this->cupomService->createCupom(
+                $this->empresaServices->incrementCupomSequence(Auth::user()->empresa_id),
+                $request->valorTotal,
+                $request->descontoTotal,
+                $request->acrescimoTotal,
+                $request->subtotal,
+                $request->troco,
+                $request->input('cliente.id'),
+                Auth::user()->empresa_id,
+            );
             $this->itemCupomService->createItemsCupom($request->itens, $cupomId);
             $this->cupomFormaService->createCupomFormas($request->formas, $cupomId);
             foreach ($request->itens as $item) {

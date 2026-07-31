@@ -576,7 +576,7 @@
                             </thead>
                             <tbody>
                                 @foreach (json_decode($customers) as $client)
-                                    <tr wire:dblclick="selectClient('{{ $client->id }}', '{{ $client->nome }}')"
+                                    <tr wire:dblclick="selectClient({{ $client->id }}, @js($client->nome))"
                                         style="cursor: pointer;">
                                         <td>{{ $client->codigo }}</td>
                                         <td>{{ $client->nome }}</td>
