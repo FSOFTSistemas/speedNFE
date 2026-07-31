@@ -98,10 +98,12 @@ class EmpresasController extends Controller
         }
 
         try {
+            $isMaster = Auth::user()->cargo === 'master';
+
             $request->validate([
                 'nome' => 'required|max:255',
                 'fantasia' => 'required|max:255',
-                'ramo_atividade' => 'required|in:motos,geral',
+                'ramo_atividade' => $isMaster ? 'required|in:motos,geral' : 'nullable|in:motos,geral',
                 'rg_ie' => 'required',
                 'telefone' => 'required',
                 'rua' => 'required|max:255',
@@ -133,6 +135,13 @@ class EmpresasController extends Controller
                 'email' => 'O campo :attribute deve ser um email',
                 'ramo_atividade.in' => 'Selecione um ramo de atividade válido!'
             ]);
+
+            if (!$isMaster) {
+                $request->merge([
+                    'ramo_atividade' => Empresa::findOrFail($id)->ramo_atividade,
+                ]);
+            }
+
             DB::beginTransaction();
             $empresa = $this->empresaServices->atualizar($id, $request);
             $this->enderecoServices->editar(

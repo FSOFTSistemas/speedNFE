@@ -182,13 +182,15 @@
                             <div class="col-md-4 mb-3"><label for="telefone" class="form-label">Celular</label><input
                                     required class="form-control" type="text" id="telefone" name="telefone"
                                     maxlength="15" onkeyup="handlePhone(event)" value="{{ $empresa->celular }}"></div>
-                            <div class="col-md-4 mb-3">
-                                <label for="ramo_atividade" class="form-label">Ramo de Atividade</label>
-                                <select class="form-control" name="ramo_atividade" id="ramo_atividade" required>
-                                    <option value="motos" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'motos' ? 'selected' : '' }}>Venda de Motos</option>
-                                    <option value="geral" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'geral' ? 'selected' : '' }}>Geral</option>
-                                </select>
-                            </div>
+                            @if (Auth::user()->cargo === 'master')
+                                <div class="col-md-4 mb-3">
+                                    <label for="ramo_atividade" class="form-label">Ramo de Atividade</label>
+                                    <select class="form-control" name="ramo_atividade" id="ramo_atividade" required>
+                                        <option value="motos" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'motos' ? 'selected' : '' }}>Venda de Motos</option>
+                                        <option value="geral" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'geral' ? 'selected' : '' }}>Geral</option>
+                                    </select>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
