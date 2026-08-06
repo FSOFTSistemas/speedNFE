@@ -104,9 +104,6 @@ class FluxoDeCaixaController extends Controller
     {
         try {
             $lancamento = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)->findOrFail($id);
-            if ($lancamento->origem) {
-                return back()->with('error', 'Este lançamento foi gerado automaticamente por uma ' . $lancamento->origem . ' e não pode ser excluído manualmente. Cancele a nota de origem para estorná-lo.');
-            }
             $lancamento->delete();
 
             return redirect()->route('fluxo-caixa.index')->with('success', 'Lançamento removido com sucesso!');

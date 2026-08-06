@@ -225,10 +225,11 @@
                         <td>{{ \Carbon\Carbon::parse($lancamento->data)->format('d/m/Y') }}</td>
                         <td class="action-buttons">
                             @if ($lancamento->origem)
-                                <span class="text-muted" title="Lançamento automático — altere cancelando a nota de origem"><i class="fa fa-lock"></i></span>
+                                <span class="text-muted" title="Edição bloqueada — lançamento gerado automaticamente"><i class="fa fa-lock"></i></span>
+                                <a title="Excluir" href="#" class="text-danger" onclick="openDeleteModal({{ $lancamento->id }}, true)"><i class="fa fa-trash"></i></a>
                             @else
                                 <a title="Editar" href="#" class="text-warning" onclick="openEditModal({{ json_encode($lancamento) }})"><i class="fa fa-edit"></i></a>
-                                <a title="Excluir" href="#" class="text-danger" onclick="openDeleteModal({{ $lancamento->id }})"><i class="fa fa-trash"></i></a>
+                                <a title="Excluir" href="#" class="text-danger" onclick="openDeleteModal({{ $lancamento->id }}, false)"><i class="fa fa-trash"></i></a>
                             @endif
                         </td>
                     </tr>
@@ -266,6 +267,10 @@
             <div class="modal-header"><h5 class="modal-title">Apagar este Lançamento?</h5><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button></div>
             <div class="modal-body text-center">
                 <p class="text-danger">Você irá excluir todas as informações sobre este lançamento!</p>
+                <p class="text-danger" id="deleteWarningAutomatico" style="display: none;">
+                    <strong>Atenção:</strong> este lançamento foi gerado automaticamente por uma nota. Excluí-lo aqui
+                    não cancela nem estorna a nota de origem — os dois ficarão dessincronizados.
+                </p>
                 <form id="deleteForm" method="POST">
                     @csrf
                     @method('DELETE')
@@ -316,10 +321,11 @@
         $('#modalEditFluxo').modal('show');
     }
 
-    function openDeleteModal(id) {
+    function openDeleteModal(id, isAutomatico) {
         // Define a action do formulário de exclusão genérico
         $('#deleteForm').attr('action', '/fluxo-caixa/' + id);
-        
+        $('#deleteWarningAutomatico').toggle(!!isAutomatico);
+
         // Abre o modal
         $('#deleteModal').modal('show');
     }

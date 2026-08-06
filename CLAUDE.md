@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-SpeedNFE — a Laravel 9 ERP/fiscal application for Brazilian businesses (NFe, NFCe, MDFe electronic
-documents, PDV/cupom, stock, orders, accounts receivable/payable, cash flow, Pix payments). Server-rendered
+SpeedNFE — a Laravel 9 ERP/fiscal application for Brazilian businesses (NFe, NFCe, MDFe, NFCom, CTe
+electronic documents, PDV/cupom, stock, orders, accounts receivable/payable, cash flow, Pix payments). Server-rendered
 Blade + Livewire is the primary UI; a JSON API (`/api/v1`) and an Inertia+React frontend are being built out
 alongside it. This is a real production codebase in active development — expect mixed styles and in-progress
 areas (see `AGENTS.md` for the older contributor guide, largely superseded by this file but still accurate
@@ -82,22 +82,24 @@ Web routes use a custom `access.permission:role1|role2|...` middleware
 on `users`) against the pipe-separated role list — **not** the `spatie/laravel-permission` package's
 roles/permissions system, even though that package is installed and its tables exist. Known `cargo` values
 seen in routes: `master`, `admin`, `client-advanced1`, `client-advanced2`, `client-advanced3`, `client-NFe`,
-`client-NFCe`, `client-MDFe`, `client-NFCom`. Web routes are further gated by a `check.subscription`
-middleware group.
+`client-NFCe`, `client-MDFe`, `client-NFCom`, `client-CTe`. Web routes are further gated by a
+`check.subscription` middleware group.
 
 ### Fiscal document integration
 
-NFe/NFCe/MDFe/NFCom issuance goes through the `nfephp-org/sped-*` packages (`sped-nfe`, `sped-mdfe`,
-`sped-nfcom`, `sped-da` for DANFE PDFs), wrapped by `app/Services/NFeService.php`, `NFCeService.php`,
-`MDFeService.php`, `NFComService.php`. Certificates are read per-company from
-`storage/app/certificados/{razao}.pfx` (PFX + password stored on the `Empresa` model, field
-`senhaCertificado`). Treat changes to these services as fiscal-compliance-sensitive — they build the SEFAZ
-payloads.
+NFe/NFCe/MDFe/NFCom/CTe issuance goes through the `nfephp-org/sped-*` packages (`sped-nfe`, `sped-mdfe`,
+`sped-nfcom`, `sped-cte`, `sped-da` for DANFE PDFs), wrapped by `app/Services/NFeService.php`,
+`NFCeService.php`, `MDFeService.php`, `NFComService.php`, `CTeService.php`. Certificates are read
+per-company from `storage/app/certificados/{razao}.pfx` (PFX + password stored on the `Empresa` model,
+field `senhaCertificado`). Treat changes to these services as fiscal-compliance-sensitive — they build the
+SEFAZ payloads.
 
-NFCom (telecom services electronic invoice) is the newest document type: `NFComController` /
-`NFComService` build and transmit the document from an `NFCom` header + `NFComItem` lines, gated by the
-`client-NFCom` role; the `Servico` model (`ServicosController`/`ServicosService`) is a per-company catalog
-of billable services used when building NFCom items.
+NFCom (telecom services electronic invoice) and CTe (Conhecimento de Transporte Eletrônico, road modal) are
+the newest document types: `NFComController`/`NFComService` build and transmit a document from an `NFCom`
+header + `NFComItem` lines, gated by the `client-NFCom` role; `CTeController`/`CTeService` build a document
+from a `CTe` header + `CTeDocumento` lines (the NFe/NFCe documents being transported), gated by the
+`client-CTe` role. The `Servico` model (`ServicosController`/`ServicosService`) is a per-company catalog of
+billable services used when building NFCom items.
 
 ### Other integrations
 
