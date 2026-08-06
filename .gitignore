@@ -6,6 +6,8 @@
 !/public/docs/**
 !/public/css/
 !/public/css/**
+!/public/js/
+!/public/js/homePage-motion.js
 /public/storage
 /storage/*.key
 /vendor
