@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="{{ asset('css/fontawesome-all.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/homePage.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/homePage-modern.css') }}" />
     <link rel="shortcut icon" href="{{ asset('site/img/logo.png') }}" />
 
     <!-- PWA -->
@@ -17,7 +18,7 @@
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
 </head>
 
-<body>
+<body class="homepage-preview">
 
     <!-- Header -->
     <header id="site-header">
@@ -51,6 +52,10 @@
 
     <!-- Hero -->
     <section id="hero">
+        <div class="hero-code-stream" aria-hidden="true">
+            <span>NFe</span><span>NFC-e</span><span>MDF-e</span><span>SEFAZ</span><span>XML</span>
+        </div>
+        <div class="hero-cursor-light" aria-hidden="true"></div>
         <div class="container hero-grid">
             <div class="hero-copy">
                 <span class="eyebrow"><i class="fas fa-bolt"></i> Emissão fiscal sem complicação</span>
@@ -72,6 +77,7 @@
                 <div class="hero-note">
                     <i class="fas fa-check-circle"></i> Sem cartão de crédito · 1ª nota fiscal de teste grátis · Suporte via WhatsApp
                 </div>
+                <div class="hero-scroll-cue" aria-hidden="true"><span></span> Explore a plataforma</div>
             </div>
 
             <div class="hero-visual reveal">
@@ -96,6 +102,30 @@
             <div class="trust-item"><i class="fas fa-shield-alt"></i><span>Certificada pela SEFAZ<small>emissões 100% dentro da lei</small></span></div>
             <div class="trust-item"><i class="fas fa-cloud"></i><span>100% na nuvem<small>acesse de qualquer dispositivo</small></span></div>
             <div class="trust-item"><i class="fab fa-whatsapp"></i><span>Suporte especializado<small>atendimento humano via WhatsApp</small></span></div>
+        </div>
+        <div class="trust-carousel" aria-label="Recursos disponíveis na plataforma">
+            <div class="trust-carousel-track">
+                <div class="trust-carousel-group">
+                    <span><i class="fas fa-file-invoice"></i> NFe</span>
+                    <span><i class="fas fa-receipt"></i> NFC-e</span>
+                    <span><i class="fas fa-truck"></i> MDF-e</span>
+                    <span><i class="fas fa-shield-alt"></i> Integração SEFAZ</span>
+                    <span><i class="fas fa-boxes"></i> Estoque conectado</span>
+                    <span><i class="fas fa-chart-line"></i> Financeiro</span>
+                    <span><i class="fas fa-qrcode"></i> Pix integrado</span>
+                    <span><i class="fas fa-mobile-alt"></i> Acesso mobile</span>
+                </div>
+                <div class="trust-carousel-group" aria-hidden="true">
+                    <span><i class="fas fa-file-invoice"></i> NFe</span>
+                    <span><i class="fas fa-receipt"></i> NFC-e</span>
+                    <span><i class="fas fa-truck"></i> MDF-e</span>
+                    <span><i class="fas fa-shield-alt"></i> Integração SEFAZ</span>
+                    <span><i class="fas fa-boxes"></i> Estoque conectado</span>
+                    <span><i class="fas fa-chart-line"></i> Financeiro</span>
+                    <span><i class="fas fa-qrcode"></i> Pix integrado</span>
+                    <span><i class="fas fa-mobile-alt"></i> Acesso mobile</span>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -130,6 +160,9 @@
 
     <!-- Recursos -->
     <section id="recursos">
+        <div class="resource-3d-stack scene-3d" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </div>
         <div class="container">
             <div class="section-head reveal">
                 <span class="eyebrow">Muito além da nota fiscal</span>
@@ -173,33 +206,42 @@
     </section>
 
     <!-- Showcase -->
-    <section id="sistema">
+    <section id="sistema" aria-labelledby="sistema-title">
         <div id="showcase">
+            <div class="system-grid-lines" aria-hidden="true"></div>
             <div class="container showcase-grid">
-                <div class="showcase-copy reveal">
-                    <span class="eyebrow">Veja o sistema por dentro</span>
-                    <h2>Uma interface simples para emitir, acompanhar e resolver rápido</h2>
+                <div class="showcase-copy system-copy">
+                    <div class="system-kicker">
+                        <span class="system-index">02</span>
+                        <span class="eyebrow">Veja o sistema por dentro</span>
+                    </div>
+                    <h2 id="sistema-title">Sua operação fiscal,<br><em>sem pontos cegos.</em></h2>
                     <p>O painel organiza as rotinas fiscais em fluxos claros: cadastro, venda, emissão, consulta e reenvio. Assim a equipe encontra o que precisa sem depender de treinamento técnico.</p>
-                    <ul class="showcase-list">
-                        <li><i class="fas fa-check"></i> Tela de emissão com etapas objetivas e prévia antes do envio</li>
-                        <li><i class="fas fa-check"></i> Histórico de notas emitidas, autorizadas, canceladas e rejeitadas</li>
-                        <li><i class="fas fa-check"></i> XML, DANFE e reenvio por e-mail acessíveis no mesmo painel</li>
-                        <li><i class="fas fa-check"></i> Cadastros e relatórios conectados ao estoque e financeiro</li>
+                    <ul class="showcase-list system-flow">
+                        <li><span>01</span><p><strong>Emita com segurança</strong>Tela objetiva e prévia antes do envio à SEFAZ.</p></li>
+                        <li><span>02</span><p><strong>Acompanhe em tempo real</strong>Autorizadas, canceladas e rejeitadas em um só fluxo.</p></li>
+                        <li><span>03</span><p><strong>Resolva sem procurar</strong>XML, DANFE, estoque e financeiro sempre conectados.</p></li>
                     </ul>
                     <a href="https://wa.me/5587981753993?text=Ol%C3%A1!+Gostaria+de+solicitar+uma+demonstra%C3%A7%C3%A3o+do+SpeedNFE." target="_blank" rel="noopener" class="btn btn-accent">
                         <i class="fab fa-whatsapp"></i> Solicitar demonstração
                     </a>
                 </div>
-                <div class="reveal">
-                    <div class="screens-preview">
+                <div class="system-visual-wrap">
+                    <div class="system-orbit orbit-one" aria-hidden="true"></div>
+                    <div class="system-orbit orbit-two" aria-hidden="true"></div>
+                    <div class="screens-preview" data-system-visual>
+                        <div class="system-live"><span></span> Ambiente operacional</div>
                         <div class="showcase-frame browser-frame">
                             <div class="browser-bar"><span></span><span></span><span></span></div>
                             <img src="{{ asset('css/images/tela.png') }}" alt="Tela de notas fiscais emitidas no SpeedNFE" />
+                            <div class="system-focus" aria-hidden="true"></div>
                         </div>
-                        <div class="screen-details" aria-label="Principais áreas do sistema">
-                            <span><i class="fas fa-file-invoice"></i> Notas fiscais</span>
-                            <span><i class="fas fa-boxes"></i> Estoque</span>
-                            <span><i class="fas fa-chart-line"></i> Financeiro</span>
+                        <div class="system-signal signal-top"><i class="fas fa-check"></i><span><strong>Nota autorizada</strong>SEFAZ · agora</span></div>
+                        <div class="system-signal signal-bottom"><span class="signal-value">+18%</span><span><strong>Mais agilidade</strong>na rotina fiscal</span></div>
+                        <div class="screen-details" aria-label="Explore as principais áreas do sistema">
+                            <button type="button" class="is-active" data-system-tab="notes"><i class="fas fa-file-invoice"></i> Notas fiscais</button>
+                            <button type="button" data-system-tab="stock"><i class="fas fa-boxes"></i> Estoque</button>
+                            <button type="button" data-system-tab="finance"><i class="fas fa-chart-line"></i> Financeiro</button>
                         </div>
                     </div>
                 </div>
@@ -356,6 +398,7 @@
     <!-- CTA final -->
     <section>
         <div id="cta-final" class="reveal">
+            <div class="cta-3d-orbit scene-3d" aria-hidden="true"><span></span><i></i></div>
             <span class="eyebrow"><i class="fas fa-bolt"></i> Comece agora</span>
             <h2>Pare de perder tempo com nota fiscal. Emita em minutos, de onde estiver.</h2>
             <p>Fale agora com nossa equipe pelo WhatsApp e comece a emitir sua primeira nota fiscal de teste, gratuitamente.</p>
@@ -387,12 +430,27 @@
         </div>
     </footer>
 
+    <button type="button" class="scroll-companion" aria-label="Avançar para a próxima seção">
+        <span class="scroll-companion-ring" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+                <circle class="companion-track" cx="24" cy="24" r="20"></circle>
+                <circle class="companion-progress" cx="24" cy="24" r="20"></circle>
+            </svg>
+            <i class="fas fa-chevron-down"></i>
+        </span>
+        <span class="scroll-companion-copy">
+            <small>Explorando</small>
+            <strong>Início</strong>
+        </span>
+    </button>
+
     <a href="https://wa.me/5587981753993?text=Ol%C3%A1!+Quero+saber+mais+sobre+o+SpeedNFE." target="_blank" rel="noopener" class="whatsapp-float" aria-label="Falar no WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 
     <!-- Scripts -->
     <script src="{{ asset('/sw.js') }}"></script>
+    <script type="module" src="{{ asset('js/homePage-motion.js') }}"></script>
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("/sw.js").then(
