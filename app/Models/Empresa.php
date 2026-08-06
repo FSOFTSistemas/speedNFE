@@ -39,10 +39,12 @@ class Empresa extends Model
         'limNFCes',
         'limMDFes',
         'crt',
+        'lancar_nfe_nfce_fluxo_caixa',
     ];
 
     protected $casts = [
         'senhaCertificado' => 'encrypted',
+        'lancar_nfe_nfce_fluxo_caixa' => 'boolean',
     ];
 
     protected $hidden = [
@@ -65,7 +67,7 @@ class Empresa extends Model
         return $empresa->ultimoNumeroNFe + 1;
     }
 
-    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $contador, $nfe, $nfce, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $limNFCes, $clientes, $produtos, $crt)
+    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $contador, $nfe, $nfce, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $limNFCes, $clientes, $produtos, $crt, $lancarNFeNFCeFluxoCaixa = true)
     {
         $response = Empresa::create([
             'razao' => $nome,
@@ -92,6 +94,7 @@ class Empresa extends Model
             'limNFCes' => $limNFCes,
             'limMDFes' => $limMDFes,
             'crt' => $crt,
+            'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
         ]);
 
         return $response;

@@ -11,6 +11,8 @@ class EmpresasService
     public function atualizar($id, $request)
     {
         $empresa = Empresa::find($id);
+        $lancarNFeNFCeFluxoCaixa = $request->boolean('lancar_nfe_nfce_fluxo_caixa');
+
         if ($request->hasFile('certificado')) {
             $path = $request->certificado->storeAs('certificados', $request->nome.'.pfx');
             if ($request->senha != '') {
@@ -35,6 +37,7 @@ class EmpresasService
                     'limProdutos' => $request->produtos,
                     'limClientes' => $request->clientes,
                     'crt' => $request->crt,
+                    'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
                 ]);
             } else {
                 $empresa->update([
@@ -57,6 +60,7 @@ class EmpresasService
                     'limProdutos' => $request->produtos,
                     'limClientes' => $request->clientes,
                     'crt' => $request->crt,
+                    'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
                 ]);
             }
         }
@@ -81,6 +85,7 @@ class EmpresasService
                 'limProdutos' => $request->produtos,
                 'limClientes' => $request->clientes,
                 'crt' => $request->crt,
+                'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
             ]);
         } else {
             $empresa->update([
@@ -101,6 +106,7 @@ class EmpresasService
                 'limProdutos' => $request->produtos,
                 'limClientes' => $request->clientes,
                 'crt' => $request->crt,
+                'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
             ]);
         }
 

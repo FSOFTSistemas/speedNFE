@@ -195,6 +195,20 @@
     </div>
 </div>
                     <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <input type="hidden" name="lancar_nfe_nfce_fluxo_caixa" value="0">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="lancar_nfe_nfce_fluxo_caixa"
+                                    id="lancar_nfe_nfce_fluxo_caixa" value="1"
+                                    {{ old('lancar_nfe_nfce_fluxo_caixa', true) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="lancar_nfe_nfce_fluxo_caixa">
+                                    Lançar NFe e NFCe automaticamente no fluxo de caixa
+                                </label>
+                            </div>
+                            <small class="text-muted">Quando desmarcado, novas NFe e NFCe autorizadas não criarão entrada automática no fluxo de caixa.</small>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-3 mb-3"><label for="senha" class="form-label">Senha do Certificado</label><input class="form-control" type="password" name="senha" id="senha" required><div class="invalid-feedback">Informe a senha.</div></div>
                         <div class="col-md-9 mb-3"><label for="certificado" class="form-label">Arquivo do Certificado (.pfx)</label><input accept=".pfx" type="file" name="certificado" id="certificado" class="form-control" required><div class="invalid-feedback">Informe um certificado.</div></div>
                     </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Services\EmpresasService;
 use App\Services\EnderecosService;
@@ -16,9 +15,10 @@ use NFePHP\Common\Exception\CertificateException;
 
 class EmpresasController extends Controller
 {
-
     private EmpresasService $empresaServices;
+
     private UsersService $userServices;
+
     private EnderecosService $enderecoServices;
 
     public function __construct(EmpresasService $empresaServices, UsersService $userServices, EnderecosService $enderecoServices)
@@ -32,9 +32,10 @@ class EmpresasController extends Controller
     {
         try {
             $company = $this->empresaServices->minhaEmpresa(Auth::user()->empresa_id);
+
             return view('empresas.edit', ['empresa' => $company]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -43,7 +44,7 @@ class EmpresasController extends Controller
         try {
             return view('empresas.create');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -51,6 +52,7 @@ class EmpresasController extends Controller
     {
         try {
             $this->empresaServices->reativarDesativar($id);
+
             return redirect()->route('empresa.show')->with('success', 'Status da empresa atualizado com sucesso');
         } catch (Exception $e) {
             return back()->with('error', 'Não foi possível atualizar o status da empresa');
@@ -65,9 +67,10 @@ class EmpresasController extends Controller
 
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
+
             return view('empresas.edit', ['empresa' => $empresa, 'user' => Auth::user()]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -75,9 +78,10 @@ class EmpresasController extends Controller
     {
         try {
             $empresa = $this->empresaServices->todas();
+
             return view('empresas.index', ['empresas' => $empresa]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -85,9 +89,10 @@ class EmpresasController extends Controller
     {
         try {
             $empresa = $this->empresaServices->buscarEmpresa($id);
+
             return view('empresas.view', ['empresa' => $empresa]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -123,7 +128,8 @@ class EmpresasController extends Controller
                 'csc' => 'required',
                 'idCsc' => 'required',
                 'ambiente' => 'required|numeric',
-                'crt' => 'nullable'
+                'crt' => 'nullable',
+                'lancar_nfe_nfce_fluxo_caixa' => 'nullable|boolean',
                 // 'clientes' => 'required|numeric',
                 // 'produtos' => 'required|numeric',
                 // 'nfes' => 'required|numeric',
@@ -133,10 +139,10 @@ class EmpresasController extends Controller
                 'max' => 'O campo :attribute deve conter no máximo :max caracteres!',
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
                 'email' => 'O campo :attribute deve ser um email',
-                'ramo_atividade.in' => 'Selecione um ramo de atividade válido!'
+                'ramo_atividade.in' => 'Selecione um ramo de atividade válido!',
             ]);
 
-            if (!$isMaster) {
+            if (! $isMaster) {
                 $request->merge([
                     'ramo_atividade' => Empresa::findOrFail($id)->ramo_atividade,
                 ]);
@@ -156,16 +162,19 @@ class EmpresasController extends Controller
                 $request->complemento,
             );
             DB::commit();
+
             return redirect()->route('editar_empresa', [$empresa->id])->with('success', 'Empresa foi atualizada com sucesso!');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
+
             return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado updateEmpresa, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -205,6 +214,7 @@ class EmpresasController extends Controller
                 'email' => 'required|email',
                 'tipo' => 'nullable',
                 'crt' => 'nullable',
+                'lancar_nfe_nfce_fluxo_caixa' => 'nullable|boolean',
                 // 'confirm_email' => 'required',
                 'password' => 'required',
                 'confirm_password' => 'required',
@@ -254,7 +264,8 @@ class EmpresasController extends Controller
                 $request->nfces,
                 $request->clientes,
                 $request->produtos,
-                $request->crt
+                $request->crt,
+                $request->boolean('lancar_nfe_nfce_fluxo_caixa')
             );
             $this->userServices->store(
                 $request->email,
@@ -265,19 +276,23 @@ class EmpresasController extends Controller
                 $request->tipo
             );
             DB::commit();
+
             return redirect()->route('empresa.show')->with('success', 'Empresa foi criada com sucesso!');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
-                $errors[] = implode("<br>", $error);
+                $errors[] = implode('<br>', $error);
             }
             DB::rollBack();
-            return back()->with('warning', implode("<br>", $errors))->withInput();
+
+            return back()->with('warning', implode('<br>', $errors))->withInput();
         } catch (CertificateException $e) {
             DB::rollBack();
-            return back()->with('warning', $e->getMessage() . ' - Senha incorreta, informe uma senha válida')->withInput();
+
+            return back()->with('warning', $e->getMessage().' - Senha incorreta, informe uma senha válida')->withInput();
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e);
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e);
         }
     }
 }
