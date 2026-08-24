@@ -110,6 +110,7 @@
                                 <option value="client-NFe" @if ($user->cargo == 'client-NFe') selected @endif>Apenas NFe</option>
                                 <option value="client-NFCe" @if ($user->cargo == 'client-NFCe') selected @endif>Apenas NFCe</option>
                                 <option value="client-MDFe" @if ($user->cargo == 'client-MDFe') selected @endif>Apenas MDFe</option>
+                                <option value="client-NFSe" @if ($user->cargo == 'client-NFSe') selected @endif>Apenas NFSe</option>
                                 <option value="client-NFCom" @if ($user->cargo == 'client-NFCom') selected @endif>Apenas NFCom</option>
                                 <option value="client-CTe" @if ($user->cargo == 'client-CTe') selected @endif>Apenas CTe</option>
                                 <option value="client-advanced1" @if ($user->cargo == 'client-advanced1') selected @endif>NFe e MDFe</option>

@@ -247,6 +247,7 @@
                                 <option value="client-NFe" @if (old('cargo') == 'client-NFe') selected @endif>Apenas NFe</option>
                                 <option value="client-NFCe" @if (old('cargo') == 'client-NFCe') selected @endif>Apenas NFCe</option>
                                 <option value="client-MDFe" @if (old('cargo') == 'client-MDFe') selected @endif>Apenas MDFe</option>
+                                <option value="client-NFSe" @if (old('cargo') == 'client-NFSe') selected @endif>Apenas NFSe</option>
                                 <option value="client-NFCom" @if (old('cargo') == 'client-NFCom') selected @endif>Apenas NFCom</option>
                                 <option value="client-CTe" @if (old('cargo') == 'client-CTe') selected @endif>Apenas CTe</option>
                                 <option value="client-advanced1" @if (old('cargo') == 'client-advanced1') selected @endif>NFe e MDFe</option>
