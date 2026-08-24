@@ -465,6 +465,31 @@ return [
             ],
         ],
         [
+            'text' => 'NFS-e',
+            'icon' => 'fas fa-file-invoice-dollar',
+            'can' => ['admin', 'master', 'client-NFSe'],
+            'submenu' => [
+                [
+                    'text' => 'Emitir NFS-e',
+                    'url' => 'nfse/emitir',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Notas Emitidas (NFS-e)',
+                    'url' => 'nfse',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Cadastrar Serviços',
+                    'url' => 'servicos',
+                    'icon' => 'fas fa-concierge-bell',
+                    'shift' => 'ml-2',
+                ],
+            ],
+        ],
+        [
             'text' => 'CTe',
             'icon' => 'fas fa-shipping-fast',
             'can' => ['admin', 'master', 'client-CTe', 'client-advanced3'],

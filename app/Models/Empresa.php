@@ -26,7 +26,10 @@ class Empresa extends Model
         'ultimaMDFe',
         'ultimaNFCom',
         'ultimaCTe',
+        'ultimaNFSe',
+        'ultimaDPS',
         'serie',
+        'serieNFSe',
         'certificado',
         'senhaCertificado',
         'ambiente',
@@ -37,8 +40,10 @@ class Empresa extends Model
         'limProdutos',
         'limNFes',
         'limNFCes',
+        'limNFSe',
         'limMDFes',
         'crt',
+        'inscricao_municipal',
         'lancar_nfe_nfce_fluxo_caixa',
     ];
 
@@ -67,7 +72,7 @@ class Empresa extends Model
         return $empresa->ultimoNumeroNFe + 1;
     }
 
-    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $contador, $nfe, $nfce, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $limNFCes, $clientes, $produtos, $crt, $lancarNFeNFCeFluxoCaixa = true)
+    public static function salvar($nome, $fantasia, $cpf_cnpj, $endereco_id, $rg_ie, $telefone, $contador, $nfe, $nfce, $mdfe, $serie, $certificado, $senha, $ambiente, $csc, $idCsc, $limNFes, $limMDFes, $limNFCes, $clientes, $produtos, $crt, $lancarNFeNFCeFluxoCaixa = true, $nfse = 0, $dps = 0, $serieNFSe = null, $limNFSe = 0, $inscricaoMunicipal = null)
     {
         $response = Empresa::create([
             'razao' => $nome,
@@ -75,13 +80,17 @@ class Empresa extends Model
             'cpf_cnpj' => $cpf_cnpj,
             'endereco_id' => $endereco_id,
             'rg_ie' => $rg_ie,
+            'inscricao_municipal' => $inscricaoMunicipal,
             'celular' => $telefone,
             'contador' => $contador,
             'sequenciaCupom' => 1,
             'ultimaNFe' => $nfe,
             'ultimaNFCe' => $nfce,
             'ultimaMDFe' => $mdfe,
+            'ultimaNFSe' => $nfse,
+            'ultimaDPS' => $dps,
             'serie' => $serie,
+            'serieNFSe' => $serieNFSe ?: $serie,
             'certificado' => $certificado,
             'senhaCertificado' => $senha,
             'ambiente' => $ambiente,
@@ -92,6 +101,7 @@ class Empresa extends Model
             'limProdutos' => $produtos,
             'limNFes' => $limNFes,
             'limNFCes' => $limNFCes,
+            'limNFSe' => $limNFSe,
             'limMDFes' => $limMDFes,
             'crt' => $crt,
             'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
@@ -146,5 +156,10 @@ class Empresa extends Model
     public function nfces()
     {
         return $this->hasMany(NFCe::class, 'empresa_id', 'id');
+    }
+
+    public function nfses()
+    {
+        return $this->hasMany(NFSe::class, 'empresa_id', 'id');
     }
 }

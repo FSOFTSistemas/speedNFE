@@ -248,6 +248,20 @@
                                     value="{{ $empresa->ultimaMDFe }}"></div>
                         </div>
                         <div class="row">
+                            <div class="col-md-3 mb-3"><label class="form-label">Nº da Última NFS-e</label><input
+                                    class="form-control" type="number" name="nfse" id="nfse"
+                                    value="{{ old('nfse', $empresa->ultimaNFSe ?? 0) }}"></div>
+                            <div class="col-md-3 mb-3"><label class="form-label">Nº da Última DPS</label><input
+                                    class="form-control" type="number" name="dps" id="dps"
+                                    value="{{ old('dps', $empresa->ultimaDPS ?? 0) }}"></div>
+                            <div class="col-md-3 mb-3"><label class="form-label">Série NFS-e/DPS</label><input
+                                    class="form-control" type="number" name="serie_nfse" id="serie_nfse"
+                                    value="{{ old('serie_nfse', $empresa->serieNFSe ?? $empresa->serie) }}"></div>
+                            <div class="col-md-3 mb-3"><label class="form-label">Inscrição Municipal</label><input
+                                    class="form-control" type="text" name="inscricao_municipal" id="inscricao_municipal"
+                                    maxlength="15" value="{{ old('inscricao_municipal', $empresa->inscricao_municipal) }}"></div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-2 mb-3"><label class="form-label">Série</label><input required
                                     class="form-control" type="number" name="serie" id="serie"
                                     value="{{ $empresa->serie }}"></div>
@@ -311,6 +325,7 @@
 
                     <input type="hidden" name="nfes" value="{{ $empresa->limNFes }}">
                     <input type="hidden" name="nfces" value="{{ $empresa->limNFCes }}">
+                    <input type="hidden" name="nfses" value="{{ $empresa->limNFSe ?? 0 }}">
                     <input type="hidden" name="mdfes" value="{{ $empresa->limMDFes }}">
                     <input type="hidden" name="clientes" value="{{ $empresa->limClientes }}">
                     <input type="hidden" name="produtos" value="{{ $empresa->limProdutos }}">
@@ -318,10 +333,10 @@
                     @can('master')
                         <div class="tab-pane fade" id="limite" role="tabpanel">
                             <div class="row">
-                                <div class="col-md-3 mb-3"><label class="form-label">Limite de Clientes</label><input required
+                                <div class="col-md-2 mb-3"><label class="form-label">Limite de Clientes</label><input required
                                         class="form-control" type="number" name="clientes" id="clientes"
                                         value="{{ $empresa->limClientes }}"></div>
-                                <div class="col-md-3 mb-3"><label class="form-label">Limite de Produtos</label><input required
+                                <div class="col-md-2 mb-3"><label class="form-label">Limite de Produtos</label><input required
                                         class="form-control" type="number" name="produtos" id="produtos"
                                         value="{{ $empresa->limProdutos }}"></div>
                                 <div class="col-md-2 mb-3"><label class="form-label">Limite de NFe</label><input required
@@ -330,6 +345,9 @@
                                 <div class="col-md-2 mb-3"><label class="form-label">Limite de NFCe</label><input required
                                         class="form-control" type="number" name="nfces" id="nfces"
                                         value="{{ $empresa->limNFCes }}"></div>
+                                <div class="col-md-2 mb-3"><label class="form-label">Limite de NFS-e</label><input
+                                        class="form-control" type="number" name="nfses" id="nfses"
+                                        value="{{ $empresa->limNFSe ?? 0 }}"></div>
                                 <div class="col-md-2 mb-3"><label class="form-label">Limite de MDFe</label><input required
                                         class="form-control" type="number" name="mdfes" id="mdfes"
                                         value="{{ $empresa->limMDFes }}"></div>

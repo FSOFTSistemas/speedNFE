@@ -33,3 +33,51 @@ Recent history uses short Portuguese messages with `feat:` and `fix:` prefixes, 
 ## Security & Configuration Tips
 
 Do not commit `.env`, certificates, tokens, webhook secrets, or fiscal credentials. Keep payment, Pix, NFe, NFCe, MDFe, JWT, and CORS configuration in environment variables; set `CORS_ALLOWED_ORIGINS` for separated frontends. Review authentication, authorization, fiscal XML, and webhook changes carefully.
+
+## NFS-e Nacional
+
+The `nfse` branch contains the initial NFS-e Nacional implementation, including the contributor emission flow, domain catalogs, DPS XML generation, XML signature/validation services, Sefin Nacional client, permissions, company settings, service catalog fields, and NFS-e listing/detail screens.
+
+### NFS-e migrations
+
+The NFS-e database changes are applied in this order:
+
+- `database/migrations/2026_08_24_000000_add_client_nfse_permission.php`
+- `database/migrations/2026_08_24_010000_add_nfse_fields_to_empresas_table.php`
+- `database/migrations/2026_08_24_011000_create_nfses_tables.php`
+- `database/migrations/2026_08_24_020000_create_nfse_domain_tables.php`
+- `database/migrations/2026_08_24_030000_add_nfse_fields_to_servicos_table.php`
+
+In a production deployment, after the application files and dependencies are updated, run the normal pending migrations command:
+
+```bash
+php artisan migrate --force
+```
+
+Do not use `--path` in production unless there is a deliberate reason to run only a subset. Confirm the result with `php artisan migrate:status`. The permission migration creates `client-NFSe`, but access still has to be assigned to the appropriate users/roles according to the application's permission workflow.
+
+### NFS-e domain data and schemas
+
+The domain tables created by `2026_08_24_020000_create_nfse_domain_tables.php` must be populated after migration with:
+
+```bash
+php artisan nfse:importar-dominios
+```
+
+The importer reads the versioned files under `resources/domains/nfse/v1.01/`. The XML validator reads the official XSD files under `resources/schemas/nfse/v1.01/`. Both directories must be included in the release artifact. The importer is idempotent and can be executed again when the official domain files are updated.
+
+### NFS-e production configuration
+
+Configure the NFS-e variables in the production environment without committing them to `.env`:
+
+- `NFSE_LAYOUT_VERSION`
+- `NFSE_VER_APLIC`
+- `NFSE_SEFIN_RESTRITA_URL`
+- `NFSE_SEFIN_PRODUCAO_URL`
+- `NFSE_SEFIN_TIMEOUT`
+
+Each issuing company also needs a valid municipal registration, NFS-e/DPS series and numbering configuration, the correct environment, and the digital certificate/private key required by the Sefin integration. Keep certificates and credentials outside version control.
+
+### NFS-e frontend conventions
+
+The service catalog uses Select2 for the national service code, NBS code, and tax-operation indicator. The emission form supports municipality selection by IBGE code, optional CEP lookup through ViaCEP, and calculates IBS at `0.10%` and CBS at `0.90%` in the backend as well as in the form display. Service creation/editing is organized into tabs for basic data, NFS-e Nacional, and NFCom taxes.

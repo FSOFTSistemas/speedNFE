@@ -14,6 +14,19 @@ class Servico extends Model
         'codigo',
         'descricao',
         'cClass',
+        'cTribNac',
+        'cTribMun',
+        'cNBS',
+        'cIndOp',
+        'cClassTrib',
+        'tribISSQN',
+        'tpRetISSQN',
+        'pAliqISSQN',
+        'cst_ibs_cbs',
+        'pRedutorIBSCBS',
+        'finNFSe',
+        'indFinal',
+        'indDest',
         'cfop',
         'uMed',
         'valor',
@@ -33,5 +46,10 @@ class Servico extends Model
     public function empresa()
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
+    }
+
+    public function nfses()
+    {
+        return $this->hasMany(NFSe::class, 'servico_id');
     }
 }

@@ -160,6 +160,12 @@
                         <div class="col-md-4 mb-3"><label for="nfce" class="form-label">Nº da Última NFCe</label><input required class="form-control" type="number" name="nfce" id="nfce" value="{{ old('nfce') }}"><div class="invalid-feedback">Informe o nº da última NFCe.</div></div>
                         <div class="col-md-4 mb-3"><label for="mdfe" class="form-label">Nº da Última MDFe</label><input required class="form-control" type="number" name="mdfe" id="mdfe" value="{{ old('mdfe') }}"><div class="invalid-feedback">Informe o nº da última MDFe.</div></div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3"><label for="nfse" class="form-label">Nº da Última NFS-e</label><input class="form-control" type="number" name="nfse" id="nfse" value="{{ old('nfse', 0) }}"></div>
+                        <div class="col-md-3 mb-3"><label for="dps" class="form-label">Nº da Última DPS</label><input class="form-control" type="number" name="dps" id="dps" value="{{ old('dps', 0) }}"></div>
+                        <div class="col-md-3 mb-3"><label for="serie_nfse" class="form-label">Série NFS-e/DPS</label><input class="form-control" type="number" name="serie_nfse" id="serie_nfse" value="{{ old('serie_nfse') }}"></div>
+                        <div class="col-md-3 mb-3"><label for="inscricao_municipal" class="form-label">Inscrição Municipal</label><input class="form-control" type="text" name="inscricao_municipal" id="inscricao_municipal" maxlength="15" value="{{ old('inscricao_municipal') }}"></div>
+                    </div>
 <div class="row">
     <div class="col-md-2 mb-3">
         <label for="serie" class="form-label">Série</label>
@@ -220,10 +226,11 @@
 
                 <div class="tab-pane fade" id="limite" role="tabpanel" aria-labelledby="limite-tab">
                     <div class="row">
-                        <div class="col-md-3 mb-3"><label for="clientes" class="form-label">Limite de Clientes</label><input required class="form-control" type="number" name="clientes" id="clientes" value="{{ old('clientes') }}"><div class="invalid-feedback">Informe o limite.</div></div>
-                        <div class="col-md-3 mb-3"><label for="produtos" class="form-label">Limite de Produtos</label><input required class="form-control" type="number" name="produtos" id="produtos" value="{{ old('produtos') }}"><div class="invalid-feedback">Informe o limite.</div></div>
+                        <div class="col-md-2 mb-3"><label for="clientes" class="form-label">Limite de Clientes</label><input required class="form-control" type="number" name="clientes" id="clientes" value="{{ old('clientes') }}"><div class="invalid-feedback">Informe o limite.</div></div>
+                        <div class="col-md-2 mb-3"><label for="produtos" class="form-label">Limite de Produtos</label><input required class="form-control" type="number" name="produtos" id="produtos" value="{{ old('produtos') }}"><div class="invalid-feedback">Informe o limite.</div></div>
                         <div class="col-md-2 mb-3"><label for="nfes" class="form-label">Limite de NFe</label><input required class="form-control" type="number" name="nfes" id="nfes" value="{{ old('nfes') }}"><div class="invalid-feedback">Informe o limite.</div></div>
                         <div class="col-md-2 mb-3"><label for="nfces" class="form-label">Limite de NFCe</label><input required class="form-control" type="number" name="nfces" id="nfces" value="{{ old('nfces') }}"><div class="invalid-feedback">Informe o limite.</div></div>
+                        <div class="col-md-2 mb-3"><label for="nfses" class="form-label">Limite de NFS-e</label><input class="form-control" type="number" name="nfses" id="nfses" value="{{ old('nfses', 0) }}"></div>
                         <div class="col-md-2 mb-3"><label for="mdfes" class="form-label">Limite de MDFe</label><input required class="form-control" type="number" name="mdfes" id="mdfes" value="{{ old('mdfes') }}"><div class="invalid-feedback">Informe o limite.</div></div>
                     </div>
                 </div>

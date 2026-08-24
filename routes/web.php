@@ -18,6 +18,7 @@ use App\Http\Controllers\MDFEController;
 use App\Http\Controllers\MotoristaController;
 use App\Http\Controllers\NFCeController;
 use App\Http\Controllers\NFComController;
+use App\Http\Controllers\NFSeController;
 use App\Http\Controllers\NotasFiscaisController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PedidosController;
@@ -237,12 +238,27 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::post('/cancelar-nota', [NFComController::class, 'cancelarNFCom'])->name('nfcom.cancel')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
     });
 
-    // Serviços (catálogo NFCom)
+    // NFS-e
+    Route::prefix('nfse')->group(function () {
+        Route::get('', [NFSeController::class, 'index'])->name('nfse.index')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::get('/emitir', [NFSeController::class, 'create'])->name('nfse.create')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::post('/emitir', [NFSeController::class, 'store'])->name('nfse.store')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::get('/{id}/editar', [NFSeController::class, 'edit'])->name('nfse.edit')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::put('/{id}/update', [NFSeController::class, 'update'])->name('nfse.update')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::delete('/deletar', [NFSeController::class, 'delete'])->name('nfse.delete')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::get('/{id}/visualizar', [NFSeController::class, 'visualizar'])->name('nfse.view')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::get('/{id}/download-xml', [NFSeController::class, 'downloadXml'])->name('nfse.downloadXml')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::get('/{id}/enviar-nota', [NFSeController::class, 'enviar'])->name('nfse.enviar')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::post('/cancelar-nota', [NFSeController::class, 'cancelar'])->name('nfse.cancel')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+    });
+
+    // Serviços (catálogo NFCom/NFS-e)
     Route::prefix('servicos')->group(function () {
-        Route::get('', [ServicosController::class, 'index'])->name('servicos.index')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
-        Route::post('', [ServicosController::class, 'store'])->name('servicos.store')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
-        Route::put('/{id}', [ServicosController::class, 'update'])->name('servicos.update')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
-        Route::delete('', [ServicosController::class, 'destroy'])->name('servicos.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCom']);
+        Route::get('', [ServicosController::class, 'index'])->name('servicos.index')->middleware(['auth', 'access.permission:master|admin|client-NFCom|client-NFSe']);
+        Route::get('/dominios-nfse/{tipo}', [ServicosController::class, 'buscarDominioNFSe'])->name('servicos.dominios-nfse')->middleware(['auth', 'access.permission:master|admin|client-NFCom|client-NFSe']);
+        Route::post('', [ServicosController::class, 'store'])->name('servicos.store')->middleware(['auth', 'access.permission:master|admin|client-NFCom|client-NFSe']);
+        Route::put('/{id}', [ServicosController::class, 'update'])->name('servicos.update')->middleware(['auth', 'access.permission:master|admin|client-NFCom|client-NFSe']);
+        Route::delete('', [ServicosController::class, 'destroy'])->name('servicos.destroy')->middleware(['auth', 'access.permission:master|admin|client-NFCom|client-NFSe']);
     });
 
     // CTe

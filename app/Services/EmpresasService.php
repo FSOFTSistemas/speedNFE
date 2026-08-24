@@ -16,7 +16,7 @@ class EmpresasService
         if ($request->hasFile('certificado')) {
             $path = $request->certificado->storeAs('certificados', $request->nome.'.pfx');
             if ($request->senha != '') {
-                $empresa->update([
+                $empresa->update(array_merge([
                     'razao' => $request->nome,
                     'fantasia' => $request->fantasia,
                     'ramo_atividade' => $request->ramo_atividade,
@@ -38,9 +38,9 @@ class EmpresasService
                     'limClientes' => $request->clientes,
                     'crt' => $request->crt,
                     'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
-                ]);
+                ], $this->nfseSettingsPayload($request, $empresa)));
             } else {
-                $empresa->update([
+                $empresa->update(array_merge([
                     'razao' => $request->nome,
                     'fantasia' => $request->fantasia,
                     'ramo_atividade' => $request->ramo_atividade,
@@ -61,11 +61,11 @@ class EmpresasService
                     'limClientes' => $request->clientes,
                     'crt' => $request->crt,
                     'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
-                ]);
+                ], $this->nfseSettingsPayload($request, $empresa)));
             }
         }
         if ($request->senha != '') {
-            $empresa->update([
+            $empresa->update(array_merge([
                 'razao' => $request->nome,
                 'fantasia' => $request->fantasia,
                 'ramo_atividade' => $request->ramo_atividade,
@@ -86,9 +86,9 @@ class EmpresasService
                 'limClientes' => $request->clientes,
                 'crt' => $request->crt,
                 'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
-            ]);
+            ], $this->nfseSettingsPayload($request, $empresa)));
         } else {
-            $empresa->update([
+            $empresa->update(array_merge([
                 'razao' => $request->nome,
                 'fantasia' => $request->fantasia,
                 'ramo_atividade' => $request->ramo_atividade,
@@ -107,10 +107,21 @@ class EmpresasService
                 'limClientes' => $request->clientes,
                 'crt' => $request->crt,
                 'lancar_nfe_nfce_fluxo_caixa' => $lancarNFeNFCeFluxoCaixa,
-            ]);
+            ], $this->nfseSettingsPayload($request, $empresa)));
         }
 
         return $empresa;
+    }
+
+    private function nfseSettingsPayload($request, Empresa $empresa): array
+    {
+        return [
+            'ultimaNFSe' => $request->filled('nfse') ? $request->nfse : $empresa->ultimaNFSe,
+            'ultimaDPS' => $request->filled('dps') ? $request->dps : $empresa->ultimaDPS,
+            'serieNFSe' => $request->filled('serie_nfse') ? $request->serie_nfse : $empresa->serieNFSe,
+            'limNFSe' => $request->filled('nfses') ? $request->nfses : $empresa->limNFSe,
+            'inscricao_municipal' => $request->filled('inscricao_municipal') ? $request->inscricao_municipal : $empresa->inscricao_municipal,
+        ];
     }
 
     public function todas()
@@ -220,6 +231,20 @@ class EmpresasService
     {
         $company = Empresa::find($companyId);
         $company->ultimaCTe = $company->ultimaCTe + 1;
+        $company->save();
+    }
+
+    public function incrementLastNFSe($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->ultimaNFSe = $company->ultimaNFSe + 1;
+        $company->save();
+    }
+
+    public function incrementLastDPS($companyId)
+    {
+        $company = Empresa::find($companyId);
+        $company->ultimaDPS = $company->ultimaDPS + 1;
         $company->save();
     }
 }
