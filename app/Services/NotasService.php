@@ -4,10 +4,10 @@ namespace App\Services;
 
 use App\Models\MDFE;
 use App\Models\MDFeNota;
+use App\Models\MDFeXml;
 
 class NotasService
 {
-
     public function save(
         $numero,
         $serie,
@@ -79,6 +79,7 @@ class NotasService
         $mdfeId
     ) {
         $mdfe = MDFE::find($mdfeId);
+
         return $mdfe->update([
             'numero' => $numero,
             'serie' => $serie,
@@ -122,7 +123,7 @@ class NotasService
 
     public function updateOrCreateNotas($tipoDocumento, $chave, $uf, $municipio, $codMun, $valor, $peso, $serie, $numero, $nota_id, $mdfeId)
     {
-        if (!$nota_id) {
+        if (! $nota_id) {
             return $this->saveNotas(
                 $tipoDocumento,
                 $chave,
@@ -137,6 +138,7 @@ class NotasService
             );
         } else {
             $nota = MDFeNota::find($nota_id);
+
             return $nota->update([
                 'chave' => $chave,
                 'uf' => $uf,
@@ -155,18 +157,33 @@ class NotasService
         $notas_ids = collect($notas)->pluck('nota_id')->toArray();
         $ids = MDFeNota::where('mdfe_id', $mdfeId)->get()->pluck('id')->toArray();
         $notasParaDeletar = array_diff($ids, $notas_ids);
+
         return MDFeNota::whereIn('id', $notasParaDeletar)->delete();
     }
 
     public function deleteMDFe($mdfeId)
     {
         $mdfe = MDFE::find($mdfeId);
+
         return $mdfe->delete();
     }
 
     public function buscarMDFe($mdfeId)
     {
-        return MDFE::with('empresa', 'veiculoTracao.proprietario', 'reboques.reboque', 'motoristas.motorista', 'notas', 'prodPred')->find($mdfeId);
+        return MDFE::with('empresa', 'veiculoTracao.proprietario', 'reboques.reboque', 'motoristas.motorista', 'notas', 'prodPred', 'xmls')->find($mdfeId);
+    }
+
+    public function salvarXmlMDFe(MDFE $mdfe, string $tipo, string $xml): MDFeXml
+    {
+        return MDFeXml::updateOrCreate(
+            [
+                'mdfe_id' => $mdfe->id,
+                'tipo' => $tipo,
+            ],
+            [
+                'xml' => $xml,
+            ]
+        );
     }
 
     public function buscarMDFes($empresaId)
@@ -174,6 +191,7 @@ class NotasService
         if ($empresaId == 1) {
             $empresaId = '%';
         }
+
         return MDFE::select('m_d_f_e_s.*', 'empresas.fantasia')
             ->join('empresas', 'empresas.id', 'm_d_f_e_s.empresa_id')
             ->where('m_d_f_e_s.empresa_id', 'like', $empresaId)

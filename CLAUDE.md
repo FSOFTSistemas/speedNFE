@@ -101,6 +101,35 @@ from a `CTe` header + `CTeDocumento` lines (the NFe/NFCe documents being transpo
 `client-CTe` role. The `Servico` model (`ServicosController`/`ServicosService`) is a per-company catalog of
 billable services used when building NFCom items.
 
+### NFS-e Nacional (`app/Services/NFSeService.php`, `app/Services/NFSe/*`)
+
+The newest fiscal document type, gated by the `client-NFSe` role: `NFSeController`/`NFSeService` build and
+transmit a DPS (Declaração de Prestação de Serviços) to the national Sefin Nacional platform, with dedicated
+helpers under `app/Services/NFSe/` for XML signing (`NFSeSigner`), the Sefin HTTP client (`NFSeClient`), and
+XSD validation (`NFSeSchemaValidator`). Two supporting data directories must ship with any release:
+
+- `resources/domains/nfse/v1.01/` — versioned domain spreadsheets, imported into the domain tables (created
+  by migration `2026_08_24_020000_create_nfse_domain_tables.php`) via `php artisan nfse:importar-dominios`
+  (idempotent; re-run when the official domain files are updated).
+- `resources/schemas/nfse/v1.01/` — official XSD files used by `NFSeSchemaValidator`.
+
+NFS-e migrations must run in this order (`php artisan migrate --force` respects it automatically; don't use
+`--path` to run a subset without a specific reason):
+`2026_08_24_000000_add_client_nfse_permission.php` →
+`2026_08_24_010000_add_nfse_fields_to_empresas_table.php` →
+`2026_08_24_011000_create_nfses_tables.php` →
+`2026_08_24_020000_create_nfse_domain_tables.php` →
+`2026_08_24_030000_add_nfse_fields_to_servicos_table.php`.
+The permission migration only creates the `client-NFSe` cargo value — it still needs to be assigned to
+users/roles through the normal permission workflow.
+
+Production also needs env vars `NFSE_LAYOUT_VERSION`, `NFSE_VER_APLIC`, `NFSE_SEFIN_RESTRITA_URL`,
+`NFSE_SEFIN_PRODUCAO_URL`, `NFSE_SEFIN_TIMEOUT`, plus a per-company municipal registration, NFS-e/DPS series
+and numbering config, and the digital certificate/private key for Sefin — never commit these. On the
+frontend, the `Servico` catalog uses Select2 for national service code / NBS code / tax-operation indicator,
+the emission form supports municipality lookup by IBGE code and optional CEP lookup via ViaCEP, and IBS
+(0.10%) / CBS (0.90%) are calculated both backend and in the form display.
+
 ### Other integrations
 
 - **Pix payments**: `EfiPixService.php` (Efí/Gerencianet SDK) + `PixController`/`PixWebhookController`

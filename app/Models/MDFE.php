@@ -41,7 +41,7 @@ class MDFE extends Model
     protected $casts = [
         'situacao' => EstadoEnum::class,
         'tipo_documento' => TipoDocumentoEnum::class,
-        'tipo_carga' => TipoCargaEnum::class
+        'tipo_carga' => TipoCargaEnum::class,
     ];
 
     public function empresa()
@@ -72,5 +72,25 @@ class MDFE extends Model
     public function prodPred()
     {
         return $this->hasOne(MDFeProdPred::class, 'mdfe_id');
+    }
+
+    public function xmls()
+    {
+        return $this->hasMany(MDFeXml::class, 'mdfe_id');
+    }
+
+    public function xmlAutorizado()
+    {
+        return $this->hasOne(MDFeXml::class, 'mdfe_id')->where('tipo', MDFeXml::TIPO_AUTORIZADO);
+    }
+
+    public function xmlEncerrado()
+    {
+        return $this->hasOne(MDFeXml::class, 'mdfe_id')->where('tipo', MDFeXml::TIPO_ENCERRADO);
+    }
+
+    public function xmlCancelado()
+    {
+        return $this->hasOne(MDFeXml::class, 'mdfe_id')->where('tipo', MDFeXml::TIPO_CANCELADO);
     }
 }

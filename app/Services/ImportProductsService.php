@@ -12,7 +12,7 @@ class ImportProductsService
 
     public function __construct($config, $emitente)
     {
-        $certificado = file_get_contents(storage_path('app/certificados/' . $emitente->razao . '.pfx'));
+        $certificado = app(EmpresaCertificate::class)->content($emitente);
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
         $this->tools->model('55');
     }
@@ -23,17 +23,19 @@ class ImportProductsService
         $this->tools->setEnvironment(1);
         $response = $this->tools->sefazDownload($chaveNota);
         $stdCl = new Standardize($response);
+
         return $stdCl->toStd();
     }
 
-    //Codigo para confirmação de operação: 210200
-    //Ciência da emissão: 210210
-    //Código para desconhecimento da operação: 210220
-    //Código para operação não realizada: 210240
+    // Codigo para confirmação de operação: 210200
+    // Ciência da emissão: 210210
+    // Código para desconhecimento da operação: 210220
+    // Código para operação não realizada: 210240
     public function manifest($chaveNota, $evento, $sequenciaEvento, $justificativa = '')
     {
         $response = $this->tools->sefazManifesta($chaveNota, $evento, $justificativa, $sequenciaEvento);
         $std = new Standardize($response);
+
         return $std->toStd();
     }
 
@@ -41,6 +43,7 @@ class ImportProductsService
     {
         $response = $this->tools->sefazConsultaChave($chaveNota);
         $stdCl = new Standardize($response);
+
         return $stdCl->toStd();
     }
 
@@ -65,14 +68,13 @@ class ImportProductsService
 
         return [
             'nota' => [
-                'ide'   => $note->NFe->infNFe->ide,
-                'emit'  => $note->NFe->infNFe->emit,
-                'vNF'   => $note->NFe->infNFe->total->ICMSTot->vNF,
+                'ide' => $note->NFe->infNFe->ide,
+                'emit' => $note->NFe->infNFe->emit,
+                'vNF' => $note->NFe->infNFe->total->ICMSTot->vNF,
                 'chNFe' => $note->protNFe->infProt->chNFe ?? null,
             ],
             'prods' => $prods,
             'xml' => file_get_contents((string) $xml),
         ];
     }
-
 }

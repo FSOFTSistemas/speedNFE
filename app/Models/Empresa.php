@@ -31,6 +31,7 @@ class Empresa extends Model
         'serie',
         'serieNFSe',
         'certificado',
+        'certificado_conteudo',
         'senhaCertificado',
         'ambiente',
         'status',
@@ -49,12 +50,14 @@ class Empresa extends Model
 
     protected $casts = [
         'senhaCertificado' => 'encrypted',
+        'certificado_conteudo' => 'encrypted',
         'lancar_nfe_nfce_fluxo_caixa' => 'boolean',
     ];
 
     protected $hidden = [
         'senhaCertificado',
         'certificado',
+        'certificado_conteudo',
     ];
 
     public function endereco()
@@ -91,7 +94,8 @@ class Empresa extends Model
             'ultimaDPS' => $dps,
             'serie' => $serie,
             'serieNFSe' => $serieNFSe ?: $serie,
-            'certificado' => $certificado,
+            'certificado' => null,
+            'certificado_conteudo' => $certificado,
             'senhaCertificado' => $senha,
             'ambiente' => $ambiente,
             'status' => 1,

@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
-use NFePHP\Common\Certificate;
 
 class EmpresasService
 {
@@ -14,7 +13,11 @@ class EmpresasService
         $lancarNFeNFCeFluxoCaixa = $request->boolean('lancar_nfe_nfce_fluxo_caixa');
 
         if ($request->hasFile('certificado')) {
-            $path = $request->certificado->storeAs('certificados', $request->nome.'.pfx');
+            $certificateContent = $this->storeCertificate(
+                $request->certificado,
+                $request->nome,
+                $request->senha !== '' ? $request->senha : (string) $empresa->senhaCertificado
+            );
             if ($request->senha != '') {
                 $empresa->update(array_merge([
                     'razao' => $request->nome,
@@ -29,7 +32,8 @@ class EmpresasService
                     'serie' => $request->serie,
                     'senhaCertificado' => $request->senha,
                     'ambiente' => $request->ambiente,
-                    'certificado' => $path,
+                    'certificado' => null,
+                    'certificado_conteudo' => $certificateContent,
                     'csc' => $request->csc,
                     'idCsc' => $request->idCsc,
                     'limNFes' => $request->nfes,
@@ -52,7 +56,8 @@ class EmpresasService
                     'contador' => $request->contador,
                     'serie' => $request->serie,
                     'ambiente' => $request->ambiente,
-                    'certificado' => $path,
+                    'certificado' => null,
+                    'certificado_conteudo' => $certificateContent,
                     'csc' => $request->csc,
                     'idCsc' => $request->idCsc,
                     'limNFes' => $request->nfes,
@@ -197,11 +202,14 @@ class EmpresasService
 
     public function storeCertificate($certificado, $nome, $senha)
     {
-        $path = $certificado->storeAs('certificados', $nome.'.pfx');
-        $content = file_get_contents(storage_path('app/certificados/'.$nome.'.pfx'));
-        Certificate::readPfx($content, $senha);
+        $content = file_get_contents($certificado->getRealPath());
+        if ($content === false) {
+            throw new \RuntimeException('Não foi possível ler o certificado enviado.');
+        }
 
-        return $path;
+        app(EmpresaCertificate::class)->validate($content, (string) $senha);
+
+        return $content;
     }
 
     public function incrementCupomSequence($companyId)

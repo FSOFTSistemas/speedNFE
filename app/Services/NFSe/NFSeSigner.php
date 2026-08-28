@@ -3,23 +3,18 @@
 namespace App\Services\NFSe;
 
 use App\Models\Empresa;
+use App\Services\EmpresaCertificate;
 use NFePHP\Common\Certificate;
 use NFePHP\Common\Signer;
-use RuntimeException;
 
 class NFSeSigner
 {
+    public function __construct(private EmpresaCertificate $certificates) {}
+
     public function signDps(string $xml, Empresa $empresa): string
     {
-        $path = $this->certificatePath($empresa);
-        if (! file_exists($path)) {
-            throw new RuntimeException('Certificado digital da empresa não encontrado para assinar a NFS-e.');
-        }
-
-        $content = file_get_contents($path);
-
         return Signer::sign(
-            Certificate::readPfx($content, $empresa->senhaCertificado),
+            $this->certificate($empresa),
             $xml,
             'infDPS',
             'Id',
@@ -29,12 +24,29 @@ class NFSeSigner
         );
     }
 
-    public function certificatePath(Empresa $empresa): string
+    public function signEvent(string $xml, Empresa $empresa): string
     {
-        if (! empty($empresa->certificado)) {
-            return storage_path('app/'.$empresa->certificado);
-        }
+        return Signer::sign(
+            $this->certificate($empresa),
+            $xml,
+            'infPedReg',
+            'Id',
+            OPENSSL_ALGO_SHA256,
+            Signer::CANONICAL,
+            'pedRegEvento'
+        );
+    }
 
-        return storage_path('app/certificados/'.$empresa->razao.'.pfx');
+    public function withCertificateFile(Empresa $empresa, callable $callback)
+    {
+        return $this->certificates->withTemporaryFile($empresa, $callback);
+    }
+
+    private function certificate(Empresa $empresa): Certificate
+    {
+        return Certificate::readPfx(
+            $this->certificates->content($empresa),
+            (string) $empresa->senhaCertificado
+        );
     }
 }

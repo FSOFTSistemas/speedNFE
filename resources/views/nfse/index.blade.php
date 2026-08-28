@@ -40,6 +40,7 @@
             </thead>
             <tbody>
                 @foreach ($nfses as $nfse)
+                    @php($transmissaoInconclusiva = $nfse->situacao === 'Pendente' && $nfse->cStat === 'PENDENTE')
                     <tr>
                         <td>{{ $nfse->nro ?: '-' }}/{{ $nfse->serie ?: '-' }}</td>
                         <td>{{ $nfse->nDPS ?: '-' }}/{{ $nfse->serieDPS ?: '-' }}</td>
@@ -70,16 +71,32 @@
                                     <i class="far fa-file-code"></i>
                                 </a>
                             @endif
-                            @if (in_array($nfse->situacao, ['Pendente', 'Rejeitado', 'Rascunho']))
+                            @if ($nfse->chave && in_array($nfse->situacao, ['Autorizado', 'Cancelado']))
+                                <a title="Baixar DANFSe" href="{{ route('nfse.downloadDanfse', [$nfse->id]) }}" class="mx-1">
+                                    <i class="far fa-file-pdf"></i>
+                                </a>
+                            @endif
+                            @if (in_array($nfse->situacao, ['Pendente', 'Rejeitado', 'Rascunho']) && ! $transmissaoInconclusiva)
                                 <a title="Editar" href="{{ route('nfse.edit', [$nfse->id]) }}" class="mx-1">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a title="Enviar" href="{{ route('nfse.enviar', [$nfse->id]) }}" class="mx-1" onclick="return confirm('Enviar essa NFS-e?')">
-                                    <i class="fas fa-paper-plane text-success"></i>
-                                </a>
+                                <form action="{{ route('nfse.enviar', [$nfse->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Enviar essa NFS-e?')">
+                                    @csrf
+                                    <button type="submit" title="Enviar" class="btn btn-link p-0 mx-1">
+                                        <i class="fas fa-paper-plane text-success"></i>
+                                    </button>
+                                </form>
                                 <button type="button" title="Excluir" class="btn btn-link p-0 mx-1" data-toggle="modal" data-target="#deleteModal{{ $nfse->id }}">
                                     <i class="fas fa-trash text-danger"></i>
                                 </button>
+                            @endif
+                            @if ($transmissaoInconclusiva)
+                                <form action="{{ route('nfse.reconciliar', [$nfse->id]) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" title="Sincronizar com a SEFIN" class="btn btn-link p-0 mx-1">
+                                        <i class="fas fa-sync-alt text-warning"></i>
+                                    </button>
+                                </form>
                             @endif
                             @if ($nfse->situacao === 'Autorizado')
                                 <button type="button" title="Cancelar" class="btn btn-link p-0 mx-1" data-toggle="modal" data-target="#cancelModal{{ $nfse->id }}">
@@ -114,8 +131,16 @@
                             @csrf
                             <input type="hidden" name="nfse_id" value="{{ $nfse->id }}">
                             <div class="form-group">
+                                <label>Motivo</label>
+                                <select class="form-control" name="codigo_motivo" required>
+                                    <option value="1">1 - Erro na emissão</option>
+                                    <option value="2">2 - Serviço não prestado</option>
+                                    <option value="9">9 - Outros</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label>Justificativa (mínimo 15 caracteres)</label>
-                                <textarea class="form-control" name="justificativa" minlength="15" required></textarea>
+                                <textarea class="form-control" name="justificativa" minlength="15" maxlength="255" required></textarea>
                             </div>
                             <div class="text-right">
                                 <button type="submit" class="btn btn-danger">Confirmar Cancelamento</button>

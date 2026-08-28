@@ -101,7 +101,15 @@
             @if ($nfse->xmlAutorizado || $nfse->xmlDps)
                 <a href="{{ route('nfse.downloadXml', [$nfse->id]) }}" class="btn btn-outline-info">Baixar XML</a>
             @endif
-            @if (in_array($nfse->situacao, ['Pendente', 'Rejeitado', 'Rascunho']))
+            @if ($nfse->chave && in_array($nfse->situacao, ['Autorizado', 'Cancelado']))
+                <a href="{{ route('nfse.downloadDanfse', [$nfse->id]) }}" class="btn btn-outline-danger">Baixar DANFSe</a>
+            @endif
+            @if ($nfse->situacao === 'Pendente' && $nfse->cStat === 'PENDENTE')
+                <form action="{{ route('nfse.reconciliar', [$nfse->id]) }}" method="POST" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-warning">Sincronizar com a SEFIN</button>
+                </form>
+            @elseif (in_array($nfse->situacao, ['Pendente', 'Rejeitado', 'Rascunho']))
                 <a href="{{ route('nfse.edit', [$nfse->id]) }}" class="btn btn-primary">Editar</a>
             @endif
         </div>

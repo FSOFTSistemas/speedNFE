@@ -2,8 +2,8 @@
 
 namespace App\Services\NFSe;
 
-use App\Models\Endereco;
 use App\Models\Empresa;
+use App\Models\Endereco;
 use App\Models\NFSe;
 use App\Utils\FormatationUtil;
 use Carbon\Carbon;
@@ -43,6 +43,7 @@ class DpsXmlBuilder
         $this->appendPessoa($doc, $infDps, 'toma', $nfse->cliente);
         $this->appendServico($doc, $infDps, $nfse);
         $this->appendValores($doc, $infDps, $nfse);
+        $this->appendIbsCbs($doc, $infDps, $nfse);
 
         return $doc->saveXML($doc->documentElement, LIBXML_NOXMLDECL);
     }
@@ -103,11 +104,13 @@ class DpsXmlBuilder
 
         if (strlen($digits) === 14) {
             $this->append($doc, $parent, 'CNPJ', $digits);
+
             return;
         }
 
         if (strlen($digits) === 11) {
             $this->append($doc, $parent, 'CPF', $digits);
+
             return;
         }
 
@@ -178,6 +181,35 @@ class DpsXmlBuilder
 
         $totTrib = $this->append($doc, $trib, 'totTrib');
         $this->append($doc, $totTrib, 'indTotTrib', '0');
+    }
+
+    private function appendIbsCbs(DOMDocument $doc, DOMElement $parent, NFSe $nfse): void
+    {
+        $finNFSe = (string) ($nfse->finNFSe ?? '0');
+        $indFinal = (string) ($nfse->indFinal ?? '0');
+        $indDest = (string) ($nfse->indDest ?? '0');
+
+        if ($finNFSe !== '0') {
+            throw new RuntimeException('Finalidade da NFS-e inválida para o leiaute nacional atual.');
+        }
+        if (! in_array($indFinal, ['0', '1'], true)) {
+            throw new RuntimeException('Indicador de consumidor final inválido para IBS/CBS.');
+        }
+        if (! in_array($indDest, ['0', '1'], true)) {
+            throw new RuntimeException('Indicador de destinatário inválido para IBS/CBS.');
+        }
+
+        $ibsCbs = $this->append($doc, $parent, 'IBSCBS');
+        $this->append($doc, $ibsCbs, 'finNFSe', $finNFSe);
+        $this->append($doc, $ibsCbs, 'indFinal', $indFinal);
+        $this->append($doc, $ibsCbs, 'cIndOp', $this->digits($this->required($nfse->cIndOp, 'Indicador da operação de IBS/CBS não informado.'), 6));
+        $this->append($doc, $ibsCbs, 'indDest', $indDest);
+
+        $valores = $this->append($doc, $ibsCbs, 'valores');
+        $tributos = $this->append($doc, $valores, 'trib');
+        $grupo = $this->append($doc, $tributos, 'gIBSCBS');
+        $this->append($doc, $grupo, 'CST', $this->digits($this->required($nfse->cst_ibs_cbs, 'CST do IBS/CBS não informado.'), 3));
+        $this->append($doc, $grupo, 'cClassTrib', $this->digits($this->required($nfse->cClassTrib, 'Classificação tributária do IBS/CBS não informada.'), 6));
     }
 
     private function append(DOMDocument $doc, DOMElement $parent, string $tag, $value = null): DOMElement

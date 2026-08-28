@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\TipoDocumentoEnum;
 use App\Enums\UfEnum;
-use App\Services\MDFeMotoristaService;
+use App\Models\MDFeXml;
 use App\Services\EmpresasService;
+use App\Services\MDFeMotoristaService;
 use App\Services\MDFeReboqueService;
 use App\Services\MDFeService;
 use App\Services\NotasService;
@@ -22,11 +23,14 @@ use NFePHP\DA\MDFe\Damdfe;
 
 class MDFEController extends Controller
 {
-
     private NotasService $notasService;
+
     private ProdPredService $prodPredService;
+
     private EmpresasService $empresaService;
+
     private MDFeReboqueService $reboqueService;
+
     private MDFeMotoristaService $motoristaService;
 
     public function __construct(NotasService $notasService, EmpresasService $empresaService, ProdPredService $prodPredService, MDFeReboqueService $reboqueService, MDFeMotoristaService $motoristaService)
@@ -42,9 +46,10 @@ class MDFEController extends Controller
     {
         try {
             $MDFes = $this->notasService->buscarMDFes(Auth::user()->empresa_id);
+
             return view('mdfes.index', ['mdfes' => $MDFes, 'empresa' => Auth::user()->empresa_id]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -53,9 +58,10 @@ class MDFEController extends Controller
         try {
             $tiposDocumentos = TipoDocumentoEnum::cases();
             $ufs = UfEnum::cases();
+
             return view('mdfes.create', ['tiposDocumentos' => $tiposDocumentos, 'ufs' => $ufs]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -81,42 +87,42 @@ class MDFEController extends Controller
                 'pesoTotal' => 'required|numeric',
                 'produtoPredominante' => 'required|max:255',
                 'tipoCarga' => 'required',
-                "info_fisco" => 'nullable|max:255',
-                "info_contribuinte" => 'nullable|max:255',
-                "numeroLacre" => 'nullable',
-                "codigo_gtin" => 'required',
-                "ncm" => 'required',
-                "lat_carregamento" => 'required',
-                "lon_carregamento" => 'required',
-                "lat_descarregamento" => 'required',
-                "lon_descarregamento" => 'required',
+                'info_fisco' => 'nullable|max:255',
+                'info_contribuinte' => 'nullable|max:255',
+                'numeroLacre' => 'nullable',
+                'codigo_gtin' => 'required',
+                'ncm' => 'required',
+                'lat_carregamento' => 'required',
+                'lon_carregamento' => 'required',
+                'lat_descarregamento' => 'required',
+                'lon_descarregamento' => 'required',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'max' => 'O campo :attribute pode ter no máximo 255 dígitos!',
-                'numeric' => 'O campo :attribute deve ser um valor numérico!'
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
             ]);
             DB::beginTransaction();
-                $MDFe = $this->notasService->save(
-                    1,
-                    $request->serie,
-                    $request->dataInicio,
-                    $request->localCarregamento,
-                    $request->localDescarregamento,
-                    $request->codMunCarregamento,
-                    $request->municipio,
-                    $request->percursos,
-                    $request->valorTotal,
-                    $request->pesoTotal,
-                    $request->tipoCarga,
-                    $request->numeroNotas_['NFe'],
-                    $request->numeroNotas_['MDFe'],
-                    $request->numeroNotas_['CTe'],
-                    $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
-                    $request->veiculoTracao,
-                    $request->numeroLacre,
-                    $request->info_fisco,
-                    $request->info_contribuinte
-                );
+            $MDFe = $this->notasService->save(
+                1,
+                $request->serie,
+                $request->dataInicio,
+                $request->localCarregamento,
+                $request->localDescarregamento,
+                $request->codMunCarregamento,
+                $request->municipio,
+                $request->percursos,
+                $request->valorTotal,
+                $request->pesoTotal,
+                $request->tipoCarga,
+                $request->numeroNotas_['NFe'],
+                $request->numeroNotas_['MDFe'],
+                $request->numeroNotas_['CTe'],
+                $this->empresaService->buscarEmpresa(Auth::user()->empresa_id),
+                $request->veiculoTracao,
+                $request->numeroLacre,
+                $request->info_fisco,
+                $request->info_contribuinte
+            );
             if ($MDFe) {
                 $this->prodPredService->createProdPred(
                     $request->produtoPredominante,
@@ -157,18 +163,22 @@ class MDFEController extends Controller
                     );
                 }
                 DB::commit();
+
                 return redirect()->route('mdfe.index')->with('success', 'MDFe foi criada com sucesso!');
             }
+
             return back()->with('warning', 'Limite de MDFes foi atingido, assine um plano com mais vantagens para aumentar o limite!');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
+
             return back()->with('warning', implode(PHP_EOL, $errors))->withInput();
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -176,9 +186,10 @@ class MDFEController extends Controller
     {
         try {
             $nota = $this->notasService->buscarMDFe($mdfeId);
+
             return view('mdfes.edit', ['nota' => $nota]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -205,19 +216,19 @@ class MDFEController extends Controller
                 'produtoPredominante' => 'required|max:255',
                 'prodPred_id' => 'required|numeric',
                 'tipoCarga' => 'required',
-                "info_fisco" => 'nullable|max:255',
-                "info_contribuinte" => 'nullable|max:255',
-                "numeroLacre" => 'nullable',
-                "codigo_gtin" => 'required',
-                "ncm" => 'required',
-                "lat_carregamento" => 'required',
-                "lon_carregamento" => 'required',
-                "lat_descarregamento" => 'required',
-                "lon_descarregamento" => 'required',
+                'info_fisco' => 'nullable|max:255',
+                'info_contribuinte' => 'nullable|max:255',
+                'numeroLacre' => 'nullable',
+                'codigo_gtin' => 'required',
+                'ncm' => 'required',
+                'lat_carregamento' => 'required',
+                'lon_carregamento' => 'required',
+                'lat_descarregamento' => 'required',
+                'lon_descarregamento' => 'required',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'max' => 'O campo :attribute pode ter no máximo 255 dígitos!',
-                'numeric' => 'O campo :attribute deve ser um valor numérico!'
+                'numeric' => 'O campo :attribute deve ser um valor numérico!',
             ]);
             DB::beginTransaction();
             $this->notasService->update(
@@ -284,10 +295,12 @@ class MDFEController extends Controller
                 );
             }
             DB::commit();
+
             return redirect()->route('mdfe.edit', [$mdfeId])->with('success', 'Nota atuzalizada com sucesso!');
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -300,10 +313,12 @@ class MDFEController extends Controller
             DB::beginTransaction();
             $this->notasService->deleteMDFe($request->mdfeId);
             DB::commit();
+
             return redirect()->route('mdfe.index')->with('success', 'MDFe foi deletada com sucesso!');
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -312,42 +327,47 @@ class MDFEController extends Controller
         try {
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
             $MDFeService = new MDFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $mdfe->empresa->ambiente,
-                "razaosocial" => $mdfe->empresa->razao,
-                "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
-                "schemes" => "PL_MDFe_300a",
-                "versao" => "3.00",
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $mdfe->empresa->ambiente,
+                'razaosocial' => $mdfe->empresa->razao,
+                'siglaUF' => $mdfe->empresa->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                'schemes' => 'PL_MDFe_300a',
+                'versao' => '3.00',
             ], $mdfe->empresa);
             DB::beginTransaction();
             $xml = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
-            if ($xml && !isset($xml['erros_xml'])) {
+            if ($xml && ! isset($xml['erros_xml'])) {
                 $signedXml = $MDFeService->sign($xml['xml']);
-                $result = $MDFeService->transmitir($signedXml, $xml['chave'], 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas');
+                $result = $MDFeService->transmitir($signedXml);
                 if (isset($result['sucesso']) && isset($result['nProt'])) {
                     $mdfe->chave_acesso = $xml['chave'];
                     $mdfe->situacao = 'Autorizado';
                     $mdfe->numero = $xml['nMDF'];
                     $mdfe->nProtocolo = $result['nProt'];
                     $mdfe->save();
+                    $this->notasService->salvarXmlMDFe($mdfe, MDFeXml::TIPO_AUTORIZADO, $result['xml']);
                     $mdfe->empresa->update(['ultimaMDFe' => $mdfe->empresa->ultimaMDFe + 1]);
                     DB::commit();
+
                     return redirect()->route('mdfe.index')->with('success', 'Nota enviada com sucesso!');
                 } else {
                     $mdfe->situacao = 'Rejeitado';
                     $mdfe->save();
                     DB::commit();
+
                     return redirect()->route('mdfe.index')->with('warning', $result['erro']);
                 }
             }
             DB::rollBack();
+
             return redirect()->route('mdfe.index')->with('warning', $xml['erros_xml']);
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -356,31 +376,35 @@ class MDFEController extends Controller
         try {
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
             $MDFeService = new MDFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $mdfe->empresa->ambiente,
-                "razaosocial" => $mdfe->empresa->razao,
-                "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
-                "schemes" => "PL_MDFe_300a",
-                "versao" => "3.00",
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $mdfe->empresa->ambiente,
+                'razaosocial' => $mdfe->empresa->razao,
+                'siglaUF' => $mdfe->empresa->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                'schemes' => 'PL_MDFe_300a',
+                'versao' => '3.00',
             ], $mdfe->empresa);
             DB::beginTransaction();
-            $result = $MDFeService->encerrar($mdfe, 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Encerradas');
-            if (!isset($result['erro'])) {
+            $result = $MDFeService->encerrar($mdfe);
+            if (! isset($result['erro'])) {
                 $mdfe->situacao = 'Encerrado';
                 $mdfe->nProtocolo = $result['nProt'];
                 $mdfe->save();
+                $this->notasService->salvarXmlMDFe($mdfe, MDFeXml::TIPO_ENCERRADO, $result['xml']);
                 DB::commit();
+
                 return redirect()->route('mdfe.index')->with('success', 'Nota encerrada com sucesso!');
             } else {
                 DB::rollBack();
+
                 return redirect()->route('mdfe.index')->with('warning', $result['erro']);
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -389,31 +413,34 @@ class MDFEController extends Controller
         try {
             $request->validate([
                 'justificativa' => 'required|max:255',
-                'mdfe_id' => 'required|numeric'
+                'mdfe_id' => 'required|numeric',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
-                'max' => 'O campo :attribute deve conter no máximo :max dígitos!'
+                'max' => 'O campo :attribute deve conter no máximo :max dígitos!',
             ]);
             $mdfe = $this->notasService->buscarMDFe($request->mdfe_id);
             $MDFeService = new MDFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $mdfe->empresa->ambiente,
-                "razaosocial" => $mdfe->empresa->razao,
-                "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
-                "schemes" => "PL_MDFe_300a",
-                "versao" => "3.00",
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $mdfe->empresa->ambiente,
+                'razaosocial' => $mdfe->empresa->razao,
+                'siglaUF' => $mdfe->empresa->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                'schemes' => 'PL_MDFe_300a',
+                'versao' => '3.00',
             ], $mdfe->empresa);
             DB::beginTransaction();
-            $result = $MDFeService->cancelar($mdfe, $request->justificativa,  'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas');
-            if (!isset($result['erro'])) {
+            $result = $MDFeService->cancelar($mdfe, $request->justificativa);
+            if (! isset($result['erro'])) {
                 $mdfe->situacao = 'Cancelado';
                 $mdfe->nProtocolo = $result['nProt'];
                 $mdfe->save();
+                $this->notasService->salvarXmlMDFe($mdfe, MDFeXml::TIPO_CANCELADO, $result['xml']);
                 DB::commit();
+
                 return redirect()->route('mdfe.index')->with('success', 'Nota cancelada com sucesso!');
             } else {
                 DB::rollBack();
+
                 return redirect()->route('mdfe.index')->with('warning', $result['erro']);
             }
         } catch (ValidationException $e) {
@@ -421,12 +448,14 @@ class MDFEController extends Controller
                 $errors[] = implode(PHP_EOL, $error);
             }
             DB::rollBack();
+
             return back()->with('warning', implode(PHP_EOL, $errors));
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -434,29 +463,33 @@ class MDFEController extends Controller
     {
         try {
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
-            if ($modo == 0) {
-                $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Autorizadas/' . $mdfe->chave_acesso . '.xml');
+            $tipo = MDFeXml::tipoPorModo((int) $modo);
+            abort_if($tipo === null, 404);
+
+            $xmlRow = $mdfe->xmls->firstWhere('tipo', $tipo);
+            if (! $xmlRow) {
+                return back()->with('warning', 'XML do MDF-e não encontrado no banco de dados.');
+            }
+
+            if ((int) $modo === 0) {
+                $xml = $xmlRow->xml;
                 $damdfe = new Damdfe($xml);
                 $pdf = $damdfe->render();
+
                 return response($pdf)
                     ->header('Content-Type', 'application/pdf');
-            } else if ($modo == 1) {
-                $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Encerradas/' . $mdfe->chave_acesso . '.xml');
-                $daevento = new Daevento($xml, $mdfe->empresa);
-                $daevento->debugMode(true);
-                $pdf = $daevento->render();
-                return response($pdf)->header('Content-Type', 'application/pdf');
             } else {
-                $xml = file_get_contents('xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Canceladas/' . $mdfe->chave_acesso . '.xml');
+                $xml = $xmlRow->xml;
                 $daevento = new Daevento($xml, $mdfe->empresa);
                 $daevento->debugMode(true);
                 $pdf = $daevento->render();
+
                 return response($pdf)->header('Content-Type', 'application/pdf');
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -465,23 +498,24 @@ class MDFEController extends Controller
         try {
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
             $MDFeService = new MDFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $mdfe->empresa->ambiente,
-                "razaosocial" => $mdfe->empresa->razao,
-                "siglaUF" => $mdfe->empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
-                "schemes" => "PL_MDFe_300a",
-                "versao" => "3.00",
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $mdfe->empresa->ambiente,
+                'razaosocial' => $mdfe->empresa->razao,
+                'siglaUF' => $mdfe->empresa->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($mdfe->empresa->cpf_cnpj),
+                'schemes' => 'PL_MDFe_300a',
+                'versao' => '3.00',
             ], $mdfe->empresa);
             $result = $MDFeService->gerarXml($mdfe, $mdfe->empresa);
             $damdfe = new Damdfe($result['xml']);
             $pdf = $damdfe->render();
+
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -489,11 +523,19 @@ class MDFEController extends Controller
     {
         try {
             $mdfe = $this->notasService->buscarMDFe($mdfeId);
-            $situacao = $mdfe->situacao->value == 'Autorizado' ? 'Autorizadas' : ($mdfe->situacao->value == 'Cancelado' ? 'Canceladas' : 'Encerradas');
-            $xml = 'xml_mdfe/' . $mdfe->empresa->fantasia . '/' . date('Y', strtotime($mdfe->data)) . '/' . date('m', strtotime($mdfe->data)) . '/notas/' . $situacao . '/' . $mdfe->chave_acesso . '.xml';
-            return response()->download($xml);
+            $tipo = MDFeXml::tipoPorSituacao($mdfe->situacao);
+            $xmlRow = $tipo ? $mdfe->xmls->firstWhere('tipo', $tipo) : null;
+
+            if (! $xmlRow) {
+                return back()->with('warning', 'XML do MDF-e não encontrado no banco de dados.');
+            }
+
+            return response($xmlRow->xml, 200, [
+                'Content-Type' => 'application/xml; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="'.$mdfe->chave_acesso.'.xml"',
+            ]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento! Erro: '.$e->getMessage());
         }
     }
 
@@ -501,10 +543,10 @@ class MDFEController extends Controller
     {
         try {
             $results = $this->notasService->getTotalMDFePerMonth(Auth::user()->empresa_id);
+
             return response()->json($results);
         } catch (Exception $e) {
-            return response()->json('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+            return response()->json('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage());
         }
     }
-
 }

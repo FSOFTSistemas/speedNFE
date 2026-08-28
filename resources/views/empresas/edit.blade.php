@@ -308,7 +308,7 @@
                         <div class="row">
                             <div class="col-md-3 mb-3"><label class="form-label">Senha do Certificado</label><input
                                     class="form-control" type="password" name="senha" id="senha"
-                                    value="{{ $empresa->senhaCertificado }}"></div>
+                                    value="" placeholder="Deixe vazio para manter a senha atual"></div>
                             <div class="col-md-9 mb-3"><label class="form-label">Alterar Certificado (.pfx)</label><input
                                     accept=".pfx" type="file" name="certificado" id="certificado"
                                     class="form-control"></div>

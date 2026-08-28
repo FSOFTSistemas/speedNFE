@@ -154,11 +154,8 @@
             <div class="nfse-panel-title">Informações gerais</div>
             <div class="row">
                 <div class="col-md-4 form-group">
-                    <label>Informar dados da Reforma Tributária (Imposto sobre Bens e Serviços e Contribuição sobre Bens e Serviços)?</label>
-                    <div class="nfse-radio-group">
-                        <label><input type="radio" name="preencher_ibs_cbs" value="1" @if (old('preencher_ibs_cbs') == '1') checked @endif> Sim</label>
-                        <label><input type="radio" name="preencher_ibs_cbs" value="0" @if (old('preencher_ibs_cbs', '0') == '0') checked @endif> Não</label>
-                    </div>
+                    <label>Reforma Tributária</label>
+                    <div class="alert alert-info mb-0">Os dados de IBS/CBS são obrigatórios no leiaute nacional atual.</div>
                 </div>
                 <div class="col-md-4 form-group">
                     <label>Data em que o serviço foi prestado</label>
@@ -235,6 +232,10 @@
                                 data-cnbs="{{ $digitsOnly($servico->cNBS) }}"
                                 data-cindop="{{ $servico->cIndOp }}"
                                 data-cclasstrib="{{ $servico->cClassTrib }}"
+                                data-cstibscbs="{{ $servico->cst_ibs_cbs }}"
+                                data-finnfse="{{ $servico->finNFSe ?? '0' }}"
+                                data-indfinal="{{ $servico->indFinal ?? '0' }}"
+                                data-inddest="{{ $servico->indDest ?? '0' }}"
                                 data-paliq="{{ $servico->pAliqISSQN }}"
                                 data-descricao="{{ $servico->descricao }}"
                                 @if ($servicoSelecionado == $servico->id) selected @endif
@@ -320,7 +321,7 @@
                 </div>
                 <div class="col-md-12 form-group">
                     <label>Indicador da operação para apuração da Reforma Tributária</label>
-                    <select class="form-control nfse-select2" name="cIndOp" data-placeholder="Pesquise pelo indicador da operação da Reforma Tributária">
+                    <select class="form-control nfse-select2" name="cIndOp" data-placeholder="Pesquise pelo indicador da operação da Reforma Tributária" required>
                         <option value="">Selecione</option>
                         @foreach ($indOps as $item)
                             <option value="{{ $item->codigo }}" @if ($val('cIndOp') == $item->codigo) selected @endif>
@@ -333,11 +334,28 @@
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label>Código de classificação tributária da Reforma Tributária</label>
-                    <input type="text" class="form-control" name="cClassTrib" value="{{ $val('cClassTrib') }}" maxlength="6">
+                    <input type="text" class="form-control" name="cClassTrib" value="{{ $val('cClassTrib') }}" maxlength="6" required>
                 </div>
                 <div class="col-md-6 form-group">
                     <label>Alíquota do Imposto Sobre Serviços (%)</label>
                     <input type="number" step="0.0001" class="form-control" name="pAliq" value="{{ $val('pAliq') }}">
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>CST do IBS/CBS</label>
+                    <input type="text" class="form-control" name="cst_ibs_cbs" value="{{ $val('cst_ibs_cbs') }}" maxlength="3" required>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Finalidade da NFS-e</label>
+                    <select class="form-control nfse-select2" name="finNFSe" required>
+                        <option value="0" @if (($val('finNFSe') ?: '0') == '0') selected @endif>0 - NFS-e regular</option>
+                    </select>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Uso ou consumo pessoal?</label>
+                    <select class="form-control nfse-select2" name="indFinal" required>
+                        <option value="0" @if (($val('indFinal') ?: '0') == '0') selected @endif>0 - Não</option>
+                        <option value="1" @if ($val('indFinal') == '1') selected @endif>1 - Sim</option>
+                    </select>
                 </div>
                 <div class="col-md-12 form-group">
                     <label>Descrição detalhada do serviço prestado</label>
@@ -497,7 +515,8 @@
             const vIBS = Math.round((vBC * (aliquotaIbs / 100)) * 100) / 100;
             const vCBS = Math.round((vBC * (aliquotaCbs / 100)) * 100) / 100;
             const vLiq = Math.max(0, vServ - vDescIncond - vDescCond - vTotalRet);
-            const vTotNF = vLiq + vIBS + vCBS;
+            const competenceYear = Number((field('data_competencia')?.value || '').slice(0, 4));
+            const vTotNF = competenceYear >= 2027 ? vLiq + vIBS + vCBS : vLiq;
             setValue('vISSQN', vISSQN.toFixed(2), true);
             setValue('vIBS', vIBS.toFixed(2), true);
             setValue('vCBS', vCBS.toFixed(2), true);
@@ -601,6 +620,10 @@
                 setValue('cNBS', selected.dataset.cnbs);
                 setValue('cIndOp', selected.dataset.cindop);
                 setValue('cClassTrib', selected.dataset.cclasstrib);
+                setValue('cst_ibs_cbs', selected.dataset.cstibscbs);
+                setValue('finNFSe', selected.dataset.finnfse);
+                setValue('indFinal', selected.dataset.indfinal);
+                setValue('indDest', selected.dataset.inddest);
                 setValue('pAliq', selected.dataset.paliq);
                 setValue('discriminacao', selected.dataset.descricao);
                 calculate();

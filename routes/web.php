@@ -248,7 +248,9 @@ Route::middleware(['check.subscription'])->group(function () {
         Route::delete('/deletar', [NFSeController::class, 'delete'])->name('nfse.delete')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
         Route::get('/{id}/visualizar', [NFSeController::class, 'visualizar'])->name('nfse.view')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
         Route::get('/{id}/download-xml', [NFSeController::class, 'downloadXml'])->name('nfse.downloadXml')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
-        Route::get('/{id}/enviar-nota', [NFSeController::class, 'enviar'])->name('nfse.enviar')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::get('/{id}/download-danfse', [NFSeController::class, 'downloadDanfse'])->name('nfse.downloadDanfse')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::post('/{id}/enviar-nota', [NFSeController::class, 'enviar'])->name('nfse.enviar')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
+        Route::post('/{id}/reconciliar', [NFSeController::class, 'reconciliar'])->name('nfse.reconciliar')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
         Route::post('/cancelar-nota', [NFSeController::class, 'cancelar'])->name('nfse.cancel')->middleware(['auth', 'access.permission:master|admin|client-NFSe']);
     });
 

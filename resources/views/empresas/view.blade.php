@@ -375,7 +375,7 @@
         <div class="col-md-3 col-5">
             <div class="input-group has-validation mb-2">
                 <div class="form-floating">
-                    <input placeholder="Senha Certificado..." class="form-control" type="text" name="senha" id="senha" value="{{ $empresa->senhaCertificado }}" />
+                    <input placeholder="Senha protegida" class="form-control" type="password" value="" readonly />
                     <label>Senha Cert.</label>
                     <div class="invalid-feedback">Informe uma senha válida.</div>
                 </div>
@@ -385,7 +385,7 @@
         <div class="col-md-7 col-7">
             <div class="input-group has-validation mb-2">
                 <div class="form-floating">
-                    <input placeholder=" " type="text" name="certificado" id="certificado" class="form-control" value="{{ count(explode('/', $empresa->certificado)) > 2 ? explode('/', $empresa->certificado)[2] : '' }}">
+                    <input placeholder=" " type="text" class="form-control" value="{{ $empresa->certificado_conteudo ? 'Armazenado e criptografado no banco' : ($empresa->certificado ? 'Arquivo legado pendente de importação' : 'Não cadastrado') }}" readonly>
                     <label>Certificado</label>
                     <div class="invalid-feedback">Informe um certificado válido.</div>
                 </div>

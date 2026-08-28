@@ -7,7 +7,12 @@ return [
 
     'sefin' => [
         'timeout' => (int) env('NFSE_SEFIN_TIMEOUT', 30),
-        'restrita_base_url' => env('NFSE_SEFIN_RESTRITA_URL', 'https://sefin.producaorestrita.nfse.gov.br/SefinNacional'),
+        'connect_timeout' => (int) env('NFSE_SEFIN_CONNECT_TIMEOUT', 10),
+        'restrita_base_url' => env('NFSE_SEFIN_RESTRITA_URL', 'https://sefin.producaorestrita.nfse.gov.br/API/SefinNacional'),
         'producao_base_url' => env('NFSE_SEFIN_PRODUCAO_URL', 'https://sefin.nfse.gov.br/SefinNacional'),
+    ],
+
+    'danfse' => [
+        'base_url' => env('NFSE_DANFSE_URL', 'https://adn.nfse.gov.br'),
     ],
 ];

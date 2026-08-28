@@ -42,11 +42,15 @@ class NFSeController extends Controller
             'data_competencia' => 'required|date',
             'cLocPrestacao' => 'nullable|digits:7',
             'cLocIncid' => 'nullable|digits:7',
-            'cTribNac' => 'nullable|digits:6',
+            'cTribNac' => 'required|digits:6',
             'cTribMun' => 'nullable',
             'cNBS' => 'nullable|digits:9',
-            'cIndOp' => 'nullable|digits:6',
-            'cClassTrib' => 'nullable|digits:6',
+            'cIndOp' => 'required|digits:6',
+            'cClassTrib' => 'required|digits:6',
+            'cst_ibs_cbs' => 'required|digits:3',
+            'finNFSe' => 'required|in:0',
+            'indFinal' => 'required|in:0,1',
+            'indDest' => 'required|in:0,1',
             'vServ' => 'required|numeric',
             'vDescIncond' => 'nullable|numeric',
             'vDescCond' => 'nullable|numeric',
@@ -183,6 +187,18 @@ class NFSeController extends Controller
         }
     }
 
+    public function reconciliar($id)
+    {
+        try {
+            $nfse = $this->nfseService->buscar($id, Auth::user()->empresa_id);
+            $response = $this->nfseService->reconciliar($nfse);
+
+            return back()->with($response['ok'] ? 'success' : 'warning', $response['message']);
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado ao sincronizar a NFS-e: '.$e->getMessage());
+        }
+    }
+
     public function downloadXml($id)
     {
         try {
@@ -202,12 +218,30 @@ class NFSeController extends Controller
         }
     }
 
+    public function downloadDanfse($id)
+    {
+        try {
+            $nfse = $this->nfseService->buscar($id, Auth::user()->empresa_id);
+            $result = $this->nfseService->baixarDanfse($nfse);
+            if (! $result['ok']) {
+                return back()->with('warning', $result['message']);
+            }
+
+            return response($result['content'])
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="'.$result['filename'].'"');
+        } catch (Exception $e) {
+            return back()->with('error', 'Ocorreu um erro inesperado ao baixar o DANFSe: '.$e->getMessage());
+        }
+    }
+
     public function cancelar(Request $request)
     {
         try {
             $request->validate([
                 'nfse_id' => 'required|numeric',
-                'justificativa' => 'required|min:15',
+                'codigo_motivo' => 'required|in:1,2,9',
+                'justificativa' => 'required|min:15|max:255',
             ], [
                 'required' => 'O campo :attribute é obrigatório!',
                 'min' => 'O campo :attribute deve ter no mínimo :min caracteres!',
@@ -218,9 +252,13 @@ class NFSeController extends Controller
                 return back()->with('warning', 'Apenas NFS-e autorizadas podem ser canceladas.');
             }
 
-            $this->nfseService->registrarCancelamentoLocal($nfse, $request->justificativa);
+            $response = $this->nfseService->cancelar(
+                $nfse,
+                (string) $request->codigo_motivo,
+                $request->justificativa
+            );
 
-            return redirect()->route('nfse.index')->with('success', 'Cancelamento registrado localmente.');
+            return redirect()->route('nfse.index')->with($response['ok'] ? 'success' : 'warning', $response['message']);
         } catch (ValidationException $e) {
             return back()->with('warning', $this->formatValidation($e));
         } catch (Exception $e) {

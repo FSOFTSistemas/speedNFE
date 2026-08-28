@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Enums\EstadoEnum;
+use App\Models\Cliente;
 use App\Models\NFSe;
 use App\Models\NFSeEvento;
 use App\Models\NFSeXml;
 use App\Models\Servico;
+use App\Services\NFSe\CancelamentoXmlBuilder;
 use App\Services\NFSe\DpsXmlBuilder;
 use App\Services\NFSe\NFSeClient;
 use App\Services\NFSe\NFSeSchemaValidator;
@@ -27,16 +29,20 @@ class NFSeService
 
     private NFSeClient $nfseClient;
 
+    private CancelamentoXmlBuilder $cancelamentoXmlBuilder;
+
     public function __construct(
         DpsXmlBuilder $dpsXmlBuilder,
         NFSeSigner $nfseSigner,
         NFSeSchemaValidator $schemaValidator,
-        NFSeClient $nfseClient
+        NFSeClient $nfseClient,
+        CancelamentoXmlBuilder $cancelamentoXmlBuilder
     ) {
         $this->dpsXmlBuilder = $dpsXmlBuilder;
         $this->nfseSigner = $nfseSigner;
         $this->schemaValidator = $schemaValidator;
         $this->nfseClient = $nfseClient;
+        $this->cancelamentoXmlBuilder = $cancelamentoXmlBuilder;
     }
 
     public function todas($empresaId)
@@ -92,6 +98,10 @@ class NFSeService
 
     public function emitir(NFSe $nfse): array
     {
+        if ($this->transmissaoInconclusiva($nfse)) {
+            return $this->reconciliar($nfse);
+        }
+
         try {
             $nfse = $this->prepararParaEmissao($nfse);
 
@@ -110,13 +120,17 @@ class NFSeService
 
         $response = $this->nfseClient->emitir($xmlAssinado, $nfse->empresa);
 
-        if ($response['ok']) {
+        if ($response['ok'] && $this->possuiAutorizacao($response['body'])) {
             $this->registrarAutorizacao($nfse, $response['body']);
 
             return [
                 'ok' => true,
                 'message' => 'NFS-e transmitida e autorizada com sucesso.',
             ];
+        }
+
+        if ($this->respostaInconclusiva($response)) {
+            return $this->reconciliar($nfse, true);
         }
 
         $message = $this->mensagemResposta($response['body']);
@@ -128,30 +142,174 @@ class NFSeService
         ];
     }
 
-    public function registrarCancelamentoLocal(NFSe $nfse, string $justificativa): NFSeEvento
+    public function reconciliar(NFSe $nfse, bool $aposFalhaDeEnvio = false): array
     {
-        return DB::transaction(function () use ($nfse, $justificativa) {
-            $sequencia = ((int) $nfse->eventos()->where('tipo_evento', 'cancelamento')->max('sequencia')) + 1;
+        $nfse = $nfse->fresh(['empresa.endereco', 'cliente.endereco', 'servico']);
+        if (! $nfse || ! $nfse->nDPS) {
+            return [
+                'ok' => false,
+                'pending' => false,
+                'message' => 'A NFS-e ainda não possui uma DPS transmitida para reconciliar.',
+            ];
+        }
 
-            $evento = NFSeEvento::create([
+        try {
+            $idDps = $this->dpsXmlBuilder->dpsId($nfse);
+            $response = $this->nfseClient->consultarDps($idDps, $nfse->empresa);
+        } catch (Throwable $e) {
+            $this->marcarPendente($nfse, 'Consulta de reconciliação falhou: '.$e->getMessage());
+
+            return [
+                'ok' => false,
+                'pending' => true,
+                'message' => 'Não foi possível confirmar a situação da DPS. Não retransmita; tente sincronizar novamente.',
+            ];
+        }
+
+        if ($response['ok'] && $this->possuiAutorizacao($response['body'])) {
+            $this->registrarAutorizacao($nfse, $response['body']);
+
+            return [
+                'ok' => true,
+                'pending' => false,
+                'message' => 'NFS-e localizada na SEFIN e sincronizada com sucesso.',
+            ];
+        }
+
+        $motivo = $aposFalhaDeEnvio
+            ? 'Transmissão inconclusiva. A SEFIN ainda não confirmou se a DPS foi processada.'
+            : 'A SEFIN ainda não retornou uma NFS-e para esta DPS.';
+        $detalhe = $this->mensagemResposta($response['body']);
+        $this->marcarPendente($nfse, $motivo.' '.$detalhe);
+
+        return [
+            'ok' => false,
+            'pending' => true,
+            'message' => $motivo.' Não retransmita; use a ação Sincronizar.',
+        ];
+    }
+
+    public function cancelar(NFSe $nfse, string $codigoMotivo, string $justificativa): array
+    {
+        $nfse = $nfse->fresh(['empresa', 'eventos']);
+        $eventoPendente = $nfse->eventos
+            ->first(fn (NFSeEvento $evento) => $evento->tipo_evento === 'cancelamento'
+                && $evento->situacao === EstadoEnum::PENDENTE->value);
+        if ($eventoPendente) {
+            return $this->reconciliarCancelamento($nfse, $eventoPendente);
+        }
+
+        try {
+            $xml = $this->cancelamentoXmlBuilder->build($nfse, $codigoMotivo, $justificativa);
+            $xmlAssinado = $this->nfseSigner->signEvent($xml, $nfse->empresa);
+            $this->schemaValidator->validateEvent($xmlAssinado);
+        } catch (Throwable $e) {
+            return [
+                'ok' => false,
+                'pending' => false,
+                'message' => 'Falha ao preparar o cancelamento: '.$e->getMessage(),
+            ];
+        }
+
+        $evento = DB::transaction(function () use ($nfse, $justificativa, $xmlAssinado) {
+            return NFSeEvento::updateOrCreate([
                 'nfse_id' => $nfse->id,
                 'tipo_evento' => 'cancelamento',
+                'sequencia' => 1,
+            ], [
                 'codigo_evento' => '101101',
-                'sequencia' => $sequencia,
                 'situacao' => EstadoEnum::PENDENTE->value,
                 'justificativa' => $justificativa,
                 'data_evento' => now(),
+                'xml_pedido' => $xmlAssinado,
+                'xml_retorno' => null,
+                'cStat' => null,
+                'xMotivo' => null,
+            ]);
+        });
+
+        $response = $this->nfseClient->registrarEvento($nfse->chave, $xmlAssinado, $nfse->empresa);
+        if ($response['ok'] && $this->possuiEventoAutorizado($response['body'])) {
+            $this->registrarCancelamentoAutorizado($nfse, $evento, $response['body']);
+
+            return [
+                'ok' => true,
+                'pending' => false,
+                'message' => 'Cancelamento autorizado pela SEFIN Nacional.',
+            ];
+        }
+
+        if ($this->respostaInconclusiva($response)) {
+            return $this->reconciliarCancelamento($nfse, $evento);
+        }
+
+        $message = $this->mensagemResposta($response['body']);
+        $evento->update([
+            'situacao' => EstadoEnum::REJEITADO->value,
+            'cStat' => $response['status'] ? (string) $response['status'] : null,
+            'xMotivo' => mb_substr($message, 0, 2000),
+            'xml_retorno' => $this->conteudoRetornoEvento($response['body']),
+        ]);
+
+        return [
+            'ok' => false,
+            'pending' => false,
+            'message' => 'Cancelamento rejeitado pela SEFIN: '.$message,
+        ];
+    }
+
+    private function reconciliarCancelamento(NFSe $nfse, NFSeEvento $evento): array
+    {
+        $response = $this->nfseClient->consultarEvento($nfse->chave, '101101', 1, $nfse->empresa);
+        if ($response['ok'] && $this->possuiEventoAutorizado($response['body'])) {
+            $this->registrarCancelamentoAutorizado($nfse, $evento, $response['body']);
+
+            return [
+                'ok' => true,
+                'pending' => false,
+                'message' => 'Cancelamento localizado na SEFIN e sincronizado.',
+            ];
+        }
+
+        $evento->update([
+            'situacao' => EstadoEnum::PENDENTE->value,
+            'xMotivo' => 'Transmissão do cancelamento inconclusiva. Consulte novamente antes de reenviar.',
+        ]);
+
+        return [
+            'ok' => false,
+            'pending' => true,
+            'message' => 'Não foi possível confirmar o cancelamento. A nota continua autorizada localmente; consulte novamente antes de reenviar.',
+        ];
+    }
+
+    private function registrarCancelamentoAutorizado(NFSe $nfse, NFSeEvento $evento, array $body): void
+    {
+        DB::transaction(function () use ($nfse, $evento, $body) {
+            $xmlRetorno = $this->conteudoRetornoEvento($body);
+            $dados = $this->dadosXmlEvento($body['eventoXml'] ?? null);
+
+            $evento->update([
+                'situacao' => EstadoEnum::AUTORIZADO->value,
+                'nProtocolo' => $body['idEvento'] ?? $body['protocolo'] ?? $evento->nProtocolo,
+                'cStat' => $dados['cStat'] ?? '100',
+                'xMotivo' => $dados['xMotivo'] ?? 'Cancelamento autorizado pela SEFIN Nacional.',
+                'xml_retorno' => $xmlRetorno,
             ]);
 
             $nfse->situacao = EstadoEnum::CANCELADO->value;
+            $nfse->cStat = $dados['cStat'] ?? $nfse->cStat;
+            $nfse->xMotivo = $dados['xMotivo'] ?? 'Cancelamento autorizado pela SEFIN Nacional.';
             $nfse->save();
-
-            return $evento;
         });
     }
 
     public function podeEditar(NFSe $nfse): bool
     {
+        if ($nfse->situacao === EstadoEnum::PENDENTE->value && $nfse->cStat === 'PENDENTE') {
+            return false;
+        }
+
         return in_array($nfse->situacao, [
             EstadoEnum::PENDENTE->value,
             EstadoEnum::REJEITADO->value,
@@ -162,6 +320,30 @@ class NFSeService
     public function podeExcluir(NFSe $nfse): bool
     {
         return $this->podeEditar($nfse);
+    }
+
+    public function baixarDanfse(NFSe $nfse): array
+    {
+        if (! $nfse->chave) {
+            return [
+                'ok' => false,
+                'message' => 'A NFS-e ainda não possui chave de acesso para gerar o DANFSe.',
+            ];
+        }
+
+        $response = $this->nfseClient->baixarDanfse($nfse->chave);
+        if (! $response['ok'] || ! str_starts_with($response['body'], '%PDF-')) {
+            return [
+                'ok' => false,
+                'message' => 'Não foi possível baixar o DANFSe no Ambiente de Dados Nacional.',
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'content' => $response['body'],
+            'filename' => 'danfse_'.$nfse->chave.'.pdf',
+        ];
     }
 
     private function prepararParaEmissao(NFSe $nfse): NFSe
@@ -176,10 +358,13 @@ class NFSeService
                 throw new \RuntimeException('Apenas NFS-e pendentes ou rejeitadas podem ser transmitidas.');
             }
 
-            $empresa = $nfse->empresa;
+            $empresa = $nfse->empresa()->lockForUpdate()->firstOrFail();
+            $empresa->loadMissing('endereco');
 
             if (! $nfse->nDPS) {
                 $nfse->nDPS = (string) (((int) $empresa->ultimaDPS) + 1);
+                $empresa->ultimaDPS = (int) $nfse->nDPS;
+                $empresa->save();
             }
 
             if (! $nfse->serieDPS) {
@@ -227,7 +412,7 @@ class NFSeService
                 $this->salvarXml($nfse, 'autorizado', $body['nfseXml']);
             }
 
-            $nfse->chave = $body['chaveAcesso'] ?? $nfse->chave;
+            $nfse->chave = $body['chaveAcesso'] ?? $dadosXml['chNFSe'] ?? $nfse->chave;
             $nfse->nProtocolo = $body['idDps'] ?? $body['protocolo'] ?? $nfse->nProtocolo;
             $nfse->nro = $dadosXml['nNFSe'] ?? $nfse->nro;
             $nfse->nDFSe = $dadosXml['nDFSe'] ?? $nfse->nDFSe;
@@ -235,6 +420,9 @@ class NFSeService
             $nfse->xMotivo = $this->mensagemAlertas($body['alertas'] ?? null) ?: 'Autorizado o uso da NFS-e.';
             $nfse->situacao = EstadoEnum::AUTORIZADO->value;
             $nfse->data_processamento = isset($dadosXml['dhProc']) ? Carbon::parse($dadosXml['dhProc']) : now();
+            $nfse->vIBS = $dadosXml['vIBS'] ?? $nfse->vIBS;
+            $nfse->vCBS = $dadosXml['vCBS'] ?? $nfse->vCBS;
+            $nfse->vTotNF = $dadosXml['vTotNF'] ?? $nfse->vTotNF;
             $nfse->save();
 
             $empresa = $nfse->empresa()->lockForUpdate()->first();
@@ -254,6 +442,14 @@ class NFSeService
     {
         $nfse->situacao = EstadoEnum::REJEITADO->value;
         $nfse->cStat = $status ? (string) $status : $nfse->cStat;
+        $nfse->xMotivo = mb_substr($motivo, 0, 2000);
+        $nfse->save();
+    }
+
+    private function marcarPendente(NFSe $nfse, string $motivo): void
+    {
+        $nfse->situacao = EstadoEnum::PENDENTE->value;
+        $nfse->cStat = 'PENDENTE';
         $nfse->xMotivo = mb_substr($motivo, 0, 2000);
         $nfse->save();
     }
@@ -288,10 +484,70 @@ class NFSeService
 
         return [
             'nNFSe' => $this->xpathValue($xpath, '//*[local-name()="nNFSe"]'),
+            'chNFSe' => $this->xpathValue($xpath, '//*[local-name()="chNFSe"]'),
             'nDFSe' => $this->xpathValue($xpath, '//*[local-name()="nDFSe"]'),
             'cStat' => $this->xpathValue($xpath, '//*[local-name()="cStat"]'),
             'dhProc' => $this->xpathValue($xpath, '//*[local-name()="dhProc"]'),
+            'vIBS' => $this->xpathValue($xpath, '//*[local-name()="vIBS"]'),
+            'vCBS' => $this->xpathValue($xpath, '//*[local-name()="vCBS"]'),
+            'vTotNF' => $this->xpathValue($xpath, '//*[local-name()="vTotNF"]'),
         ];
+    }
+
+    private function dadosXmlEvento(?string $xml): array
+    {
+        if (! $xml) {
+            return [];
+        }
+
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        if (! @$dom->loadXML($xml)) {
+            return [];
+        }
+
+        $xpath = new DOMXPath($dom);
+
+        return [
+            'cStat' => $this->xpathValue($xpath, '//*[local-name()="cStat"]'),
+            'xMotivo' => $this->xpathValue($xpath, '//*[local-name()="xMotivo"]'),
+        ];
+    }
+
+    private function conteudoRetornoEvento(array $body): ?string
+    {
+        if (! empty($body['eventoXml'])) {
+            return $body['eventoXml'];
+        }
+
+        $json = json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return $json !== false ? $json : null;
+    }
+
+    private function possuiAutorizacao(array $body): bool
+    {
+        return empty($body['erros']) && (! empty($body['nfseXml']) || ! empty($body['chaveAcesso']));
+    }
+
+    private function possuiEventoAutorizado(array $body): bool
+    {
+        return empty($body['erros']) && (! empty($body['eventoXml']) || ! empty($body['idEvento']) || ! empty($body['protocolo']));
+    }
+
+    private function respostaInconclusiva(array $response): bool
+    {
+        if (! empty($response['body']['erros'])) {
+            return false;
+        }
+
+        return $response['status'] === null || (int) $response['status'] >= 500 || ($response['ok'] && ! $this->possuiAutorizacao($response['body']));
+    }
+
+    private function transmissaoInconclusiva(NFSe $nfse): bool
+    {
+        return $nfse->situacao === EstadoEnum::PENDENTE->value
+            && $nfse->cStat === 'PENDENTE'
+            && $nfse->xmlDps()->exists();
     }
 
     private function xpathValue(DOMXPath $xpath, string $query): ?string
@@ -334,6 +590,7 @@ class NFSeService
             if (is_string($item) || is_numeric($item)) {
                 $label = is_string($key) && ! is_numeric($key) ? $key.': ' : '';
                 $messages[] = $label.$item;
+
                 continue;
             }
 
@@ -345,7 +602,14 @@ class NFSeService
 
     private function payloadFiscal(array $data, $empresa): array
     {
-        $servico = Servico::find($data['servico_id']);
+        $servicoQuery = Servico::query()->whereKey($data['servico_id']);
+        $clienteQuery = Cliente::query()->whereKey($data['cliente_id']);
+        if ((int) $empresa->id !== 1) {
+            $servicoQuery->where('empresa_id', $empresa->id);
+            $clienteQuery->where('empresa_id', $empresa->id);
+        }
+        $servico = $servicoQuery->firstOrFail();
+        $clienteQuery->firstOrFail();
         $value = fn (string $key, $default = null) => $data[$key] ?? $default;
         $vServ = (float) $value('vServ', 0);
         $vDescIncond = (float) $value('vDescIncond', 0);
@@ -360,7 +624,8 @@ class NFSeService
         $vIBS = round($vBC * (0.1 / 100), 2);
         $vCBS = round($vBC * (0.9 / 100), 2);
         $vLiq = max(0, $vServ - $vDescIncond - $vDescCond - $vTotalRet);
-        $vTotNF = $vLiq + $vIBS + $vCBS;
+        $competenceYear = Carbon::parse($data['data_competencia'])->year;
+        $vTotNF = $competenceYear >= 2027 ? $vLiq + $vIBS + $vCBS : $vLiq;
 
         return [
             'empresa_id' => $empresa->id,
@@ -381,6 +646,10 @@ class NFSeService
             'cNBS' => $value('cNBS') ?: $servico?->cNBS,
             'cIndOp' => $value('cIndOp') ?: $servico?->cIndOp,
             'cClassTrib' => $value('cClassTrib') ?: $servico?->cClassTrib,
+            'cst_ibs_cbs' => $value('cst_ibs_cbs') ?: $servico?->cst_ibs_cbs,
+            'finNFSe' => $value('finNFSe', $servico?->finNFSe ?? '0'),
+            'indFinal' => $value('indFinal', $servico?->indFinal ?? '0'),
+            'indDest' => $value('indDest', $servico?->indDest ?? '0'),
             'vServ' => $vServ,
             'vDescIncond' => $vDescIncond,
             'vDescCond' => $vDescCond,

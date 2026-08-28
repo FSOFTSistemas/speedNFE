@@ -17,7 +17,7 @@ class NFComService
 
     public function __construct($config, $emitente)
     {
-        $certificado = file_get_contents(storage_path('app/certificados/'.$emitente->razao.'.pfx'));
+        $certificado = app(EmpresaCertificate::class)->content($emitente);
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
     }
 
