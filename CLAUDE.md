@@ -85,6 +85,13 @@ seen in routes: `master`, `admin`, `client-advanced1`, `client-advanced2`, `clie
 `client-NFCe`, `client-MDFe`, `client-NFCom`, `client-CTe`. Web routes are further gated by a
 `check.subscription` middleware group.
 
+Newer resources (e.g. `PreVenda`) additionally use standard Laravel authorization: a policy in
+`app/Policies` (registered in `AuthServiceProvider::$policies`) checked via `$this->authorize(...)` in both
+the web and API controllers. The policy re-implements the same `cargo` allowlist plus the `empresa_id === 1`
+super-tenant check, so both controllers for a resource share identical authorization logic even though it's
+duplicated (once in the route middleware string, once in the policy) rather than expressed only in routes.
+Follow this policy pattern for new resources instead of relying solely on route middleware.
+
 ### Fiscal document integration
 
 NFe/NFCe/MDFe/NFCom/CTe issuance goes through the `nfephp-org/sped-*` packages (`sped-nfe`, `sped-mdfe`,
@@ -115,6 +122,8 @@ billable services used when building NFCom items.
   class.
 - API controllers: return JSON, validate via `FormRequest`, shape output via `JsonResource`.
 - Naming: StudlyCase classes (`ProdutosController`, `NFCeService`), snake_case database columns.
+- Native PHP 8.1 backed enums (`app/Enums`, e.g. `PreVendaStatusEnum`) are the preferred way to represent
+  fixed status/type columns on newer models — prefer this over magic strings for new fixed-value fields.
 - Tests: `tests/Feature` for HTTP/workflow tests, `tests/Unit` for isolated logic, named after the behavior
   under test (e.g. `ProdutosControllerTest.php`). Add tests for new API routes, validation rules, permission
   boundaries, and fiscal flows.

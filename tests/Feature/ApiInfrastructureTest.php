@@ -17,6 +17,15 @@ class ApiInfrastructureTest extends TestCase
             ]);
     }
 
+    public function test_pre_vendas_api_routes_are_protected(): void
+    {
+        $this->getJson('/api/v1/pre-vendas')
+            ->assertStatus(401)
+            ->assertJson([
+                'message' => 'Nao autenticado.',
+            ]);
+    }
+
     public function test_missing_api_resource_returns_json_404(): void
     {
         $response = $this->getJson('/api/v1/rota-inexistente');

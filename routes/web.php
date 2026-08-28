@@ -24,6 +24,7 @@ use App\Http\Controllers\PedidosController;
 use App\Http\Controllers\PixController;
 use App\Http\Controllers\PlanoController;
 use App\Http\Controllers\PlanoDeContaController;
+use App\Http\Controllers\PreVendasController;
 use App\Http\Controllers\ProdutosController;
 use App\Http\Controllers\ReceberController;
 use App\Http\Controllers\RelatoriosController;
@@ -168,6 +169,18 @@ Route::middleware(['check.subscription'])->group(function () {
     });
 
     // VENDAS
+    Route::prefix('pre-vendas')->name('pre-vendas.')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe|client-NFCe'])->group(function () {
+        Route::get('', [PreVendasController::class, 'index'])->name('index');
+        Route::get('/nova', [PreVendasController::class, 'create'])->name('create');
+        Route::post('', [PreVendasController::class, 'store'])->name('store');
+        Route::get('/{id}', [PreVendasController::class, 'show'])->name('show');
+        Route::get('/{id}/editar', [PreVendasController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PreVendasController::class, 'update'])->name('update');
+        Route::post('/{id}/cancelar', [PreVendasController::class, 'cancelar'])->name('cancelar');
+        Route::post('/{id}/converter', [PreVendasController::class, 'converter'])->name('converter');
+        Route::get('/{id}/pdf', [PreVendasController::class, 'pdf'])->name('pdf');
+    });
+
     Route::get('/venda', [PedidosController::class, 'todos'])->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
     Route::post('/venda', [PedidosController::class, 'cancelarNFe'])->name('cancelar')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);
     Route::get('/vendas', [PedidosController::class, 'todos'])->name('vendas.index')->middleware(['auth', 'access.permission:master|admin|client-advanced1|client-advanced2|client-NFe']);

@@ -13,6 +13,7 @@ tags:
   - name: Dashboard
   - name: Clientes
   - name: Produtos
+  - name: Pre-vendas
   - name: Entradas
   - name: Estoques
   - name: Financeiro
@@ -79,6 +80,54 @@ components:
           type: string
         empresa_id:
           type: integer
+    PreVendaItem:
+      type: object
+      required: [produto_id, quantidade]
+      properties:
+        produto_id: { type: integer }
+        descricao: { type: string, readOnly: true }
+        quantidade: { type: number, format: double, minimum: 0.0001 }
+        valor_unitario: { type: number, format: double, minimum: 0 }
+        desconto: { type: number, format: double, minimum: 0 }
+        acrescimo: { type: number, format: double, minimum: 0 }
+        total: { type: number, format: double, readOnly: true }
+    PreVendaPagamento:
+      type: object
+      required: [valor]
+      properties:
+        forma_pag_id: { type: integer, nullable: true }
+        descricao: { type: string, nullable: true }
+        valor: { type: number, format: double, minimum: 0.01 }
+        vencimento: { type: string, format: date, nullable: true }
+    PreVenda:
+      type: object
+      properties:
+        id: { type: integer, readOnly: true }
+        numero: { type: integer, readOnly: true }
+        empresa_id: { type: integer }
+        cliente_id: { type: integer, nullable: true }
+        cliente_nome: { type: string, nullable: true, readOnly: true }
+        cliente_documento: { type: string, nullable: true, readOnly: true }
+        data: { type: string, format: date }
+        validade_at: { type: string, format: date, nullable: true }
+        status:
+          type: string
+          enum: [ABERTA, CONVERTIDA, CANCELADA, EXPIRADA]
+          readOnly: true
+        subtotal: { type: number, format: double, readOnly: true }
+        desconto: { type: number, format: double, minimum: 0 }
+        acrescimo: { type: number, format: double, minimum: 0 }
+        total: { type: number, format: double, readOnly: true }
+        observacoes: { type: string, nullable: true }
+        destino: { type: string, enum: [NFE, NFCE], nullable: true, readOnly: true }
+        pedido_id: { type: integer, nullable: true, readOnly: true }
+        cupom_id: { type: integer, nullable: true, readOnly: true }
+        itens:
+          type: array
+          items: { $ref: '#/components/schemas/PreVendaItem' }
+        pagamentos:
+          type: array
+          items: { $ref: '#/components/schemas/PreVendaPagamento' }
     StandardMessage:
       type: object
       properties:
@@ -295,6 +344,124 @@ paths:
       responses:
         '200':
           description: Produto removido.
+  /pre-vendas:
+    get:
+      tags: [Pre-vendas]
+      summary: Lista pré-vendas da empresa autenticada.
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string, enum: [ABERTA, CONVERTIDA, CANCELADA, EXPIRADA] }
+        - in: query
+          name: data_inicio
+          schema: { type: string, format: date }
+        - in: query
+          name: data_fim
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Lista paginada de pré-vendas.
+    post:
+      tags: [Pre-vendas]
+      summary: Cria uma pré-venda sem movimentar estoque ou financeiro.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreVenda'
+      responses:
+        '201':
+          description: Pré-venda criada.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /pre-vendas/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: integer }
+    get:
+      tags: [Pre-vendas]
+      summary: Detalha uma pré-venda.
+      responses:
+        '200':
+          description: Pré-venda encontrada.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Pre-vendas]
+      summary: Atualiza uma pré-venda aberta.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreVenda'
+      responses:
+        '200':
+          description: Pré-venda atualizada.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /pre-vendas/{id}/cancelar:
+    post:
+      tags: [Pre-vendas]
+      summary: Cancela uma pré-venda aberta.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Pré-venda cancelada.
+  /pre-vendas/{id}/converter:
+    post:
+      tags: [Pre-vendas]
+      summary: Converte uma pré-venda uma única vez em NF-e ou NFC-e.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [destino]
+              properties:
+                destino: { type: string, enum: [NFE, NFCE] }
+                cfop: { type: integer, description: Obrigatório para NF-e. }
+                finalidade: { type: integer, enum: [1, 4] }
+                tipo: { type: integer, enum: [0, 1] }
+                ref_nfe: { type: string, nullable: true }
+                info_complementares: { type: string, nullable: true }
+                aut_xml: { type: string, nullable: true }
+      responses:
+        '200':
+          description: Pré-venda convertida.
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /pre-vendas/{id}/pdf:
+    get:
+      tags: [Pre-vendas]
+      summary: Gera o PDF da pré-venda.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: PDF da pré-venda.
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
   /entradas:
     get:
       tags: [Entradas]

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\FornecedoresController as ApiFornecedoresControl
 use App\Http\Controllers\Api\V1\NFCeController as ApiNFCeController;
 use App\Http\Controllers\Api\V1\NotasFiscaisController as ApiNotasFiscaisController;
 use App\Http\Controllers\Api\V1\PlanoDeContaController as ApiPlanoDeContaController;
+use App\Http\Controllers\Api\V1\PreVendasController as ApiPreVendasController;
 use App\Http\Controllers\Api\V1\ProdutosController as ApiProdutosController;
 use App\Http\Controllers\Api\V1\ReceberController as ApiReceberController;
 use App\Http\Controllers\Api\V1\RelatoriosController as ApiRelatoriosController;
@@ -52,6 +53,14 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('clientes', ApiClientesController::class);
 
         Route::apiResource('produtos', ApiProdutosController::class);
+
+        Route::post('pre-vendas/{preVenda}/cancelar', [ApiPreVendasController::class, 'cancelar'])
+            ->name('pre-vendas.cancelar');
+        Route::post('pre-vendas/{preVenda}/converter', [ApiPreVendasController::class, 'converter'])
+            ->name('pre-vendas.converter');
+        Route::get('pre-vendas/{preVenda}/pdf', [ApiPreVendasController::class, 'pdf'])
+            ->name('pre-vendas.pdf');
+        Route::apiResource('pre-vendas', ApiPreVendasController::class)->only(['index', 'store', 'show', 'update']);
 
         Route::apiResource('entradas', ApiEntradaController::class)->only(['index', 'show', 'destroy']);
         Route::apiResource('estoques', ApiEstoqueController::class)->only(['index', 'show', 'update']);

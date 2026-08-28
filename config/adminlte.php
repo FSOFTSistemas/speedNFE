@@ -333,6 +333,12 @@ return [
             'can' => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2'],
         ],
         [
+            'text' => 'Pré-vendas',
+            'url' => '/pre-vendas',
+            'icon' => 'fas fa-clipboard-list',
+            'can' => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2'],
+        ],
+        [
             'text' => 'Entradas NFE',
             'url' => '/entrada',
             'icon' => 'fas fa-file-upload',
