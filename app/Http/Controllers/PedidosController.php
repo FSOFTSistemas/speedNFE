@@ -101,7 +101,7 @@ class PedidosController extends Controller
             if (!isset($result['erro'])) {
                 return redirect('/inutilizar')->with('success', 'Inutilização feita com sucesso');
             } else {
-                return redirect('/inutilizar')->with('success', $result['data']);
+                return redirect('/inutilizar')->with('warning', NFeErroUtil::formatar($result['data']));
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
@@ -142,7 +142,7 @@ class PedidosController extends Controller
             if (!isset($result['erro'])) {
                 return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
             } else {
-                return redirect('/venda')->with('warning', $result['data']['retEvento']['infEvento']['xMotivo']);
+                return redirect('/venda')->with('warning', NFeErroUtil::formatar($this->extrairMensagemEventoNFe($result['data'])));
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
@@ -188,7 +188,7 @@ class PedidosController extends Controller
                 $this->fluxoCaixaService->estornarPorOrigem('NFe', $venda->id);
                 return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
             } else {
-                return redirect('/venda')->with('error', $nfe['data']['retEvento']['infEvento']['xMotivo']);
+                return redirect('/venda')->with('error', NFeErroUtil::formatar($this->extrairMensagemEventoNFe($nfe['data'])));
             }
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
@@ -340,13 +340,23 @@ class PedidosController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $request->validate([
+            $venda = $this->pedidoServices->buscarPedido($id);
+            $isDevolucao = (int) $venda->finNF === 4;
+            $usarReferenciaPorItem = $isDevolucao && PedidosService::referenciaItemDevolucaoHabilitada();
+
+            if ($usarReferenciaPorItem) {
+                $this->normalizarReferenciasDosItens($request);
+            }
+
+            $request->validate(array_merge([
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
-                'vendaItens' => 'required',
+                'vendaItens' => 'required|array|min:1',
                 'info_complementares' => 'nullable'
-            ]);
-            $venda = $this->pedidoServices->buscarPedido($id);
+            ], $this->regrasReferenciasDosItens($usarReferenciaPorItem)), $this->mensagensReferenciasDosItens());
+
+            $this->validarReferenciasDuplicadas($request, $usarReferenciaPorItem);
+
             if (!$venda->chave) {
                 $this->itemServices->deleteItems($venda->id);
                 $subtotal = 0;
@@ -365,7 +375,9 @@ class PedidosController extends Controller
                         $item['quantidade'],
                         $venda->empresa_id,
                         $item['desconto'],
-                        $item['unitario']
+                        $item['unitario'],
+                        $usarReferenciaPorItem ? $item['dfe_referenciado_chave'] : null,
+                        $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null
                     );
                 }
                 $this->faturaServices->update(
@@ -384,6 +396,8 @@ class PedidosController extends Controller
             } else {
                 return redirect()->route('vendas.index')->with('warning', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
             }
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
         }
@@ -392,22 +406,31 @@ class PedidosController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            $isDevolucao = (int) $request->finalidade === 4;
+            $usarReferenciaPorItem = $isDevolucao && PedidosService::referenciaItemDevolucaoHabilitada();
+
+            if ($usarReferenciaPorItem) {
+                $this->normalizarReferenciasDosItens($request);
+            }
+
+            $request->validate(array_merge([
                 'empresa' => 'required|numeric',
                 'finalidade' => 'required|numeric',
                 'tipo' => 'required|numeric',
-                'ref_nfe' => $request->finalidade == 4 ? 'required' : 'nullable',
+                'ref_nfe' => $isDevolucao && !$usarReferenciaPorItem ? 'required' : 'nullable',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
-                'vendaItens' => 'required',
+                'vendaItens' => 'required|array|min:1',
                 'info_complementares' => 'nullable|max:255',
                 'aut_xml' => 'nullable|string|max:18',
-            ], [
+            ], $this->regrasReferenciasDosItens($usarReferenciaPorItem)), array_merge([
                 'required' => 'O campo :attribute é obrigatório!',
                 'vendaItens.required' => 'Deve existir pelo menos um item no pedido!',
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
                 'max' => 'O campo :attribute deve conter no máximo :max caracteres'
-            ]);
+            ], $this->mensagensReferenciasDosItens()));
+
+            $this->validarReferenciasDuplicadas($request, $usarReferenciaPorItem);
 
             $autXml = preg_replace('/\D/', '', $request->aut_xml ?? '');
 
@@ -435,7 +458,7 @@ class PedidosController extends Controller
                     $request->empresa,
                     $request->cfop,
                     $request->finalidade == 4 ? 4 : 1,
-                    $request->ref_nfe,
+                    $usarReferenciaPorItem ? null : $request->ref_nfe,
                     $request->tipo,
                     $request->info_complementares,
                     $autXml
@@ -453,7 +476,9 @@ class PedidosController extends Controller
                         $item['quantidade'],
                         $request->empresa,
                         $item['desconto'],
-                        $item['unitario']
+                        $item['unitario'],
+                        $usarReferenciaPorItem ? $item['dfe_referenciado_chave'] : null,
+                        $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null
                     );
                 }
                 $this->faturaServices->create(
@@ -469,11 +494,94 @@ class PedidosController extends Controller
                 return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (ValidationException $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getmessage());
+        }
+    }
+
+    /**
+     * O retorno de eventos (CCe/cancelamento) do NFeService ora vem como o
+     * array do XML padronizado, ora como a mensagem de uma exceção (string),
+     * dependendo de onde a falha ocorreu. Aqui extraímos o xMotivo quando
+     * disponível, sem arriscar acessar índice de array numa string.
+     */
+    private function extrairMensagemEventoNFe($data)
+    {
+        if (is_array($data)) {
+            return $data['retEvento']['infEvento']['xMotivo'] ?? $data;
+        }
+
+        return $data;
+    }
+
+    private function normalizarReferenciasDosItens(Request $request): void
+    {
+        $itens = $request->input('vendaItens');
+
+        if (!is_array($itens)) {
+            return;
+        }
+
+        foreach ($itens as &$item) {
+            if (array_key_exists('dfe_referenciado_chave', $item)) {
+                $item['dfe_referenciado_chave'] = preg_replace(
+                    '/\D/',
+                    '',
+                    (string) $item['dfe_referenciado_chave']
+                );
+            }
+        }
+        unset($item);
+
+        $request->merge(['vendaItens' => $itens]);
+    }
+
+    private function regrasReferenciasDosItens(bool $usarReferenciaPorItem): array
+    {
+        $required = $usarReferenciaPorItem ? 'required' : 'nullable';
+
+        return [
+            'vendaItens.*.dfe_referenciado_chave' => [$required, 'digits:44'],
+            'vendaItens.*.dfe_referenciado_n_item' => [$required, 'integer', 'between:1,990'],
+        ];
+    }
+
+    private function mensagensReferenciasDosItens(): array
+    {
+        return [
+            'vendaItens.*.dfe_referenciado_chave.required' => 'Informe a chave da NF-e de origem em cada item da devolução.',
+            'vendaItens.*.dfe_referenciado_chave.digits' => 'A chave da NF-e de origem deve conter 44 dígitos.',
+            'vendaItens.*.dfe_referenciado_n_item.required' => 'Informe o número do item correspondente na NF-e de origem.',
+            'vendaItens.*.dfe_referenciado_n_item.integer' => 'O número do item da NF-e de origem deve ser inteiro.',
+            'vendaItens.*.dfe_referenciado_n_item.between' => 'O número do item da NF-e de origem deve estar entre 1 e 990.',
+        ];
+    }
+
+    private function validarReferenciasDuplicadas(Request $request, bool $usarReferenciaPorItem): void
+    {
+        if (!$usarReferenciaPorItem) {
+            return;
+        }
+
+        $referencias = [];
+
+        foreach ($request->input('vendaItens', []) as $index => $item) {
+            $referencia = ($item['dfe_referenciado_chave'] ?? '') . ':' . ($item['dfe_referenciado_n_item'] ?? '');
+
+            if (isset($referencias[$referencia])) {
+                throw ValidationException::withMessages([
+                    "vendaItens.$index.dfe_referenciado_n_item" => 'A mesma chave e o mesmo item da NF-e de origem foram informados mais de uma vez.',
+                ]);
+            }
+
+            $referencias[$referencia] = true;
         }
     }
 

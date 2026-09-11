@@ -27,6 +27,7 @@ class Pedido extends Component
     public $forma = '';
     public $finalidade = 1;
     public $tipo = 1;
+    public $referenciaItemHabilitada = false;
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -55,6 +56,8 @@ class Pedido extends Component
 
     public function mount()
     {
+        $this->referenciaItemHabilitada = PedidosService::referenciaItemDevolucaoHabilitada();
+
         //declaração dos services para recuperar dados
         try {
             $sUsers = new UsersService();
@@ -121,6 +124,8 @@ class Pedido extends Component
                         'unitario' => $item['unitario'],
                         'desconto' => $item['desconto'],
                         'total' => $total,
+                        'dfe_referenciado_chave' => $item['dfe_referenciado_chave'] ?? '',
+                        'dfe_referenciado_n_item' => $item['dfe_referenciado_n_item'] ?? '',
                     ];
                     $subtotal += $total;
                 }
@@ -178,7 +183,16 @@ class Pedido extends Component
                     $prod = Produto::find($this->produto);
                     $total = $this->quantidade * $this->preco;
                     $desconto =  $this->desconto;
-                    $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                    $this->vendaItens[] = [
+                        'produto_id' => $prod->id,
+                        'descricao' => $prod->produto,
+                        'quantidade' => $this->quantidade,
+                        'unitario' => $this->preco,
+                        'desconto' => $desconto,
+                        'total' => $total - $desconto,
+                        'dfe_referenciado_chave' => '',
+                        'dfe_referenciado_n_item' => '',
+                    ];
                     $subtotal = 0;
                     foreach ($this->vendaItens as $item) {
                         $subtotal = $subtotal + $item['total'];

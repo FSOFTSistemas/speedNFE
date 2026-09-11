@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\DB;
 class PedidosService
 {
 
+    public static function referenciaItemDevolucaoHabilitada(): bool
+    {
+        $dataAtual = new \DateTime(date('Y-m-d'));
+        $dataVirada = new \DateTime('2026-10-05');
+
+        return $dataAtual >= $dataVirada;
+    }
+
     public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $finalidade, $ref_nfe, $tipo, $info_complementares, $aut_xml = null)
     {
         

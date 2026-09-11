@@ -26,6 +26,31 @@ class NFeService
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
     }
 
+    /**
+     * Algumas SEFAZ retornam o XML declarando um encoding que não bate com os
+     * bytes reais da resposta (ex.: bytes em UTF-8 com a tag declarando
+     * ISO-8859-1, ou o contrário). Isso faz o DOMDocument/SimpleXML
+     * reinterpretar caracteres acentuados e cedilha errado, corrompendo o
+     * xMotivo exibido ao usuário. Aqui garantimos que o conteúdo esteja em
+     * UTF-8 válido e que a declaração do XML reflita isso antes de qualquer
+     * parsing.
+     */
+    private function normalizarEncodingXml(?string $xml): string
+    {
+        $xml = (string) $xml;
+
+        if ($xml === '') {
+            return $xml;
+        }
+
+        if (! mb_check_encoding($xml, 'UTF-8')) {
+            $convertido = @mb_convert_encoding($xml, 'UTF-8', 'ISO-8859-1');
+            $xml = $convertido !== false ? $convertido : $xml;
+        }
+
+        return preg_replace('/encoding="[^"]*"/i', 'encoding="UTF-8"', $xml, 1) ?? $xml;
+    }
+
     public function gerarXml($venda, $emitente)
     {
 
@@ -68,9 +93,11 @@ class NFeService
         $dataEmissao = new \DateTime(date('Y-m-d'));
         $dataVirada = new \DateTime('2026-01-01');
         $isRTC = ($dataEmissao >= $dataVirada) || (getenv('TESTAR_RTC') == 'true' && $emitente->ambiente == 2);
+        $isDevolucao = (int) $venda->finNF === 4;
+        $usarReferenciaPorItem = $isDevolucao && PedidosService::referenciaItemDevolucaoHabilitada();
         // --------------------------------------------
 
-        if ($venda->ref_nfe) {
+        if (!$usarReferenciaPorItem && $venda->ref_nfe) {
             $stdrefNFe = new \stdClass;
             $stdrefNFe->refNFe = $venda->ref_nfe;
             $nfe->tagrefNFe($stdrefNFe);
@@ -236,6 +263,23 @@ class NFeService
             $stdProd->qTrib = $i->qtde;
             $stdProd->vUnTrib = FormatationUtil::format($i->unitario);
             $stdProd->indTot = 1;
+
+            if ($usarReferenciaPorItem) {
+                $chaveReferenciada = preg_replace('/\D/', '', (string) $i->dfe_referenciado_chave);
+                $nItemReferenciado = (int) $i->dfe_referenciado_n_item;
+
+                if (strlen($chaveReferenciada) !== 44 || $nItemReferenciado < 1 || $nItemReferenciado > 990) {
+                    throw new \InvalidArgumentException(
+                        'Informe a chave com 44 dígitos e o número do item da NF-e de origem para o item '.($key + 1).'.'
+                    );
+                }
+
+                $stdDFeReferenciado = new \stdClass;
+                $stdDFeReferenciado->item = $key + 1;
+                $stdDFeReferenciado->chaveAcesso = $chaveReferenciada;
+                $stdDFeReferenciado->nItem = $nItemReferenciado;
+                $nfe->tagDFeReferenciado($stdDFeReferenciado);
+            }
 
             if ($i->produto->tpProd == 1) {
                 $stdVeicProd = new \stdClass;
@@ -560,7 +604,7 @@ class NFeService
             $idLote = str_pad(100, 15, '0', STR_PAD_LEFT);
 
             // Envia em modo síncrono
-            $resp = $this->tools->sefazEnviaLote([$signXml], $idLote, 1);
+            $resp = $this->normalizarEncodingXml($this->tools->sefazEnviaLote([$signXml], $idLote, 1));
 
             $st = new Standardize;
             $std = $st->toStd($resp);
@@ -599,7 +643,7 @@ class NFeService
     public function inutilizarNum($serie, $numI, $numF, $xJust, $caminho)
     {
         try {
-            $response = $this->tools->sefazInutiliza($serie, $numI, $numF, $xJust);
+            $response = $this->normalizarEncodingXml($this->tools->sefazInutiliza($serie, $numI, $numF, $xJust));
             sleep(2);
             $stdCl = new Standardize($response);
             $std = $stdCl->toStd();
@@ -628,7 +672,7 @@ class NFeService
             $chave = $venda->chave;
             $xCorrecao = $justificativa;
             $nSeqEvento = $venda->sequencia_evento + 1;
-            $response = $this->tools->sefazCCe($chave, $xCorrecao, $nSeqEvento);
+            $response = $this->normalizarEncodingXml($this->tools->sefazCCe($chave, $xCorrecao, $nSeqEvento));
             sleep(2);
             $stdCl = new Standardize($response);
             $std = $stdCl->toStd();
@@ -662,14 +706,14 @@ class NFeService
     {
         try {
             $chave = $venda->chave;
-            $response = $this->tools->sefazConsultaChave($chave);
+            $response = $this->normalizarEncodingXml($this->tools->sefazConsultaChave($chave));
             sleep(2);
             $stdCl = new Standardize($response);
             $arr = $stdCl->toArray();
             $xJust = $justificativa;
             $nProt = $arr['protNFe']['infProt']['nProt'];
 
-            $response = $this->tools->sefazCancela($chave, $xJust, $nProt);
+            $response = $this->normalizarEncodingXml($this->tools->sefazCancela($chave, $xJust, $nProt));
             sleep(2);
             $stdCl = new Standardize($response);
             $std = $stdCl->toStd();

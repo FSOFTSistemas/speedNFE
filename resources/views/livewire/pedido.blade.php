@@ -165,11 +165,16 @@
                 </div>
 
                 <h4 class="mb-3 font-weight-bold border-bottom pb-2">Itens da Nota</h4>
+                @if ((int) $finalidade === 4 && $referenciaItemHabilitada)
+                    <div class="alert alert-info">
+                        Para cada item devolvido, informe a chave da NF-e de origem e o número correspondente no documento original.
+                    </div>
+                @endif
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead class="table-light"><tr class="text-center"><th>#</th><th class="text-left">Produto</th><th>Qtd.</th><th>Unitário</th><th>Desconto</th><th>Total</th><th>Ações</th></tr></thead>
+                        <thead class="table-light"><tr class="text-center"><th>#</th><th class="text-left">Produto</th><th>Qtd.</th><th>Unitário</th><th>Desconto</th><th>Total</th>@if ((int) $finalidade === 4 && $referenciaItemHabilitada)<th style="min-width: 360px;">Chave NF-e de origem</th><th style="min-width: 120px;">Item origem</th>@endif<th>Ações</th></tr></thead>
                         <tbody class="text-center">
-                            @forelse ($vendaItens as $item)
+                            @forelse ($vendaItens as $index => $item)
                                 <tr>
                                     <td>{{ $item['produto_id'] }}</td>
                                     <td class="text-left">{{ $item['descricao'] }}</td>
@@ -177,17 +182,48 @@
                                     <td>R$ {{ number_format($item['unitario'], 2, ',', '.') }}</td>
                                     <td>R$ {{ number_format($item['desconto'], 2, ',', '.') }}</td>
                                     <td>R$ {{ number_format($item['total'], 2, ',', '.') }}</td>
+                                    @if ((int) $finalidade === 4 && $referenciaItemHabilitada)
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name="vendaItens[{{ $index }}][dfe_referenciado_chave]"
+                                                wire:model.defer="vendaItens.{{ $index }}.dfe_referenciado_chave"
+                                                class="form-control @error('vendaItens.'.$index.'.dfe_referenciado_chave') is-invalid @enderror"
+                                                inputmode="numeric"
+                                                maxlength="44"
+                                                placeholder="44 dígitos"
+                                                required
+                                            >
+                                            @error('vendaItens.'.$index.'.dfe_referenciado_chave')
+                                                <small class="text-danger d-block text-left">{{ $message }}</small>
+                                            @enderror
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                name="vendaItens[{{ $index }}][dfe_referenciado_n_item]"
+                                                wire:model.defer="vendaItens.{{ $index }}.dfe_referenciado_n_item"
+                                                class="form-control @error('vendaItens.'.$index.'.dfe_referenciado_n_item') is-invalid @enderror"
+                                                min="1"
+                                                max="990"
+                                                required
+                                            >
+                                            @error('vendaItens.'.$index.'.dfe_referenciado_n_item')
+                                                <small class="text-danger d-block text-left">{{ $message }}</small>
+                                            @enderror
+                                        </td>
+                                    @endif
                                     <td class="action-buttons">
                                         <span class="d-none d-md-inline-flex">
-                                            <a href="#" wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})" title="Remover Item" class="text-danger"><i class="fa fa-trash"></i></a>
+                                            <a href="#" wire:click.prevent="removerProduto({{ $index }})" title="Remover Item" class="text-danger"><i class="fa fa-trash"></i></a>
                                         </span>
                                         <div class="mobile-actions d-md-none">
-                                            <a href="#" wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i> Remover</a>
+                                            <a href="#" wire:click.prevent="removerProduto({{ $index }})" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i> Remover</a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="7" class="text-center text-muted">Nenhum item adicionado.</td></tr>
+                                <tr><td colspan="{{ (int) $finalidade === 4 && $referenciaItemHabilitada ? 9 : 7 }}" class="text-center text-muted">Nenhum item adicionado.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -216,9 +252,11 @@
 
                 <hr class="my-4">
                 <h4 class="mb-3 font-weight-bold border-bottom pb-2">Informações Adicionais</h4>
-                <div class="row mb-3" id="ref_nfe_section" style="display: none" wire:ignore>
-                    <div class="col-12"><label for="ref_nfe" class="form-label">Referência NFe</label><input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44" value="{{ old('ref_nfe') }}"></div>
-                </div>
+                @if (!$referenciaItemHabilitada)
+                    <div class="row mb-3" id="ref_nfe_section" style="display: none" wire:ignore>
+                        <div class="col-12"><label for="ref_nfe" class="form-label">Referência NFe</label><input type="text" class="form-control" name="ref_nfe" id="ref_nfe" minlength="44" value="{{ old('ref_nfe') }}"></div>
+                    </div>
+                @endif
                 <div class="row mb-3">
                     <div class="col-12"><label for="info_complementares" class="form-label">Informações Complementares (Opcional)</label><textarea class="form-control" name="info_complementares" maxlength="1500" id="info_complementares" rows="4">{{ old('info_complementares') }}</textarea></div>
                 </div>
@@ -266,15 +304,15 @@
 <script>
     // Mantendo 100% da sua lógica JS original
     document.addEventListener('livewire:load', function() {
-        // Listener para a seção de NFe de devolução
+        // Listener para o tipo/referência da NF-e de devolução
         Livewire.on('section_nfe', function(value) {
             let section = document.getElementById('ref_nfe_section');
             let section2 = document.getElementById('tp_nfe_section');
             if (value == 4) {
-                section.style.display = 'block';
+                if (section) section.style.display = 'block';
                 section2.style.display = 'block';
             } else {
-                section.style.display = 'none';
+                if (section) section.style.display = 'none';
                 section2.style.display = 'none';
             }
         });

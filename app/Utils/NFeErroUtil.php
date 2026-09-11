@@ -47,11 +47,29 @@ class NFeErroUtil
         $mensagens = is_array($erro) ? self::achatar($erro) : [$erro];
 
         return array_values(array_filter(array_map(function ($mensagem) {
-            $mensagem = trim((string) $mensagem);
+            $mensagem = self::paraUtf8(trim((string) $mensagem));
             $mensagem = preg_replace('/\s+/', ' ', $mensagem);
 
             return $mensagem;
         }, $mensagens)));
+    }
+
+    /**
+     * Algumas respostas da SEFAZ (ou exceções de bibliotecas de terceiros)
+     * chegam com bytes fora de UTF-8, o que corrompe acentos e cedilha e pode
+     * até fazer o restante da mensagem sumir ao passar por htmlspecialchars/
+     * json_encode. Aqui garantimos que o texto exibido ao usuário esteja
+     * sempre em UTF-8 válido.
+     */
+    private static function paraUtf8(string $mensagem): string
+    {
+        if ($mensagem === '' || mb_check_encoding($mensagem, 'UTF-8')) {
+            return $mensagem;
+        }
+
+        $convertido = @mb_convert_encoding($mensagem, 'UTF-8', 'ISO-8859-1');
+
+        return $convertido !== false ? $convertido : $mensagem;
     }
 
     private static function achatar(array $itens): array

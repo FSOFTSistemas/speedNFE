@@ -8,7 +8,16 @@ use App\Models\Produto;
 class ItemService
 {
 
-    public function create($pedido_id, $prod, $qtde, $empresa, $desconto, $unitario)
+    public function create(
+        $pedido_id,
+        $prod,
+        $qtde,
+        $empresa,
+        $desconto,
+        $unitario,
+        $dfeReferenciadoChave = null,
+        $dfeReferenciadoNItem = null
+    )
     {
         return ItemPedido::create([
             'pedido_id' => $pedido_id,
@@ -18,6 +27,8 @@ class ItemService
             'desconto' => $desconto,
             'acrescimo' => 0,
             'unitario' => $unitario,
+            'dfe_referenciado_chave' => $dfeReferenciadoChave,
+            'dfe_referenciado_n_item' => $dfeReferenciadoNItem,
         ]);
     }
 

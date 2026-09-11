@@ -89,10 +89,22 @@ seen in routes: `master`, `admin`, `client-advanced1`, `client-advanced2`, `clie
 
 NFe/NFCe/MDFe/NFCom/CTe issuance goes through the `nfephp-org/sped-*` packages (`sped-nfe`, `sped-mdfe`,
 `sped-nfcom`, `sped-cte`, `sped-da` for DANFE PDFs), wrapped by `app/Services/NFeService.php`,
-`NFCeService.php`, `MDFeService.php`, `NFComService.php`, `CTeService.php`. Certificates are read
-per-company from `storage/app/certificados/{razao}.pfx` (PFX + password stored on the `Empresa` model,
-field `senhaCertificado`). Treat changes to these services as fiscal-compliance-sensitive — they build the
-SEFAZ payloads.
+`NFCeService.php`, `MDFeService.php`, `NFComService.php`, `CTeService.php`. Certificate password is stored
+on the `Empresa` model (`senhaCertificado`). Treat changes to these services as fiscal-compliance-sensitive
+— they build the SEFAZ payloads.
+
+**Certificate storage** (all fiscal services, including NFS-e, resolve certificates the same way via
+`app/Services/EmpresaCertificate.php`): the PFX content now lives encrypted in the `empresas.certificado_conteudo`
+column (cast `encrypted` on the model) rather than only as a file. `EmpresaCertificate::content()` tries, in
+order: the DB column, a legacy file at `storage/app/certificados/{razao}.pfx` (or the path in the legacy
+`certificado` column), then a legacy raw-binary value left in the `certificado` column itself — throwing if
+none resolve. Use `EmpresaCertificate::withTemporaryFile()` when a library needs a real file path (it
+materializes to a 0600 temp file and unlinks it afterward). `php artisan certificados:importar-banco
+--empresa=ID` migrates a company's on-disk PFX into the encrypted column (`--delete-files` additionally
+removes the legacy file once verified); `php artisan certificado:migrar` is an older one-off command that
+just relocated files out of the public disk and encrypted plaintext passwords. Don't reintroduce direct
+`file_get_contents(storage_path('app/certificados/...'))` calls in new fiscal code — go through
+`EmpresaCertificate`.
 
 NFCom (telecom services electronic invoice) and CTe (Conhecimento de Transporte Eletrônico, road modal) are
 the newest document types: `NFComController`/`NFComService` build and transmit a document from an `NFCom`
@@ -114,12 +126,15 @@ XSD validation (`NFSeSchemaValidator`). Two supporting data directories must shi
 - `resources/schemas/nfse/v1.01/` — official XSD files used by `NFSeSchemaValidator`.
 
 NFS-e migrations must run in this order (`php artisan migrate --force` respects it automatically; don't use
-`--path` to run a subset without a specific reason):
+`--path` to run a subset without a specific reason — though production deploys deliberately do run them
+one-by-one with `--path`, see `docs/deploy-nfse-nacional.md`):
 `2026_08_24_000000_add_client_nfse_permission.php` →
 `2026_08_24_010000_add_nfse_fields_to_empresas_table.php` →
 `2026_08_24_011000_create_nfses_tables.php` →
 `2026_08_24_020000_create_nfse_domain_tables.php` →
-`2026_08_24_030000_add_nfse_fields_to_servicos_table.php`.
+`2026_08_24_030000_add_nfse_fields_to_servicos_table.php` →
+`2026_08_27_010000_add_certificado_conteudo_to_empresas_table.php` →
+`2026_08_27_020000_add_ibscbs_fields_to_nfses_table.php`.
 The permission migration only creates the `client-NFSe` cargo value — it still needs to be assigned to
 users/roles through the normal permission workflow.
 
@@ -133,9 +148,18 @@ the emission form supports municipality lookup by IBGE code and optional CEP loo
 ### Other integrations
 
 - **Pix payments**: `EfiPixService.php` (Efí/Gerencianet SDK) + `PixController`/`PixWebhookController`
-  (webhook route is unauthenticated at `/api/pix/webhook`, so it self-validates the payload).
+  (webhook route is unauthenticated at `/api/pix/webhook`, so it self-validates the payload). See
+  `docs/integracao-efi-pix.md` for the full request flow (immediate charge → QR code → client-side polling
+  → webhook reconciliation) and how the `.p12` mTLS certificate/credentials are configured.
 - **CORS**: `config/cors.php` only applies to `api/*` and `sanctum/csrf-cookie` paths; origins come from the
   `CORS_ALLOWED_ORIGINS` env var (comma-separated) — set this when pointing a separate frontend at the API.
+
+### Deploy runbooks in `docs/`
+
+Operational steps that don't belong in this file live under `docs/`: `deploy-nfse-nacional.md` is the
+step-by-step NFS-e Nacional production rollout (migration order, cert import, domain import, diagnostics,
+controlled emission/cancellation test, rollback plan); `deploy-mdfe-xml-banco.md` covers moving stored MDFe
+XML into the database. Consult these before touching NFS-e or MDFe deploy/migration behavior.
 
 ## Coding conventions
 
