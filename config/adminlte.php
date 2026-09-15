@@ -1,5 +1,13 @@
 <?php
 
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter;
+
 return [
 
     /*
@@ -291,184 +299,294 @@ return [
 
     'menu' => [
         [
-            'text'        => 'Inicio',
-            'url'         => '/home',
-            'icon'        => 'fas fa-home',
+            'text' => 'Inicio',
+            'url' => '/home',
+            'icon' => 'fas fa-home',
         ],
         [
-            'text'        => 'Cliente',
-            'url'         => '/cliente',
-            'icon'        => 'fas fa-solid fa-user',
-            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+            'id' => 'notificacoes-widget',
+            'icon' => 'far fa-bell',
+            'type' => 'navbar-notification',
+            'topnav_right' => true,
+            'url' => '/notificacoes/minhas',
+            'label_color' => 'danger',
+            'dropdown_mode' => true,
+            'dropdown_flabel' => 'Ver todas as notificações',
+            'update_cfg' => ['url' => '/notificacoes/widget', 'period' => 20],
         ],
         [
-            'text'        => 'Produtos',
-            'url'         => '/produto',
-            'icon'        => 'fas fa-box-open',
-            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+            'text' => 'Cliente',
+            'url' => '/cliente',
+            'icon' => 'fas fa-solid fa-user',
+            'can' => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2'],
         ],
         [
-            'text'        => 'Estoque',
-            'url'         => '/estoque',
-            'icon'        => 'fas fa-boxes',
-            'can'         => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+            'text' => 'Produtos',
+            'url' => '/produto',
+            'icon' => 'fas fa-box-open',
+            'can' => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2'],
+        ],
+        [
+            'text' => 'Estoque',
+            'url' => '/estoque',
+            'icon' => 'fas fa-boxes',
+            'can' => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2'],
         ],
         [
             'text' => 'Entradas NFE',
-            'url'  => '/entrada',
+            'url' => '/entrada',
             'icon' => 'fas fa-file-upload',
-            'can'  => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2']
+            'can' => ['admin', 'client-NFe', 'master', 'client-NFCe', 'client-advanced1', 'client-advanced2'],
         ],
         [
-            'text'        => 'NFe',
-            'icon'        => 'far fa-file-alt',
-            'can'         => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
+            'text' => 'NFe',
+            'icon' => 'far fa-file-alt',
+            'can' => ['admin', 'client-NFe', 'master', 'client-advanced1', 'client-advanced2'],
             'submenu' => [
                 [
-                    'text'        => 'Emitir NFe',
-                    'url'         => '/vendas/nova',
-                    'icon'        => 'fas fa-upload',
-                    'shift' => 'ml-2'
+                    'text' => 'Emitir NFe',
+                    'url' => '/vendas/nova',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'Notas Emitidas (NFe)',
-                    'url'         => '/vendas',
-                    'icon'        => 'fas fa-list-ul',
-                    'shift' => 'ml-2'
+                    'text' => 'Notas Emitidas (NFe)',
+                    'url' => '/vendas',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'Baixar XML (NFe)',
-                    'url'         => '/notas',
-                    'icon'        => 'fas fa-download',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Relatórios (NFe)',
-                    'url'         => '/relatorios',
-                    'icon'        => 'fas fa-chart-area',
-                    'shift' => 'ml-2'
+                    'text' => 'Baixar XML (NFe)',
+                    'url' => '/notas',
+                    'icon' => 'fas fa-download',
+                    'shift' => 'ml-2',
                 ],
             ],
         ],
         [
-            'text'        => 'PDV',
-            'icon'        => 'fas fa-cash-register',
-            'can'         => ['admin', 'master', 'client-NFCe', 'client-advanced2'],
+            'text' => 'Relatórios',
+            'icon' => 'fas fa-chart-area',
+            'can' => 'menu-administracao',
             'submenu' => [
                 [
-                    'text'        => 'Emitir NFCe',
-                    'url'         => '/cupom/criar',
-                    'icon'        => 'fas fa-upload',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Notas Emitidas (NFCe)',
-                    'url'         => '/cupom',
-                    'icon'        => 'fas fa-list-ul',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Baixar XML (NFCe)',
-                    'url'         => 'nfce/xmls/download',
-                    'icon'        => 'fas fa-download',
-                    'shift' => 'ml-2'
-                ]
-            ]
-        ],
-        [
-            'text'        => 'MDFe',
-            'icon'        => 'fas fa-truck',
-            'can'         => ['admin', 'client-MDFe', 'master', 'client-advanced1', 'client-advanced3'],
-            'submenu' => [
-                [
-                    'text'        => 'Emitir MDFe',
-                    'url'         => 'mdfes/emitir',
-                    'icon'        => 'fas fa-upload',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Notas Emitidas (MDFe)',
-                    'url'         => 'mdfes',
-                    'icon'        => 'fas fa-list-ul',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Relatórios (MDFe)',
-                    'url'         => 'relatorios/mdfe',
-                    'icon'        => 'fas fa-chart-area',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Veículos',
-                    'url'         => 'veiculos',
-                    'icon'        => 'fa fa-car',
-                    'shift' => 'ml-2'
-                ],
-                [
-                    'text'        => 'Motoristas',
-                    'url'         => 'motoristas',
-                    'icon'        => 'far fa-address-card',
-                    'shift' => 'ml-2'
+                    'text' => ' NFe',
+                    'url' => '/relatorios',
+                    'icon' => 'far fa-file-alt',
+                    'can' => 'menu-administracao',
+                    'shift' => 'ml-2',
                 ],
             ],
         ],
         [
-            'text'  => 'Log',
-            'url'   => '/log',
-            'icon'  => 'fas fa-clipboard-list',
-        ],
-        [
-            'text'  => 'Fluxo de Caixa',
-            'icon'  => 'fas fa-cash-register',
+            'text' => 'PDV',
+            'icon' => 'fas fa-cash-register',
+            'can' => ['admin', 'master', 'client-NFCe', 'client-advanced2'],
             'submenu' => [
                 [
-                    'text'        => 'Caixa',
-                    'url'         => '/fluxo-caixa',
-                    'icon'        => 'fas fa-cash-register',
-                    'shift'       => 'ml-2'
+                    'text' => 'Emitir NFCe',
+                    'url' => '/cupom/criar',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'Relatórios',
-                    'url'         => '/rel/fluxo-caixa',
-                    'icon'        => 'fas fa-file-contract',
-                    'shift'       => 'ml-2'
+                    'text' => 'Notas Emitidas (NFCe)',
+                    'url' => '/cupom',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'DRE',
-                    'url'         => '/dre',
-                    'icon'        => 'fas fa-file-contract',
-                    'shift'       => 'ml-2'
+                    'text' => 'Baixar XML (NFCe)',
+                    'url' => 'nfce/xmls/download',
+                    'icon' => 'fas fa-download',
+                    'shift' => 'ml-2',
                 ],
             ],
         ],
         [
-            'text'        => 'Configurações',
-            'url'         => '/empresa',
-            'icon'        => 'fas fa-cogs',
-        ],
-        [
-            'text'        => 'Faturas',
-            'icon'        => 'fas fa-file-invoice',
-            'can'         => ['master'],
+            'text' => 'MDFe',
+            'icon' => 'fas fa-truck',
+            'can' => ['admin', 'client-MDFe', 'master', 'client-advanced1', 'client-advanced3'],
             'submenu' => [
                 [
-                    'text'        => 'Assinatura',
-                    'url'         => '/faturas',
-                    'icon'        => 'fas fa-file-contract',
-                    'shift' => 'ml-2'
+                    'text' => 'Emitir MDFe',
+                    'url' => 'mdfes/emitir',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'Histórico de pagamentos',
-                    'url'         => '/faturas/historico-pagamentos',
-                    'icon'        => 'fas fa-history',
-                    'shift' => 'ml-2'
+                    'text' => 'Notas Emitidas (MDFe)',
+                    'url' => 'mdfes',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
                 ],
                 [
-                    'text'        => 'Formas de pagamentos',
-                    'url'         => '/faturas/metodos-pagamentos',
-                    'icon'        => 'fas fa-money-check-alt',
-                    'shift' => 'ml-2'
-                ]
+                    'text' => 'Relatórios (MDFe)',
+                    'url' => 'relatorios/mdfe',
+                    'icon' => 'fas fa-chart-area',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Veículos',
+                    'url' => 'veiculos',
+                    'icon' => 'fa fa-car',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Motoristas',
+                    'url' => 'motoristas',
+                    'icon' => 'far fa-address-card',
+                    'shift' => 'ml-2',
+                ],
+            ],
+        ],
+        [
+            'text' => 'NFCom',
+            'icon' => 'fas fa-signal',
+            'can' => ['admin', 'master', 'client-NFCom'],
+            'submenu' => [
+                [
+                    'text' => 'Emitir NFCom',
+                    'url' => 'nfcom/emitir',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Notas Emitidas (NFCom)',
+                    'url' => 'nfcom',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Cadastrar Serviços',
+                    'url' => 'servicos',
+                    'icon' => 'fas fa-concierge-bell',
+                    'shift' => 'ml-2',
+                ],
+            ],
+        ],
+        [
+            'text' => 'NFS-e',
+            'icon' => 'fas fa-file-invoice-dollar',
+            'can' => ['admin', 'master', 'client-NFSe'],
+            'submenu' => [
+                [
+                    'text' => 'Emitir NFS-e',
+                    'url' => 'nfse/emitir',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Notas Emitidas (NFS-e)',
+                    'url' => 'nfse',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Cadastrar Serviços',
+                    'url' => 'servicos',
+                    'icon' => 'fas fa-concierge-bell',
+                    'shift' => 'ml-2',
+                ],
+            ],
+        ],
+        [
+            'text' => 'CTe',
+            'icon' => 'fas fa-shipping-fast',
+            'can' => ['admin', 'master', 'client-CTe', 'client-advanced3'],
+            'submenu' => [
+                [
+                    'text' => 'Emitir CTe',
+                    'url' => 'ctes/emitir',
+                    'icon' => 'fas fa-upload',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'CTes Emitidos',
+                    'url' => 'ctes',
+                    'icon' => 'fas fa-list-ul',
+                    'shift' => 'ml-2',
+                ],
+            ],
+        ],
+        [
+            'text' => 'Central de Ajuda',
+            'url' => '/ajuda',
+            'icon' => 'fas fa-graduation-cap',
+        ],
+        [
+            'text' => 'Central de Notificações',
+            'url' => '/notificacoes/central',
+            'icon' => 'far fa-bell',
+            'can' => ['master'],
+        ],
+        [
+            'text' => 'Administração',
+            'icon' => 'fas fa-user-shield',
+            'can' => 'menu-administracao',
+            'submenu' => [
+                [
+                    'text' => 'Configurações',
+                    'url' => '/empresa',
+                    'icon' => 'fas fa-cogs',
+                    'shift' => 'ml-2',
+                ],
+                [
+                    'text' => 'Fluxo de Caixa',
+                    'icon' => 'fas fa-cash-register',
+                    'shift' => 'ml-2',
+                    'submenu' => [
+                        [
+                            'text' => 'Caixa',
+                            'url' => '/fluxo-caixa',
+                            'icon' => 'fas fa-cash-register',
+                            'shift' => 'ml-4',
+                        ],
+                        [
+                            'text' => 'Relatórios',
+                            'url' => '/rel/fluxo-caixa',
+                            'icon' => 'fas fa-file-contract',
+                            'shift' => 'ml-4',
+                        ],
+                        [
+                            'text' => 'DRE',
+                            'url' => '/dre',
+                            'icon' => 'fas fa-file-contract',
+                            'shift' => 'ml-4',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'Faturas',
+                    'icon' => 'fas fa-file-invoice',
+                    'shift' => 'ml-2',
+                    'can' => 'menu-faturas',
+                    'submenu' => [
+                        [
+                            'text' => 'Assinatura',
+                            'url' => '/faturas',
+                            'icon' => 'fas fa-file-contract',
+                            'shift' => 'ml-4',
+                        ],
+                        // [
+                        //     'text'        => 'Histórico de pagamentos',
+                        //     'url'         => '/faturas/historico-pagamentos',
+                        //     'icon'        => 'fas fa-history',
+                        //     'shift' => 'ml-4'
+                        // ],
+                        // [
+                        //     'text'        => 'Formas de pagamentos',
+                        //     'url'         => '/faturas/metodos-pagamentos',
+                        //     'icon'        => 'fas fa-money-check-alt',
+                        //     'shift' => 'ml-4'
+                        // ]
+                    ],
+                ],
+                [
+                    'text' => 'Auditoria',
+                    'url' => '/log',
+                    'icon' => 'fas fa-clipboard-list',
+                    'shift' => 'ml-2',
+                ],
             ],
         ],
     ],
@@ -486,13 +604,13 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        GateFilter::class,
+        HrefFilter::class,
+        SearchFilter::class,
+        ActiveFilter::class,
+        ClassesFilter::class,
+        LangFilter::class,
+        DataFilter::class,
     ],
 
     /*
@@ -529,7 +647,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',

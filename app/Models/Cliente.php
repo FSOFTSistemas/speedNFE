@@ -14,4 +14,9 @@ class Cliente extends Model
     public function endereco(){
         return $this->hasOne(Endereco::class, 'id', 'endereco_id');
     }
+
+    public function nfses()
+    {
+        return $this->hasMany(NFSe::class, 'cliente_id');
+    }
 }

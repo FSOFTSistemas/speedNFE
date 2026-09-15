@@ -27,6 +27,7 @@ class Pedido extends Component
     public $forma = '';
     public $finalidade = 1;
     public $tipo = 1;
+    public $referenciaItemHabilitada = false;
 
     public $desconto = 0;
     public $subtotal = 0;
@@ -55,6 +56,8 @@ class Pedido extends Component
 
     public function mount()
     {
+        $this->referenciaItemHabilitada = PedidosService::referenciaItemDevolucaoHabilitada();
+
         //declaração dos services para recuperar dados
         try {
             $sUsers = new UsersService();
@@ -94,6 +97,40 @@ class Pedido extends Component
             $this->cfop = '';
             $this->vendaItens = [];
             $this->formasVenda = [];
+
+            // Se voltamos aqui após uma falha de validação no envio do formulário,
+            // restaura os dados que o usuário já tinha preenchido (inclusive os itens
+            // já adicionados) em vez de reiniciar o formulário do zero.
+            if (old('vendaItens')) {
+                $this->empresa = old('empresa', $this->empresa);
+                $this->cliente = old('cliente');
+                $this->cfop = old('cfop', '');
+                $this->finalidade = old('finalidade', $this->finalidade);
+                $this->tipo = old('tipo', $this->tipo);
+
+                if ($this->cfop) {
+                    $cfopEncontrado = $sPedidos->findCfop($this->cfop);
+                    $this->bcfop = $cfopEncontrado->cfop ?? '';
+                }
+
+                $subtotal = 0;
+                foreach (old('vendaItens') as $item) {
+                    $produto = Produto::find($item['produto_id']);
+                    $total = ($item['unitario'] * $item['quantidade']) - $item['desconto'];
+                    $this->vendaItens[] = [
+                        'produto_id' => $item['produto_id'],
+                        'descricao' => $produto->produto ?? '',
+                        'quantidade' => $item['quantidade'],
+                        'unitario' => $item['unitario'],
+                        'desconto' => $item['desconto'],
+                        'total' => $total,
+                        'dfe_referenciado_chave' => $item['dfe_referenciado_chave'] ?? '',
+                        'dfe_referenciado_n_item' => $item['dfe_referenciado_n_item'] ?? '',
+                    ];
+                    $subtotal += $total;
+                }
+                $this->subtotal = $subtotal;
+            }
         } catch (Exception $e) {
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em outro momento!, Erro: ' . $e);
         }
@@ -146,7 +183,16 @@ class Pedido extends Component
                     $prod = Produto::find($this->produto);
                     $total = $this->quantidade * $this->preco;
                     $desconto =  $this->desconto;
-                    $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                    $this->vendaItens[] = [
+                        'produto_id' => $prod->id,
+                        'descricao' => $prod->produto,
+                        'quantidade' => $this->quantidade,
+                        'unitario' => $this->preco,
+                        'desconto' => $desconto,
+                        'total' => $total - $desconto,
+                        'dfe_referenciado_chave' => '',
+                        'dfe_referenciado_n_item' => '',
+                    ];
                     $subtotal = 0;
                     foreach ($this->vendaItens as $item) {
                         $subtotal = $subtotal + $item['total'];

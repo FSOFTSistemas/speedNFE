@@ -15,6 +15,7 @@ class Entrada extends Model
         'numeroNota',
         'fornecedor',
         'chave',
+        'xml',
         'valor',
         'empresa_id'
     ];
@@ -24,4 +25,8 @@ class Entrada extends Model
         return $this->hasMany(ItensEntrada::class, 'entrada_id', 'id');
     }
 
+    public function itens()
+    {
+        return $this->hasMany(ItensEntrada::class, 'entrada_id', 'id');
+    }
 }

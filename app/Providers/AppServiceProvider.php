@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Cliente;
 use App\Models\Empresa;
+use App\Models\FluxoDeCaixa;
 use App\Models\MDFE;
 use App\Models\Motorista;
 use App\Models\Pedido;
@@ -44,5 +45,6 @@ class AppServiceProvider extends ServiceProvider
         Veiculo::observe(TransactionObserver::class);
         Motorista::observe(TransactionObserver::class);
         MDFE::observe(TransactionObserver::class);
+        FluxoDeCaixa::observe(TransactionObserver::class);
     }
 }

@@ -49,11 +49,13 @@ class DRE extends Controller
         $dataFinal = $request->input('data_final', now()->endOfMonth()->toDateString());
 
         $receitas = FluxoDeCaixa::whereBetween('data', [$dataInicial, $dataFinal])
-            ->where('tipo', 'Receita')
+            ->where('tipo', 'Entrada')
+            ->where('empresa_id', Auth::user()->empresa_id)
             ->sum('valor');
 
         $despesas = FluxoDeCaixa::whereBetween('data', [$dataInicial, $dataFinal])
-            ->where('tipo', 'Despesa')
+            ->where('tipo', 'Saída')
+            ->where('empresa_id', Auth::user()->empresa_id)
             ->sum('valor');
 
         $lucro = $receitas - $despesas;

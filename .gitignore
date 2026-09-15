@@ -1,10 +1,17 @@
 /node_modules
 /public/build
 /public/hot
-# /public/storage
-# /storage/*.key
+/public/*
+!/public/docs/
+!/public/docs/**
+!/public/css/
+!/public/css/**
+!/public/js/
+!/public/js/homePage-motion.js
+/public/storage
+/storage/*.key
 /vendor
-# .env
+.env
 .env.backup
 .env.production
 .phpunit.result.cache
@@ -16,3 +23,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+composer.lock

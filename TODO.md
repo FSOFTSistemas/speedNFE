@@ -1,0 +1,1 @@
+- Alterada a tabela de plano de contas: removido o índice único da coluna `codigo`.

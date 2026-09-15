@@ -39,9 +39,12 @@ class EditPedido extends Component
     public $produtos = [];
     public $formas = [];
     public $cfops = [];
+    public $referenciaItemHabilitada = false;
 
     public function mount()
     {
+        $this->referenciaItemHabilitada = PedidosService::referenciaItemDevolucaoHabilitada();
+
         try {
             //declaração dos services para recuperar dados
             $sUsers = new UsersService();
@@ -77,9 +80,11 @@ class EditPedido extends Component
                     'produto_id' => $produto->id,
                     'descricao' => $produto->produto,
                     'quantidade' => $item->qtde,
-                    'unitario' => $produto->precovenda,
+                    'unitario' => $item->unitario,
                     'desconto' => $item->desconto,
-                    'total' => ($produto->precovenda * $item->qtde) - $item->desconto,
+                    'total' => ($item->unitario * $item->qtde) - $item->desconto + $item->acrescimo,
+                    'dfe_referenciado_chave' => $item->dfe_referenciado_chave ?: $pedido->ref_nfe,
+                    'dfe_referenciado_n_item' => $item->dfe_referenciado_n_item ?: '',
                 ];
             }
         } catch (Exception $e) {
@@ -134,7 +139,16 @@ class EditPedido extends Component
                     $prod = Produto::find($this->produto);
                     $total = $this->quantidade * $this->preco;
                     $desconto = $total * $this->desconto / 100;
-                    $this->vendaItens[] = ['produto_id' => $prod->id, 'descricao' => $prod->produto, 'quantidade' => $this->quantidade, 'unitario' => $this->preco, 'desconto' => $desconto, 'total' => $total - $desconto];
+                    $this->vendaItens[] = [
+                        'produto_id' => $prod->id,
+                        'descricao' => $prod->produto,
+                        'quantidade' => $this->quantidade,
+                        'unitario' => $this->preco,
+                        'desconto' => $desconto,
+                        'total' => $total - $desconto,
+                        'dfe_referenciado_chave' => '',
+                        'dfe_referenciado_n_item' => '',
+                    ];
                     $subtotal = 0;
                     foreach ($this->vendaItens as $item) {
                         $subtotal = $subtotal + $item['total'];

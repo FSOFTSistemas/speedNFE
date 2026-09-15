@@ -2,27 +2,65 @@
 
 namespace App\Utils;
 
-class FormatationUtil {
+use Carbon\Carbon;
 
+class FormatationUtil
+{
     public static function retiraAcentos($texto)
     {
-        return preg_replace(array("/(á|à|ã|â|ä)/", "/(Á|À|Ã|Â|Ä)/", "/(é|è|ê|ë)/", "/(É|È|Ê|Ë)/", "/(í|ì|î|ï)/", "/(Í|Ì|Î|Ï)/", "/(ó|ò|õ|ô|ö)/", "/(Ó|Ò|Õ|Ô|Ö)/", "/(ú|ù|û|ü)/", "/(Ú|Ù|Û|Ü)/", "/(ñ)/", "/(Ñ)/", "/(ç)/"), explode(" ", "a A e E i I o O u U n N c"), $texto);
+        return preg_replace(['/(á|à|ã|â|ä)/', '/(Á|À|Ã|Â|Ä)/', '/(é|è|ê|ë)/', '/(É|È|Ê|Ë)/', '/(í|ì|î|ï)/', '/(Í|Ì|Î|Ï)/', '/(ó|ò|õ|ô|ö)/', '/(Ó|Ò|Õ|Ô|Ö)/', '/(ú|ù|û|ü)/', '/(Ú|Ù|Û|Ü)/', '/(ñ)/', '/(Ñ)/', '/(ç)/'], explode(' ', 'a A e E i I o O u U n N c'), $texto);
     }
 
     public static function format($number, $dec = 2)
     {
-        return number_format((float) $number, $dec, ".", "");
+        return number_format((float) $number, $dec, '.', '');
     }
 
     public static function retiraPontuacoes($texto)
     {
-        $texto = str_replace(".", "", $texto);
-        $texto = str_replace("/", "", $texto);
-        $texto = str_replace("-", "", $texto);
-        $texto = str_replace(" ", "", $texto);
+        $texto = str_replace('.', '', $texto);
+        $texto = str_replace('/', '', $texto);
+        $texto = str_replace('-', '', $texto);
+        $texto = str_replace(' ', '', $texto);
         $texto = str_replace('(', '', $texto);
         $texto = str_replace(')', '', $texto);
+
         return $texto;
     }
 
+    public static function normalizarTelefoneFiscal($texto): ?string
+    {
+        $telefone = preg_replace('/\D/', '', (string) $texto);
+
+        if (strlen($telefone) < 6 || strlen($telefone) > 14) {
+            return null;
+        }
+
+        return $telefone;
+    }
+
+    /**
+     * Faz o parse de uma data armazenada como string tentando, em ordem, os
+     * formatos informados. Necessário porque algumas colunas (ex.: dataEntrada
+     * e dataEmissao de entradas) guardam datas em formatos diferentes
+     * dependendo de como o registro foi criado.
+     *
+     * @return Carbon|null
+     */
+    public static function parseData($valor, array $formatos = ['d/m/Y H:i:s', 'Y-m-d'])
+    {
+        if (empty($valor)) {
+            return null;
+        }
+
+        foreach ($formatos as $formato) {
+            try {
+                return Carbon::createFromFormat($formato, $valor);
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return null;
+    }
 }

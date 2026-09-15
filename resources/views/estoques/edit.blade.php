@@ -2,97 +2,148 @@
 
 @section('title', 'Editar Estoque')
 
+@push('css')
+<style>
+    /* Estilos importados para consistência */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    :root {
+        --primary-color: #00033a;
+        --card-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --border-color: #dee2e6;
+        --text-dark: #343a40;
+        --input-focus-border: #80bdff;
+        --input-focus-shadow: rgba(0, 3, 58, .25);
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .card-main {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        padding: 30px;
+    }
+    .custom-btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff !important;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+    }
+    .custom-btn-primary:hover {
+        background-color: #00045e;
+        border-color: #00045e;
+        transform: translateY(-2px);
+    }
+    .custom-btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+    .custom-btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: .5rem;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        padding: 10px 15px;
+        height: auto;
+    }
+    .form-control:focus {
+        border-color: var(--input-focus-border);
+        box-shadow: 0 0 0 0.2rem var(--input-focus-shadow);
+    }
+    .product-title {
+        font-weight: 500;
+        color: var(--text-dark);
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+    }
+</style>
+@endpush
+
 @section('content_header')
-    <div class="text-center text-dark">
-        <h3>Edição de Estoque</h3>
+    <div class="row align-items-center">
+        <div class="col-md-10">
+            <h1 class="m-0 text-dark" style="font-weight: 600;">Edição de Estoque</h1>
+        </div>
+        <div class="col-md-2 text-md-right mt-2 mt-md-0">
+            <a href="{{ route('estoque.index') }}" class="btn custom-btn-secondary btn-block">Voltar</a>
+        </div>
     </div>
 @stop
 
 @section('content')
-    <div class="row text-right mb-3">
-        <div class="col">
-            <a class="btn btn-secondary" href="{{ route('estoque.index') }}">Voltar</a>
-        </div>
-    </div>
-
-    <div class="card">
+    <div class="card card-main">
         <div class="card-body">
-            <div class="row mb-2">
-                <div class="col">
-                    <h4>{{ $estoque->produto->produto }}</h4>
-                </div>
-            </div>
-
-            <form class="g-3 needs-validation" novalidate action="{{ route('estoque.update', [$estoque->id]) }}" method="POST" enctype="multipart/form-data">
+            <h4 class="product-title text-center mb-4">{{ $estoque->produto->produto }}</h4>
+            <form class="needs-validation" novalidate action="{{ route('estoque.update', [$estoque->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
-
                 <div class="row">
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="estoque" id="estoque" value="{{ $estoque->estoque_atual }}" placeholder=" " required>
-                            <label for="estoque">Estoque Atual</label>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="estoque" class="form-label">Estoque Atual</label>
+                        <input class="form-control" name="estoque" id="estoque" value="{{ $estoque->estoque_atual }}" required>
+                        <div class="invalid-feedback">Informe o estoque atual.</div>
                     </div>
-
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="estoque_anterior" id="estoque_anterior" value="{{ $estoque->estoque_anterior }}" placeholder=" "
-                                required>
-                            <label for="estoque_anterior">Estoque Anterior</label>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="estoque_anterior" class="form-label">Estoque Anterior</label>
+                        <input class="form-control" name="estoque_anterior" id="estoque_anterior" value="{{ $estoque->estoque_anterior }}" required>
+                         <div class="invalid-feedback">Informe o estoque anterior.</div>
                     </div>
                 </div>
-
                 <div class="row">
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="entradas" id="entradas" value="{{ $estoque->entradas }}" placeholder=" " required>
-                            <label for="entradas">Entradas</label>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="entradas" class="form-label">Entradas</label>
+                        <input class="form-control" name="entradas" id="entradas" value="{{ $estoque->entradas }}" required>
+                        <div class="invalid-feedback">Informe o total de entradas.</div>
                     </div>
-
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="saidas" id="saidas" value="{{ $estoque->saidas }}" placeholder=" " required>
-                            <label for="saidas">Saidas</label>
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="saidas" class="form-label">Saídas</label>
+                        <input class="form-control" name="saidas" id="saidas" value="{{ $estoque->saidas }}" required>
+                        <div class="invalid-feedback">Informe o total de saídas.</div>
                     </div>
                 </div>
-
-                <div class="text-center">
-                    <button class="btn btn-outline-success w-25" type="submit">Salvar</button>
+                <div class="row mt-4">
+                    <div class="col-md-6 mx-auto text-center">
+                        <button class="btn custom-btn-primary btn-block" type="submit">Salvar Alterações</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
-@endsection
+@stop
 
-@section('css')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-@endsection
-
-@section('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+@push('js')
     <script>
-        (function() {
+        (() => {
             'use strict'
-            var forms = document.querySelectorAll('.needs-validation')
-
-            Array.prototype.slice.call(forms)
-                .forEach(function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault()
-                            event.stopPropagation()
-                        }
-
-                        form.classList.add('was-validated')
-                    }, false)
-                })
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
         })()
     </script>
-@endsection
+@endpush

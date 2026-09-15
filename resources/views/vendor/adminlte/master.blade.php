@@ -47,6 +47,9 @@
         @endif
     @endif
 
+    {{-- Global custom theme (sidebar + shared modern UI) --}}
+    <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
+
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
 

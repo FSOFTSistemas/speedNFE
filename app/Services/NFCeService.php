@@ -21,7 +21,7 @@ class NFCeService
 
     public function __construct($config, $emitente)
     {
-        $certificado = file_get_contents('../storage/app/public/certificados/' . $emitente->razao . '.pfx');
+        $certificado = app(EmpresaCertificate::class)->content($emitente);
         $this->tools = new Tools(json_encode($config), Certificate::readPfx($certificado, $emitente->senhaCertificado));
         $this->tools->model('65');
     }
@@ -38,7 +38,7 @@ class NFCeService
 
     public static function getMonthlyCompanyXmls($companyId, $month)
     {
-        return NFCe::select('xml', 'chave')->whereEmpresaId($companyId)->where('data', 'like', $month . '%')->get();
+        return NFCe::select('xml', 'chave')->whereEmpresaId($companyId)->where('data', 'like', $month.'%')->get();
     }
 
     public static function getTotalNFCePerMonth($companyId)
@@ -68,36 +68,37 @@ class NFCeService
             'situacao' => EstadoEnum::AUTORIZADO,
             'xml' => $body['xml'],
             'cupom_id' => $couponId,
-            'empresa_id' => $company->id
+            'empresa_id' => $company->id,
         ]);
     }
 
     public function generateXml($cupom, $emitente)
     {
+
         try {
             if (count($emitente->nfces) >= $emitente->limNFCes && $emitente->id != 1) {
-                throw new LimitExceededException("O limite de notas NFCe foi atingido!");
+                throw new LimitExceededException('O limite de notas NFCe foi atingido!');
             }
-            $make = new Make();
+            $make = new Make;
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->Id = '';
             $std->versao = '4.00';
             $make->taginfNFe($std);
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->cUF = $emitente::getCUF($emitente->endereco->uf);
             $std->cNF = rand(11111, 99999);
             $std->natOp = 'VENDA CONSUMIDOR';
             $std->mod = 65;
             $std->serie = $emitente->serie;
             $std->nNF = $emitente->ultimaNFCe + 1;
-            $std->dhEmi = date("Y-m-d\TH:i:sP");;
-            $std->dhSaiEnt = date("Y-m-d\TH:i:sP");;
+            $std->dhEmi = date("Y-m-d\TH:i:sP");
+            $std->dhSaiEnt = date("Y-m-d\TH:i:sP");
             $std->tpNF = 1;
             $cliente = $cupom->cliente ?? null;
             $clientAddress = $cliente->endereco ?? null;
-            $std->idDest = ($clientAddress && $emitente->endereco->uf == $clientAddress->uf) || !$clientAddress ? 1 : 2;
+            $std->idDest = ($clientAddress && $emitente->endereco->uf == $clientAddress->uf) || ! $clientAddress ? 1 : 2;
             $std->cMunFG = $emitente->endereco->codigoIBGE;
             $std->tpImp = 4;
             $std->indSinc = 0;
@@ -113,12 +114,12 @@ class NFCeService
             $std->xJust = null;
             $make->tagIde($std);
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->xNome = $emitente->razao;
             $std->xFant = $emitente->fantasia;
             $std->IE = FormatationUtil::retiraPontuacoes($emitente->rg_ie);
             $std->IEST = null;
-            $std->CRT = 1; //Simples Nacional
+            $std->CRT = $emitente->crt; // Simples Nacional
             if (strlen(FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj)) >= 12) {
                 $std->CNPJ = FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj);
             } else {
@@ -126,7 +127,7 @@ class NFCeService
             }
             $make->tagemit($std);
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->xLgr = FormatationUtil::retiraAcentos($emitente->endereco->rua);
             $std->nro = $emitente->endereco->numero;
             $std->xCpl = FormatationUtil::retiraAcentos($emitente->endereco->complemento);
@@ -141,17 +142,12 @@ class NFCeService
             $make->tagenderemit($std);
 
             if ($cliente) {
-                $std = new \stdClass();
+                $std = new \stdClass;
                 $std->xNome = FormatationUtil::retiraAcentos($cliente->nome);
                 if (strlen(FormatationUtil::retiraPontuacoes($cliente->cpf_cnpj)) >= 12) {
                     $std->CNPJ = FormatationUtil::retiraPontuacoes($cliente->cpf_cnpj);
-                    // $std->IE = FormatationUtil::retiraPontuacoes($cliente->rg_ie);
                 } else {
                     $std->CPF = FormatationUtil::retiraPontuacoes($cliente->cpf_cnpj);
-                    // $ie = FormatationUtil::retiraPontuacoes($cliente->rg_ie);
-                    // if (strtolower($ie) != "isento" && $cliente->contribuinte) {
-                    //     $std->IE = $ie;
-                    // }
                 }
                 if ($cliente->contribuinte) {
                     if ($cliente->rg_ie == 'ISENTO') {
@@ -164,7 +160,7 @@ class NFCeService
                 }
                 $make->tagdest($std);
 
-                $std = new \stdClass();
+                $std = new \stdClass;
                 $std->xLgr = FormatationUtil::retiraAcentos($cliente->endereco->rua);
                 $std->nro = FormatationUtil::retiraAcentos($cliente->endereco->numero);
                 $std->xCpl = FormatationUtil::retiraAcentos($cliente->endereco->complemento);
@@ -179,11 +175,17 @@ class NFCeService
                 $make->tagenderdest($std);
             }
 
+            // --- [NOVO] ACUMULADORES DA REFORMA TRIBUTÁRIA ---
+            $totalVBCIBSCBS = 0.00;
+            $totalVIBS = 0.00;
+            $totalVCBS = 0.00;
+            // -------------------------------------------------
+
             foreach ($cupom->itens as $index => $item) {
-                $std = new \stdClass();
+                $std = new \stdClass;
                 $std->item = $index + 1;
                 $std->cProd = $item->produto->id;
-                $std->cEAN = $item->produto->codigo != "SEM GTIN" && strlen($item->produto->codigo) >= 8 ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
+                $std->cEAN = $item->produto->codigo != 'SEM GTIN' && strlen($item->produto->codigo) >= 8 ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
                 $std->xProd = FormatationUtil::retiraAcentos($item->produto->produto);
                 $std->NCM = FormatationUtil::retiraPontuacoes($item->produto->ncm);
                 $std->EXTIPI = '';
@@ -191,80 +193,188 @@ class NFCeService
                 $std->uCom = $item->produto->un;
                 $std->qCom = $item->qtde;
                 $std->vUnCom = FormatationUtil::format($item->unitario);
-                $vProd = FormatationUtil::format($item->qtde * $item->unitario);
+
+                // Cálculo do valor bruto para uso interno
+                $valorBrutoItem = $item->qtde * $item->unitario;
+                $vProd = FormatationUtil::format($valorBrutoItem);
+
                 $std->vProd = $vProd;
-                $std->cEANTrib = $item->produto->codigo != "SEM GTIN" && strlen($item->produto->codigo) >= 8 ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
+                $std->cEANTrib = $item->produto->codigo != 'SEM GTIN' && strlen($item->produto->codigo) >= 8 ? FormatationUtil::retiraPontuacoes($item->produto->codigo) : 9780000000002;
                 $std->uTrib = $item->produto->un;
                 $std->qTrib = $item->qtde;
                 $std->vUnTrib = FormatationUtil::format($item->unitario);
                 $std->indTot = 1;
                 $make->tagprod($std);
 
-                $tag = new \stdClass();
+                $tag = new \stdClass;
                 $tag->item = $index + 1;
                 $tag->infAdProd = FormatationUtil::retiraAcentos($item->produto->produto);
                 $make->taginfAdProd($tag);
 
-                $std = new \stdClass();
+                $std = new \stdClass;
                 $std->item = $index + 1;
                 $std->vTotTrib = 0.00;
                 $make->tagimposto($std);
 
-                $std = new \stdClass();
+                // $std = new \stdClass();
+                // $std->item = $index + 1;
+                // $std->orig = 0;
+                // $std->CSOSN = $item->produto->cst_csosn;
+                // $std->pCredSN = 0.00;
+                // $std->vCredICMSSN = 0.00;
+                // $std->modBCST = null; $std->pMVAST = null; $std->pRedBCST = null; $std->vBCST = null;
+                // $std->pICMSST = null; $std->vICMSST = null; $std->vBCFCPST = null; $std->pFCPST = null;
+                // $std->vFCPST = null; $std->vBCSTRet = null; $std->pST = null; $std->vICMSSTRet = null;
+                // $std->vBCFCPSTRet = null; $std->pFCPSTRet = null; $std->vFCPSTRet = null; $std->modBC = null;
+                // $std->vBC = null; $std->pRedBC = null; $std->pICMS = null; $std->vICMS = null;
+                // $std->pRedBCEfet = null; $std->vBCEfet = null; $std->pICMSEfet = null; $std->vICMSEfet = null;
+                // $std->vICMSSubstituto = null;
+                // $make->tagICMSSN($std);
+
+                $std = new \stdClass;
                 $std->item = $index + 1;
                 $std->orig = 0;
-                $std->CSOSN = $item->produto->cst_csosn;
-                $std->pCredSN = 0.00;
-                $std->vCredICMSSN = 0.00;
-                $std->modBCST = null;
-                $std->pMVAST = null;
-                $std->pRedBCST = null;
-                $std->vBCST = null;
-                $std->pICMSST = null;
-                $std->vICMSST = null;
-                $std->vBCFCPST = null;
-                $std->pFCPST = null;
-                $std->vFCPST = null;
-                $std->vBCSTRet = null;
-                $std->pST = null;
-                $std->vICMSSTRet = null;
-                $std->vBCFCPSTRet = null;
-                $std->pFCPSTRet = null;
-                $std->vFCPSTRet = null;
-                $std->modBC = null;
-                $std->vBC = null;
-                $std->pRedBC = null;
-                $std->pICMS = null;
-                $std->vICMS = null;
-                $std->pRedBCEfet = null;
-                $std->vBCEfet = null;
-                $std->pICMSEfet = null;
-                $std->vICMSEfet = null;
-                $std->vICMSSubstituto = null;
-                $make->tagICMSSN($std);
-                $std = new \stdClass();
+
+                if ($emitente->crt == 1) {
+
+                    $std->CSOSN = $item->produto->cst_csosn;
+                    $std->pCredSN = 0.00;
+                    $std->vCredICMSSN = 0.00;
+                    $std->modBCST = null;
+                    $std->pMVAST = null;
+                    $std->pRedBCST = null;
+                    $std->vBCST = null;
+                    $std->pICMSST = null;
+                    $std->vICMSST = null;
+                    $std->vBCFCPST = null;
+                    $std->pFCPST = null;
+                    $std->vFCPST = null;
+                    $std->vBCSTRet = null;
+                    $std->pST = null;
+                    $std->vICMSSTRet = null;
+                    $std->vBCFCPSTRet = null;
+                    $std->pFCPSTRet = null;
+                    $std->vFCPSTRet = null;
+                    $std->modBC = null;
+                    $std->vBC = null;
+                    $std->pRedBC = null;
+                    $std->pICMS = null;
+                    $std->vICMS = null;
+                    $std->pRedBCEfet = null;
+                    $std->vBCEfet = null;
+                    $std->pICMSEfet = null;
+                    $std->vICMSEfet = null;
+                    $std->vICMSSubstituto = null;
+
+                    $make->tagICMSSN($std);
+
+                } else {
+
+                    $cst = trim((string) $item->produto->cst_csosn);
+
+                    $std->CST = $cst;
+
+                    switch ($cst) {
+
+                        case '00':
+                            $std->modBC = 3;
+                            $std->vBC = (float) $item->total_base_icms;
+                            $std->pICMS = (float) $item->aliquota_icms;
+                            $std->vICMS = (float) $item->valor_icms;
+                            break;
+
+                        case '40':
+                        case '41':
+                        case '50':
+                            // Isento / não tributado / suspensão
+                            $std->modBC = null;
+                            $std->vBC = null;
+                            $std->pICMS = null;
+                            $std->vICMS = null;
+                            break;
+
+                        case '60':
+                            // ST já retida anteriormente
+                            $std->vBCSTRet = (float) $item->base_st_ret;
+                            $std->vICMSSTRet = (float) $item->icms_st_ret;
+
+                            $std->modBC = null;
+                            $std->vBC = null;
+                            $std->pICMS = null;
+                            $std->vICMS = null;
+                            break;
+
+                        default:
+                            throw new \Exception("CST não tratado: {$cst} no item {$std->item}");
+                    }
+
+                    $make->tagICMS($std);
+                }
+
+                $std = new \stdClass;
                 $std->item = $index + 1;
                 $std->CST = $item->produto->cst_pis;
                 $std->vBC = FormatationUtil::format($item->produto->pis) > 0 ? $vProd : 0.00;
                 $std->pPIS = FormatationUtil::format($item->produto->pis);
-                $std->vPIS = FormatationUtil::format(($vProd) * ($item->produto->pis / 100));
+                $std->vPIS = FormatationUtil::format(($valorBrutoItem) * ($item->produto->pis / 100));
                 $std->qBCProd = 0;
                 $std->vAliqProd = 0;
                 $make->tagPIS($std);
 
-                $std = new \stdClass();
+                $std = new \stdClass;
                 $std->item = $index + 1;
                 $std->CST = $item->produto->cst_cofins;
                 $std->vBC = FormatationUtil::format($item->produto->cofins) > 0 ? $vProd : 0.00;
                 $std->pCOFINS = FormatationUtil::format($item->produto->cofins);
-                $std->vCOFINS = FormatationUtil::format(($vProd) *
-                    ($item->produto->cofins / 100));
+                $std->vCOFINS = FormatationUtil::format(($valorBrutoItem) * ($item->produto->cofins / 100));
                 $std->qBCProd = 0;
                 $std->vAliqProd = 0;
                 $make->tagCOFINS($std);
+
+                // --- [NOVO] TAG IBS/CBS POR ITEM ---
+                // Verifica se está em 2026 para gerar a tag
+                if (date('Y') >= 2026) {
+                    $stdIBS = new \stdClass;
+                    $stdIBS->item = $index + 1;
+                    // Força CST 010 para evitar erro de redução na transição
+                    $stdIBS->CST = '010';
+                    // Usa classificação do produto ou padrão genérico
+                    $stdIBS->cClassTrib = $item->produto->cClassTrib ?? '010001';
+
+                    // Base de Cálculo (Usa o valor do produto)
+                    $vBC_RTC = $valorBrutoItem;
+                    $stdIBS->vBC = FormatationUtil::format($vBC_RTC);
+                    $totalVBCIBSCBS += $vBC_RTC;
+
+                    // IBS (Estadual) - Padrão Transição 0.1% se não tiver no produto
+                    $aliqIBS = isset($item->produto->pIBS) ? floatval($item->produto->pIBS) : 0.10;
+                    $stdIBS->gIBSUF_pIBSUF = FormatationUtil::format($aliqIBS);
+                    $valorIBS = $vBC_RTC * ($aliqIBS / 100);
+                    $stdIBS->gIBSUF_vIBSUF = FormatationUtil::format($valorIBS);
+
+                    // IBS Municipal (Obrigatório enviar zerado)
+                    $stdIBS->gIBSMun_pIBSMun = 0.00;
+                    $stdIBS->gIBSMun_vIBSMun = 0.00;
+
+                    // Total IBS deste item
+                    $stdIBS->vIBS = FormatationUtil::format($valorIBS);
+                    $totalVIBS += $valorIBS;
+
+                    // CBS (Federal) - Padrão Transição 0.9% se não tiver no produto
+                    $aliqCBS = isset($item->produto->pCBS) ? floatval($item->produto->pCBS) : 0.90;
+                    $stdIBS->gCBS_pCBS = FormatationUtil::format($aliqCBS);
+                    $valorCBS = $vBC_RTC * ($aliqCBS / 100);
+                    $stdIBS->gCBS_vCBS = FormatationUtil::format($valorCBS);
+
+                    // Total CBS deste item
+                    $totalVCBS += $valorCBS;
+
+                    $make->tagIBSCBS($stdIBS);
+                }
+                // -----------------------------------
             }
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->vProd = 0.00;
             $std->vBC = 0.00;
             $std->vICMS = 0.00;
@@ -283,17 +393,55 @@ class NFCeService
             $std->vNF = FormatationUtil::format($cupom->total);
             $make->tagicmstot($std);
 
-            $std = new \stdClass();
+            // --- [NOVO] TOTALIZADORES IBS/CBS ---
+            // Verifica se está em 2026 para gerar a tag de totais
+            if (date('Y') >= 2026) {
+                $stdTot = new \stdClass;
+                $stdTot->vBCIBSCBS = FormatationUtil::format($totalVBCIBSCBS);
+
+                // Grupo IBS Total
+                $stdTot->gIBS_vIBS = FormatationUtil::format($totalVIBS);
+                $stdTot->gIBS_gIBSUF_vIBSUF = FormatationUtil::format($totalVIBS);
+                $stdTot->gIBS_gIBSMun_vIBSMun = 0.00;
+
+                // Zerar campos complexos do IBS
+                $stdTot->gIBS_vDevTrib = 0.00;
+                $stdTot->gIBS_vDif = 0.00;
+                $stdTot->gIBS_vCredPres = 0.00;
+                $stdTot->gIBS_vCredPresCondSus = 0.00;
+
+                // Grupo CBS Total
+                $stdTot->gCBS_vCBS = FormatationUtil::format($totalVCBS);
+
+                // Zerar campos complexos da CBS
+                $stdTot->gCBS_vDevTrib = 0.00;
+                $stdTot->gCBS_vDif = 0.00;
+                $stdTot->gCBS_vCredPres = 0.00;
+                $stdTot->gCBS_vCredPresCondSus = 0.00;
+
+                // Zerar Monofásica
+                $stdTot->gMono_vIBSMono = 0.00;
+                $stdTot->gMono_vCBSMono = 0.00;
+                $stdTot->gMono_vIBSMonoReten = 0.00;
+                $stdTot->gMono_vCBSMonoReten = 0.00;
+                $stdTot->gMono_vIBSMonoRet = 0.00;
+                $stdTot->gMono_vCBSMonoRet = 0.00;
+
+                $make->tagIBSCBSTot($stdTot);
+            }
+            // ------------------------------------
+
+            $std = new \stdClass;
             $std->modFrete = 9;
             $make->tagtransp($std);
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->vTroco = FormatationUtil::format($cupom->troco);
             $make->tagpag($std);
 
             foreach ($cupom->formasPagamento as $item) {
                 $card = false;
-                $std = new \stdClass();
+                $std = new \stdClass;
                 switch ($item->forma) {
                     case 'DINHEIRO':
                         $std->tPag = '01';
@@ -324,12 +472,29 @@ class NFCeService
                 $make->tagdetpag($std);
             }
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->infAdFisco = '';
-            $std->infCpl = '';
+
+            // --- LÓGICA PARA ESCREVER NO RODAPÉ (INF. COMPLEMENTARES) ---
+            $msgTransparencia = '';
+
+            // Só calcula/mostra se estiver na vigência (2026+)
+            if (date('Y') >= 2026) {
+                // $totalVIBS e $totalVCBS foram calculados lá em cima no loop dos itens
+                $msgTransparencia = sprintf(
+                    'Trib. Aprox. Lei da Transparência: IBS R$ %s - CBS R$ %s',
+                    FormatationUtil::format($totalVIBS),
+                    FormatationUtil::format($totalVCBS)
+                );
+            }
+
+            // Adiciona ao texto que já existir (se houver)
+            $std->infCpl = $msgTransparencia;
+            // Se você já tiver outros textos, use: $std->infCpl = "Obrigado pela preferência. " . $msgTransparencia;
+
             $make->taginfadic($std);
 
-            $std = new \stdClass();
+            $std = new \stdClass;
             $std->CNPJ = getenv('RESP_CNPJ');
             $std->xContato = getenv('RESP_NOME');
             $std->email = getenv('RESP_EMAIL');
@@ -337,7 +502,6 @@ class NFCeService
             $make->taginfRespTec($std);
 
             try {
-                $make->monta();
                 $xml = $make->getXML();
             } catch (\Exception $e) {
                 dd($e->getMessage(), $make->getErrors());
@@ -349,6 +513,7 @@ class NFCeService
                 'chave' => $key,
                 'xml' => $signedXml,
             ];
+
             return $arr;
         } catch (\Exception $e) {
             throw $e;
@@ -364,7 +529,7 @@ class NFCeService
     {
         $loteId = str_pad(100, 15, '0', STR_PAD_LEFT);
         $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId, 1);
-        $st = new Standardize();
+        $st = new Standardize;
         $std = $st->toStd($resp);
         sleep(2);
         if ($std->cStat == 104) {

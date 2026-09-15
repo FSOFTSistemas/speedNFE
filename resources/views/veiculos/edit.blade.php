@@ -2,247 +2,137 @@
 
 @section('title', 'Editar Veículo')
 
+@push('css')
+<style>
+    /* Estilos do Padrão Visual Definido */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    :root {
+        --primary-color: #00033a;
+        --card-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --border-color: #dee2e6;
+        --text-dark: #343a40;
+        --warning-color: #ffc107;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    .card-main {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        padding: 30px;
+    }
+    
+    .custom-btn {
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+    .custom-btn:hover {
+        transform: translateY(-2px);
+    }
+    .custom-btn-warning { background-color: var(--warning-color) !important; border-color: var(--warning-color) !important; color: #212529 !important; }
+    .custom-btn-secondary { background-color: #6c757d !important; border-color: #6c757d !important; color: #fff !important; }
+
+    .header-buttons .btn { display: block; margin-bottom: 8px; }
+    @media (min-width: 992px) {
+        .header-buttons .btn { display: inline-block; margin-bottom: 0; }
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: .5rem;
+    }
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        height: 48px;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 3, 58, .25);
+    }
+    textarea.form-control {
+        height: auto;
+    }
+    .form-control[readonly] {
+        background-color: #e9ecef;
+    }
+</style>
+@endpush
+
 @section('content_header')
-    <div class="row" style="text-align: center">
-        <div class="col">
-            <h3>Editar Veículo</h3>
+    <div class="row align-items-center">
+        <div class="col-lg-6 text-center text-lg-left mb-3 mb-lg-0">
+            <h1 class="m-0 text-dark" style="font-weight: 600;">Editar Veículo</h1>
+        </div>
+        <div class="col-lg-6 text-center text-lg-right header-buttons">
+            <a class="btn custom-btn custom-btn-secondary" href="{{ route('veiculos.index') }}">
+                <i class="fas fa-arrow-left mr-1"></i> Voltar
+            </a>
         </div>
     </div>
 @stop
 
 @section('content')
-    <div class="row" style="margin-bottom: 1%; padding-top: 1%;">
-        <div class="col">
-            <a class="btn btn-secondary" href="{{ route('veiculos.index') }}">Voltar</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <div class="row" style="text-align: center">
-                    <div class="col">
-                        <strong>
-                            <h5>Informações do Veículo</h5>
-                        </strong>
-                    </div>
+<div class="card card-main">
+    <div class="card-body">
+        <form action="{{ route('veiculos.update', [$veiculo->id]) }}" method="post" name="veiculo">
+            @csrf
+            @method('PUT')
+            <h5 class="mb-3 font-weight-bold">Informações do Veículo</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3"><label for="placa" class="form-label">Placa *</label><input type="text" class="form-control" required name="placa" id="placa" onkeyup="validarPlaca(this)" maxlength="8" value="{{ $veiculo->placa }}"></div>
+                <div class="col-md-4 mb-3"><label for="capacidade" class="form-label">Capacidade (Kg) *</label><input type="number" class="form-control" step="0.1" required name="capacidade" id="capacidade" value="{{ $veiculo->capacidade }}"></div>
+                <div class="col-md-4 mb-3"><label for="renavan" class="form-label">Renavam *</label><input type="number" class="form-control" required name="renavan" id="renavan" value="{{ $veiculo->renavan }}"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3"><label for="tara" class="form-label">Tara (kg) *</label><input type="number" class="form-control" step="0.1" required name="tara" id="tara" value="{{ $veiculo->tara }}"></div>
+                <div class="col-md-3 mb-3"><label for="capacidade_m3" class="form-label">Capacidade (M³) *</label><input type="text" class="form-control" required name="capacidade_m3" id="capacidade_m3" value="{{ $veiculo->capacidade_m3 }}"></div>
+                <div class="col-md-3 mb-3"><label for="tipo_carroceria" class="form-label">Tipo de Carroceria *</label><select class="form-control" required name="tipo_carroceria" id="tipo_carroceria">@foreach ($tiposCarrocerias as $tipoCarroceria)<option value="{{ $tipoCarroceria->value }}" @if($veiculo->tipo_carroceria == $tipoCarroceria->value) selected @endif>{{ $tipoCarroceria->value }}</option>@endforeach</select></div>
+                <div class="col-md-3 mb-3"><label for="tipo_veiculo" class="form-label">Tipo de Veículo *</label><select class="form-control" required name="tipo_veiculo" id="tipo_veiculo">@foreach ($tiposVeiculos as $tipoVeiculo)<option value="{{ $tipoVeiculo->value }}" @if($veiculo->tipo_veiculo == $tipoVeiculo->value) selected @endif>{{ $tipoVeiculo->value }}</option>@endforeach</select></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3"><label for="tipo_rodado" class="form-label">Tipo Rodado *</label><select class="form-control" required name="tipo_rodado" id="tipo_rodado">@foreach ($tiposRodados as $tipo_rodado)<option value="{{ $tipo_rodado->value }}" @if($veiculo->tipo_rodado == $tipo_rodado->value) selected @endif>{{ $tipo_rodado->value }}</option>@endforeach</select></div>
+                <div class="col-md-3 mb-3"><label for="uf_veiculo" class="form-label">UF do Veículo *</label><select class="form-control" required name="uf_veiculo" id="uf_veiculo">@foreach ($ufs as $uf)<option value="{{ $uf->value }}" @if($veiculo->uf_veiculo == $uf->value) selected @endif>{{ $uf->value }}</option>@endforeach</select></div>
+                <div class="col-md-3 mb-3"><label for="tipo_propriedade" class="form-label">Tipo Propriedade *</label><select class="form-control" required name="tipo_propriedade" id="tipo_propriedade" readonly><option value="{{ $veiculo->tipo_propriedade }}">{{ $veiculo->tipo_propriedade }}</option></select></div>
+                <div class="col-md-3 mb-3"><label for="empresaId" class="form-label">Empresa</label><select class="form-control" name="empresaId" id="empresaId" required readonly><option value="{{ $veiculo->empresaId }}">{{ $veiculo->fantasia }}</option></select></div>
+            </div>
+            
+            @if ($veiculo->tipo_propriedade == 'Terceiro' && isset($veiculo->proprietario))
+                <hr class="my-4">
+                <h5 class="mb-3 font-weight-bold">Informações do Proprietário</h5>
+                <div class="row">
+                    <div class="col-md-4 mb-3"><label class="form-label">CPF/CNPJ</label><input class="form-control" type="text" name="cpf_cnpj" onblur="this.value = formatarCpfCnpj(this.value);" maxlength="18" required value="{{ $veiculo->proprietario->cpf_cnpj }}"></div>
+                    <div class="col-md-4 mb-3"><label class="form-label">Nome Proprietário</label><input class="form-control" type="text" name="nome" required value="{{ $veiculo->proprietario->nome_proprietario }}"></div>
+                    <div class="col-md-4 mb-3"><label class="form-label">Inscrição Estadual</label><input class="form-control" type="text" name="ie" required value="{{ $veiculo->proprietario->ie }}"></div>
                 </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3"><label class="form-label">UF Proprietário</label><select class="form-control" name="uf_prop" required>@foreach ($ufs as $uf)<option value="{{ $uf->value }}" @if($veiculo->proprietario->uf_proprietario == $uf->value) selected @endif>{{ $uf->value }}</option>@endforeach</select></div>
+                    <div class="col-md-3 mb-3"><label class="form-label">RNTRC</label><input class="form-control" type="text" name="rntrc" required value="{{ $veiculo->proprietario->rntrc }}"></div>
+                    <div class="col-md-3 mb-3"><label class="form-label">Tipo Proprietário</label><select class="form-control" name="tipo_proprietario" required>@foreach ($tipoProprietarios as $tpProp)<option value="{{ $tpProp->value }}" @if($veiculo->proprietario->tipo_proprietario == $tpProp->value) selected @endif>{{ $tpProp->value }}</option>@endforeach</select></div>
+                    <div class="col-md-3 mb-3"><label class="form-label">Tipo Transportador</label><select class="form-control" name="tipo_transportador" required>@foreach ($tipoTransportadores as $tpTransp)<option value="{{ $tpTransp->value }}" @if($veiculo->proprietario->tipo_transportador == $tpTransp->value) selected @endif>{{ $tpTransp->value }}</option>@endforeach</select></div>
+                </div>
+                 <div class="form-check mb-3"><input type="checkbox" class="form-check-input" name="isento" id="isento" {{ $veiculo->proprietario->isento ? 'checked' : '' }}><label class="form-check-label" for="isento">Isento de Inscrição Estadual</label></div>
+            @endif
+            
+            <div class="row mt-3">
+                <div class="col-12 mb-3"><label for="descricao" class="form-label">Descrição</label><textarea class="form-control" maxlength="512" name="descricao" id="descricao" rows="3">{{ $veiculo->descricao }}</textarea></div>
             </div>
-
-            <div class="card-body">
-                <form action="{{ route('veiculos.update', [$veiculo->id]) }}" method="post" class="control-form"
-                    name="veiculo">
-                    @csrf
-                    @method('PUT')
-                    <div class="row">
-                        <div class="col-md-4 col-xs-4">
-                            <div class="form-group">
-                                <label for="placa">Placa *</label>
-                                <input type="text" class="form-control" required placeholder="Placa..." name="placa"
-                                    id="placa" onkeyup="validarPlaca(this)" maxlength="8"
-                                    value="{{ $veiculo->placa }}">
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-xs-4">
-                            <div class="form-group">
-                                <label for="capacidade">Capacidade (Kg) *</label>
-                                <input type="number" class="form-control" step="0.1" required
-                                    placeholder="Capacidade (Kg)..." name="capacidade" id="capacidade"
-                                    value="{{ $veiculo->capacidade }}">
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-xs-4">
-                            <div class="form-group">
-                                <label for="renavan">Renavan *</label>
-                                <input type="number" class="form-control" required placeholder="Renavan..." name="renavan"
-                                    id="renavan" value="{{ $veiculo->renavan }}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="float">Tara (kg) *</label>
-                                <input type="number" class="form-control" step="0.1" required placeholder="Tara..."
-                                    name="tara" id="tara" value="{{ $veiculo->tara }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="capacidade_m3">Capacidade (M³) *</label>
-                                <input type="text" class="form-control" required
-                                    placeholder="Capacidade (M³)..." name="capacidade_m3" id="capacidade_m3"
-                                    value="{{ $veiculo->capacidade_m3 }}">
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="tipo_carroceria">Tipo de Carroceria *</label>
-                                <select class="form-control" required name="tipo_carroceria" id="tipo_carroceria">
-                                    <option value="{{ $veiculo->tipo_carroceria }}">{{ $veiculo->tipo_carroceria }}</option>
-                                    @foreach ($tiposCarrocerias as $tipoCarroceria)
-                                        <option value="{{ $tipoCarroceria }}">{{ $tipoCarroceria->value }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="float">Tipo de Veículo *</label>
-                                <select class="form-control" required name="tipo_veiculo" id="tipo_veiculo">
-                                    <option value="{{ $veiculo->tipo_veiculo }}">{{ $veiculo->tipo_veiculo }}</option>
-                                    @foreach ($tiposVeiculos as $tipoVeiculo)
-                                        <option value="{{ $tipoVeiculo }}">{{ $tipoVeiculo->value }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="">Tipo Rodado *</label>
-                                <select class="form-control" required name="tipo_rodado" id="tipo_rodado">
-                                    <option value="{{ $veiculo->tipo_rodado }}">{{ $veiculo->tipo_rodado }}</option>
-                                    @foreach ($tiposRodados as $tipo_rodado)
-                                        <option value="{{ $tipo_rodado }}">{{ $tipo_rodado->value }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="tipo_carroceria">UF do Veículo *</label>
-                                <select class="form-control" required name="uf_veiculo" id="uf_veiculo">
-                                    <option value="{{ $veiculo->uf_veiculo }}">{{ $veiculo->uf_veiculo }}</option>
-                                    @foreach ($ufs as $uf)
-                                        <option value="{{ $uf }}">{{ $uf->value }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="float">Tipo Propriedade *</label>
-                                <select class="form-control" required name="tipo_propriedade" id="tipo_propriedade"
-                                    readonly>
-                                    <option value="{{ $veiculo->tipo_propriedade }}">{{ $veiculo->tipo_propriedade }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xs-3">
-                            <div class="form-group">
-                                <label for="">Empresa</label>
-                                <select class="form-control" name="empresaId" id="empresaId" required readonly>
-                                    <option value="{{ $veiculo->empresaId }}">{{ $veiculo->fantasia }}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if ($veiculo->tipo_propriedade->value == 'Terceiro')
-                        <div class="row">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="">CPF/CNPJ</label>
-                                        <input class="form-control" type="text" name="cpf_cnpj" id="cpf_cnpj"
-                                            onblur="this.value = formatarCpfCnpj(this.value);" maxlength="14" required
-                                            value="{{ $veiculo->proprietario->cpf_cnpj }}" placeholder="CPF/CNPJ...">
-                                    </div>
-                                    <div class="col">
-                                        <label for="">Inscrição Estadual</label>
-                                        <input class="form-control" type="text" name="ie" id="ie"
-                                            required value="{{ $veiculo->proprietario->ie }}"
-                                            placeholder="Inscrição estadual...">
-                                    </div>
-                                    <div class="col">
-                                        <label for="">Isento</label>
-                                        <div class="row">
-                                            <div class="col">
-                                                <input type="checkbox" name="isento" id="isento"
-                                                    {{ $veiculo->proprietario->isento ? 'checked' : '' }}>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="">Nome Proprietário</label>
-                                        <input class="form-control" type="text" name="nome" id="nome"
-                                            required value="{{ $veiculo->proprietario->nome_proprietario }}"
-                                            placeholder="Nome do proprietário...">
-                                    </div>
-                                    <div class="col">
-                                        <label for="">UF proprietário</label>
-                                        <select class="form-control" name="uf_prop" id="uf_prop" required>
-                                            <option value="{{ $veiculo->proprietario->uf_proprietario }}">
-                                                {{ $veiculo->proprietario->uf_proprietario }}</option>
-                                            @foreach ($ufs as $uf)
-                                                <option value="{{ $uf }}">{{ $uf }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label for="">RNTRC</label>
-                                        <input class="form-control" type="text" name="rntrc" id="rntrc"
-                                            required value="{{ $veiculo->proprietario->rntrc }}" placeholder="RNTRC...">
-                                    </div>
-                                    <div class="col">
-                                        <label for="">Tipo propritário</label>
-                                        <select class="form-control" name="tipo_proprietario" id="tipo_proprietario"
-                                            required>
-                                            <option value="{{ $veiculo->proprietario->tipo_proprietario }}">
-                                                {{ $veiculo->proprietario->tipo_proprietario }}</option>
-                                            @foreach ($tipoProprietarios as $tpProp)
-                                                <option value="{{ $tpProp }}">{{ $tpProp }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label for="">Tipo transportador</label>
-                                        <select class="form-control" name="tipo_transportador" id="tipo_transportador"
-                                            required>
-                                            <option value="{{ $veiculo->proprietario->tipo_transportador }}">
-                                                {{ $veiculo->proprietario->tipo_transportador }}</option>
-                                            @foreach ($tipoTransportadores as $tpTransp)
-                                                <option value="{{ $tpTransp }}">{{ $tpTransp }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-
-                    <div class="row">
-                        <div class="col-md-12 col-xs-12">
-                            <div class="form-group">
-                                <label for="">Descrição</label>
-                                <textarea class="form-control" maxlength="512" placeholder="Descrição..." name="descricao" id="descricao"
-                                    cols="30" rows="5">{{ $veiculo->descricao }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row" style="text-align: center">
-                        <div class="col">
-                            <button class="btn btn-success" style="width: 25%" type="submit">Salvar</button>
-                        </div>
-                    </div>
-                </form>
+            
+            <div class="text-center mt-4">
+                <button class="btn btn-lg custom-btn custom-btn-warning" type="submit"><i class="fas fa-save mr-2"></i> Salvar Alterações</button>
             </div>
-        </div>
-
+        </form>
     </div>
-@stop
-
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+</div>
 @stop
 
 @section('js')
@@ -259,57 +149,30 @@
                 }
             }
         }
-
         function formatarCpfCnpj(valor) {
-            // Remove qualquer caracter que não seja número
             valor = valor.replace(/\D/g, '');
-
-            // Verifica se é CPF (11 dígitos)
             if (valor.length === 11) {
-                // Formata o CPF ###.###.###-##
                 return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            }
-
-            // Verifica se é CNPJ (14 dígitos)
-            else if (valor.length === 14) {
-                // Formata o CNPJ ##.###.###/####-##
+            } else if (valor.length === 14) {
                 return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-            }
-            // Não é CPF nem CNPJ
-            else {
+            } else {
                 return valor;
             }
         }
-
         document.getElementById('capacidade_m3').addEventListener('input', function() {
-            // Obtém o valor atual do campo
             var inputValue = this.value;
-
-            // Remove caracteres não numéricos e não ponto
             var numericValue = inputValue.replace(/[^0-9.]/g, '');
-
-            // Se o ponto não estiver presente e houver pelo menos um dígito, adiciona o ponto
             if (numericValue.indexOf('.') === -1 && numericValue.length > 0) {
                 numericValue += '.';
             }
-
-            // Divide o valor em partes antes e depois do ponto
             var parts = numericValue.split('.');
-
-            // Se houver mais de uma parte, garante que a parte decimal tenha no máximo duas casas
             if (parts.length > 1) {
                 parts[1] = parts[1].substring(0, 2);
             }
-
-            // Se houver mais de um dígito antes do ponto, mantenha apenas o primeiro
             if (parts[0].length > 1) {
                 parts[0] = parts[0].substring(0, 1);
             }
-
-            // Recria o valor formatado
             var formattedValue = parts.join('.');
-
-            // Atualiza o valor no campo
             this.value = formattedValue;
         });
     </script>

@@ -2,88 +2,101 @@
 
 @section('title', 'Visualizar Estoque')
 
+@push('css')
+<style>
+    /* Estilos importados para consistência */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    :root {
+        --primary-color: #00033a;
+        --card-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --border-color: #dee2e6;
+        --text-dark: #343a40;
+        --label-color: #495057;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .card-main {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px var(--shadow-color);
+        padding: 30px;
+    }
+    .custom-btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+    .custom-btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+    
+    /* Estilo para a visualização dos dados */
+    .data-item {
+        margin-bottom: 1.5rem;
+    }
+    .data-label {
+        font-weight: 600;
+        color: var(--label-color);
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+    }
+    .data-value {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        word-wrap: break-word;
+    }
+</style>
+@endpush
+
 @section('content_header')
-    <div class="text-center text-dark">
-        <h3>Visualização de Estoque</h3>
+    <div class="row align-items-center">
+        <div class="col-md-10">
+            <h1 class="m-0 text-dark" style="font-weight: 600;">Visualizar Estoque</h1>
+            <small>{{ $estoque->produto->produto }}</small>
+        </div>
+        <div class="col-md-2 text-md-right mt-2 mt-md-0">
+            <a href="{{ route('estoque.index') }}" class="btn custom-btn-secondary btn-block">Voltar</a>
+        </div>
     </div>
 @stop
 
 @section('content')
-    <div class="row text-right mb-3">
-        <div class="col">
-            <a class="btn btn-secondary" href="{{ route('estoque.index') }}">Voltar</a>
-        </div>
-    </div>
-
-    <div class="card">
+    <div class="card card-main">
         <div class="card-body">
-            <div class="row mb-2">
-                <div class="col">
-                    <h4>{{ $estoque->produto->produto }}</h4>
+            <div class="row">
+                <div class="col-md-6 data-item">
+                    <span class="data-label">Estoque Atual</span>
+                    <p class="data-value">{{ $estoque->estoque_atual }}</p>
+                </div>
+                <div class="col-md-6 data-item">
+                    <span class="data-label">Estoque Anterior</span>
+                    <p class="data-value">{{ $estoque->estoque_anterior }}</p>
                 </div>
             </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="estoque" id="estoque" value="{{ $estoque->estoque_atual }}" placeholder=" " readonly>
-                            <label for="estoque">Estoque Atual</label>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="estoque_anterior" id="estoque_anterior" value="{{ $estoque->estoque_anterior }}" placeholder=" "
-                                readonly>
-                            <label for="estoque_anterior">Estoque Anterior</label>
-                        </div>
-                    </div>
+             <div class="row">
+                <div class="col-md-6 data-item">
+                    <span class="data-label">Total de Entradas</span>
+                    <p class="data-value">{{ $estoque->entradas }}</p>
                 </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="entradas" id="entradas" value="{{ $estoque->entradas }}" placeholder=" " readonly>
-                            <label for="entradas">Entradas</label>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div class="form-floating mb-3">
-                            <input class="form-control" name="saidas" id="saidas" value="{{ $estoque->saidas }}" placeholder=" " readonly>
-                            <label for="saidas">Saidas</label>
-                        </div>
-                    </div>
+                <div class="col-md-6 data-item">
+                    <span class="data-label">Total de Saídas</span>
+                    <p class="data-value">{{ $estoque->saidas }}</p>
                 </div>
+            </div>
         </div>
     </div>
-@endsection
-
-@section('css')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-@endsection
-
-@section('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
-    <script>
-        (function() {
-            'use strict'
-            var forms = document.querySelectorAll('.needs-validation')
-
-            Array.prototype.slice.call(forms)
-                .forEach(function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault()
-                            event.stopPropagation()
-                        }
-
-                        form.classList.add('was-validated')
-                    }, false)
-                })
-        })()
-    </script>
-@endsection
+@stop

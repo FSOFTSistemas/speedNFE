@@ -5,7 +5,8 @@ namespace App\Services;
 use App\Exceptions\AlreadyExistException;
 use App\Models\Entrada;
 
-class EntradaService {
+class EntradaService
+{
 
     public function createEntrada($request, $empresaId)
     {
@@ -15,6 +16,7 @@ class EntradaService {
             'numeroNota' => $request->nNF,
             'fornecedor' => $request->fornecedor . ' / ' . $request->CNPJ,
             'chave' => $request->chNFe,
+            'xml' => $request->xml,
             'valor' => $request->vNF,
             'empresa_id' => $empresaId
         ])->id;
@@ -22,12 +24,12 @@ class EntradaService {
 
     public function getInput($entradaId)
     {
-        return Entrada::find($entradaId);
+        return Entrada::with('itens.produto')->find($entradaId);
     }
 
     public function getEntradas($empresaId)
     {
-        return Entrada::whereEmpresaId($empresaId)->get();
+        return Entrada::whereEmpresaId($empresaId)->with('itens.produto')->get();
     }
 
     public function entradaExist($chNFe)
@@ -37,5 +39,4 @@ class EntradaService {
         }
         return false;
     }
-
 }

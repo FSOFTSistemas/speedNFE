@@ -4,16 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\FluxoDeCaixa;
 use App\Models\PlanoDeConta;
+use App\Services\FluxoDeCaixaService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FluxoDeCaixaController extends Controller
 {
+    private FluxoDeCaixaService $fluxoCaixaService;
+
+    public function __construct(FluxoDeCaixaService $fluxoCaixaService)
+    {
+        $this->fluxoCaixaService = $fluxoCaixaService;
+    }
+
     public function index(Request $request)
     {
-        $query = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id);
-
         // Define as datas de início e fim com a data de hoje
         $dataInicio = \Carbon\Carbon::today()->startOfDay(); // Início do dia atual
         $dataFim = \Carbon\Carbon::today()->endOfDay(); // Fim do dia atual
@@ -24,11 +30,12 @@ class FluxoDeCaixaController extends Controller
             $dataFim = \Carbon\Carbon::parse($request->data_fim)->endOfDay();
         }
 
-        // Aplica o filtro de data
-        $query->whereBetween('data', [$dataInicio, $dataFim]);
-
-        // Obtém os lançamentos filtrados ou todos, caso o filtro não seja aplicado
-        $lancamentos = $query->orderBy('data', 'asc')->get();
+        $lancamentos = $this->fluxoCaixaService->listar(Auth::user()->empresa_id, [
+            'data_inicio' => $dataInicio,
+            'data_fim' => $dataFim,
+            'tipo' => $request->get('tipo'),
+            'origem' => $request->get('origem'),
+        ]);
 
         // Obtém os planos de contas
         $planosDeContas = PlanoDeConta::where('empresa_id', Auth::user()->empresa_id)->get();
@@ -45,6 +52,7 @@ class FluxoDeCaixaController extends Controller
             'descricao' => 'required|string|max:255',
             'valor' => 'required|numeric',
             'data' => 'required|date',
+            'tipo' => 'required|in:Entrada,Saída',
             'plano_de_contas_id' => 'required|exists:plano_de_contas,id',
         ]);
 
@@ -71,11 +79,14 @@ class FluxoDeCaixaController extends Controller
             'descricao' => 'required|string|max:255',
             'valor' => 'required|numeric',
             'data' => 'required|date',
-            'tipo' => 'required',
+            'tipo' => 'required|in:Entrada,Saída',
         ]);
 
         try {
-            $fluxoDeCaixa = FluxoDeCaixa::find($id);
+            $fluxoDeCaixa = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)->findOrFail($id);
+            if ($fluxoDeCaixa->origem) {
+                return back()->with('error', 'Este lançamento foi gerado automaticamente por uma ' . $fluxoDeCaixa->origem . ' e não pode ser editado manualmente. Cancele a nota de origem para estorná-lo.');
+            }
             $fluxoDeCaixa->update([
                 'descricao' => $request->descricao,
                 'valor' => $request->valor,
@@ -92,7 +103,7 @@ class FluxoDeCaixaController extends Controller
     public function destroy($id)
     {
         try {
-            $lancamento = FluxoDeCaixa::findOrFail($id);
+            $lancamento = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)->findOrFail($id);
             $lancamento->delete();
 
             return redirect()->route('fluxo-caixa.index')->with('success', 'Lançamento removido com sucesso!');
@@ -114,7 +125,11 @@ class FluxoDeCaixaController extends Controller
             'tipo_relatorio' => 'required|in:geral,receitas_despesas,categoria,empresa,resumo',
         ]);
 
-        $query = FluxoDeCaixa::whereBetween('data', [$request->data_inicio, $request->data_fim]);
+        $dataInicio = \Carbon\Carbon::parse($request->data_inicio)->startOfDay();
+        $dataFim = \Carbon\Carbon::parse($request->data_fim)->endOfDay();
+
+        $query = FluxoDeCaixa::where('empresa_id', Auth::user()->empresa_id)
+            ->whereBetween('data', [$dataInicio, $dataFim]);
 
         switch ($request->tipo_relatorio) {
             case 'geral':
@@ -125,10 +140,10 @@ class FluxoDeCaixaController extends Controller
 
                 break;
             case 'categoria':
-                $dados = $query->selectRaw("plano_de_contas_id, SUM(valor) as total")
-                    ->join('plano_de_contas', 'fluxo_de_caixas.plano_de_contas_id', '=', 'plano_de_contas.id') // Fazendo o JOIN manualmente
-                    ->groupBy('plano_de_contas_id', 'plano_de_contas.descricao') // Agrupando pelo nome também
-                    ->addSelect('plano_de_contas.descricao as plano_de_contas_nome') // Selecionando o nome diretamente
+                $dados = $query->selectRaw("fluxo_de_caixas.plano_de_contas_id, plano_de_contas.descricao as plano_de_contas_nome, SUM(fluxo_de_caixas.valor) as total")
+                    ->join('plano_de_contas', 'fluxo_de_caixas.plano_de_contas_id', '=', 'plano_de_contas.id')
+                    ->where('plano_de_contas.empresa_id', Auth::user()->empresa_id)
+                    ->groupBy('fluxo_de_caixas.plano_de_contas_id', 'plano_de_contas.descricao')
                     ->get();
                 break;
             case 'empresa':
@@ -138,10 +153,13 @@ class FluxoDeCaixaController extends Controller
                     ->get();
                 break;
             case 'resumo':
+                $totalReceitas = (clone $query)->where('tipo', 'Entrada')->sum('valor');
+                $totalDespesas = (clone $query)->where('tipo', 'Saída')->sum('valor');
+
                 $dados = [
-                    'total_receitas' => $query->where('tipo', 'Receita')->sum('valor'),
-                    'total_despesas' => $query->where('tipo', 'Despesa')->sum('valor'),
-                    'saldo_final' => $query->sum('valor')
+                    'total_receitas' => $totalReceitas,
+                    'total_despesas' => $totalDespesas,
+                    'saldo_final' => $totalReceitas - $totalDespesas,
                 ];
                 break;
             default:

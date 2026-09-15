@@ -10,7 +10,7 @@ class Pedido extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'status', 'empresa_id', 'cliente_id', 'data', 'forma_pag_id', 'ref_nfe', 'tpNF', 'finNF', 'info_complementares', 'subtotal', 'total', 'desconto', 'numero_nfe', 'sequencia_evento', 'chave', 'estado', 'cfop'];
+    protected $fillable = ['user_id', 'status', 'empresa_id', 'cliente_id', 'data', 'forma_pag_id', 'ref_nfe', 'tpNF', 'finNF', 'info_complementares', 'aut_xml', 'subtotal', 'total', 'desconto', 'numero_nfe', 'sequencia_evento', 'chave', 'estado', 'cfop'];
 
     protected $casts = [
         'estado' => EstadoEnum::class
@@ -38,6 +38,18 @@ class Pedido extends Model
 
     public function fatura(){
         return $this->hasMany(FaturaPedido::class, 'venda_id', 'id');
+    }
+
+    public function xmlAutorizado(){
+        return $this->hasOne(PedidoXml::class, 'pedido_id')->where('tipo', 'autorizado');
+    }
+
+    public function xmlCancelado(){
+        return $this->hasOne(PedidoXml::class, 'pedido_id')->where('tipo', 'cancelado');
+    }
+
+    public function xmlCce(){
+        return $this->hasOne(PedidoXml::class, 'pedido_id')->where('tipo', 'cce');
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\EntradaService;
+use Inertia\Inertia;
 
 class ItensEntradaController extends Controller
 {
@@ -22,5 +23,4 @@ class ItensEntradaController extends Controller
             return redirect()->route('entradas.index')->with('error', 'Erro interno, tente novamente em outro momento ou entre em contato com nosso suporte!');
         }
     }
-
 }

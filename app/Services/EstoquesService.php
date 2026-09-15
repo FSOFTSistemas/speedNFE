@@ -50,7 +50,7 @@ class EstoquesService{
 
     public function getCompanyStocks($companyId)
     {
-        return Estoque::whereEmpresaId($companyId)->get();
+        return Estoque::whereEmpresaId($companyId)->with('produto')->get();
     }
 
     public function getStock($stockId)

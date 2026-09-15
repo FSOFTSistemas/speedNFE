@@ -286,156 +286,142 @@
                                 </div>
                             </div>
 
-                            <div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
+<div class="tab-pane fade" id="fiscal" role="tabpanel" aria-labelledby="fiscal-tab">
 
-                                <div class="row">
-                                    <div class="col-md-4 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder="Nº Última NFe..." class=form-control
-                                                    type="number" name="nfe" id="nfe"
-                                                    value="{{ $empresa->ultimaNFe }}" />
-                                                <label>Nº da Última NFe</label>
-                                                <div class="invalid-feedback">
-                                                    Informe o nº da última NFe.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input required placeholder="Nº Última NFe..." class="form-control" type="number" name="nfe" id="nfe" value="{{ $empresa->ultimaNFe }}" />
+                    <label>Nº da Última NFe</label>
+                    <div class="invalid-feedback">Informe o nº da última NFe.</div>
+                </div>
+            </div>
+        </div>
 
-                                    <div class="col-md-4 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder="Nº Última MDFe..." class=form-control
-                                                    type="number" name="mdfe" id="mdfe"
-                                                    value="{{ $empresa->ultimaMDFe }}" />
-                                                <label>Nº da Última MDFe</label>
-                                                <div class="invalid-feedback">
-                                                    Informe o nº da última MDFe.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+        <div class="col-md-4 col-12">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input required placeholder="Nº Última MDFe..." class="form-control" type="number" name="mdfe" id="mdfe" value="{{ $empresa->ultimaMDFe }}" />
+                    <label>Nº da Última MDFe</label>
+                    <div class="invalid-feedback">Informe o nº da última MDFe.</div>
+                </div>
+            </div>
+        </div>
 
-                                    <div class="col-md-4 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder="Nº Última NFCe..." class=form-control
-                                                    type="number" name="nfce" id="nfce"
-                                                    value="{{ $empresa->ultimaNFCe }}" />
-                                                <label>Nº da Última NFCe</label>
-                                                <div class="invalid-feedback">
-                                                    Informe o nº da última NFCe.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="col-md-4 col-12">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input required placeholder="Nº Última NFCe..." class="form-control" type="number" name="nfce" id="nfce" value="{{ $empresa->ultimaNFCe }}" />
+                    <label>Nº da Última NFCe</label>
+                    <div class="invalid-feedback">Informe o nº da última NFCe.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                <div class="row">
-                                    <div class="col-md-2 col-4">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder="Série..." class=form-control type="number"
-                                                    name="serie" id="serie" value="{{ $empresa->serie }}" />
-                                                <label>Série</label>
-                                                <div class="invalid-feedback">
-                                                    Informe uma série válida.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+    <div class="row">
+        <div class="col-md-2 col-4">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input required placeholder="Série..." class="form-control" type="number" name="serie" id="serie" value="{{ $empresa->serie }}" />
+                    <label>Série</label>
+                    <div class="invalid-feedback">Informe uma série válida.</div>
+                </div>
+            </div>
+        </div>
 
-                                    <div class="col-md-3 col-8">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <select required class="form-select" name="ambiente" id="ambiente">
-                                                    <option value="{{ $empresa->ambiente }}">
-                                                        {{ $empresa->ambiente == 1 ? 'Produção' : 'Homologação' }}
-                                                    </option>
-                                                    <option value="1">Produção</option>
-                                                    <option value="2">Homologação</option>
-                                                </select>
-                                                <label>Ambiente</label>
-                                                <div class="invalid-feedback">
-                                                    Informe o ambiente válido.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+        <div class="col-md-3 col-8">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <select required class="form-select" name="ambiente" id="ambiente">
+                        <option value="1" {{ $empresa->ambiente == 1 ? 'selected' : '' }}>Produção</option>
+                        <option value="2" {{ $empresa->ambiente == 2 ? 'selected' : '' }}>Homologação</option>
+                    </select>
+                    <label>Ambiente</label>
+                    <div class="invalid-feedback">Informe o ambiente válido.</div>
+                </div>
+            </div>
+        </div>
 
-                                    <div class="col-md-6 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input placeholder=" " class=form-control type="email" name="contador"
-                                                    id="contador" value="{{ $empresa->contador }}" />
-                                                <label>Contador</label>
-                                                <div class="invalid-feedback">
-                                                    Informe o contador.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+        {{-- INSERÇÃO DO CAMPO CRT --}}
+        <div class="col-md-3 col-12">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <select required class="form-select" name="crt" id="crt">
+                        <option value="1" {{ $empresa->crt == 1 ? 'selected' : '' }}>1 - Simples Nacional</option>
+                        <option value="2" {{ $empresa->crt == 2 ? 'selected' : '' }}>2 - Simples Nacional - excesso de sublimite</option>
+                        <option value="3" {{ $empresa->crt == 3 ? 'selected' : '' }}>3 - Regime Normal</option>
+                        <option value="4" {{ $empresa->crt == 4 ? 'selected' : '' }}>4 - Simples Nacional - MEI</option>
+                    </select>
+                    <label>Regime Tributário (CRT)</label>
+                    <div class="invalid-feedback">Informe o CRT.</div>
+                </div>
+            </div>
+        </div>
 
-                                <div class="row">
-                                    <div class="col-md-3 col-5">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input placeholder="Senha Certificado..." class=form-control
-                                                    type="text" name="senha" id="senha"
-                                                    value="{{ $empresa->senhaCertificado }}" />
-                                                <label>Senha Cert.</label>
-                                                <div class="invalid-feedback">
-                                                    Informe uma senha válida.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+        <div class="col-md-4 col-12">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input placeholder=" " class="form-control" type="email" name="contador" id="contador" value="{{ $empresa->contador }}" />
+                    <label>Contador</label>
+                    <div class="invalid-feedback">Informe o contador.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                    <div class="col-md-7 col-7">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input placeholder=" " type="text" name="certificado"
-                                                    id="certificado" class="form-control"
-                                                    value="{{ explode('/', $empresa->certificado)[2] }}">
-                                                <label>Certificado</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um certificado válido.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+    <div class="row">
+        <div class="col-md-3 col-5">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input placeholder="Senha protegida" class="form-control" type="password" value="" readonly />
+                    <label>Senha Cert.</label>
+                    <div class="invalid-feedback">Informe uma senha válida.</div>
+                </div>
+            </div>
+        </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 col-12">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder=" " class="form-control" type="text"
-                                                    name="csc" id="csc" value="{{ $empresa->csc }}">
-                                                <label>CSC</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um CSC.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+        <div class="col-md-7 col-7">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input placeholder=" " type="text" class="form-control" value="{{ $empresa->certificado_conteudo ? 'Armazenado e criptografado no banco' : ($empresa->certificado ? 'Arquivo legado pendente de importação' : 'Não cadastrado') }}" readonly>
+                    <label>Certificado</label>
+                    <div class="invalid-feedback">Informe um certificado válido.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                    <div class="col-md-2 col-5">
-                                        <div class="input-group has-validation mb-2">
-                                            <div class="form-floating">
-                                                <input required placeholder=" " class="form-control" type="text"
-                                                    name="idCsc" id="idCsc" value="{{ $empresa->idCsc }}">
-                                                <label>Id Token CSC</label>
-                                                <div class="invalid-feedback">
-                                                    Informe um id token CSC.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input required placeholder=" " class="form-control" type="text" name="csc" id="csc" value="{{ $empresa->csc }}">
+                    <label>CSC</label>
+                    <div class="invalid-feedback">Informe um CSC.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-5">
+            <div class="input-group has-validation mb-2">
+                <div class="form-floating">
+                    <input required placeholder=" " class="form-control" type="text" name="idCsc" id="idCsc" value="{{ $empresa->idCsc }}">
+                    <label>Id Token CSC</label>
+                    <div class="invalid-feedback">Informe um id token CSC.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- CAMPOS HIDDEN PARA EVITAR NULL CONSTRAINTS NO BANCO --}}
+    <input type="hidden" name="nfes" value="{{ $empresa->limNFes }}">
+    <input type="hidden" name="nfces" value="{{ $empresa->limNFCes }}">
+    <input type="hidden" name="mdfes" value="{{ $empresa->limMDFes }}">
+    <input type="hidden" name="clientes" value="{{ $empresa->limClientes }}">
+    <input type="hidden" name="produtos" value="{{ $empresa->limProdutos }}">
+</div>
 
                             <div class="tab-pane fade" id="limite" role="tabpanel" aria-labelledby="limite-tab">
                                 <div class="row">

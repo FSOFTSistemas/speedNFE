@@ -11,6 +11,7 @@ use App\Mail\EmailXmlContador;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\EstoquesService;
+use App\Services\FluxoDeCaixaService;
 use App\Services\NFCeService;
 use App\Utils\FormatationUtil;
 use App\Utils\ZipArchiveUtil;
@@ -21,18 +22,22 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use NFePHP\DA\NFe\Danfce;
+use App\Http\Controllers\Traits\EnviaNFCe;
 
 class NFCeController extends Controller
 {
     private $cupomService;
     private $empresaServices;
     private $estoqueService;
+    private $fluxoCaixaService;
+    use EnviaNFCe;
 
-    public function __construct(CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService)
+    public function __construct(CupomService $cupomService, EmpresasService $empresaServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService)
     {
         $this->cupomService = $cupomService;
         $this->empresaServices = $empresaServices;
         $this->estoqueService = $estoqueService;
+        $this->fluxoCaixaService = $fluxoCaixaService;
     }
 
     private function makeNFCeService($empresa)
@@ -43,7 +48,7 @@ class NFCeController extends Controller
             "razaosocial" => $empresa->razao,
             "siglaUF" => $empresa->endereco->uf,
             "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-            "schemes" => "PL_009_V4",
+            "schemes" => "PL_010_V1.30",
             "versao" => "4.00",
             "tokenIBPT" => "AAAAAAA",
             "CSC" => $empresa->csc,
@@ -71,32 +76,52 @@ class NFCeController extends Controller
         }
     }
 
+    // public function sendNFCe($id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $cupom = $this->cupomService->getCupom($id);
+    //         $nfceService = $this->makeNFCeService($cupom->empresa);
+    //         $this->empresaServices->incrementLastNFCe($cupom->empresa_id);
+    //         $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
+    //         $this->cupomService->updateCoupon($cupom);
+    //         NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
+    //         foreach ($cupom->itens as $item) {
+    //             $this->estoqueService->out($item->produto_id, $item->qtde);
+    //         }
+    //         DB::commit();
+    //         return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
+    //     } catch (LimitExceededException $e) {
+    //         DB::rollback();
+    //         $this->cupomService->rejectedCoupon($id);
+    //         return back()->with('warning', $e->getMessage());
+    //     }catch (MalformedXmlException $e) {
+    //         DB::rollback();
+    //         $this->cupomService->rejectedCoupon($id);
+    //         return back()->with('warning', $e->getMessage());
+    //     } catch (Exception $e) {
+    //         DB::rollback();
+    //         return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+    //     }
+    // }
+
     public function sendNFCe($id)
     {
-        try {
-            DB::beginTransaction();
-            $cupom = $this->cupomService->getCupom($id);
-            $nfceService = $this->makeNFCeService($cupom->empresa);
-            $this->empresaServices->incrementLastNFCe($cupom->empresa_id);
-            $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
-            $this->cupomService->updateCoupon($cupom);
-            NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
-            foreach ($cupom->itens as $item) {
-                $this->estoqueService->out($item->produto_id, $item->qtde);
-            }
-            DB::commit();
-            return redirect()->route('cupom.index')->with('success', 'Cupom foi enviado com sucesso!');
-        } catch (LimitExceededException $e) {
-            DB::rollback();
-            $this->cupomService->rejectedCoupon($id);
-            return back()->with('warning', $e->getMessage());
-        }catch (MalformedXmlException $e) {
-            DB::rollback();
-            $this->cupomService->rejectedCoupon($id);
-            return back()->with('warning', $e->getMessage());
-        } catch (Exception $e) {
-            DB::rollback();
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+        // Chama a lógica de negócio que está no Trait
+        $resultado = $this->_enviarNFCePeloId(
+            $id,
+            $this->cupomService,
+            $this->empresaServices,
+            $this->estoqueService,
+            $this->fluxoCaixaService
+        );
+
+        // Lida com o redirecionamento com base na resposta do Trait
+        if ($resultado->status === 'success') {
+            return redirect()->route('cupom.index')->with('success', $resultado->message);
+        } else {
+            // Usa o status ('warning' ou 'error') como a chave da mensagem de sessão
+            return back()->with($resultado->status, $resultado->message);
         }
     }
 
@@ -115,6 +140,7 @@ class NFCeController extends Controller
             foreach ($coupon->itens as $item) {
                 $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
             }
+            $this->fluxoCaixaService->estornarPorOrigem('NFCe', $coupon->id);
             DB::commit();
             return redirect()->route('cupom.index')->with('success', 'Cupom foi cancelado com sucesso!');
         } catch (AlreadyExistException $e) {
@@ -238,9 +264,14 @@ class NFCeController extends Controller
                     $resultXml = $nfceService->generateXml($coupon, $coupon->empresa);
                     $this->cupomService->updateCoupon($coupon);
                     NFCeService::createNFCe($resultXml, $coupon->id, $coupon->empresa);
-                    foreach ($coupon->itens as $item) {
-                        $this->estoqueService->out($item->produto_id, $item->qtde);
-                    }
+                    $this->fluxoCaixaService->registrarEntradaAutomatica(
+                        $coupon->empresa_id,
+                        $coupon->total,
+                        'Venda NFCe #' . $coupon->nroCupom . ($coupon->cliente ? ' - ' . $coupon->cliente->nome : ''),
+                        $coupon->data,
+                        'NFCe',
+                        $coupon->id
+                    );
                 } catch (Exception $e) {
                     $this->cupomService->rejectedCoupon($coupon->id);
                     array_push($errorsCaught, 'Cupom: ' . $coupon->nroCupom . ' - ' . $e->getMessage());

@@ -78,6 +78,11 @@
                     <h5>Itens</h5>
                 </div>
             </div>
+            @if ((int) $pedido->finNF === 4 && $referenciaItemHabilitada)
+                <div class="alert alert-info">
+                    Para cada item devolvido, informe a chave da NF-e de origem e o número correspondente no documento original.
+                </div>
+            @endif
             <br>
             <div class="row">
                 <div class="col">
@@ -151,10 +156,14 @@
                                         <th>Unitário</th>
                                         <th>Desconto</th>
                                         <th>Total</th>
+                                        @if ((int) $pedido->finNF === 4 && $referenciaItemHabilitada)
+                                            <th style="min-width: 360px;">Chave NF-e de origem</th>
+                                            <th style="min-width: 120px;">Item origem</th>
+                                        @endif
                                         <th>Ações</th>
                                     </thead>
                                     <tbody style="text-align: center">
-                                        @foreach ($vendaItens as $item)
+                                        @foreach ($vendaItens as $index => $item)
                                             <tr>
                                                 <td>#{{ $item['produto_id'] }}</td>
                                                 <td>{{ $item['descricao'] }}</td>
@@ -162,7 +171,38 @@
                                                 <td>R$ {{ number_format($item['unitario'], 2) }}</td>
                                                 <td>R$ {{ number_format($item['desconto'], 2) }}</td>
                                                 <td>R$ {{ number_format($item['total'], 2) }}</td>
-                                                <td><a wire:click.prevent="removerProduto({{ array_search($item, $vendaItens, true) }})"
+                                                @if ((int) $pedido->finNF === 4 && $referenciaItemHabilitada)
+                                                    <td>
+                                                        <input
+                                                            type="text"
+                                                            name="vendaItens[{{ $index }}][dfe_referenciado_chave]"
+                                                            wire:model.defer="vendaItens.{{ $index }}.dfe_referenciado_chave"
+                                                            class="form-control @error('vendaItens.'.$index.'.dfe_referenciado_chave') is-invalid @enderror"
+                                                            inputmode="numeric"
+                                                            maxlength="44"
+                                                            placeholder="44 dígitos"
+                                                            required
+                                                        >
+                                                        @error('vendaItens.'.$index.'.dfe_referenciado_chave')
+                                                            <small class="text-danger d-block text-left">{{ $message }}</small>
+                                                        @enderror
+                                                    </td>
+                                                    <td>
+                                                        <input
+                                                            type="number"
+                                                            name="vendaItens[{{ $index }}][dfe_referenciado_n_item]"
+                                                            wire:model.defer="vendaItens.{{ $index }}.dfe_referenciado_n_item"
+                                                            class="form-control @error('vendaItens.'.$index.'.dfe_referenciado_n_item') is-invalid @enderror"
+                                                            min="1"
+                                                            max="990"
+                                                            required
+                                                        >
+                                                        @error('vendaItens.'.$index.'.dfe_referenciado_n_item')
+                                                            <small class="text-danger d-block text-left">{{ $message }}</small>
+                                                        @enderror
+                                                    </td>
+                                                @endif
+                                                <td><a wire:click.prevent="removerProduto({{ $index }})"
                                                         title="Remover Item" class="text-danger"><i
                                                             class="fa fa-trash"></i></a></td>
                                             </tr>
