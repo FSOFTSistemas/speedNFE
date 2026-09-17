@@ -24,7 +24,6 @@ class ProdutosController extends Controller
     private EmpresasService $empresaServices;
 
     private PedidosService $pedidoServices;
-    private EstoquesService $estoqueService;
 
     private EstoquesService $estoqueService;
 

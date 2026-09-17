@@ -145,6 +145,7 @@
                         </div>
                         <div class="accordion" id="accordionProducts">
                             @foreach ($prods as $index => $item)
+                                <div wire:key="produto-item-{{ $index }}">
                                 <div class="card mb-2" wire:ignore.self>
                                     <div class="card-header" id="heading{{ $index }}">
                                         <h2 class="mb-0">
@@ -197,6 +198,7 @@
                                     </div>
                                 </div>
                                 {{-- Inputs Hidden --}}
+                                <input type="hidden" name="prods[{{ $index }}][0][cProd]" wire:model="prods.{{ $index }}.0.cProd">
                                 <input type="hidden" name="prods[{{ $index }}][0][qCom]" wire:model="prods.{{ $index }}.0.qCom">
                                 <input type="hidden" name="prods[{{ $index }}][0][NCM]" wire:model="prods.{{ $index }}.0.NCM">
                                 <input type="hidden" name="prods[{{ $index }}][0][CFOP]" wire:model="prods.{{ $index }}.0.CFOP">
@@ -237,6 +239,7 @@
                                     <input type="hidden" name="prods[{{ $index }}][0][tpRest]" wire:model="prods.{{ $index }}.0.tpRest">
                                     <input type="hidden" name="prods[{{ $index }}][0][tpVeic]" wire:model="prods.{{ $index }}.0.tpVeic">
                                 @endif
+                                </div>
                             @endforeach
                         </div>
                     </section>
