@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\EnviaNFe;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Services\EmpresasService;
@@ -27,12 +27,20 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class PedidosController extends Controller
 {
+    use EnviaNFe;
+
     private PedidosService $pedidoServices;
+
     private EmpresasService $empresaServices;
+
     private FaturaService $faturaServices;
+
     private ItemService $itemServices;
+
     private ProdutosService $produtoServices;
+
     private EstoquesService $estoqueService;
+
     private FluxoDeCaixaService $fluxoCaixaService;
 
     public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService)
@@ -52,15 +60,16 @@ class PedidosController extends Controller
             $venda = $this->pedidoServices->buscarPedido($id);
             $emitente = $this->empresaServices->buscarEmpresa($venda->empresa_id);
             $xmlRow = $venda->xmlCce;
-            if (!$xmlRow) {
+            if (! $xmlRow) {
                 return back()->with('error', 'XML de correção não encontrado.');
             }
             $daevento = new Daevento($xmlRow->xml, $emitente);
             $daevento->debugMode(true);
             $pdf = $daevento->render();
+
             return response($pdf)->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -68,9 +77,10 @@ class PedidosController extends Controller
     {
         try {
             $user = Auth::user();
+
             return view('notas.inutilizar', ['empresa' => $user->empresa_id, 'mode' => 'nfe']);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -81,24 +91,24 @@ class PedidosController extends Controller
             if ($emitente == null) {
                 return redirect('/inutilizar')->with('error', 'Configure o emitente');
             }
-            $cnpj = str_replace(".", "", $emitente->cpf_cnpj);
-            $cnpj = str_replace("/", "", $cnpj);
-            $cnpj = str_replace("-", "", $cnpj);
-            $cnpj = str_replace(" ", "", $cnpj);
+            $cnpj = str_replace('.', '', $emitente->cpf_cnpj);
+            $cnpj = str_replace('/', '', $cnpj);
+            $cnpj = str_replace('-', '', $cnpj);
+            $cnpj = str_replace(' ', '', $cnpj);
             $nfe_service = new NFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $emitente->ambiente,
-                "razaosocial" => $emitente->razao,
-                "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_010_V1.30",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $emitente->csc,
-                "CSCid" => '00000' . $emitente->idCsc,
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $emitente->ambiente,
+                'razaosocial' => $emitente->razao,
+                'siglaUF' => $emitente->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
+                'schemes' => 'PL_010_V1.30',
+                'versao' => '4.00',
+                'tokenIBPT' => 'AAAAAAA',
+                'CSC' => $emitente->csc,
+                'CSCid' => '00000'.$emitente->idCsc,
             ], $emitente);
-            $result = $nfe_service->inutilizarNum($emitente->serie, $request->numI, $request->numI, $request->justificativa, $emitente->fantasia . '/' . date('Y') . '/' . date('m') . '/notas/Inutilizacoes');
-            if (!isset($result['erro'])) {
+            $result = $nfe_service->inutilizarNum($emitente->serie, $request->numI, $request->numI, $request->justificativa, $emitente->fantasia.'/'.date('Y').'/'.date('m').'/notas/Inutilizacoes');
+            if (! isset($result['erro'])) {
                 return redirect('/inutilizar')->with('success', 'Inutilização feita com sucesso');
             } else {
                 return redirect('/inutilizar')->with('warning', NFeErroUtil::formatar($result['data']));
@@ -106,7 +116,7 @@ class PedidosController extends Controller
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -120,26 +130,26 @@ class PedidosController extends Controller
                 return response()->json('Configure o emitente', 404);
             }
 
-            $cnpj = str_replace(".", "", $emitente->cpf_cnpj);
-            $cnpj = str_replace("/", "", $cnpj);
-            $cnpj = str_replace("-", "", $cnpj);
-            $cnpj = str_replace(" ", "", $cnpj);
+            $cnpj = str_replace('.', '', $emitente->cpf_cnpj);
+            $cnpj = str_replace('/', '', $cnpj);
+            $cnpj = str_replace('-', '', $cnpj);
+            $cnpj = str_replace(' ', '', $cnpj);
 
             $nfe_service = new NFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $emitente->ambiente,
-                "razaosocial" => $emitente->razao,
-                "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_010_V1.30",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $emitente->csc,
-                "CSCid" => '00000' . $emitente->idCsc,
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $emitente->ambiente,
+                'razaosocial' => $emitente->razao,
+                'siglaUF' => $emitente->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
+                'schemes' => 'PL_010_V1.30',
+                'versao' => '4.00',
+                'tokenIBPT' => 'AAAAAAA',
+                'CSC' => $emitente->csc,
+                'CSCid' => '00000'.$emitente->idCsc,
             ], $emitente);
 
             $result = $nfe_service->cartaCorrecao($venda, $request->justificativa);
-            if (!isset($result['erro'])) {
+            if (! isset($result['erro'])) {
                 return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
             } else {
                 return redirect('/venda')->with('warning', NFeErroUtil::formatar($this->extrairMensagemEventoNFe($result['data'])));
@@ -147,7 +157,7 @@ class PedidosController extends Controller
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage());
         }
     }
 
@@ -160,24 +170,24 @@ class PedidosController extends Controller
             if ($emitente == null) {
                 return response()->json('Configure o emitente', 404);
             }
-            $cnpj = str_replace(".", "", $emitente->cpf_cnpj);
-            $cnpj = str_replace("/", "", $cnpj);
-            $cnpj = str_replace("-", "", $cnpj);
-            $cnpj = str_replace(" ", "", $cnpj);
+            $cnpj = str_replace('.', '', $emitente->cpf_cnpj);
+            $cnpj = str_replace('/', '', $cnpj);
+            $cnpj = str_replace('-', '', $cnpj);
+            $cnpj = str_replace(' ', '', $cnpj);
             $nfe_service = new NFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $emitente->ambiente,
-                "razaosocial" => $emitente->razao,
-                "siglaUF" => $emitente->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                "schemes" => "PL_010_V1.30",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $emitente->csc,
-                "CSCid" => '00000' . $emitente->idCsc,
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $emitente->ambiente,
+                'razaosocial' => $emitente->razao,
+                'siglaUF' => $emitente->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
+                'schemes' => 'PL_010_V1.30',
+                'versao' => '4.00',
+                'tokenIBPT' => 'AAAAAAA',
+                'CSC' => $emitente->csc,
+                'CSCid' => '00000'.$emitente->idCsc,
             ], $emitente);
             $nfe = $nfe_service->cancelar($venda, $request->justificativa);
-            if (!isset($nfe['erro'])) {
+            if (! isset($nfe['erro'])) {
                 $venda->status = 0;
                 $venda->estado = 'Cancelado';
                 $venda->total = 0;
@@ -186,6 +196,7 @@ class PedidosController extends Controller
                     $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
                 }
                 $this->fluxoCaixaService->estornarPorOrigem('NFe', $venda->id);
+
                 return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
             } else {
                 return redirect('/venda')->with('error', NFeErroUtil::formatar($this->extrairMensagemEventoNFe($nfe['data'])));
@@ -193,7 +204,7 @@ class PedidosController extends Controller
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -202,18 +213,20 @@ class PedidosController extends Controller
         try {
             $venda = Pedido::find($id);
             $xmlRow = $venda->xmlCancelado;
-            if (!$xmlRow) {
+            if (! $xmlRow) {
                 return back()->with('error', 'XML de cancelamento não encontrado.');
             }
             $dadosEmitente = Empresa::find($venda->empresa_id);
             $daevento = new Daevento($xmlRow->xml, $dadosEmitente->toArray());
             $daevento->debugMode(true);
             $pdf = $daevento->render();
+
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
-            session()->flash("erro", $e->getMessage());
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            session()->flash('erro', $e->getMessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -222,109 +235,47 @@ class PedidosController extends Controller
         try {
             $venda = Pedido::find($id);
             $xmlRow = $venda->xmlAutorizado;
-            if (!$xmlRow) {
+            if (! $xmlRow) {
                 return back()->with('error', 'XML da nota não encontrado.');
             }
             $danfe = new Danfe($xmlRow->xml);
             $danfe->creditsIntegratorFooter('SpeedNFE - www.f-softsistemas.com.br', false);
             $pdf = $danfe->render();
+
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
     public function enviarNFe($id)
     {
-        try {
-            DB::beginTransaction();
-            $venda = $this->pedidoServices->buscarPedido($id);
-            $empresa = $this->empresaServices->buscarEmpresa($venda->empresa_id);
-            $nfe_service = new NFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $empresa->ambiente,
-                "razaosocial" => $empresa->razao,
-                "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-                // "schemes" => "PL_009_V4",
-                "schemes" => "PL_010_V1.30",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $empresa->csc,
-                "CSCid" => "00000" . $empresa->idCsc,
-            ], $empresa);
-            if ($venda->estado->value == 'Rejeitado' || $venda->estado->value == 'Pendente') {
-                $result = $nfe_service->gerarXml($venda, $empresa);
-                // dd($result);
-                if (!isset($result['erros_xml'])) {
-                    $signed = $nfe_service->sign($result['xml']);
-                    // dd($signed);
-                    $resultado = $nfe_service->transmitir($signed, $result['chave'], $venda->id);
-                    // dd($resultado);
-                    if (isset($resultado['sucesso'])) {
-                        DB::beginTransaction();
+        $resultado = $this->_enviarNFePeloId(
+            $id,
+            $this->pedidoServices,
+            $this->empresaServices,
+            $this->estoqueService,
+            $this->fluxoCaixaService
+        );
 
-                        $venda->chave = $result['chave'];
-                        $venda->status = 1;
-                        $venda->estado = 'Autorizado';
-                        $venda->numero_nfe = $result['nNf'];
-                        $venda->save();
-                        $empresa->update(['ultimaNFe' => $empresa->ultimaNFe + 1]);
-                        if ($venda->tpNF) {
-                            foreach ($venda->itens as $item) {
-                                $this->estoqueService->out($item->produto_id, $item->qtde);
-                            }
-                            $this->fluxoCaixaService->registrarEntradaAutomatica(
-                                $venda->empresa_id,
-                                $venda->total,
-                                'Venda NFe #' . $venda->numero_nfe . ($venda->cliente ? ' - ' . $venda->cliente->nome : ''),
-                                $venda->data,
-                                'NFe',
-                                $venda->id
-                            );
-                        } else {
-                            foreach ($venda->itens as $item) {
-                                $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
-                            }
-                        }
+        switch ($resultado->type) {
+            case 'success':
+                return redirect('/vendas')->with('success', $resultado->message);
+            case 'rejeitado_sefaz':
+                Alert::warning($resultado->title, $resultado->message)->persistent();
 
-                        DB::commit();
-                        return redirect('/vendas')->with('success', 'Nota enviada com sucesso');
-                    } else {
-                        DB::beginTransaction();
+                return redirect('/vendas');
+            case 'erro_xml':
+                Alert::error($resultado->title, $resultado->message)->persistent();
 
-                        $venda->status = 3;
-                        $venda->estado = 'Rejeitado';
-                        $venda->save();
-
-                        DB::commit();
-                        Alert::warning('A NFe foi rejeitada pela SEFAZ', NFeErroUtil::formatar($resultado['erro']))->persistent();
-                        return redirect('/vendas');
-                    }
-                } else {
-                    if (DB::transactionLevel() > 0) {
-                        DB::rollBack();
-                    }
-                    Alert::error('Não foi possível gerar a NFe', NFeErroUtil::formatar($result['erros_xml']))->persistent();
-                    return redirect('/vendas');
-                }
-            } else {
-                if (DB::transactionLevel() > 0) {
-                    DB::rollBack();
-                }
-                return redirect('/vendas')->with("error", 404);
-            }
-        } catch (ValidatorException $e) {
-            if (DB::transactionLevel() > 0) {
-                DB::rollBack();
-            }
-            return back()->with('warning', $e->getMessage());
-        } catch (Exception $e) {
-            if (DB::transactionLevel() > 0) {
-                DB::rollBack();
-            }
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
+                return redirect('/vendas');
+            case 'estado_invalido':
+                return redirect('/vendas')->with('error', $resultado->message);
+            case 'validator_exception':
+                return back()->with('warning', $resultado->message);
+            default:
+                return back()->with('error', $resultado->message);
         }
     }
 
@@ -332,9 +283,10 @@ class PedidosController extends Controller
     {
         try {
             $pedido = $this->pedidoServices->buscarPedido($id);
+
             return view('vendas.edit', ['pedido' => $pedido]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -353,12 +305,12 @@ class PedidosController extends Controller
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required|array|min:1',
-                'info_complementares' => 'nullable'
+                'info_complementares' => 'nullable',
             ], $this->regrasReferenciasDosItens($usarReferenciaPorItem)), $this->mensagensReferenciasDosItens());
 
             $this->validarReferenciasDuplicadas($request, $usarReferenciaPorItem);
 
-            if (!$venda->chave) {
+            if (! $venda->chave) {
                 $this->itemServices->deleteItems($venda->id);
                 $subtotal = 0;
                 $desconto = 0;
@@ -393,6 +345,7 @@ class PedidosController extends Controller
                     $request->cfop,
                     $request->info_complementares
                 );
+
                 return redirect()->route('vendas.editar', [$venda->id])->with('success', 'Nota atualizada com sucesso.');
             } else {
                 return redirect()->route('vendas.index')->with('warning', 'Já foi emitida a NFe desse venda, não é possível realizar alterações.');
@@ -400,7 +353,7 @@ class PedidosController extends Controller
         } catch (ValidationException $e) {
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -418,7 +371,7 @@ class PedidosController extends Controller
                 'empresa' => 'required|numeric',
                 'finalidade' => 'required|numeric',
                 'tipo' => 'required|numeric',
-                'ref_nfe' => $isDevolucao && !$usarReferenciaPorItem ? 'required' : 'nullable',
+                'ref_nfe' => $isDevolucao && ! $usarReferenciaPorItem ? 'required' : 'nullable',
                 'cliente' => 'required|numeric',
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required|array|min:1',
@@ -428,14 +381,14 @@ class PedidosController extends Controller
                 'required' => 'O campo :attribute é obrigatório!',
                 'vendaItens.required' => 'Deve existir pelo menos um item no pedido!',
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
-                'max' => 'O campo :attribute deve conter no máximo :max caracteres'
+                'max' => 'O campo :attribute deve conter no máximo :max caracteres',
             ], $this->mensagensReferenciasDosItens()));
 
             $this->validarReferenciasDuplicadas($request, $usarReferenciaPorItem);
 
             $autXml = preg_replace('/\D/', '', $request->aut_xml ?? '');
 
-            if (!empty($autXml) && !in_array(strlen($autXml), [11, 14])) {
+            if (! empty($autXml) && ! in_array(strlen($autXml), [11, 14])) {
                 return back()
                     ->withInput()
                     ->with('warning', 'CPF/CNPJ autorizado para XML deve ter 11 ou 14 dígitos.');
@@ -444,7 +397,7 @@ class PedidosController extends Controller
             DB::beginTransaction();
             $subtotal = 0;
             $desconto = 0;
-            //Se ainda não atingiu o limite de Notas ou é janaina que está fazendo, permito a criação de uma nova nota, caso contrário faço o bloqueio da ação
+            // Se ainda não atingiu o limite de Notas ou é janaina que está fazendo, permito a criação de uma nova nota, caso contrário faço o bloqueio da ação
             if ($this->pedidoServices->limiteDeNotas($request->empresa) < $this->empresaServices->buscarEmpresa($request->empresa)->limNFes || $request->empresa == 1) {
                 foreach ($request->vendaItens as $item) {
                     $prod = $this->produtoServices->um($item['produto_id']);
@@ -489,21 +442,25 @@ class PedidosController extends Controller
                     $request->empresa
                 );
                 DB::commit();
-                return redirect()->route('vendas.index')->with('success', "Nota criada com sucesso");
+
+                return redirect()->route('vendas.index')->with('success', 'Nota criada com sucesso');
             } else {
                 DB::rollBack();
+
                 return redirect()->route('vendas.index')->with('warning', 'Limite de notas Atingido');
             }
         } catch (ValidationException $e) {
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }
+
             return back()->withErrors($e->validator)->withInput();
         } catch (Exception $e) {
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getmessage());
+
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getmessage());
         }
     }
 
@@ -526,7 +483,7 @@ class PedidosController extends Controller
     {
         $itens = $request->input('vendaItens');
 
-        if (!is_array($itens)) {
+        if (! is_array($itens)) {
             return;
         }
 
@@ -567,14 +524,14 @@ class PedidosController extends Controller
 
     private function validarReferenciasDuplicadas(Request $request, bool $usarReferenciaPorItem): void
     {
-        if (!$usarReferenciaPorItem) {
+        if (! $usarReferenciaPorItem) {
             return;
         }
 
         $referencias = [];
 
         foreach ($request->input('vendaItens', []) as $index => $item) {
-            $referencia = ($item['dfe_referenciado_chave'] ?? '') . ':' . ($item['dfe_referenciado_n_item'] ?? '');
+            $referencia = ($item['dfe_referenciado_chave'] ?? '').':'.($item['dfe_referenciado_n_item'] ?? '');
 
             if (isset($referencias[$referencia])) {
                 throw ValidationException::withMessages([
@@ -590,9 +547,10 @@ class PedidosController extends Controller
     {
         try {
             $this->pedidoServices->delete($request->pedido_id);
+
             return redirect()->route('vendas.index')->with('success', 'Nota deletada com sucesso!');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -622,7 +580,7 @@ class PedidosController extends Controller
                 'filtros' => $filtros,
             ]);
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -632,26 +590,27 @@ class PedidosController extends Controller
             $pedido = $this->pedidoServices->buscarPedido($id);
             $empresa = $this->empresaServices->buscarEmpresa($pedido->empresa_id);
             $nfe_service = new NFeService([
-                "atualizacao" => date('Y-m-d h:i:s'),
-                "tpAmb" => (int) $empresa->ambiente,
-                "razaosocial" => $empresa->razao,
-                "siglaUF" => $empresa->endereco->uf,
-                "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-                "schemes" => "PL_010_V1.30",
-                "versao" => "4.00",
-                "tokenIBPT" => "AAAAAAA",
-                "CSC" => $empresa->csc,
-                "CSCid" => "00000" . $empresa->idCsc,
+                'atualizacao' => date('Y-m-d h:i:s'),
+                'tpAmb' => (int) $empresa->ambiente,
+                'razaosocial' => $empresa->razao,
+                'siglaUF' => $empresa->endereco->uf,
+                'cnpj' => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
+                'schemes' => 'PL_010_V1.30',
+                'versao' => '4.00',
+                'tokenIBPT' => 'AAAAAAA',
+                'CSC' => $empresa->csc,
+                'CSCid' => '00000'.$empresa->idCsc,
             ], $empresa);
             $result = $nfe_service->gerarXml($pedido, $empresa);
             $danfe = new Danfe($result['xml']);
             $pdf = $danfe->render();
+
             return response($pdf)
                 ->header('Content-Type', 'application/pdf');
         } catch (ValidatorException $e) {
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -660,7 +619,7 @@ class PedidosController extends Controller
         try {
             return view('vendas.create');
         } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e);
+            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
         }
     }
 
@@ -668,9 +627,10 @@ class PedidosController extends Controller
     {
         try {
             $results = $this->pedidoServices->getTotalNFePerMonth(Auth::user()->empresa_id);
+
             return response()->json($results);
         } catch (Exception $e) {
-            return response()->json('error: Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage(), $e->getCode());
+            return response()->json('error: Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage(), $e->getCode());
         }
     }
 }

@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Enums\EstadoEnum;
+use App\Exceptions\LimitExceededException;
 use App\Models\Ncm;
 use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
 
 class PedidosService
 {
-
     public static function referenciaItemDevolucaoHabilitada(): bool
     {
         $dataAtual = new \DateTime(date('Y-m-d'));
@@ -18,9 +18,84 @@ class PedidosService
         return $dataAtual >= $dataVirada;
     }
 
+    /**
+     * Cria um pedido (rascunho de NFe) pela API, com os itens e a fatura
+     * associados. Espelha a orquestração de PedidosController::store(),
+     * reaproveitando os mesmos services (ProdutosService, ItemService,
+     * FaturaService) para não duplicar a lógica de negócio.
+     *
+     * @param  array  $data  Payload já validado por StorePedidoRequest (chaves: finalidade,
+     *                       tipo, ref_nfe, cliente, cfop, vendaItens, info_complementares, aut_xml).
+     */
+    public function criarApi(
+        array $data,
+        int $userId,
+        int $empresaId,
+        ProdutosService $produtoService,
+        ItemService $itemService,
+        FaturaService $faturaService,
+        EmpresasService $empresaService
+    ): Pedido {
+        $empresa = $empresaService->buscarEmpresa($empresaId);
+
+        if ($this->limiteDeNotas($empresaId) >= $empresa->limNFes && $empresaId != 1) {
+            throw new LimitExceededException('Limite de notas atingido para esta empresa.');
+        }
+
+        $isDevolucao = (int) $data['finalidade'] === 4;
+        $usarReferenciaPorItem = $isDevolucao && self::referenciaItemDevolucaoHabilitada();
+
+        $subtotal = 0;
+        $desconto = 0;
+
+        foreach ($data['vendaItens'] as $item) {
+            $desconto += $item['desconto'] ?? 0;
+            $subtotal += $item['quantidade'] * $item['unitario'];
+        }
+
+        return DB::transaction(function () use ($data, $userId, $empresaId, $subtotal, $desconto, $isDevolucao, $usarReferenciaPorItem, $produtoService, $itemService, $faturaService) {
+            $pedido = $this->create(
+                $userId,
+                $data['cliente'],
+                $subtotal,
+                $desconto,
+                $empresaId,
+                $data['cfop'],
+                $isDevolucao ? 4 : 1,
+                $usarReferenciaPorItem ? null : ($data['ref_nfe'] ?? null),
+                $data['tipo'],
+                $data['info_complementares'] ?? null,
+                $data['aut_xml'] ?? null
+            );
+
+            foreach ($data['vendaItens'] as $item) {
+                $prod = $produtoService->um($item['produto_id']);
+
+                if ((int) $data['finalidade'] === 1) {
+                    $itemService->verificaVendaPorProduto($empresaId, $prod);
+                }
+
+                $itemService->create(
+                    $pedido->id,
+                    $prod,
+                    $item['quantidade'],
+                    $empresaId,
+                    $item['desconto'] ?? 0,
+                    $item['unitario'],
+                    $usarReferenciaPorItem ? $item['dfe_referenciado_chave'] : null,
+                    $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null
+                );
+            }
+
+            $faturaService->create($subtotal - $desconto, $pedido->id, $pedido->finNF, $empresaId);
+
+            return $pedido->load('itens.produto', 'cliente');
+        });
+    }
+
     public function create($user_id, $cliente_id, $subtotal, $desconto, $empresa, $cfop, $finalidade, $ref_nfe, $tipo, $info_complementares, $aut_xml = null)
     {
-        
+
         return Pedido::create([
             'user_id' => $user_id,
             'cliente_id' => $cliente_id,
@@ -39,13 +114,14 @@ class PedidosService
             'cfop' => $cfop,
             'ref_nfe' => $ref_nfe,
             'info_complementares' => $info_complementares,
-            'aut_xml' => $aut_xml
+            'aut_xml' => $aut_xml,
         ]);
     }
 
     public function update($id, $cliente, $subtotal, $desconto, $cfop, $info_complementares)
     {
         $pedido = Pedido::find($id);
+
         return $pedido->update([
             'cliente_id' => $cliente,
             'data' => today(),
@@ -74,7 +150,7 @@ class PedidosService
             ->where('pedidos.empresa_id', 'like', $idEmpresa)
             ->whereBetween('pedidos.data', [$dataInicio, $dataFim]);
 
-        if (!empty($filtros['cliente'])) {
+        if (! empty($filtros['cliente'])) {
             $cliente = $filtros['cliente'];
             $query->where(function ($q) use ($cliente) {
                 $q->where('clientes.nome', 'like', "%{$cliente}%")
@@ -82,7 +158,7 @@ class PedidosService
             });
         }
 
-        if (!empty($filtros['chassi'])) {
+        if (! empty($filtros['chassi'])) {
             $chassi = $filtros['chassi'];
             $query->whereExists(function ($q) use ($chassi) {
                 $q->select(DB::raw(1))
@@ -93,7 +169,7 @@ class PedidosService
             });
         }
 
-        if (!empty($filtros['estado'])) {
+        if (! empty($filtros['estado'])) {
             $query->where('pedidos.estado', $filtros['estado']);
         }
 
@@ -122,18 +198,18 @@ class PedidosService
         $dataFim = $filtros['data_fim'] ?? now()->endOfDay()->format('Y-m-d');
 
         $query = Pedido::select(
-                'pedidos.*',
-                'empresas.fantasia',
-                'clientes.nome as cliente_nome',
-                'clientes.cpf_cnpj as cliente_cpf_cnpj'
-            )
+            'pedidos.*',
+            'empresas.fantasia',
+            'clientes.nome as cliente_nome',
+            'clientes.cpf_cnpj as cliente_cpf_cnpj'
+        )
             ->join('empresas', 'empresas.id', 'pedidos.empresa_id')
             ->leftJoin('clientes', 'clientes.id', 'pedidos.cliente_id')
             ->where('pedidos.empresa_id', 'like', $empresaId)
             ->where('pedidos.chave', '!=', '')
             ->whereBetween('pedidos.data', [$dataInicio, $dataFim]);
 
-        if (!empty($filtros['cliente'])) {
+        if (! empty($filtros['cliente'])) {
             $cliente = $filtros['cliente'];
             $query->where(function ($q) use ($cliente) {
                 $q->where('clientes.nome', 'like', "%{$cliente}%")
@@ -141,14 +217,14 @@ class PedidosService
             });
         }
 
-        if (!empty($filtros['chassi'])) {
+        if (! empty($filtros['chassi'])) {
             $chassi = $filtros['chassi'];
             $query->whereHas('produtos', function ($q) use ($chassi) {
                 $q->where('produtos.chassiVeic', 'like', "%{$chassi}%");
             });
         }
 
-        if (!empty($filtros['estado'])) {
+        if (! empty($filtros['estado'])) {
             $query->where('pedidos.estado', $filtros['estado']);
         }
 
@@ -158,6 +234,7 @@ class PedidosService
     public function delete($id)
     {
         $pedido = Pedido::find($id);
+
         return $pedido->delete();
     }
 

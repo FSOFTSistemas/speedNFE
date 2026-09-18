@@ -70,7 +70,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('nfce', ApiNFCeController::class)->only(['index', 'show']);
 
         Route::get('notas-fiscais/total-mes', [ApiNotasFiscaisController::class, 'totalMes'])->name('notas-fiscais.total-mes');
-        Route::apiResource('notas-fiscais', ApiNotasFiscaisController::class)->only(['index', 'show']);
+        Route::post('notas-fiscais/{id}/enviar', [ApiNotasFiscaisController::class, 'enviar'])->name('notas-fiscais.enviar');
+        Route::apiResource('notas-fiscais', ApiNotasFiscaisController::class)->only(['index', 'show', 'store']);
 
         Route::get('relatorios/vendas', [ApiRelatoriosController::class, 'vendas'])->name('relatorios.vendas');
         Route::get('relatorios/nfe', [ApiRelatoriosController::class, 'nfe'])->name('relatorios.nfe');
