@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Enums\EstadoEnum;
 use App\Exceptions\LimitExceededException;
+use App\Exceptions\NotaJaEmitidaException;
 use App\Models\Ncm;
 use App\Models\Pedido;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class PedidosService
@@ -90,6 +92,73 @@ class PedidosService
             $faturaService->create($subtotal - $desconto, $pedido->id, $pedido->finNF, $empresaId);
 
             return $pedido->load('itens.produto', 'cliente');
+        });
+    }
+
+    /**
+     * Atualiza um pedido (rascunho de NFe) pela API, substituindo os itens e
+     * ajustando a fatura associada. Espelha a orquestração de
+     * PedidosController::update(), reaproveitando os mesmos services
+     * (ProdutosService, ItemService, FaturaService) para não duplicar a
+     * lógica de negócio.
+     *
+     * @param  array  $data  Payload já validado por UpdatePedidoRequest (chaves: cliente, cfop,
+     *                       vendaItens, info_complementares).
+     */
+    public function atualizarApi(
+        int $id,
+        int $empresaId,
+        array $data,
+        ItemService $itemService,
+        FaturaService $faturaService,
+        ProdutosService $produtoService
+    ): Pedido {
+        $venda = $this->buscarPedido($id);
+
+        if (! $venda || (int) $venda->empresa_id !== $empresaId) {
+            throw new ModelNotFoundException;
+        }
+
+        if ($venda->chave) {
+            throw new NotaJaEmitidaException;
+        }
+
+        $isDevolucao = (int) $venda->finNF === 4;
+        $usarReferenciaPorItem = $isDevolucao && self::referenciaItemDevolucaoHabilitada();
+
+        $subtotal = 0;
+        $desconto = 0;
+
+        foreach ($data['vendaItens'] as $item) {
+            $desconto += $item['desconto'] ?? 0;
+            $subtotal += $item['quantidade'] * $item['unitario'];
+        }
+
+        return DB::transaction(function () use ($venda, $data, $empresaId, $subtotal, $desconto, $usarReferenciaPorItem, $itemService, $faturaService, $produtoService) {
+            $itemService->deleteItems($venda->id);
+
+            foreach ($data['vendaItens'] as $item) {
+                $prod = $produtoService->um($item['produto_id']);
+
+                $itemService->create(
+                    $venda->id,
+                    $prod,
+                    $item['quantidade'],
+                    $empresaId,
+                    $item['desconto'] ?? 0,
+                    $item['unitario'],
+                    $usarReferenciaPorItem ? $item['dfe_referenciado_chave'] : null,
+                    $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null
+                );
+            }
+
+            if ($venda->fatura->isNotEmpty()) {
+                $faturaService->update($subtotal, $venda->fatura[0]->id);
+            }
+
+            $this->update($venda->id, $data['cliente'], $subtotal, $desconto, $data['cfop'], $data['info_complementares'] ?? null);
+
+            return $venda->fresh()->load('itens.produto', 'cliente');
         });
     }
 

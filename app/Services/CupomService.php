@@ -6,9 +6,82 @@ use App\Enums\SituacaoEnum;
 use App\Exceptions\NotFoundException;
 use App\Models\Cupom;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CupomService
 {
+    /**
+     * Cria um cupom (venda de PDV) pela API, com os itens e as formas de
+     * pagamento associados, e baixa o estoque imediatamente. Espelha a
+     * orquestração de CupomController::store(), reaproveitando os mesmos
+     * services (ItemCupomService, CupomFormaService, EstoquesService) para
+     * não duplicar a lógica de negócio.
+     *
+     * Diferente do PedidosService::criarApi(), aqui os totais de cada item
+     * são calculados a partir de quantidade/unitário/desconto/acréscimo em
+     * vez de confiar em subtotal/total vindos do cliente.
+     *
+     * @param  array  $data  Payload já validado por StoreCupomRequest (chaves: cliente_id, troco,
+     *                       itens, formas).
+     */
+    public function criarApi(
+        array $data,
+        int $empresaId,
+        ItemCupomService $itemCupomService,
+        CupomFormaService $cupomFormaService,
+        EstoquesService $estoqueService,
+        EmpresasService $empresaService
+    ): Cupom {
+        return DB::transaction(function () use ($data, $empresaId, $itemCupomService, $cupomFormaService, $estoqueService, $empresaService) {
+            $subtotal = 0;
+            $descontoTotal = 0;
+            $acrescimoTotal = 0;
+            $itens = [];
+
+            foreach ($data['itens'] as $item) {
+                $itemSubtotal = $item['quantidade'] * $item['unitario'];
+                $itemDesconto = $item['desconto'] ?? 0;
+                $itemAcrescimo = $item['acrescimo'] ?? 0;
+
+                $subtotal += $itemSubtotal;
+                $descontoTotal += $itemDesconto;
+                $acrescimoTotal += $itemAcrescimo;
+
+                $itens[] = [
+                    'qtde' => $item['quantidade'],
+                    'unitario' => $item['unitario'],
+                    'desconto' => $itemDesconto,
+                    'acrescimo' => $itemAcrescimo,
+                    'subtotal' => $itemSubtotal,
+                    'total' => $itemSubtotal - $itemDesconto + $itemAcrescimo,
+                    'prodId' => $item['produto_id'],
+                ];
+            }
+
+            $valorTotal = $subtotal - $descontoTotal + $acrescimoTotal;
+
+            $cupomId = $this->createCupom(
+                $empresaService->incrementCupomSequence($empresaId),
+                $valorTotal,
+                $descontoTotal,
+                $acrescimoTotal,
+                $subtotal,
+                $data['troco'] ?? 0,
+                $data['cliente_id'] ?? null,
+                $empresaId
+            );
+
+            $itemCupomService->createItemsCupom($itens, $cupomId);
+            $cupomFormaService->createCupomFormas($data['formas'], $cupomId);
+
+            foreach ($itens as $item) {
+                $estoqueService->out($item['prodId'], $item['qtde']);
+            }
+
+            return $this->getCupom($cupomId)->load('itens.produto', 'formasPagamento', 'cliente');
+        });
+    }
+
     public function getCompanyCoupons($companyId, $dataInicio = null, $dataFim = null, $situacao = null)
     {
         $query = Cupom::with(['cliente', 'nfce'])->where('empresa_id', $companyId);

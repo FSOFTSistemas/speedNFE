@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Traits\EnviaNFCe;
+use App\Http\Requests\Api\V1\StoreCupomRequest;
+use App\Http\Resources\CupomResource;
 use App\Models\NFCe;
+use App\Services\CupomFormaService;
 use App\Services\CupomService;
 use App\Services\EmpresasService;
 use App\Services\EstoquesService;
 use App\Services\FluxoDeCaixaService;
+use App\Services\ItemCupomService;
 use App\Services\NFCeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,6 +51,45 @@ class NFCeController extends ApiController
         return $this->success($this->findAllowed($id)->load('cupom'));
     }
 
+    public function store(StoreCupomRequest $request, ItemCupomService $itemCupomService, CupomFormaService $cupomFormaService): JsonResponse
+    {
+        $user = Auth::guard('api')->user();
+        $empresaId = $this->resolveEmpresaId($request, $user);
+
+        $cupom = $this->cupomService->criarApi(
+            $request->validated(),
+            $empresaId,
+            $itemCupomService,
+            $cupomFormaService,
+            $this->estoqueService,
+            $this->empresaServices
+        );
+
+        $mensagem = 'Cupom criado com sucesso.';
+        $emissao = null;
+
+        if ($request->boolean('enviar_agora')) {
+            $emissao = $this->_enviarNFCePeloId(
+                $cupom->id,
+                $this->cupomService,
+                $this->empresaServices,
+                $this->estoqueService,
+                $this->fluxoCaixaService
+            );
+
+            $mensagem = $emissao->status === 'success'
+                ? 'Cupom criado e NFC-e emitida com sucesso.'
+                : 'Cupom criado, mas houve falha ao emitir a NFC-e: '.$emissao->message;
+
+            $cupom = $cupom->fresh()->load('itens.produto', 'formasPagamento', 'cliente', 'nfce');
+        }
+
+        return $this->success([
+            'cupom' => new CupomResource($cupom),
+            'emissao' => $emissao ? ['status' => $emissao->status, 'message' => $emissao->message] : null,
+        ], $mensagem, 201);
+    }
+
     public function pdf(int $id)
     {
         $nfce = $this->findAllowed($id);
@@ -83,6 +126,21 @@ class NFCeController extends ApiController
     public function totalMes(): JsonResponse
     {
         return $this->success(NFCeService::getTotalNFCePerMonth(Auth::guard('api')->user()?->empresa_id));
+    }
+
+    private function resolveEmpresaId(Request $request, $user): int
+    {
+        if ((int) $user->empresa_id === 1) {
+            if ($request->filled('empresa_id')) {
+                return (int) $request->empresa_id;
+            }
+
+            if ($request->filled('empresa')) {
+                return (int) $request->empresa;
+            }
+        }
+
+        return (int) $user->empresa_id;
     }
 
     private function findAllowed(int $id): NFCe

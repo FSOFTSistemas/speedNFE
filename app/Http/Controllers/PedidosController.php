@@ -14,7 +14,6 @@ use App\Services\NFeService;
 use App\Services\PedidosService;
 use App\Services\ProdutosService;
 use App\Utils\FormatationUtil;
-use App\Utils\NFeErroUtil;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -86,126 +85,77 @@ class PedidosController extends Controller
 
     public function inutilizar(Request $request)
     {
-        try {
-            $emitente = Empresa::find($request->empresa_id);
-            if ($emitente == null) {
-                return redirect('/inutilizar')->with('error', 'Configure o emitente');
-            }
-            $cnpj = str_replace('.', '', $emitente->cpf_cnpj);
-            $cnpj = str_replace('/', '', $cnpj);
-            $cnpj = str_replace('-', '', $cnpj);
-            $cnpj = str_replace(' ', '', $cnpj);
-            $nfe_service = new NFeService([
-                'atualizacao' => date('Y-m-d h:i:s'),
-                'tpAmb' => (int) $emitente->ambiente,
-                'razaosocial' => $emitente->razao,
-                'siglaUF' => $emitente->endereco->uf,
-                'cnpj' => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                'schemes' => 'PL_010_V1.30',
-                'versao' => '4.00',
-                'tokenIBPT' => 'AAAAAAA',
-                'CSC' => $emitente->csc,
-                'CSCid' => '00000'.$emitente->idCsc,
-            ], $emitente);
-            $result = $nfe_service->inutilizarNum($emitente->serie, $request->numI, $request->numI, $request->justificativa, $emitente->fantasia.'/'.date('Y').'/'.date('m').'/notas/Inutilizacoes');
-            if (! isset($result['erro'])) {
-                return redirect('/inutilizar')->with('success', 'Inutilização feita com sucesso');
-            } else {
-                return redirect('/inutilizar')->with('warning', NFeErroUtil::formatar($result['data']));
-            }
-        } catch (ValidatorException $e) {
-            return back()->with('warning', $e->getMessage());
-        } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
+        $resultado = $this->_inutilizarNumeracao(
+            (int) $request->empresa_id,
+            (int) $request->numI,
+            (int) $request->numI,
+            (string) $request->justificativa,
+            $this->empresaServices
+        );
+
+        if ($resultado->status === 'success') {
+            return redirect('/inutilizar')->with('success', $resultado->message);
         }
+
+        if ($resultado->type === 'emitente_nao_configurado') {
+            return redirect('/inutilizar')->with('error', $resultado->message);
+        }
+
+        return redirect('/inutilizar')->with('warning', $resultado->message);
     }
 
     public function cartaCorrecao(Request $request)
     {
-        try {
-            $venda = Pedido::find($request->venda_id_cce);
-            $emitente = Empresa::find($venda->empresa_id);
+        $venda = Pedido::find($request->venda_id_cce);
 
-            if ($emitente == null) {
-                return response()->json('Configure o emitente', 404);
-            }
-
-            $cnpj = str_replace('.', '', $emitente->cpf_cnpj);
-            $cnpj = str_replace('/', '', $cnpj);
-            $cnpj = str_replace('-', '', $cnpj);
-            $cnpj = str_replace(' ', '', $cnpj);
-
-            $nfe_service = new NFeService([
-                'atualizacao' => date('Y-m-d h:i:s'),
-                'tpAmb' => (int) $emitente->ambiente,
-                'razaosocial' => $emitente->razao,
-                'siglaUF' => $emitente->endereco->uf,
-                'cnpj' => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                'schemes' => 'PL_010_V1.30',
-                'versao' => '4.00',
-                'tokenIBPT' => 'AAAAAAA',
-                'CSC' => $emitente->csc,
-                'CSCid' => '00000'.$emitente->idCsc,
-            ], $emitente);
-
-            $result = $nfe_service->cartaCorrecao($venda, $request->justificativa);
-            if (! isset($result['erro'])) {
-                return redirect('/venda')->with('success', 'Carta de Correção feita com sucesso');
-            } else {
-                return redirect('/venda')->with('warning', NFeErroUtil::formatar($this->extrairMensagemEventoNFe($result['data'])));
-            }
-        } catch (ValidatorException $e) {
-            return back()->with('warning', $e->getMessage());
-        } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage());
+        if (! $venda) {
+            return response()->json('Nota não encontrada', 404);
         }
+
+        $resultado = $this->_cartaCorrecaoPeloId(
+            $venda->id,
+            (string) $request->justificativa,
+            $this->pedidoServices,
+            $this->empresaServices
+        );
+
+        if ($resultado->type === 'emitente_nao_configurado') {
+            return response()->json($resultado->message, 404);
+        }
+
+        if ($resultado->status === 'success') {
+            return redirect('/venda')->with('success', $resultado->message);
+        }
+
+        return redirect('/venda')->with('warning', $resultado->message);
     }
 
     public function cancelarNFe(Request $request)
     {
-        try {
+        $venda = Pedido::find($request->venda_id_cancelar);
 
-            $venda = Pedido::find($request->venda_id_cancelar);
-            $emitente = Empresa::find($venda->empresa_id);
-            if ($emitente == null) {
-                return response()->json('Configure o emitente', 404);
-            }
-            $cnpj = str_replace('.', '', $emitente->cpf_cnpj);
-            $cnpj = str_replace('/', '', $cnpj);
-            $cnpj = str_replace('-', '', $cnpj);
-            $cnpj = str_replace(' ', '', $cnpj);
-            $nfe_service = new NFeService([
-                'atualizacao' => date('Y-m-d h:i:s'),
-                'tpAmb' => (int) $emitente->ambiente,
-                'razaosocial' => $emitente->razao,
-                'siglaUF' => $emitente->endereco->uf,
-                'cnpj' => FormatationUtil::retiraPontuacoes($emitente->cpf_cnpj),
-                'schemes' => 'PL_010_V1.30',
-                'versao' => '4.00',
-                'tokenIBPT' => 'AAAAAAA',
-                'CSC' => $emitente->csc,
-                'CSCid' => '00000'.$emitente->idCsc,
-            ], $emitente);
-            $nfe = $nfe_service->cancelar($venda, $request->justificativa);
-            if (! isset($nfe['erro'])) {
-                $venda->status = 0;
-                $venda->estado = 'Cancelado';
-                $venda->total = 0;
-                $venda->save();
-                foreach ($venda->itens as $item) {
-                    $this->estoqueService->reverseStock($item->produto_id, $item->qtde);
-                }
-                $this->fluxoCaixaService->estornarPorOrigem('NFe', $venda->id);
-
-                return redirect('/venda')->with('success', 'Nota cancelada com sucesso');
-            } else {
-                return redirect('/venda')->with('error', NFeErroUtil::formatar($this->extrairMensagemEventoNFe($nfe['data'])));
-            }
-        } catch (ValidatorException $e) {
-            return back()->with('warning', $e->getMessage());
-        } catch (Exception $e) {
-            return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e);
+        if (! $venda) {
+            return response()->json('Nota não encontrada', 404);
         }
+
+        $resultado = $this->_cancelarNFePeloId(
+            $venda->id,
+            (string) $request->justificativa,
+            $this->pedidoServices,
+            $this->empresaServices,
+            $this->estoqueService,
+            $this->fluxoCaixaService
+        );
+
+        if ($resultado->type === 'emitente_nao_configurado') {
+            return response()->json($resultado->message, 404);
+        }
+
+        if ($resultado->status === 'success') {
+            return redirect('/venda')->with('success', $resultado->message);
+        }
+
+        return redirect('/venda')->with('error', $resultado->message);
     }
 
     public function imprimirCancelamento($id)
@@ -462,21 +412,6 @@ class PedidosController extends Controller
 
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getmessage());
         }
-    }
-
-    /**
-     * O retorno de eventos (CCe/cancelamento) do NFeService ora vem como o
-     * array do XML padronizado, ora como a mensagem de uma exceção (string),
-     * dependendo de onde a falha ocorreu. Aqui extraímos o xMotivo quando
-     * disponível, sem arriscar acessar índice de array numa string.
-     */
-    private function extrairMensagemEventoNFe($data)
-    {
-        if (is_array($data)) {
-            return $data['retEvento']['infEvento']['xMotivo'] ?? $data;
-        }
-
-        return $data;
     }
 
     private function normalizarReferenciasDosItens(Request $request): void

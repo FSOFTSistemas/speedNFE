@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EmpresaResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,8 +42,14 @@ class AuthController extends Controller
 
     public function me(): JsonResponse
     {
+        $user = Auth::guard('api')->user();
+        $empresa = $user->empresa()->with('endereco')->first();
+
         return response()->json([
-            'data' => Auth::guard('api')->user(),
+            'data' => [
+                'user' => $user,
+                'empresa' => $empresa ? new EmpresaResource($empresa) : null,
+            ],
         ]);
     }
 
