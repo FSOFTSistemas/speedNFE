@@ -451,7 +451,11 @@ class NFCe extends Component
     public function clearItems()
     {
         try {
+            if (!empty($this->formasSelecionadas)) {
+                return;
+            }
             $this->itens = [];
+            $this->cancelProd();
             $this->showPaymentArea = 'none';
             $this->updateSaleTotal();
         } catch (\Exception $e) {
@@ -466,6 +470,7 @@ class NFCe extends Component
             $this->valorPago = 0;
             $this->troco = 0;
             $this->showPaymentArea = 'none';
+            $this->aReceber = $this->valorTotal;
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Ocorreu um erro interno, tente novamente em outro momento, Erro: ' . $e->getMessage());
         }
@@ -517,6 +522,9 @@ class NFCe extends Component
     public function showPaymentArea()
     {
         try {
+            if (empty($this->itens) || $this->editProd) {
+                return;
+            }
             $this->showPaymentArea = 'block';
             $this->emit('ShowPaymentArea');
         } catch (\Exception $e) {
