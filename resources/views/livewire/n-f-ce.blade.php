@@ -100,7 +100,7 @@
         <label for="pdv-customer-filter">Buscar cliente</label><input id="pdv-customer-filter" type="search" placeholder="Nome, código ou CPF/CNPJ" data-pdv-filter="pdv-customer-results" autocomplete="off">
         <div id="pdv-customer-results" class="pdv-picker">
             @forelse ($customers as $client)
-                <button type="button" class="pdv-picker-item" wire:key="pdv-client-{{ $client->id }}" wire:click="selectClient({{ $client->id }}, @js($client->nome))"><span><strong>{{ $client->nome }}</strong><small>{{ $client->codigo }} · {{ $client->cpf_cnpj }}</small></span><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+                <button type="button" class="pdv-picker-item" wire:key="pdv-client-{{ $client['id'] }}" wire:click="selectClient({{ $client['id'] }}, @js($client['nome']))"><span><strong>{{ $client['nome'] }}</strong><small>{{ $client['codigo'] ?? '—' }} · {{ $client['cpf_cnpj'] ?? '—' }}</small></span><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
             @empty<p class="pdv-muted">Nenhum cliente cadastrado. Você pode vender para Consumidor Final.</p>@endforelse
         </div><p class="pdv-filter-empty" hidden>Nenhum cliente encontrado.</p>
     </dialog>

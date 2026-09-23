@@ -39,5 +39,6 @@ class NFCePaymentMethodsTest extends TestCase
             self::assertNotEmpty(htmlspecialchars($forma, ENT_QUOTES, 'UTF-8'));
             self::assertIsString(str_replace('_', ' ', $forma));
         }
+        self::assertIsArray($componente->customers);
     }
 }

@@ -63,7 +63,10 @@ class NFCe extends Component
     public function mount(ClientesService $clienteService, ProdutosService $produtoService)
     {
         try {
-            $this->customers = $clienteService->todos(Auth::user()->empresa_id);
+            $this->customers = $clienteService->todos(Auth::user()->empresa_id)
+                ->map(fn ($cliente) => (array) $cliente)
+                ->values()
+                ->all();
             $this->formas = array_map(
                 fn (FormaPagamentoEnum $forma) => $forma->value,
                 FormaPagamentoEnum::cases()

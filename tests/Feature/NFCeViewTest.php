@@ -26,7 +26,7 @@ class NFCeViewTest extends TestCase
     public function test_formulario_preserva_itens_pagamentos_e_totais_sem_duplicar_campos(): void
     {
         $component = new NFCe;
-        $component->customers = collect();
+        $component->customers = [];
         $component->cliente = ['id' => 7, 'nome' => 'Cliente teste'];
         $component->itens = [[
             'prodId' => 12, 'produto' => 'Produto teste', 'codigo' => '0012',
