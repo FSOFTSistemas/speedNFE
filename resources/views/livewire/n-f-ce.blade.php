@@ -848,7 +848,7 @@
                 <button class="btn btn-outline-success" type="button" wire:click="updateValueReceived">Salvar</button>
             </div>
         </div>
-    @endcomponent
+    </div>
 
     @component('components.modal', [
         'modalId' => 'AddProdModal',
