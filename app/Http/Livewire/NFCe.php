@@ -64,7 +64,10 @@ class NFCe extends Component
     {
         try {
             $this->customers = $clienteService->todos(Auth::user()->empresa_id);
-            $this->formas = FormaPagamentoEnum::cases();
+            $this->formas = array_map(
+                fn (FormaPagamentoEnum $forma) => $forma->value,
+                FormaPagamentoEnum::cases()
+            );
             $this->cliente = ['id' => null, 'nome' => 'Consumidor Final'];
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Ocorreu um erro interno, tente novamente em outro momento, Erro: ' . $e->getMessage());

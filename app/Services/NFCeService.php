@@ -61,7 +61,7 @@ class NFCeService
     public static function createNFCe($body, $couponId, $company)
     {
         return NFCe::create([
-            'nro' => $company->ultimaNFCe,
+            'nro' => $body['numero'],
             'serie' => $company->serie,
             'chave' => $body['chave'],
             'contingencia' => false,
@@ -92,7 +92,8 @@ class NFCeService
             $std->natOp = 'VENDA CONSUMIDOR';
             $std->mod = 65;
             $std->serie = $emitente->serie;
-            $std->nNF = $emitente->ultimaNFCe + 1;
+            $numero = (int) $emitente->ultimaNFCe + 1;
+            $std->nNF = $numero;
             $std->dhEmi = date("Y-m-d\TH:i:sP");
             $std->dhSaiEnt = date("Y-m-d\TH:i:sP");
             $std->tpNF = 1;
@@ -504,14 +505,15 @@ class NFCeService
             try {
                 $xml = $make->getXML();
             } catch (\Exception $e) {
-                dd($e->getMessage(), $make->getErrors());
+                throw new MalformedXmlException(implode('; ', $make->getErrors()) ?: $e->getMessage());
             }
             $signedXml = $this->sign($xml);
             $key = $make->getChave();
-            $this->toTransmit($signedXml);
+            $authorizedXml = $this->toTransmit($signedXml);
             $arr = [
                 'chave' => $key,
-                'xml' => $signedXml,
+                'xml' => $authorizedXml,
+                'numero' => $numero,
             ];
 
             return $arr;
@@ -531,10 +533,9 @@ class NFCeService
         $resp = $this->tools->sefazEnviaLote([$signedXml], $loteId, 1);
         $st = new Standardize;
         $std = $st->toStd($resp);
-        sleep(2);
         if ($std->cStat == 104) {
             if ($std->protNFe->infProt->cStat == 100) {
-                return true;
+                return Complements::toAuthorize($signedXml, $resp);
             } else {
                 throw new MalformedXmlException($std->protNFe->infProt->xMotivo);
             }

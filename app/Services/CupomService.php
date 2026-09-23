@@ -105,6 +105,11 @@ class CupomService
         return Cupom::find($id);
     }
 
+    public function getCupomForUpdate($id)
+    {
+        return Cupom::whereKey($id)->lockForUpdate()->first();
+    }
+
     public function createCupom($nroCupom, $total, $desconto, $acrescimo, $subtotal, $troco, $clientId, $empresaId)
     {
         return Cupom::create([
@@ -125,7 +130,9 @@ class CupomService
 
     public function getOutstandingCouponsOfTheDay($companyId, $day)
     {
-        $coupons = Cupom::whereEmpresaId($companyId)->where('data', 'like', $day.'%')->where('gerado_nfce', false)->get();
+        $coupons = Cupom::whereEmpresaId($companyId)->where('data', 'like', $day.'%')
+            ->where('gerado_nfce', false)->where('situacao', '!=', SituacaoEnum::CANCELADO->value)
+            ->whereDoesntHave('nfce')->get();
         if ($coupons->isEmpty()) {
             throw new NotFoundException('Não foram encontrados cupoms para data selecionada!');
         }
@@ -150,7 +157,7 @@ class CupomService
     public function updateCoupon($coupon)
     {
         $coupon->gerado_nfce = true;
-        $coupon->contingencia = true;
+        $coupon->contingencia = false;
         $coupon->situacao = SituacaoEnum::ATIVO;
         $coupon->save();
     }

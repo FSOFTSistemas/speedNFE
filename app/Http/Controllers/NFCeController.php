@@ -254,31 +254,21 @@ class NFCeController extends Controller
                 'day.required' => 'O campo Dia é obrigatório!',
                 'day.date' => 'O campo Dia deve ser uma data!',
             ]);
-            DB::beginTransaction();
             $outstandingCoupons = $this->cupomService->getOutstandingCouponsOfTheDay(Auth::user()->empresa_id, $request->day);
-            $nfceService = $this->makeNFCeService(Auth::user()->empresa);
 
             foreach ($outstandingCoupons as $coupon) {
-                try {
-                    $this->empresaServices->incrementLastNFCe($coupon->empresa_id);
-                    $resultXml = $nfceService->generateXml($coupon, $coupon->empresa);
-                    $this->cupomService->updateCoupon($coupon);
-                    NFCeService::createNFCe($resultXml, $coupon->id, $coupon->empresa);
-                    $this->fluxoCaixaService->registrarEntradaAutomatica(
-                        $coupon->empresa_id,
-                        $coupon->total,
-                        'Venda NFCe #' . $coupon->nroCupom . ($coupon->cliente ? ' - ' . $coupon->cliente->nome : ''),
-                        $coupon->data,
-                        'NFCe',
-                        $coupon->id
-                    );
-                } catch (Exception $e) {
-                    $this->cupomService->rejectedCoupon($coupon->id);
-                    array_push($errorsCaught, 'Cupom: ' . $coupon->nroCupom . ' - ' . $e->getMessage());
-                    continue;
+                $resultado = $this->_enviarNFCePeloId(
+                    $coupon->id,
+                    $this->cupomService,
+                    $this->empresaServices,
+                    $this->estoqueService,
+                    $this->fluxoCaixaService
+                );
+
+                if ($resultado->status !== 'success') {
+                    $errorsCaught[] = 'Cupom: ' . $coupon->nroCupom . ' - ' . $resultado->message;
                 }
             }
-            DB::commit();
             if (empty($errorsCaught)) {
                 return redirect()->route('cupom.index')->with('success', 'Cupoms foram enviados com sucesso!');
             } else {
@@ -288,13 +278,10 @@ class NFCeController extends Controller
             foreach ($e->errors() as $error) {
                 $errors[] = implode(PHP_EOL, $error);
             }
-            DB::rollBack();
             return back()->with('warning', implode('<br>', $errors));
         } catch (NotFoundException $e) {
-            DB::rollBack();
             return back()->with('warning', $e->getMessage());
         } catch (Exception $e) {
-            DB::rollBack();
             return back()->with('error', 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: ' . $e->getMessage());
         }
     }

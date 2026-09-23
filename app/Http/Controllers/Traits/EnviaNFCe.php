@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Traits;
 use App\Exceptions\LimitExceededException;
 use App\Exceptions\MalformedXmlException;
 use App\Services\NFCeService;
+use App\Models\Empresa;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Utils\FormatationUtil;
@@ -26,7 +27,7 @@ trait EnviaNFCe
             "razaosocial" => $empresa->razao,
             "siglaUF" => $empresa->endereco->uf,
             "cnpj" => FormatationUtil::retiraPontuacoes($empresa->cpf_cnpj),
-            "schemes" => "PL_009_V4",
+            "schemes" => "PL_010_V1.30",
             "versao" => "4.00",
             "tokenIBPT" => "AAAAAAA",
             "CSC" => $empresa->csc,
@@ -56,12 +57,20 @@ trait EnviaNFCe
         try {
             DB::beginTransaction();
             // Agora usa as variáveis recebidas como parâmetro, não mais $this->
-            $cupom = $cupomService->getCupom($id);
-            $nfceService = $this->makeNFCeService($cupom->empresa); // Este método está no próprio trait, então o $this continua
-            $empresaServices->incrementLastNFCe($cupom->empresa_id);
-            $resultXml = $nfceService->generateXml($cupom, $cupom->empresa);
+            $cupom = $cupomService->getCupomForUpdate($id);
+            if (! $cupom || $cupom->situacao === 'CANCELADO' || $cupom->gerado_nfce || $cupom->nfce) {
+                DB::rollBack();
+
+                return (object) ['status' => 'warning', 'message' => 'Cupom inexistente, cancelado ou com NFC-e já emitida.'];
+            }
+
+            // Serializa a numeração por empresa e usa a mesma instância no XML e na gravação.
+            $empresa = Empresa::whereKey($cupom->empresa_id)->lockForUpdate()->firstOrFail();
+            $nfceService = $this->makeNFCeService($empresa);
+            $resultXml = $nfceService->generateXml($cupom, $empresa);
             $cupomService->updateCoupon($cupom);
-            NFCeService::createNFCe($resultXml, $cupom->id, $cupom->empresa);
+            NFCeService::createNFCe($resultXml, $cupom->id, $empresa);
+            $empresa->update(['ultimaNFCe' => $resultXml['numero']]);
             $fluxoCaixaService->registrarEntradaAutomatica(
                 $cupom->empresa_id,
                 $cupom->total,

@@ -578,7 +578,7 @@
                                                             <i class="fas fa-money-bill fa-2x text-success"></i>
                                                         @elseif ($forma == 'PIX')
                                                             <i class="fas fa-qrcode fa-2x text-info"></i>
-                                                        @elseif ($forma == 'CARTAO_CREDITO')
+                                                        @elseif ($forma == 'CARTÃO/CRÉDITO')
                                                             <i class="fas fa-credit-card fa-2x text-primary"></i>
                                                         @else
                                                             <i class="fas fa-credit-card fa-2x text-secondary"></i>
