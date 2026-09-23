@@ -59,8 +59,6 @@ trait EnviaNFe
                     $resultado = $nfe_service->transmitir($signed, $result['chave'], $venda->id);
 
                     if (isset($resultado['sucesso'])) {
-                        DB::beginTransaction();
-
                         $venda->chave = $result['chave'];
                         $venda->status = 1;
                         $venda->estado = 'Autorizado';
@@ -95,8 +93,6 @@ trait EnviaNFe
                             'message' => 'Nota enviada com sucesso',
                         ];
                     }
-
-                    DB::beginTransaction();
 
                     $venda->status = 3;
                     $venda->estado = 'Rejeitado';
