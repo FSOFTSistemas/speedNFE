@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EmpresaResource;
+use App\Support\Modulos;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,7 @@ class AuthController extends Controller
             'data' => [
                 'user' => $user,
                 'empresa' => $empresa ? new EmpresaResource($empresa) : null,
+                'permissoes' => Modulos::doUsuario($user),
             ],
         ]);
     }

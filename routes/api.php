@@ -46,19 +46,21 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('dashboard', [ApiDashboardController::class, 'index'])->name('dashboard.index');
 
-        Route::get('cfops', [ApiCfopController::class, 'index'])->name('cfops.index');
+        Route::middleware('api.modulo:cadastros')->group(function () {
+            Route::get('cfops', [ApiCfopController::class, 'index'])->name('cfops.index');
 
-        Route::get('clientes/consultar-cnpj/{cnpj}', [ApiClientesController::class, 'consultarCnpj'])
-            ->name('clientes.consultar-cnpj');
-        Route::get('clientes/verificar-cpf-cnpj', [ApiClientesController::class, 'verificarCpfCnpj'])
-            ->name('clientes.verificar-cpf-cnpj');
-        Route::apiResource('clientes', ApiClientesController::class);
+            Route::get('clientes/consultar-cnpj/{cnpj}', [ApiClientesController::class, 'consultarCnpj'])
+                ->name('clientes.consultar-cnpj');
+            Route::get('clientes/verificar-cpf-cnpj', [ApiClientesController::class, 'verificarCpfCnpj'])
+                ->name('clientes.verificar-cpf-cnpj');
+            Route::apiResource('clientes', ApiClientesController::class);
 
-        Route::apiResource('produtos', ApiProdutosController::class);
+            Route::apiResource('produtos', ApiProdutosController::class);
 
-        Route::apiResource('entradas', ApiEntradaController::class)->only(['index', 'show', 'destroy']);
-        Route::apiResource('estoques', ApiEstoqueController::class)->only(['index', 'show', 'update']);
-        Route::get('fornecedores', [ApiFornecedoresController::class, 'index'])->name('fornecedores.index');
+            Route::apiResource('entradas', ApiEntradaController::class)->only(['index', 'show', 'destroy']);
+            Route::apiResource('estoques', ApiEstoqueController::class)->only(['index', 'show', 'update']);
+            Route::get('fornecedores', [ApiFornecedoresController::class, 'index'])->name('fornecedores.index');
+        });
 
         Route::get('fluxo-caixa/resumo', [ApiFluxoDeCaixaController::class, 'resumo'])->name('fluxo-caixa.resumo');
         Route::apiResource('fluxo-caixa', ApiFluxoDeCaixaController::class);
@@ -66,23 +68,27 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('plano-contas', ApiPlanoDeContaController::class);
         Route::apiResource('receber', ApiReceberController::class);
 
-        Route::get('nfce/total-mes', [ApiNFCeController::class, 'totalMes'])->name('nfce.total-mes');
-        Route::post('nfce/cupons/{cupom}/enviar', [ApiNFCeController::class, 'enviar'])->name('nfce.enviar');
-        Route::get('nfce/{nfce}/pdf', [ApiNFCeController::class, 'pdf'])->name('nfce.pdf');
-        Route::get('nfce/{nfce}/xml', [ApiNFCeController::class, 'xml'])->name('nfce.xml');
-        Route::apiResource('nfce', ApiNFCeController::class)->only(['index', 'show', 'store']);
+        Route::middleware('api.modulo:nfce')->group(function () {
+            Route::get('nfce/total-mes', [ApiNFCeController::class, 'totalMes'])->name('nfce.total-mes');
+            Route::post('nfce/cupons/{cupom}/enviar', [ApiNFCeController::class, 'enviar'])->name('nfce.enviar');
+            Route::get('nfce/{nfce}/pdf', [ApiNFCeController::class, 'pdf'])->name('nfce.pdf');
+            Route::get('nfce/{nfce}/xml', [ApiNFCeController::class, 'xml'])->name('nfce.xml');
+            Route::apiResource('nfce', ApiNFCeController::class)->only(['index', 'show', 'store']);
+        });
 
-        Route::get('notas-fiscais/total-mes', [ApiNotasFiscaisController::class, 'totalMes'])->name('notas-fiscais.total-mes');
-        Route::post('notas-fiscais/inutilizar', [ApiNotasFiscaisController::class, 'inutilizar'])->name('notas-fiscais.inutilizar');
-        Route::post('notas-fiscais/{id}/enviar', [ApiNotasFiscaisController::class, 'enviar'])->name('notas-fiscais.enviar');
-        Route::post('notas-fiscais/{id}/cancelar', [ApiNotasFiscaisController::class, 'cancelar'])->name('notas-fiscais.cancelar');
-        Route::post('notas-fiscais/{id}/carta-correcao', [ApiNotasFiscaisController::class, 'cartaCorrecao'])->name('notas-fiscais.carta-correcao');
-        Route::get('notas-fiscais/{id}/pdf', [ApiNotasFiscaisController::class, 'pdf'])->name('notas-fiscais.pdf');
-        Route::get('notas-fiscais/{id}/xml', [ApiNotasFiscaisController::class, 'xml'])->name('notas-fiscais.xml');
-        Route::get('notas-fiscais/{id}/cancelamento/pdf', [ApiNotasFiscaisController::class, 'cancelamentoPdf'])->name('notas-fiscais.cancelamento-pdf');
-        Route::put('notas-fiscais/{id}', [ApiNotasFiscaisController::class, 'update'])->name('notas-fiscais.update');
-        Route::delete('notas-fiscais/{id}', [ApiNotasFiscaisController::class, 'destroy'])->name('notas-fiscais.destroy');
-        Route::apiResource('notas-fiscais', ApiNotasFiscaisController::class)->only(['index', 'show', 'store']);
+        Route::middleware('api.modulo:nfe')->group(function () {
+            Route::get('notas-fiscais/total-mes', [ApiNotasFiscaisController::class, 'totalMes'])->name('notas-fiscais.total-mes');
+            Route::post('notas-fiscais/inutilizar', [ApiNotasFiscaisController::class, 'inutilizar'])->name('notas-fiscais.inutilizar');
+            Route::post('notas-fiscais/{id}/enviar', [ApiNotasFiscaisController::class, 'enviar'])->name('notas-fiscais.enviar');
+            Route::post('notas-fiscais/{id}/cancelar', [ApiNotasFiscaisController::class, 'cancelar'])->name('notas-fiscais.cancelar');
+            Route::post('notas-fiscais/{id}/carta-correcao', [ApiNotasFiscaisController::class, 'cartaCorrecao'])->name('notas-fiscais.carta-correcao');
+            Route::get('notas-fiscais/{id}/pdf', [ApiNotasFiscaisController::class, 'pdf'])->name('notas-fiscais.pdf');
+            Route::get('notas-fiscais/{id}/xml', [ApiNotasFiscaisController::class, 'xml'])->name('notas-fiscais.xml');
+            Route::get('notas-fiscais/{id}/cancelamento/pdf', [ApiNotasFiscaisController::class, 'cancelamentoPdf'])->name('notas-fiscais.cancelamento-pdf');
+            Route::put('notas-fiscais/{id}', [ApiNotasFiscaisController::class, 'update'])->name('notas-fiscais.update');
+            Route::delete('notas-fiscais/{id}', [ApiNotasFiscaisController::class, 'destroy'])->name('notas-fiscais.destroy');
+            Route::apiResource('notas-fiscais', ApiNotasFiscaisController::class)->only(['index', 'show', 'store']);
+        });
 
         Route::get('relatorios/vendas', [ApiRelatoriosController::class, 'vendas'])->name('relatorios.vendas');
         Route::get('relatorios/nfe', [ApiRelatoriosController::class, 'nfe'])->name('relatorios.nfe');
