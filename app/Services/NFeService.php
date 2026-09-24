@@ -652,8 +652,11 @@ class NFeService
             $std->pICMS = FormatationUtil::format($item->icms_aliquota);
             $std->vICMS = FormatationUtil::format($item->icms_valor);
 
-            if (in_array($std->CST, ['20', '70'], true)) {
-                $reducao = $vProd > 0 ? max(0, 1 - ((float) $item->icms_base / $vProd)) * 100 : 0;
+            if (in_array($std->CST, ItemFiscalService::CST_REDUCAO_BC, true)) {
+                $baseOperacao = $vProd - (float) $item->desconto;
+                $reducao = (float) $item->icms_reducao > 0
+                    ? (float) $item->icms_reducao
+                    : ($baseOperacao > 0 ? max(0, 1 - ((float) $item->icms_base / $baseOperacao)) * 100 : 0);
                 $std->pRedBC = number_format($reducao, 4, '.', '');
             }
 

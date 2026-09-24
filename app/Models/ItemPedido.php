@@ -20,6 +20,7 @@ class ItemPedido extends Model
         'fiscal_personalizado',
         'cfop_item',
         'cst_csosn',
+        'icms_reducao',
         'icms_base',
         'icms_aliquota',
         'icms_valor',

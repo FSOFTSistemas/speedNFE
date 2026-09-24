@@ -39,23 +39,31 @@ trait EditaFiscalItensVenda
                 $item['quantidade'],
                 $item['unitario'],
                 $this->bcfop,
-                $this->fiscalSimples ? 1 : 3
+                $this->fiscalSimples ? 1 : 3,
+                (float) ($item['desconto'] ?? 0)
             );
         }
 
         $this->dispatchBrowserEvent('abrirModalFiscal');
     }
 
-    /** Recalcula o valor do grupo (icms, icms_st, pis, cofins) quando a base ou a alíquota mudam. */
+    /** Preenche/recalcula os campos dependentes conforme as regras de ItemFiscalService::aplicarRegras(). */
     public function updatedFiscalForm($valor, $campo)
     {
-        if (preg_match('/^(icms_st|icms|pis|cofins)_(base|aliquota)$/', $campo, $m)) {
-            $grupo = $m[1];
-            $this->fiscalForm[$grupo.'_valor'] = (new ItemFiscalService())->calcular(
-                $this->fiscalForm[$grupo.'_base'] ?? 0,
-                $this->fiscalForm[$grupo.'_aliquota'] ?? 0
-            );
+        $item = $this->vendaItens[$this->fiscalIndex] ?? null;
+
+        if (!$item || $campo === 'cfop') {
+            return;
         }
+
+        $this->fiscalForm = (new ItemFiscalService())->aplicarRegras(
+            $this->fiscalForm,
+            $campo,
+            (float) $item['quantidade'] * (float) $item['unitario'],
+            (float) ($item['desconto'] ?? 0),
+            $this->fiscalSimples,
+            Produto::find($item['produto_id'])
+        );
     }
 
     public function salvarFiscalItem()
@@ -89,14 +97,6 @@ trait EditaFiscalItensVenda
             $fiscal[$campo] = (float) str_replace(',', '.', (string) ($fiscal[$campo] ?? 0));
         }
 
-        // Zera os grupos que o CST/CSOSN escolhido não destaca, para não confundir totais
-        if (!$this->fiscalCampoHabilitado('icms')) {
-            $fiscal['icms_base'] = $fiscal['icms_aliquota'] = $fiscal['icms_valor'] = 0;
-        }
-        if (!$this->fiscalCampoHabilitado('icms_st')) {
-            $fiscal['icms_st_mva'] = $fiscal['icms_st_base'] = $fiscal['icms_st_aliquota'] = $fiscal['icms_st_valor'] = 0;
-        }
-
         $this->vendaItens[$this->fiscalIndex]['fiscal'] = $fiscal;
         $this->fecharFiscalItem();
     }
@@ -119,19 +119,20 @@ trait EditaFiscalItensVenda
         $this->dispatchBrowserEvent('fecharModalFiscal');
     }
 
-    /** Indica se o grupo ('icms' próprio ou 'icms_st') se aplica ao CST/CSOSN selecionado no modal. */
+    /** Indica se o grupo ('icms' próprio, 'icms_st' ou 'reducao') se aplica ao CST/CSOSN selecionado no modal. */
     public function fiscalCampoHabilitado($grupo): bool
     {
         $cst = (string) ($this->fiscalForm['cst_csosn'] ?? '');
 
-        if ($this->fiscalSimples) {
-            return $grupo === 'icms'
-                ? in_array($cst, ItemFiscalService::CSOSN_CREDITO, true)
-                : in_array($cst, ItemFiscalService::CSOSN_ICMS_ST, true);
+        switch ($grupo) {
+            case 'icms':
+                return ItemFiscalService::destacaIcms($cst, $this->fiscalSimples);
+            case 'icms_st':
+                return ItemFiscalService::destacaSt($cst, $this->fiscalSimples);
+            case 'reducao':
+                return !$this->fiscalSimples && in_array($cst, ItemFiscalService::CST_REDUCAO_BC, true);
         }
 
-        return $grupo === 'icms'
-            ? in_array($cst, ItemFiscalService::CST_ICMS_PROPRIO, true)
-            : in_array($cst, ItemFiscalService::CST_ICMS_ST, true);
+        return false;
     }
 }

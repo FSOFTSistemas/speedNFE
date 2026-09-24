@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Concerns;
 
+use App\Models\Empresa;
 use App\Services\ItemFiscalService;
 
 /**
@@ -64,7 +65,9 @@ trait EditaItensVenda
             $this->vendaItens[$index]['fiscal'] = (new ItemFiscalService())->reajustarParaNovoValor(
                 $this->vendaItens[$index]['fiscal'],
                 (float) $this->vendaItens[$index]['quantidade'] * (float) $this->vendaItens[$index]['unitario'],
-                $quantidade * $unitario
+                $quantidade * $unitario,
+                $desconto,
+                ItemFiscalService::simplesNacional(optional(Empresa::find($this->empresa))->crt)
             );
         }
 

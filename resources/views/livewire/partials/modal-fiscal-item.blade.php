@@ -46,6 +46,7 @@
 
     $icmsHabilitado = $fiscalIndex !== null && $this->fiscalCampoHabilitado('icms');
     $stHabilitado = $fiscalIndex !== null && $this->fiscalCampoHabilitado('icms_st');
+    $reducaoHabilitada = $fiscalIndex !== null && $this->fiscalCampoHabilitado('reducao');
     $itemFiscal = $fiscalIndex !== null ? ($vendaItens[$fiscalIndex] ?? null) : null;
 @endphp
 
@@ -69,8 +70,9 @@
                 @if ($fiscalIndex !== null)
                     <p class="text-muted small mb-3">
                         <i class="fas fa-info-circle mr-1"></i>
-                        Os campos vêm preenchidos com o cadastro do produto. O valor é recalculado ao alterar a base ou a alíquota,
-                        mas pode ser ajustado manualmente. Regime do emitente: <strong>{{ $fiscalSimples ? 'Simples Nacional (CSOSN)' : 'Regime Normal (CST)' }}</strong>.
+                        Os campos são preenchidos automaticamente pelo cadastro do produto e recalculados conforme o
+                        {{ $fiscalSimples ? 'CSOSN' : 'CST' }}, a base, a alíquota e a MVA. Todos podem ser ajustados manualmente.
+                        Regime do emitente: <strong>{{ $fiscalSimples ? 'Simples Nacional (CSOSN)' : 'Regime Normal (CST)' }}</strong>.
                     </p>
 
                     <div class="row">
@@ -94,50 +96,60 @@
                     <h6 class="font-weight-bold border-bottom pb-2 mt-2">
                         {{ $fiscalSimples && in_array($fiscalForm['cst_csosn'] ?? '', ['101', '201']) ? 'Crédito de ICMS (Simples Nacional)' : 'ICMS' }}
                         @unless ($icmsHabilitado)
-                            <small class="text-muted font-weight-normal">— não se aplica a este {{ $fiscalSimples ? 'CSOSN' : 'CST' }}</small>
+                            <small class="text-muted font-weight-normal">— não é enviado na NF-e com este {{ $fiscalSimples ? 'CSOSN' : 'CST' }}</small>
                         @endunless
                     </h6>
                     <div class="row">
-                        <div class="col-4 mb-3">
+                        @if ($reducaoHabilitada)
+                            <div class="col-6 col-md-3 mb-3">
+                                <label class="form-label">Redução BC (%)</label>
+                                <input type="number" step="0.0001" min="0" max="100" class="form-control" wire:model.lazy="fiscalForm.icms_reducao">
+                            </div>
+                        @endif
+                        <div class="{{ $reducaoHabilitada ? 'col-6 col-md-3' : 'col-4' }} mb-3">
                             <label class="form-label">Base de cálculo</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_base" @disabled(!$icmsHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_base">
                         </div>
-                        <div class="col-4 mb-3">
+                        <div class="{{ $reducaoHabilitada ? 'col-6 col-md-3' : 'col-4' }} mb-3">
                             <label class="form-label">Alíquota (%)</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_aliquota" @disabled(!$icmsHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_aliquota">
                         </div>
-                        <div class="col-4 mb-3">
+                        <div class="{{ $reducaoHabilitada ? 'col-6 col-md-3' : 'col-4' }} mb-3">
                             <label class="form-label">Valor</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_valor" @disabled(!$icmsHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_valor">
                         </div>
                     </div>
 
                     <h6 class="font-weight-bold border-bottom pb-2 mt-2">
                         ICMS-ST
                         @unless ($stHabilitado)
-                            <small class="text-muted font-weight-normal">— não se aplica a este {{ $fiscalSimples ? 'CSOSN' : 'CST' }}</small>
+                            <small class="text-muted font-weight-normal">— não é enviado na NF-e com este {{ $fiscalSimples ? 'CSOSN' : 'CST' }}</small>
                         @endunless
                     </h6>
                     <div class="row">
                         <div class="col-6 col-md-3 mb-3">
                             <label class="form-label">MVA (%)</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_mva" @disabled(!$stHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_mva">
                         </div>
                         <div class="col-6 col-md-3 mb-3">
                             <label class="form-label">Base de cálculo ST</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_base" @disabled(!$stHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_base">
                         </div>
                         <div class="col-6 col-md-3 mb-3">
                             <label class="form-label">Alíquota ST (%)</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_aliquota" @disabled(!$stHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_aliquota">
                         </div>
                         <div class="col-6 col-md-3 mb-3">
                             <label class="form-label">Valor ST</label>
-                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_valor" @disabled(!$stHabilitado)>
+                            <input type="number" step="0.01" min="0" class="form-control" wire:model.lazy="fiscalForm.icms_st_valor">
                         </div>
                     </div>
                     @if ($stHabilitado)
-                        <p class="text-muted small mt-n2">O valor do ICMS-ST é somado ao total da NF-e.</p>
+                        <p class="text-muted small mt-n2">
+                            Base ST = (valor do item − desconto) × (1 + MVA). Valor ST = base ST × alíquota ST −
+                            {{ $fiscalSimples ? 'ICMS da operação própria pela alíquota interna' : (($fiscalForm['cst_csosn'] ?? '') === '30' ? 'sem dedução (CST 30)' : 'ICMS próprio') }}.
+                            O ICMS-ST é somado ao total da NF-e.
+                        </p>
                     @endif
 
                     @foreach (['pis' => 'PIS', 'cofins' => 'COFINS'] as $grupo => $titulo)

@@ -69,6 +69,7 @@ class ItemFiscalServiceTest extends TestCase
     public function test_reajuste_mantem_proporcao_da_base_e_recalcula_valores()
     {
         $fiscal = (new ItemFiscalService())->reajustarParaNovoValor([
+            'cst_csosn' => '00', 'cst_pis' => '01', 'cst_cofins' => '01',
             'icms_base' => 80, 'icms_aliquota' => 18, 'icms_valor' => 14.4,
             'icms_st_base' => 0, 'icms_st_aliquota' => 0, 'icms_st_valor' => 0,
             'pis_base' => 100, 'pis_aliquota' => 1.65, 'pis_valor' => 1.65,
@@ -79,5 +80,91 @@ class ItemFiscalServiceTest extends TestCase
         $this->assertEquals(28.8, $fiscal['icms_valor']);
         $this->assertEquals(200, $fiscal['pis_base']);
         $this->assertEquals(3.3, $fiscal['pis_valor']);
+    }
+
+    public function test_padrao_desconta_o_desconto_da_base()
+    {
+        $fiscal = (new ItemFiscalService())->padrao($this->produto([]), 1, 100, '5102', 3, 10);
+
+        $this->assertEquals(90, $fiscal['icms_base']);
+        $this->assertEquals(16.2, $fiscal['icms_valor']);
+        $this->assertEquals(90, $fiscal['pis_base']);
+    }
+
+    public function test_cst_10_calcula_st_com_mva_deduzindo_icms_proprio()
+    {
+        $service = new ItemFiscalService();
+        $fiscal = $service->padrao($this->produto([]), 1, 100, '5405', 3);
+
+        $fiscal['cst_csosn'] = '10';
+        $fiscal = $service->aplicarRegras($fiscal, 'cst_csosn', 100, 0, false, $this->produto([]));
+        $fiscal['icms_st_mva'] = 40;
+        $fiscal = $service->aplicarRegras($fiscal, 'icms_st_mva', 100, 0, false, $this->produto([]));
+
+        // Base ST = 100 x 1,40 = 140; ST = 140 x 18% - 18 = 7,20
+        $this->assertEquals(140, $fiscal['icms_st_base']);
+        $this->assertEquals(18, $fiscal['icms_st_aliquota']);
+        $this->assertEquals(7.2, $fiscal['icms_st_valor']);
+    }
+
+    public function test_cst_20_reducao_de_base_nos_dois_sentidos()
+    {
+        $service = new ItemFiscalService();
+        $fiscal = $service->padrao($this->produto(['cst_csosn' => '20']), 1, 200, '5102', 3);
+
+        $fiscal['icms_reducao'] = 25;
+        $fiscal = $service->aplicarRegras($fiscal, 'icms_reducao', 200, 0, false);
+        $this->assertEquals(150, $fiscal['icms_base']);
+        $this->assertEquals(27, $fiscal['icms_valor']);
+
+        $fiscal['icms_base'] = 100;
+        $fiscal = $service->aplicarRegras($fiscal, 'icms_base', 200, 0, false);
+        $this->assertEquals(50, $fiscal['icms_reducao']);
+        $this->assertEquals(18, $fiscal['icms_valor']);
+    }
+
+    public function test_troca_para_cst_sem_icms_zera_icms_e_st()
+    {
+        $service = new ItemFiscalService();
+        $fiscal = $service->padrao($this->produto([]), 1, 100, '5102', 3);
+
+        $fiscal['cst_csosn'] = '40';
+        $fiscal = $service->aplicarRegras($fiscal, 'cst_csosn', 100, 0, false);
+
+        $this->assertEquals(0, $fiscal['icms_base']);
+        $this->assertEquals(0, $fiscal['icms_valor']);
+        $this->assertEquals(0, $fiscal['icms_st_valor']);
+    }
+
+    public function test_pis_cofins_monofasico_zera_valores()
+    {
+        $service = new ItemFiscalService();
+        $fiscal = $service->padrao($this->produto([]), 1, 100, '5102', 3);
+
+        $fiscal['cst_pis'] = '04';
+        $fiscal = $service->aplicarRegras($fiscal, 'cst_pis', 100, 0, false);
+
+        $this->assertEquals(0, $fiscal['pis_base']);
+        $this->assertEquals(0, $fiscal['pis_aliquota']);
+        $this->assertEquals(0, $fiscal['pis_valor']);
+        $this->assertEquals(7.6, $fiscal['cofins_valor']);
+    }
+
+    public function test_simples_202_deduz_icms_proprio_pela_aliquota_interna()
+    {
+        $service = new ItemFiscalService();
+        $fiscal = $service->padrao($this->produto(['cst_csosn' => '202', 'icms' => 1.25]), 1, 100, '5405', 1);
+
+        // No Simples a alíquota ST não vem do produto (ICMS do produto é o % de crédito)
+        $this->assertEquals(0, $fiscal['icms_st_aliquota']);
+
+        $fiscal['icms_st_mva'] = 50;
+        $fiscal = $service->aplicarRegras($fiscal, 'icms_st_mva', 100, 0, true);
+        $fiscal['icms_st_aliquota'] = 18;
+        $fiscal = $service->aplicarRegras($fiscal, 'icms_st_aliquota', 100, 0, true);
+
+        // Base ST = 150; ST = 150 x 18% - 100 x 18% = 27 - 18 = 9
+        $this->assertEquals(150, $fiscal['icms_st_base']);
+        $this->assertEquals(9, $fiscal['icms_st_valor']);
     }
 }
