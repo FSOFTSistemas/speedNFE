@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\EstadoEnum;
+use App\Enums\SituacaoEnum;
 use App\Exceptions\AlreadyExistException;
 use App\Exceptions\LimitExceededException;
 use App\Exceptions\MalformedXmlException;
@@ -46,6 +47,8 @@ class NFCeService
         $query = NFCe::selectRaw('MONTH(n_f_ces.data) as mes, SUM(cupoms.total) as total_vendas')
             ->join('cupoms', 'n_f_ces.cupom_id', '=', 'cupoms.id')
             ->where('n_f_ces.situacao', 'Autorizado')
+            // Cancelar uma NFC-e só marca o cupom; n_f_ces.situacao continua "Autorizado".
+            ->where('cupoms.situacao', '!=', SituacaoEnum::CANCELADO->value)
             ->whereYear('n_f_ces.data', date('Y')) // Filtra apenas o ano corrente
             ->groupBy('mes')
             ->orderBy('mes', 'asc'); // Garante que os meses venham ordenados

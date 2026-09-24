@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\SituacaoEnum;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Traits\EnviaNFCe;
 use App\Http\Requests\Api\V1\StoreCupomRequest;
@@ -36,7 +37,14 @@ class NFCeController extends ApiController
         $this->scopeEmpresa($query, $request);
 
         if ($request->filled('situacao')) {
-            $query->where('situacao', $request->situacao);
+            // Cancelar uma NFC-e só marca o cupom (cupoms.situacao = CANCELADO); n_f_ces.situacao continua "Autorizado".
+            $cancelado = SituacaoEnum::CANCELADO->value;
+            match ($request->situacao) {
+                'Cancelado' => $query->whereHas('cupom', fn ($q) => $q->where('situacao', $cancelado)),
+                'Autorizado' => $query->where('situacao', 'Autorizado')
+                    ->whereHas('cupom', fn ($q) => $q->where('situacao', '!=', $cancelado)),
+                default => $query->where('situacao', $request->situacao),
+            };
         }
 
         if ($request->filled('month')) {
