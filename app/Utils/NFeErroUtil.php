@@ -55,21 +55,13 @@ class NFeErroUtil
     }
 
     /**
-     * Algumas respostas da SEFAZ (ou exceções de bibliotecas de terceiros)
-     * chegam com bytes fora de UTF-8, o que corrompe acentos e cedilha e pode
-     * até fazer o restante da mensagem sumir ao passar por htmlspecialchars/
-     * json_encode. Aqui garantimos que o texto exibido ao usuário esteja
-     * sempre em UTF-8 válido.
+     * Algumas respostas da SEFAZ (ou exceções de bibliotecas de terceiros) chegam com bytes fora
+     * de UTF-8, duplamente codificadas ("RejeiÃ§Ã£o") ou com entidades HTML, o que corrompe acentos
+     * e cedilha e pode sumir com o alerta ao passar por json_encode. Ver TextoUtil::utf8Seguro().
      */
     private static function paraUtf8(string $mensagem): string
     {
-        if ($mensagem === '' || mb_check_encoding($mensagem, 'UTF-8')) {
-            return $mensagem;
-        }
-
-        $convertido = @mb_convert_encoding($mensagem, 'UTF-8', 'ISO-8859-1');
-
-        return $convertido !== false ? $convertido : $mensagem;
+        return TextoUtil::utf8Seguro($mensagem);
     }
 
     private static function achatar(array $itens): array

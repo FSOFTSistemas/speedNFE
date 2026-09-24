@@ -9,6 +9,7 @@ use App\Services\NFeService;
 use App\Services\PedidosService;
 use App\Utils\FormatationUtil;
 use App\Utils\NFeErroUtil;
+use App\Utils\TextoUtil;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use NFePHP\Common\Exception\ValidatorException;
@@ -139,7 +140,7 @@ trait EnviaNFe
                 'status' => 'warning',
                 'type' => 'validator_exception',
                 'title' => null,
-                'message' => $e->getMessage(),
+                'message' => TextoUtil::utf8Seguro($e->getMessage()),
             ];
         } catch (Exception $e) {
             if (DB::transactionLevel() > 0) {
@@ -150,7 +151,7 @@ trait EnviaNFe
                 'status' => 'error',
                 'type' => 'exception',
                 'title' => null,
-                'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage(),
+                'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.TextoUtil::utf8Seguro($e->getMessage()),
             ];
         }
     }
@@ -214,9 +215,9 @@ trait EnviaNFe
                 'message' => NFeErroUtil::formatar($this->extrairMensagemEventoNFe($nfe['data'])),
             ];
         } catch (ValidatorException $e) {
-            return (object) ['status' => 'warning', 'type' => 'validator_exception', 'title' => null, 'message' => $e->getMessage()];
+            return (object) ['status' => 'warning', 'type' => 'validator_exception', 'title' => null, 'message' => TextoUtil::utf8Seguro($e->getMessage())];
         } catch (Exception $e) {
-            return (object) ['status' => 'error', 'type' => 'exception', 'title' => null, 'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage()];
+            return (object) ['status' => 'error', 'type' => 'exception', 'title' => null, 'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.TextoUtil::utf8Seguro($e->getMessage())];
         }
     }
 
@@ -254,9 +255,9 @@ trait EnviaNFe
                 'message' => NFeErroUtil::formatar($this->extrairMensagemEventoNFe($result['data'])),
             ];
         } catch (ValidatorException $e) {
-            return (object) ['status' => 'warning', 'type' => 'validator_exception', 'title' => null, 'message' => $e->getMessage()];
+            return (object) ['status' => 'warning', 'type' => 'validator_exception', 'title' => null, 'message' => TextoUtil::utf8Seguro($e->getMessage())];
         } catch (Exception $e) {
-            return (object) ['status' => 'error', 'type' => 'exception', 'title' => null, 'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage()];
+            return (object) ['status' => 'error', 'type' => 'exception', 'title' => null, 'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.TextoUtil::utf8Seguro($e->getMessage())];
         }
     }
 
@@ -294,9 +295,9 @@ trait EnviaNFe
                 'message' => NFeErroUtil::formatar($result['data']),
             ];
         } catch (ValidatorException $e) {
-            return (object) ['status' => 'warning', 'type' => 'validator_exception', 'title' => null, 'message' => $e->getMessage()];
+            return (object) ['status' => 'warning', 'type' => 'validator_exception', 'title' => null, 'message' => TextoUtil::utf8Seguro($e->getMessage())];
         } catch (Exception $e) {
-            return (object) ['status' => 'error', 'type' => 'exception', 'title' => null, 'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.$e->getMessage()];
+            return (object) ['status' => 'error', 'type' => 'exception', 'title' => null, 'message' => 'Ocorreu um erro inesperado, tente novamente em alguns instantes!, Erro: '.TextoUtil::utf8Seguro($e->getMessage())];
         }
     }
 }

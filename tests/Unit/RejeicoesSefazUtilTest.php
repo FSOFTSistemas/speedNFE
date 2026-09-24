@@ -54,4 +54,16 @@ class RejeicoesSefazUtilTest extends TestCase
         $this->assertStringNotContainsString('Undefined property', $mensagem);
         $this->assertStringNotContainsString('<enderDest>', $mensagem);
     }
+
+    public function test_rejeicao_com_cedilha_e_til_corrompidos_fica_legivel(): void
+    {
+        $duplamenteCodificada = NFeErroUtil::formatar('Erro na autorização: [000] - RejeiÃ§Ã£o: Endereço do destinatÃ¡rio invÃ¡lido');
+        $iso88591 = NFeErroUtil::formatar("Erro na autoriza\xE7\xE3o: [000] - Rejei\xE7\xE3o: Endere\xE7o inv\xE1lido");
+
+        foreach ([$duplamenteCodificada, $iso88591] as $mensagem) {
+            $this->assertStringContainsString('Rejeição', $mensagem);
+            $this->assertStringNotContainsString('Ã', $mensagem);
+            $this->assertNotFalse(json_encode(['text' => $mensagem]));
+        }
+    }
 }

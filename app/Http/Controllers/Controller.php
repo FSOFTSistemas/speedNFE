@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Utils\TextoUtil;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -14,11 +15,11 @@ class Controller extends BaseController
     {
         $this->middleware(function($request, $next){
             if (session('success')) {
-                Alert::success(session('success'));
+                Alert::success(TextoUtil::utf8Seguro(session('success')));
             }
 
             if (session('error')) {
-                Alert::error(session('error'));
+                Alert::error(TextoUtil::utf8Seguro(session('error')));
             }
 
             // if(session('alert')) {
