@@ -51,6 +51,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::middleware('api.modulo:cadastros')->group(function () {
             Route::get('cfops', [ApiCfopController::class, 'index'])->name('cfops.index');
             Route::get('categorias', [ApiCategoriasController::class, 'index'])->name('categorias.index');
+            Route::post('categorias', [ApiCategoriasController::class, 'store'])->name('categorias.store');
             Route::get('fiscal/cst-ibs-cbs', [ApiFiscalController::class, 'cstIbsCbs'])->name('fiscal.cst-ibs-cbs');
             Route::get('fiscal/cclasstrib', [ApiFiscalController::class, 'cClassTrib'])->name('fiscal.cclasstrib');
             Route::get('fiscal/ncms', [ApiFiscalController::class, 'ncms'])->name('fiscal.ncms');
