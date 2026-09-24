@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class ApplyRamoAtividadeMenu
 {
     /**
-     * Ajusta o item de menu "Produtos" para "Motos" (com ícone de moto)
+     * Ajusta o item de menu "Produtos" para "Veículos" (com ícone de moto)
      * quando o ramo de atividade da empresa do usuário logado for "motos".
      *
      * @param  \Illuminate\Http\Request  $request
@@ -23,7 +23,7 @@ class ApplyRamoAtividadeMenu
 
             foreach ($menu as $index => $item) {
                 if (($item['url'] ?? null) === '/produto') {
-                    $menu[$index]['text'] = 'Motos';
+                    $menu[$index]['text'] = 'Veículos';
                     $menu[$index]['icon'] = 'fas fa-motorcycle';
                 }
             }

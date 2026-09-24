@@ -186,7 +186,7 @@
                                 <div class="col-md-4 mb-3">
                                     <label for="ramo_atividade" class="form-label">Ramo de Atividade</label>
                                     <select class="form-control" name="ramo_atividade" id="ramo_atividade" required>
-                                        <option value="motos" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'motos' ? 'selected' : '' }}>Venda de Motos</option>
+                                        <option value="motos" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'motos' ? 'selected' : '' }}>Venda de Veículos</option>
                                         <option value="geral" {{ old('ramo_atividade', $empresa->ramo_atividade) == 'geral' ? 'selected' : '' }}>Geral</option>
                                     </select>
                                 </div>

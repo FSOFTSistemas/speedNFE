@@ -680,6 +680,17 @@ body {
     color: var(--text-light);
 }
 
+.home-announcement a {
+    color: var(--info-color) !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+}
+
+.home-announcement a:hover {
+    color: var(--primary-color) !important;
+    text-decoration: underline !important;
+}
+
 .home-announcement strong.title {
     display: block;
     color: var(--text-dark);
