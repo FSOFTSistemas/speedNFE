@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Livewire\Concerns\EditaFiscalItensVenda;
 use App\Http\Livewire\Concerns\EditaItensVenda;
 use App\Models\Cliente;
 use App\Models\FormaPag;
@@ -9,6 +10,7 @@ use App\Models\ItemPedido;
 use App\Models\Pedido;
 use App\Models\Produto;
 use App\Services\EmpresasService;
+use App\Services\ItemFiscalService;
 use App\Services\PedidosService;
 use App\Services\UsersService;
 use Exception;
@@ -19,6 +21,7 @@ use Livewire\Component;
 class EditPedido extends Component
 {
     use EditaItensVenda;
+    use EditaFiscalItensVenda;
 
     public $pedido;
     public $barras = '';
@@ -77,6 +80,7 @@ class EditPedido extends Component
             $this->desconto = $pedido->desconto;
             $this->subtotal = $pedido->subtotal;
 
+            $itemFiscalService = new ItemFiscalService();
             foreach ($itens as $item) {
                 $produto = Produto::find($item->produto_id);
                 $this->vendaItens[] = [
@@ -88,6 +92,7 @@ class EditPedido extends Component
                     'total' => ($item->unitario * $item->qtde) - $item->desconto + $item->acrescimo,
                     'dfe_referenciado_chave' => $item->dfe_referenciado_chave ?: $pedido->ref_nfe,
                     'dfe_referenciado_n_item' => $item->dfe_referenciado_n_item ?: '',
+                    'fiscal' => $itemFiscalService->doItem($item),
                 ];
             }
         } catch (Exception $e) {

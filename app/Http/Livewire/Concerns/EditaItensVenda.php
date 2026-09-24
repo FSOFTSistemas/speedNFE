@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Concerns;
 
+use App\Services\ItemFiscalService;
+
 /**
  * Edição inline (quantidade e valor unitário) de itens já adicionados em $vendaItens.
  * Usado pelas telas de novo pedido e de edição de pedido.
@@ -56,6 +58,14 @@ trait EditaItensVenda
         if ($quantidade * $unitario < $desconto) {
             $this->addError('itemEdicao', 'O total do item não pode ficar menor que o desconto (R$ ' . number_format($desconto, 2, ',', '.') . ').');
             return;
+        }
+
+        if (!empty($this->vendaItens[$index]['fiscal'])) {
+            $this->vendaItens[$index]['fiscal'] = (new ItemFiscalService())->reajustarParaNovoValor(
+                $this->vendaItens[$index]['fiscal'],
+                (float) $this->vendaItens[$index]['quantidade'] * (float) $this->vendaItens[$index]['unitario'],
+                $quantidade * $unitario
+            );
         }
 
         $this->vendaItens[$index]['quantidade'] = $quantidade;

@@ -9,6 +9,7 @@ use App\Services\EmpresasService;
 use App\Services\EstoquesService;
 use App\Services\FaturaService;
 use App\Services\FluxoDeCaixaService;
+use App\Services\ItemFiscalService;
 use App\Services\ItemService;
 use App\Services\NFeService;
 use App\Services\PedidosService;
@@ -42,8 +43,11 @@ class PedidosController extends Controller
 
     private FluxoDeCaixaService $fluxoCaixaService;
 
-    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService)
+    private ItemFiscalService $itemFiscalService;
+
+    public function __construct(PedidosService $pedidoServices, EmpresasService $empresaServices, ItemService $itemServices, FaturaService $faturaServices, ProdutosService $produtoServices, EstoquesService $estoqueService, FluxoDeCaixaService $fluxoCaixaService, ItemFiscalService $itemFiscalService)
     {
+        $this->itemFiscalService = $itemFiscalService;
         $this->pedidoServices = $pedidoServices;
         $this->empresaServices = $empresaServices;
         $this->itemServices = $itemServices;
@@ -256,7 +260,7 @@ class PedidosController extends Controller
                 'cfop' => 'required|numeric',
                 'vendaItens' => 'required|array|min:1',
                 'info_complementares' => 'nullable',
-            ], $this->regrasReferenciasDosItens($usarReferenciaPorItem)), $this->mensagensReferenciasDosItens());
+            ], $this->regrasReferenciasDosItens($usarReferenciaPorItem), $this->itemFiscalService->regrasValidacao()), array_merge($this->mensagensReferenciasDosItens(), $this->itemFiscalService->mensagensValidacao()));
 
             $this->validarReferenciasDuplicadas($request, $usarReferenciaPorItem);
 
@@ -280,7 +284,8 @@ class PedidosController extends Controller
                         $item['desconto'],
                         $item['unitario'],
                         $usarReferenciaPorItem ? $item['dfe_referenciado_chave'] : null,
-                        $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null
+                        $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null,
+                        $item['fiscal'] ?? null
                     );
                 }
                 $this->faturaServices->update(
@@ -327,7 +332,7 @@ class PedidosController extends Controller
                 'vendaItens' => 'required|array|min:1',
                 'info_complementares' => 'nullable|max:255',
                 'aut_xml' => 'nullable|string|max:18',
-            ], $this->regrasReferenciasDosItens($usarReferenciaPorItem)), array_merge([
+            ], $this->regrasReferenciasDosItens($usarReferenciaPorItem), $this->itemFiscalService->regrasValidacao()), array_merge($this->itemFiscalService->mensagensValidacao(), [
                 'required' => 'O campo :attribute é obrigatório!',
                 'vendaItens.required' => 'Deve existir pelo menos um item no pedido!',
                 'numeric' => 'O campo :attribute deve ser um valor numérico!',
@@ -382,7 +387,8 @@ class PedidosController extends Controller
                         $item['desconto'],
                         $item['unitario'],
                         $usarReferenciaPorItem ? $item['dfe_referenciado_chave'] : null,
-                        $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null
+                        $usarReferenciaPorItem ? $item['dfe_referenciado_n_item'] : null,
+                        $item['fiscal'] ?? null
                     );
                 }
                 $this->faturaServices->create(

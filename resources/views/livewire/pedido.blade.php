@@ -177,7 +177,12 @@
                             @forelse ($vendaItens as $index => $item)
                                 <tr>
                                     <td>{{ $item['produto_id'] }}</td>
-                                    <td class="text-left">{{ $item['descricao'] }}</td>
+                                    <td class="text-left">
+                                        {{ $item['descricao'] }}
+                                        @if (!empty($item['fiscal']))
+                                            <span class="badge badge-info ml-1" title="CFOP {{ $item['fiscal']['cfop'] }} · CST/CSOSN {{ $item['fiscal']['cst_csosn'] }}">Fiscal editado</span>
+                                        @endif
+                                    </td>
                                     @if ($itemEditando !== null && (int) $itemEditando === $index)
                                         <td style="min-width: 110px;">
                                             <input type="number" step="any" min="0" class="form-control form-control-sm text-center" wire:model.defer="editQuantidade" wire:keydown.enter.prevent="salvarEdicaoItem" wire:keydown.escape="cancelarEdicaoItem">
@@ -238,10 +243,12 @@
                                         @else
                                             <span class="d-none d-md-inline-flex">
                                                 <a href="#" wire:click.prevent="editarItem({{ $index }})" title="Editar quantidade e valor" class="text-primary"><i class="fa fa-pen"></i></a>
+                                                <a href="#" wire:click.prevent="abrirFiscalItem({{ $index }})" title="Dados fiscais (CFOP, CST, ICMS, ST, PIS/COFINS)" class="text-info"><i class="fas fa-file-invoice-dollar"></i></a>
                                                 <a href="#" wire:click.prevent="removerProduto({{ $index }})" title="Remover Item" class="text-danger"><i class="fa fa-trash"></i></a>
                                             </span>
                                             <div class="mobile-actions d-md-none">
                                                 <a href="#" wire:click.prevent="editarItem({{ $index }})" class="btn btn-sm btn-outline-primary"><i class="fa fa-pen"></i> Editar</a>
+                                                <a href="#" wire:click.prevent="abrirFiscalItem({{ $index }})" class="btn btn-sm btn-outline-info"><i class="fas fa-file-invoice-dollar"></i> Fiscal</a>
                                                 <a href="#" wire:click.prevent="removerProduto({{ $index }})" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i> Remover</a>
                                             </div>
                                         @endif
@@ -287,6 +294,8 @@
                 </div>
             </div>
         </div>
+
+        @include('livewire.partials.modal-fiscal-item')
     </form>
 
     <div wire:ignore.self class="modal fade" id="modalClientes" tabindex="-1" role="dialog">
@@ -356,6 +365,14 @@
         });
         window.addEventListener('fecharModalProdutos', () => {
             $('#modalProdutos').modal('hide');
+        });
+
+        // Modal de dados fiscais do item
+        window.addEventListener('abrirModalFiscal', () => {
+            $('#modalFiscalItem').modal('show');
+        });
+        window.addEventListener('fecharModalFiscal', () => {
+            $('#modalFiscalItem').modal('hide');
         });
     });
 

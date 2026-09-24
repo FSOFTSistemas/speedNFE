@@ -16,10 +16,11 @@ class ItemService
         $desconto,
         $unitario,
         $dfeReferenciadoChave = null,
-        $dfeReferenciadoNItem = null
+        $dfeReferenciadoNItem = null,
+        ?array $fiscal = null
     )
     {
-        return ItemPedido::create([
+        return ItemPedido::create(array_merge([
             'pedido_id' => $pedido_id,
             'produto_id' => $prod->id,
             'qtde' => $qtde,
@@ -29,7 +30,7 @@ class ItemService
             'unitario' => $unitario,
             'dfe_referenciado_chave' => $dfeReferenciadoChave,
             'dfe_referenciado_n_item' => $dfeReferenciadoNItem,
-        ]);
+        ], (new ItemFiscalService())->paraColunas($fiscal)));
     }
 
     public function deleteItems($pedido_id)

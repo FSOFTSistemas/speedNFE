@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Livewire\Concerns\EditaFiscalItensVenda;
 use App\Http\Livewire\Concerns\EditaItensVenda;
 use App\Models\Cliente;
 use App\Models\FormaPag;
@@ -20,6 +21,7 @@ use Livewire\Component;
 class Pedido extends Component
 {
     use EditaItensVenda;
+    use EditaFiscalItensVenda;
 
     public $barras = '';
     public $empresaL = '';
@@ -129,6 +131,7 @@ class Pedido extends Component
                         'total' => $total,
                         'dfe_referenciado_chave' => $item['dfe_referenciado_chave'] ?? '',
                         'dfe_referenciado_n_item' => $item['dfe_referenciado_n_item'] ?? '',
+                        'fiscal' => $item['fiscal'] ?? null,
                     ];
                     $subtotal += $total;
                 }

@@ -17,6 +17,28 @@ class ItemPedido extends Model
         'unitario',
         'dfe_referenciado_chave',
         'dfe_referenciado_n_item',
+        'fiscal_personalizado',
+        'cfop_item',
+        'cst_csosn',
+        'icms_base',
+        'icms_aliquota',
+        'icms_valor',
+        'icms_st_mva',
+        'icms_st_base',
+        'icms_st_aliquota',
+        'icms_st_valor',
+        'cst_pis',
+        'pis_base',
+        'pis_aliquota',
+        'pis_valor',
+        'cst_cofins',
+        'cofins_base',
+        'cofins_aliquota',
+        'cofins_valor',
+    ];
+
+    protected $casts = [
+        'fiscal_personalizado' => 'boolean',
     ];
 
     public function produto(){

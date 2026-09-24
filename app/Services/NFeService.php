@@ -233,6 +233,8 @@ class NFeService
         $totvIPI = 0;
         $totvPIS = 0;
         $totvCOFINS = 0;
+        $totvBCST = 0;
+        $totvST = 0;
 
         // ITENS DA NFE
         foreach ($venda->itens as $key => $i) {
@@ -250,7 +252,8 @@ class NFeService
                 $stdProd->cClassTrib = $i->produto->cClassTrib;
             }
 
-            $stdProd->CFOP = $venda->cfopNota->cfop;
+            // CFOP do item (dados fiscais personalizados no pedido) ou, por padrão, o do pedido
+            $stdProd->CFOP = ($i->fiscal_personalizado && $i->cfop_item) ? $i->cfop_item : $venda->cfopNota->cfop;
             $stdProd->uCom = $i->produto->un;
             $stdProd->qCom = $i->qtde;
             $stdProd->vUnCom = FormatationUtil::format($i->unitario);
@@ -317,51 +320,59 @@ class NFeService
             $nfe->tagimposto($stdImposto);
 
             // --- AJUSTE DINÂMICO DE ICMS POR CRT ---
-            $stdICMS = new \stdClass;
-            $stdICMS->item = $key + 1;
-            $stdICMS->orig = 0;
-
-            if (in_array($emitente->crt, [1, 4])) {
-                $stdICMS->CSOSN = $i->produto->cst_csosn;
-                if (in_array($stdICMS->CSOSN, ['101', '201', '900'])) {
-                    $stdICMS->pCredSN = FormatationUtil::format($i->produto->icms);
-                    $stdICMS->vCredICMSSN = FormatationUtil::format($stdProd->vProd * ($stdICMS->pCredSN / 100));
-                }
-                $nfe->tagICMSSN($stdICMS);
+            if ($i->fiscal_personalizado) {
+                $totaisIcms = $this->tagIcmsPersonalizado($nfe, $i, $key + 1, (float) $stdProd->vProd, $emitente->crt);
+                $totvBC += $totaisIcms['vBC'];
+                $totvICMS += $totaisIcms['vICMS'];
+                $totvBCST += $totaisIcms['vBCST'];
+                $totvST += $totaisIcms['vST'];
             } else {
+                $stdICMS = new \stdClass;
+                $stdICMS->item = $key + 1;
+                $stdICMS->orig = 0;
 
-                $stdICMS->CST = str_pad($i->produto->cst_csosn, 2, '0', STR_PAD_LEFT);
-
-                if (in_array($stdICMS->CST, ['00', '10', '20', '70', '90'])) {
-
-                    $stdICMS->modBC = 3;
-                    $stdICMS->vBC = FormatationUtil::format($stdProd->vProd);
-                    $stdICMS->pICMS = FormatationUtil::format($i->produto->icms);
-                    $stdICMS->vICMS = FormatationUtil::format($stdProd->vProd * ($i->produto->icms / 100));
-
-                    // >>> ACUMULA TOTAIS <<<
-                    $totvBC += (float) $stdICMS->vBC;
-                    $totvICMS += (float) $stdICMS->vICMS;
+                if (in_array($emitente->crt, [1, 4])) {
+                    $stdICMS->CSOSN = $i->produto->cst_csosn;
+                    if (in_array($stdICMS->CSOSN, ['101', '201', '900'])) {
+                        $stdICMS->pCredSN = FormatationUtil::format($i->produto->icms);
+                        $stdICMS->vCredICMSSN = FormatationUtil::format($stdProd->vProd * ($stdICMS->pCredSN / 100));
+                    }
+                    $nfe->tagICMSSN($stdICMS);
                 } else {
 
-                    // CST sem destaque
-                    unset(
-                        $stdICMS->modBC,
-                        $stdICMS->vBC,
-                        $stdICMS->pICMS,
-                        $stdICMS->vICMS
-                    );
-                }
+                    $stdICMS->CST = str_pad($i->produto->cst_csosn, 2, '0', STR_PAD_LEFT);
 
-                // chamada única
-                $icmsTag = $nfe->tagICMS($stdICMS);
+                    if (in_array($stdICMS->CST, ['00', '10', '20', '70', '90'])) {
 
-                if ($icmsTag === null) {
-                    throw new \Exception("Falha ao gerar ICMS. CST={$stdICMS->CST}");
-                }
+                        $stdICMS->modBC = 3;
+                        $stdICMS->vBC = FormatationUtil::format($stdProd->vProd);
+                        $stdICMS->pICMS = FormatationUtil::format($i->produto->icms);
+                        $stdICMS->vICMS = FormatationUtil::format($stdProd->vProd * ($i->produto->icms / 100));
 
-                if ($icmsTag === null) {
-                    throw new \Exception('Erro ao gerar tagICMS para o item '.($key + 1));
+                        // >>> ACUMULA TOTAIS <<<
+                        $totvBC += (float) $stdICMS->vBC;
+                        $totvICMS += (float) $stdICMS->vICMS;
+                    } else {
+
+                        // CST sem destaque
+                        unset(
+                            $stdICMS->modBC,
+                            $stdICMS->vBC,
+                            $stdICMS->pICMS,
+                            $stdICMS->vICMS
+                        );
+                    }
+
+                    // chamada única
+                    $icmsTag = $nfe->tagICMS($stdICMS);
+
+                    if ($icmsTag === null) {
+                        throw new \Exception("Falha ao gerar ICMS. CST={$stdICMS->CST}");
+                    }
+
+                    if ($icmsTag === null) {
+                        throw new \Exception('Erro ao gerar tagICMS para o item '.($key + 1));
+                    }
                 }
             }
 
@@ -393,20 +404,34 @@ class NFeService
             // PIS
             $stdPIS = new \stdClass;
             $stdPIS->item = $key + 1;
-            $stdPIS->CST = $i->produto->cst_pis;
-            $stdPIS->vBC = FormatationUtil::format($i->produto->pis) > 0 ? $stdProd->vProd : 0.00;
-            $stdPIS->pPIS = FormatationUtil::format($i->produto->pis);
-            $stdPIS->vPIS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->pis / 100));
+            if ($i->fiscal_personalizado) {
+                $stdPIS->CST = $i->cst_pis ?: $i->produto->cst_pis;
+                $stdPIS->vBC = FormatationUtil::format($i->pis_base);
+                $stdPIS->pPIS = FormatationUtil::format($i->pis_aliquota);
+                $stdPIS->vPIS = FormatationUtil::format($i->pis_valor);
+            } else {
+                $stdPIS->CST = $i->produto->cst_pis;
+                $stdPIS->vBC = FormatationUtil::format($i->produto->pis) > 0 ? $stdProd->vProd : 0.00;
+                $stdPIS->pPIS = FormatationUtil::format($i->produto->pis);
+                $stdPIS->vPIS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->pis / 100));
+            }
             $totvPIS += (float) $stdPIS->vPIS;
             $nfe->tagPIS($stdPIS);
 
             // COFINS
             $stdCOFINS = new \stdClass;
             $stdCOFINS->item = $key + 1;
-            $stdCOFINS->CST = $i->produto->cst_cofins;
-            $stdCOFINS->vBC = FormatationUtil::format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
-            $stdCOFINS->pCOFINS = FormatationUtil::format($i->produto->cofins);
-            $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->cofins / 100));
+            if ($i->fiscal_personalizado) {
+                $stdCOFINS->CST = $i->cst_cofins ?: $i->produto->cst_cofins;
+                $stdCOFINS->vBC = FormatationUtil::format($i->cofins_base);
+                $stdCOFINS->pCOFINS = FormatationUtil::format($i->cofins_aliquota);
+                $stdCOFINS->vCOFINS = FormatationUtil::format($i->cofins_valor);
+            } else {
+                $stdCOFINS->CST = $i->produto->cst_cofins;
+                $stdCOFINS->vBC = FormatationUtil::format($i->produto->cofins) > 0 ? $stdProd->vProd : 0.00;
+                $stdCOFINS->pCOFINS = FormatationUtil::format($i->produto->cofins);
+                $stdCOFINS->vCOFINS = FormatationUtil::format(($stdProd->vProd) * ($i->produto->cofins / 100));
+            }
             $totvCOFINS += (float) $stdCOFINS->vCOFINS;
             $nfe->tagCOFINS($stdCOFINS);
 
@@ -460,8 +485,8 @@ class NFeService
         $stdICMSTot->vBC = FormatationUtil::format($totvBC);
         $stdICMSTot->vICMS = FormatationUtil::format($totvICMS);
         $stdICMSTot->vICMSDeson = 0.00;
-        $stdICMSTot->vBCST = 0.00;
-        $stdICMSTot->vST = 0.00;
+        $stdICMSTot->vBCST = FormatationUtil::format($totvBCST);
+        $stdICMSTot->vST = FormatationUtil::format($totvST);
         $stdICMSTot->vFrete = 0.00;
         $stdICMSTot->vSeg = 0.00;
         $stdICMSTot->vDesc = $venda->desconto > 0 ? FormatationUtil::format($venda->desconto) : 0.00;
@@ -471,20 +496,22 @@ class NFeService
         $stdICMSTot->vCOFINS = FormatationUtil::format($totvCOFINS);
         $stdICMSTot->vOutro = 0.00;
         $stdICMSTot->vTotTrib = 0.00;
-        $stdICMSTot->vNF = FormatationUtil::format($venda->total - $venda->desconto);
+        // ICMS-ST (itens com dados fiscais personalizados) é somado ao total da nota
+        $stdICMSTot->vNF = FormatationUtil::format($venda->total - $venda->desconto + $totvST);
         $nfe->tagICMSTot($stdICMSTot);
 
         // DUPLICATAS
         $stdFat = new \stdClass;
         $stdFat->nFat = (int) $numeroNFe;
-        $stdFat->vOrig = FormatationUtil::format($venda->subtotal);
+        $stdFat->vOrig = FormatationUtil::format($venda->subtotal + $totvST);
         $stdFat->vDesc = FormatationUtil::format($venda->desconto);
-        $stdFat->vLiq = FormatationUtil::format($venda->subtotal - $venda->desconto);
+        $stdFat->vLiq = FormatationUtil::format($venda->subtotal + $totvST - $venda->desconto);
         if ($venda->tipo_pagamento != '90') {
             $nfe->tagfat($stdFat);
         }
 
-        foreach ($venda->fatura as $fat) {
+        $ultimaFatura = $venda->fatura->keys()->last();
+        foreach ($venda->fatura as $indiceFatura => $fat) {
             $stdPag = new \stdClass;
             $nfe->tagpag($stdPag);
             $stdDetPag = new \stdClass;
@@ -507,6 +534,10 @@ class NFeService
             ];
             $stdDetPag->tPag = $mapPagamento[$fat->forma_pag->descricao] ?? '99';
             $stdDetPag->vPag = $fat->forma_pag->descricao != 'Sem Pagamento' ? FormatationUtil::format($fat->valor) : 0;
+            // O ICMS-ST entra no total da nota, então é cobrado junto com o último pagamento
+            if ($totvST > 0 && $indiceFatura === $ultimaFatura && $fat->forma_pag->descricao != 'Sem Pagamento') {
+                $stdDetPag->vPag = FormatationUtil::format($fat->valor + $totvST);
+            }
             $stdDetPag->indPag = 1;
             $stdDetPag->vTroco = 0;
             if (in_array($fat->forma_pag->descricao, ['Cartão de Crédito', 'Cartão de Débito'])) {
@@ -557,6 +588,88 @@ class NFeService
 
             return ['erros_xml' => $nfe->getErrors()];
         }
+    }
+
+    /**
+     * Monta a tag de ICMS de um item com dados fiscais personalizados no pedido (CST/CSOSN,
+     * base, alíquota e valor de ICMS e ICMS-ST informados pelo usuário).
+     *
+     * @return array{vBC: float, vICMS: float, vBCST: float, vST: float} valores para o ICMSTot
+     */
+    private function tagIcmsPersonalizado(Make $nfe, $item, int $nItem, float $vProd, $crt): array
+    {
+        $totais = ['vBC' => 0.0, 'vICMS' => 0.0, 'vBCST' => 0.0, 'vST' => 0.0];
+
+        $std = new \stdClass;
+        $std->item = $nItem;
+        $std->orig = 0;
+
+        $temSt = (float) $item->icms_st_base > 0;
+        $preencherSt = function () use ($std, $item, &$totais) {
+            $std->modBCST = 4; // margem de valor agregado (%)
+            if ((float) $item->icms_st_mva > 0) {
+                $std->pMVAST = FormatationUtil::format($item->icms_st_mva);
+            }
+            $std->vBCST = FormatationUtil::format($item->icms_st_base);
+            $std->pICMSST = FormatationUtil::format($item->icms_st_aliquota);
+            $std->vICMSST = FormatationUtil::format($item->icms_st_valor);
+            $totais['vBCST'] = (float) $std->vBCST;
+            $totais['vST'] = (float) $std->vICMSST;
+        };
+
+        if (ItemFiscalService::simplesNacional($crt)) {
+            $std->CSOSN = $item->cst_csosn ?: $item->produto->cst_csosn;
+
+            // 101/201: base, alíquota e valor informados representam o crédito de ICMS do Simples
+            if (in_array($std->CSOSN, ['101', '201'], true) && (float) $item->icms_aliquota > 0) {
+                $std->pCredSN = FormatationUtil::format($item->icms_aliquota);
+                $std->vCredICMSSN = FormatationUtil::format($item->icms_valor);
+            }
+
+            if ($std->CSOSN === '900' && (float) $item->icms_base > 0) {
+                $std->modBC = 3;
+                $std->vBC = FormatationUtil::format($item->icms_base);
+                $std->pICMS = FormatationUtil::format($item->icms_aliquota);
+                $std->vICMS = FormatationUtil::format($item->icms_valor);
+                $totais['vBC'] = (float) $std->vBC;
+                $totais['vICMS'] = (float) $std->vICMS;
+            }
+
+            if (in_array($std->CSOSN, ['201', '202', '203'], true) || ($std->CSOSN === '900' && $temSt)) {
+                $preencherSt();
+            }
+
+            $nfe->tagICMSSN($std);
+
+            return $totais;
+        }
+
+        $std->CST = str_pad($item->cst_csosn ?: $item->produto->cst_csosn, 2, '0', STR_PAD_LEFT);
+
+        if (in_array($std->CST, ItemFiscalService::CST_ICMS_PROPRIO, true) && ($std->CST !== '90' || (float) $item->icms_base > 0)) {
+            $std->modBC = 3;
+            $std->vBC = FormatationUtil::format($item->icms_base);
+            $std->pICMS = FormatationUtil::format($item->icms_aliquota);
+            $std->vICMS = FormatationUtil::format($item->icms_valor);
+
+            if (in_array($std->CST, ['20', '70'], true)) {
+                $reducao = $vProd > 0 ? max(0, 1 - ((float) $item->icms_base / $vProd)) * 100 : 0;
+                $std->pRedBC = number_format($reducao, 4, '.', '');
+            }
+
+            $totais['vBC'] = (float) $std->vBC;
+            $totais['vICMS'] = (float) $std->vICMS;
+        }
+
+        if (in_array($std->CST, ItemFiscalService::CST_ICMS_ST, true) && ($std->CST !== '90' || $temSt)) {
+            $preencherSt();
+        }
+
+        if ($nfe->tagICMS($std) === null) {
+            throw new \Exception('Erro ao gerar tagICMS para o item '.$nItem." (CST {$std->CST})");
+        }
+
+        return $totais;
     }
 
     public function sign($xml)
