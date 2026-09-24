@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Estoque;
+use App\Models\Produto;
 
 class EstoquesService{
 
@@ -30,7 +31,10 @@ class EstoquesService{
 
     public function reverseStock($prodId, $amount)
     {
-        $stock = Estoque::whereProdutoId($prodId)->first();
+        // Produtos cadastrados pela API antes de ela criar o estoque não têm o registro.
+        $stock = Estoque::whereProdutoId($prodId)->first()
+            ?? $this->create(0, Produto::find($prodId)?->empresa_id, $prodId);
+
         return $stock->update([
             'estoque_atual' => $stock->estoque_atual + $amount,
             'estoque_anterior' => $stock->estoque_anterior == $stock->entradas ? 0 : $stock->estoque_anterior + $amount,
@@ -40,7 +44,10 @@ class EstoquesService{
 
     public function out($prodId, $amount)
     {
-        $stock = Estoque::whereProdutoId($prodId)->first();
+        // Produtos cadastrados pela API antes de ela criar o estoque não têm o registro.
+        $stock = Estoque::whereProdutoId($prodId)->first()
+            ?? $this->create(0, Produto::find($prodId)?->empresa_id, $prodId);
+
         return $stock->update([
             'estoque_anterior' => $stock->estoque_atual,
             'estoque_atual' => $stock->estoque_atual - $amount,

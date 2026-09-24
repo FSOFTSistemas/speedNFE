@@ -53,7 +53,14 @@ class ProdutosService
 
     public function criarApi(array $data, $user = null): Produto
     {
-        return Produto::create($this->mapearPayloadApi($data, $user));
+        return DB::transaction(function () use ($data, $user) {
+            $produto = Produto::create($this->mapearPayloadApi($data, $user));
+
+            // Igual ao cadastro web: a venda (NFC-e) baixa estoque, então todo produto precisa do registro.
+            app(EstoquesService::class)->create($data['estoque'] ?? null, $produto->empresa_id, $produto->id);
+
+            return $produto;
+        });
     }
 
     public function atualizarApi(Produto $produto, array $data, $user = null): Produto
@@ -205,6 +212,19 @@ class ProdutosService
             'pIS_imposto' => $data['pIS_imposto'] ?? null,
             'cst_ibs_cbs' => $data['cst_ibs_cbs'] ?? null,
         ];
+
+        // Mesmo comportamento do cadastro web (ProdutosController::store): cst recebe o código de cst_csosn
+        // e os campos da reforma tributária têm padrão quando não informados.
+        if (empty($mapped['cst']) && ! empty($mapped['cst_csosn'])) {
+            $mapped['cst'] = $mapped['cst_csosn'];
+        }
+
+        if (! $isUpdate) {
+            $mapped['cClassTrib'] ??= '000001';
+            $mapped['pIBS'] ??= 0.1;
+            $mapped['pCBS'] ??= 0.9;
+            $mapped['cst_ibs_cbs'] ??= '000';
+        }
 
         if (! $isUpdate && $user && empty($mapped['empresa_id'])) {
             $mapped['empresa_id'] = $user->empresa_id;

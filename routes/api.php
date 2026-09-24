@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController as ApiAuthController;
+use App\Http\Controllers\Api\V1\CategoriasController as ApiCategoriasController;
 use App\Http\Controllers\Api\V1\CfopController as ApiCfopController;
 use App\Http\Controllers\Api\V1\ClientesController as ApiClientesController;
 use App\Http\Controllers\Api\V1\DashboardController as ApiDashboardController;
 use App\Http\Controllers\Api\V1\EntradaController as ApiEntradaController;
 use App\Http\Controllers\Api\V1\EstoqueController as ApiEstoqueController;
+use App\Http\Controllers\Api\V1\FiscalController as ApiFiscalController;
 use App\Http\Controllers\Api\V1\FluxoDeCaixaController as ApiFluxoDeCaixaController;
 use App\Http\Controllers\Api\V1\FormaPagController as ApiFormaPagController;
 use App\Http\Controllers\Api\V1\FornecedoresController as ApiFornecedoresController;
@@ -48,6 +50,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::middleware('api.modulo:cadastros')->group(function () {
             Route::get('cfops', [ApiCfopController::class, 'index'])->name('cfops.index');
+            Route::get('categorias', [ApiCategoriasController::class, 'index'])->name('categorias.index');
+            Route::get('fiscal/cst-ibs-cbs', [ApiFiscalController::class, 'cstIbsCbs'])->name('fiscal.cst-ibs-cbs');
+            Route::get('fiscal/cclasstrib', [ApiFiscalController::class, 'cClassTrib'])->name('fiscal.cclasstrib');
+            Route::get('fiscal/ncms', [ApiFiscalController::class, 'ncms'])->name('fiscal.ncms');
 
             Route::get('clientes/consultar-cnpj/{cnpj}', [ApiClientesController::class, 'consultarCnpj'])
                 ->name('clientes.consultar-cnpj');

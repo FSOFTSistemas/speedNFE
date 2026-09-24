@@ -34,23 +34,62 @@ class StoreProdutoRequest extends FormRequest
         $this->merge($data);
     }
 
+    /** O projeto não tem tradução pt-br do validator; mensagens do cadastro de produto em português. */
+    public function messages(): array
+    {
+        return [
+            'required' => 'O campo :attribute é obrigatório.',
+            'required_without' => 'O campo :attribute é obrigatório.',
+            'numeric' => 'O campo :attribute deve ser um número.',
+            'min' => 'O campo :attribute não pode ser negativo.',
+            'max' => 'O campo :attribute deve ter no máximo :max caracteres.',
+            'exists' => 'O valor informado em :attribute não existe.',
+            'unique' => 'Já existe um produto com este :attribute.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'categoria_id' => 'categoria',
+            'categoria' => 'categoria',
+            'produto' => 'nome do produto',
+            'descricao' => 'nome do produto',
+            'codigo' => 'código de barras',
+            'codigo_barras' => 'código de barras',
+            'un' => 'unidade',
+            'precocusto' => 'preço de custo',
+            'precovenda' => 'preço de venda',
+            'ncm' => 'NCM',
+            'cfopinterno' => 'CFOP interno',
+            'cfopexterno' => 'CFOP externo',
+            'cst_csosn' => 'CST/CSOSN',
+            'cst_pis' => 'CST PIS',
+            'cst_cofins' => 'CST COFINS',
+            'icms' => 'ICMS',
+            'pis' => 'PIS',
+            'cofins' => 'COFINS',
+            'ipi' => 'IPI',
+        ];
+    }
+
     protected function produtoRules(?int $produtoId = null): array
     {
         return [
             'empresa_id' => ['nullable', 'integer'],
             'empresa' => ['nullable', 'integer'],
-            'categoria_id' => ['nullable', 'integer'],
-            'categoria' => ['nullable', 'integer'],
-            'codigo' => ['nullable', 'string', 'max:255'],
+            'categoria_id' => ['required_without:categoria', 'nullable', 'integer', Rule::exists('categorias', 'id')],
+            'categoria' => ['required_without:categoria_id', 'nullable', 'integer', Rule::exists('categorias', 'id')],
+            'codigo' => ['required', 'string', 'max:255'],
             'codigo_barras' => ['nullable', 'string', 'max:255', Rule::unique('produtos', 'codigo_barras')->ignore($produtoId)],
             'referencia' => ['nullable', 'string', 'max:255'],
             'produto' => ['required_without:descricao', 'string', 'max:255'],
             'descricao' => ['required_without:produto', 'string', 'max:255'],
-            'un' => ['nullable', 'string', 'max:20'],
+            'un' => ['required_without:unidade', 'nullable', 'string', 'max:20'],
             'unidade' => ['nullable', 'string', 'max:20'],
-            'precocusto' => ['nullable', 'numeric', 'min:0'],
+            'precocusto' => ['required_without:preco_custo', 'nullable', 'numeric', 'min:0'],
             'preco_custo' => ['nullable', 'numeric', 'min:0'],
-            'precovenda' => ['nullable', 'numeric', 'min:0'],
+            'precovenda' => ['required_without:preco_venda', 'nullable', 'numeric', 'min:0'],
             'preco_venda' => ['nullable', 'numeric', 'min:0'],
             'estoque' => ['nullable', 'numeric'],
             'estoque_minimo' => ['nullable', 'numeric'],
@@ -59,23 +98,23 @@ class StoreProdutoRequest extends FormRequest
             'ncm' => ['required', 'string', 'max:20'],
             'cest' => ['nullable', 'string', 'max:20'],
             'tpProd' => ['nullable', 'string', 'max:20'],
-            'cfopinterno' => ['nullable', 'string', 'max:10'],
-            'cfopexterno' => ['nullable', 'string', 'max:10'],
+            'cfopinterno' => ['required_without:cfop', 'nullable', 'string', 'max:10'],
+            'cfopexterno' => ['required', 'string', 'max:10'],
             'cfop' => ['nullable', 'string', 'max:10'],
             'cst' => ['nullable', 'string', 'max:10'],
-            'cst_csosn' => ['nullable', 'string', 'max:10'],
+            'cst_csosn' => ['required_without:csosn', 'nullable', 'string', 'max:10'],
             'csosn' => ['nullable', 'string', 'max:10'],
             'origem' => ['nullable', 'string', 'max:10'],
-            'icms' => ['nullable', 'numeric'],
+            'icms' => ['required_without:aliquota_icms', 'nullable', 'numeric'],
             'aliquota_icms' => ['nullable', 'numeric'],
-            'pis' => ['nullable', 'numeric'],
+            'pis' => ['required_without:aliquota_pis', 'nullable', 'numeric'],
             'aliquota_pis' => ['nullable', 'numeric'],
-            'cofins' => ['nullable', 'numeric'],
+            'cofins' => ['required_without:aliquota_cofins', 'nullable', 'numeric'],
             'aliquota_cofins' => ['nullable', 'numeric'],
-            'ipi' => ['nullable', 'numeric'],
+            'ipi' => ['required_without:aliquota_ipi', 'nullable', 'numeric'],
             'aliquota_ipi' => ['nullable', 'numeric'],
-            'cst_pis' => ['nullable', 'string', 'max:10'],
-            'cst_cofins' => ['nullable', 'string', 'max:10'],
+            'cst_pis' => ['required', 'string', 'max:10'],
+            'cst_cofins' => ['required', 'string', 'max:10'],
             'cst_ipi' => ['nullable', 'string', 'max:10'],
             'cst_ibs_cbs' => ['nullable', 'string', 'max:10'],
             'cClassTrib' => ['nullable', 'string', 'max:20'],
