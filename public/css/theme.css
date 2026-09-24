@@ -681,7 +681,7 @@ body {
 }
 
 .home-announcement a {
-    color: var(--info-color) !important;
+    color: #000 !important;
     text-decoration: none !important;
     white-space: nowrap;
 }
