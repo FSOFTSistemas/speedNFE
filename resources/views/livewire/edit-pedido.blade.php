@@ -167,8 +167,20 @@
                                             <tr>
                                                 <td>#{{ $item['produto_id'] }}</td>
                                                 <td>{{ $item['descricao'] }}</td>
-                                                <td>{{ $item['quantidade'] }}</td>
-                                                <td>R$ {{ number_format($item['unitario'], 2) }}</td>
+                                                @if ($itemEditando !== null && (int) $itemEditando === $index)
+                                                    <td style="min-width: 110px;">
+                                                        <input type="number" step="any" min="0" class="form-control form-control-sm text-center" wire:model.defer="editQuantidade" wire:keydown.enter.prevent="salvarEdicaoItem" wire:keydown.escape="cancelarEdicaoItem">
+                                                    </td>
+                                                    <td style="min-width: 130px;">
+                                                        <input type="number" step="0.01" min="0" class="form-control form-control-sm text-center" wire:model.defer="editUnitario" wire:keydown.enter.prevent="salvarEdicaoItem" wire:keydown.escape="cancelarEdicaoItem">
+                                                        @error('itemEdicao')
+                                                            <small class="text-danger d-block text-left">{{ $message }}</small>
+                                                        @enderror
+                                                    </td>
+                                                @else
+                                                    <td>{{ $item['quantidade'] }}</td>
+                                                    <td>R$ {{ number_format($item['unitario'], 2) }}</td>
+                                                @endif
                                                 <td>R$ {{ number_format($item['desconto'], 2) }}</td>
                                                 <td>R$ {{ number_format($item['total'], 2) }}</td>
                                                 @if ((int) $pedido->finNF === 4 && $referenciaItemHabilitada)
@@ -202,9 +214,15 @@
                                                         @enderror
                                                     </td>
                                                 @endif
-                                                <td><a wire:click.prevent="removerProduto({{ $index }})"
-                                                        title="Remover Item" class="text-danger"><i
-                                                            class="fa fa-trash"></i></a></td>
+                                                <td class="text-nowrap">
+                                                    @if ($itemEditando !== null && (int) $itemEditando === $index)
+                                                        <a href="#" wire:click.prevent="salvarEdicaoItem" title="Salvar alteração" class="text-success mr-2"><i class="fa fa-check"></i></a>
+                                                        <a href="#" wire:click.prevent="cancelarEdicaoItem" title="Cancelar" class="text-secondary"><i class="fa fa-times"></i></a>
+                                                    @else
+                                                        <a href="#" wire:click.prevent="editarItem({{ $index }})" title="Editar quantidade e valor" class="text-primary mr-2"><i class="fa fa-pen"></i></a>
+                                                        <a href="#" wire:click.prevent="removerProduto({{ $index }})" title="Remover Item" class="text-danger"><i class="fa fa-trash"></i></a>
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -265,7 +283,7 @@
 
         <div class="row" style="margin-bottom: 2%; text-align: center;">
             <div class="col">
-                <button type="submit" style="width: 25%;" class="btn btn-success">Salvar</a>
+                <button type="submit" style="width: 25%;" class="btn btn-success" @if ($itemEditando !== null) disabled title="Conclua a edição do item antes de salvar" @endif>Salvar</a>
             </div>
         </div>
 

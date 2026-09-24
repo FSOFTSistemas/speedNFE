@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Livewire\Concerns\EditaItensVenda;
 use App\Models\Cliente;
 use App\Models\FormaPag;
 use App\Models\ItemPedido;
@@ -17,6 +18,8 @@ use Livewire\Component;
 
 class EditPedido extends Component
 {
+    use EditaItensVenda;
+
     public $pedido;
     public $barras = '';
     public $empresa = '';
@@ -219,6 +222,7 @@ class EditPedido extends Component
     public function removerProduto($index)
     {
         try {
+            $this->cancelarEdicaoItem();
             unset($this->vendaItens[$index]);
             $this->vendaItens = array_values($this->vendaItens);
             $subtotal = 0;
