@@ -110,19 +110,27 @@ class ClientesController extends ApiController
             $estado = $estabelecimento['estado'] ?? [];
             $inscricoes = $estabelecimento['inscricoes_estaduais'] ?? [];
 
+            // Prefere a IE ativa do mesmo estado do estabelecimento; a lista pode trazer IEs de outras UFs.
+            $inscricao = collect($inscricoes)->first(fn ($ie) => ($ie['ativo'] ?? false) && ($ie['estado']['sigla'] ?? null) === ($estado['sigla'] ?? null))
+                ?? $inscricoes[0] ?? null;
+
+            // O cnpj.ws devolve o DDD separado do número.
+            $telefone = preg_replace('/\D/', '', ($estabelecimento['ddd1'] ?? '').($estabelecimento['telefone1'] ?? ''));
+
             return $this->success([
                 'nome' => $dados['razao_social'] ?? null,
                 'apelido' => $estabelecimento['nome_fantasia'] ?? null,
                 'cpf_cnpj' => $cnpj,
-                'rg_ie' => $inscricoes[0]['inscricao_estadual'] ?? null,
+                'rg_ie' => $inscricao['inscricao_estadual'] ?? null,
                 'rua' => $estabelecimento['logradouro'] ?? null,
                 'numero' => $estabelecimento['numero'] ?? null,
                 'bairro' => $estabelecimento['bairro'] ?? null,
                 'cidade' => $cidade['nome'] ?? null,
                 'uf' => $estado['sigla'] ?? null,
+                'ibge' => isset($cidade['ibge_id']) ? (string) $cidade['ibge_id'] : null,
                 'cep' => isset($estabelecimento['cep']) ? preg_replace('/\D/', '', $estabelecimento['cep']) : null,
                 'complemento' => $estabelecimento['complemento'] ?? null,
-                'telefone' => $estabelecimento['telefone1'] ?? null,
+                'telefone' => $telefone !== '' ? $telefone : null,
             ]);
         } catch (\Throwable $e) {
             return response()->json([
