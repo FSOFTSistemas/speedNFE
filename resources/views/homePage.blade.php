@@ -425,6 +425,7 @@
             </div>
             <div class="footer-bottom">
                 <span>&copy; {{ date('Y') }} FSOFT SISTEMAS. Todos os direitos reservados.</span>
+                <a href="{{ route('privacidade') }}">Política de privacidade</a>
                 <a href="https://f-softsistemas.com.br/" target="_blank" rel="noopener">f-softsistemas.com.br</a>
             </div>
         </div>

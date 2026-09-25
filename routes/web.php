@@ -53,6 +53,9 @@ Route::get('/', function () {
     return view('homePage');
 });
 
+// Política de privacidade (pública — URL exigida pelas lojas de apps)
+Route::view('/privacidade', 'privacidade')->name('privacidade');
+
 Route::get('/api/documentation', function () {
     return response()->file(public_path('docs/swagger.html'));
 });
