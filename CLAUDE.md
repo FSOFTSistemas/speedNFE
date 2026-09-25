@@ -160,6 +160,9 @@ Operational steps that don't belong in this file live under `docs/`: `deploy-nfs
 step-by-step NFS-e Nacional production rollout (migration order, cert import, domain import, diagnostics,
 controlled emission/cancellation test, rollback plan); `deploy-mdfe-xml-banco.md` covers moving stored MDFe
 XML into the database. Consult these before touching NFS-e or MDFe deploy/migration behavior.
+`cadastro-autonomo-clientes.md` is the (not yet started) plan for customer self-signup — read it before
+touching `/register`, plans, trial or subscription checks. The old public `/register` route (which trusted
+`cargo` from the request) was removed; `tests/Feature/RegistroPublicoDesativadoTest.php` keeps it out.
 
 ## Coding conventions
 

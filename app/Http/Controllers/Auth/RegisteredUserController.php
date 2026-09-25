@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'cargo' => $request->cargo,
+            // Nunca aceitar cargo/tipo/empresa_id da requisição (ver docs/cadastro-autonomo-clientes.md)
             'empresa_id' => '0',
         ]);
 
